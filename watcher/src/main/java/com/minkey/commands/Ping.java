@@ -15,7 +15,9 @@ public class Ping implements ICommand {
 
     @Override
     public String commandStr() throws SysException {
+        //linux 下必须带上-c 要不然不反回
         return "ping -c 4 192.168.10.1";
+
     }
 
     @Override
