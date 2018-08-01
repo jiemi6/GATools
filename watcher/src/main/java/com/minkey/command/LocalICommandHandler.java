@@ -1,7 +1,5 @@
 package com.minkey.command;
 
-import com.alibaba.fastjson.JSONObject;
-import com.minkey.commands.ICommand;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SysException;
 import com.minkey.executer.LocalExecuter;

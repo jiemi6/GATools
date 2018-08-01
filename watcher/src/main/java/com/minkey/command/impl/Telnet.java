@@ -1,4 +1,4 @@
-package com.minkey.commands;
+package com.minkey.command.impl;
 
 
 import com.minkey.exception.SysException;

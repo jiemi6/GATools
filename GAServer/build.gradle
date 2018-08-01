@@ -8,8 +8,8 @@ dependencies {
             'org.slf4j:slf4j-api:1.7.25',
             'ch.qos.logback:logback-classic:1.2.3',
             'ch.qos.logback:logback-core:1.2.3'
-    //ssh2 工具包
-    compile group: 'com.jcraft', name: 'jsch', version: '0.1.54'
+
+
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 

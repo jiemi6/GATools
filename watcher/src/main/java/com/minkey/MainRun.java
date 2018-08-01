@@ -3,7 +3,7 @@ package com.minkey;
 
 import com.jcraft.jsch.JSchException;
 import com.minkey.command.LocalICommandHandler;
-import com.minkey.commands.Ping;
+import com.minkey.command.impl.Ping;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.executer.SSHExecuter;

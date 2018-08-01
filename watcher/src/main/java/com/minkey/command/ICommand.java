@@ -1,4 +1,4 @@
-package com.minkey.commands;
+package com.minkey.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.entity.ResultInfo;

@@ -1,6 +1,5 @@
 package com.minkey.command;
 
-import com.minkey.commands.ICommand;
 import com.minkey.entity.ConnectInfo;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SysException;
