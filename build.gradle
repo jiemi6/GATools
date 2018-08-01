@@ -19,8 +19,8 @@ subprojects {
 
 	repositories {
 //    maven {url "http://repo.typesafe.com/typesafe/maven-releases/"}
-//		maven {        url "https://repo1.maven.org/maven2/"    }
-    maven { url "http://192.168.10.80:8081/nexus/content/groups/Framework-debug-Group/"  }
+		maven {        url "https://repo1.maven.org/maven2/"    }
+//    maven { url "http://192.168.10.80:8081/nexus/content/groups/Framework-debug-Group/"  }
 	}
 
 	artifacts {
