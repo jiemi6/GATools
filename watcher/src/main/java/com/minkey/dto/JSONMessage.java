@@ -3,6 +3,7 @@ package com.minkey.dto;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ErrorCodeEnum;
 import com.minkey.util.OSUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ import java.util.Date;
  * 
  */
 public class JSONMessage {
-    Logger logger = LoggerFactory.getLogger(OSUtil.class);
+    static Logger logger = LoggerFactory.getLogger(OSUtil.class);
     /** 操作成功 */
     private static final int JSON_RESULT_SUCCESS = ErrorCodeEnum.SUCCESS.getCode();
 
@@ -33,7 +34,7 @@ public class JSONMessage {
      */
     private JSONObject data;
     
-    private Date time = null;
+    private long time = System.currentTimeMillis();
     
 	protected JSONMessage() {
 		super();
@@ -107,7 +108,8 @@ public class JSONMessage {
 	public JSONObject getData() {
         return data;
     }
-    public Date getTime() {
+
+    public long getTime() {
 		return time;
 	}
 	
@@ -133,9 +135,6 @@ public class JSONMessage {
 
 	@Override
 	public String toString() {
-		this.time = new Date();
-		//屏蔽返回是msg信息
-//		this.rdesc = null;
 		try {
 			return JSONObject.toJSONString(this);
 		} catch (Exception e) {
@@ -143,4 +142,18 @@ public class JSONMessage {
 			return JSONMessage.createFalied("return jsonObject to String exception").toString();
 		}
 	}
+
+
+	public static JSONMessage string2Obj(String jsonStr){
+	    if(StringUtils.isEmpty(jsonStr)){
+	        return null;
+        }
+        try{
+            return JSONObject.parseObject(jsonStr,JSONMessage.class);
+        }catch (Exception e){
+            logger.error("String to JSONMessage exception",e);
+            return null;
+        }
+
+    }
 }
