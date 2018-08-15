@@ -2,7 +2,7 @@ package com.minkey.command;
 
 import com.minkey.entity.ConnectInfo;
 import com.minkey.entity.ResultInfo;
-import com.minkey.exception.SysException;
+import com.minkey.exception.SystemException;
 import com.minkey.executer.SSHExecuter;
 
 public class SSHICommandHandler implements ICommandHandler {
@@ -17,7 +17,7 @@ public class SSHICommandHandler implements ICommandHandler {
 
 
     @Override
-    public ResultInfo exec() throws SysException {
+    public ResultInfo exec() throws SystemException {
         SSHExecuter sshExecuter = new SSHExecuter(ConnectInfo);
 
         ResultInfo resultInfo = sshExecuter.sendCmd(command.commandStr());

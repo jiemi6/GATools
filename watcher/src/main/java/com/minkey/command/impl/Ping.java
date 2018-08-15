@@ -3,7 +3,7 @@ package com.minkey.command.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.ICommand;
 import com.minkey.entity.ResultInfo;
-import com.minkey.exception.SysException;
+import com.minkey.exception.SystemException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,19 +15,25 @@ import java.util.regex.Pattern;
 public class Ping implements ICommand {
 
     @Override
-    public String commandStr() throws SysException {
+    public String commandStr() throws SystemException {
         //linux 下必须带上-c 要不然不反回
         return "ping -c 4 192.168.10.1";
 
     }
 
     @Override
-    public JSONObject result2JSON(ResultInfo resultInfo) throws SysException {
+    public JSONObject result2JSON(ResultInfo resultInfo) throws SystemException {
         JSONObject jo = new JSONObject();
         jo.put("ok","c成功了");
         return jo;
     }
 
+    /**
+     * java测试ping，只能代表是否联通
+     * @param ipAddress
+     * @return
+     * @throws Exception
+     */
     public static boolean javaPing(String ipAddress) throws Exception {
         //超时应该在3钞以上
         int timeOut = 3000;
@@ -50,6 +56,13 @@ public class Ping implements ICommand {
         return 0;
     }
 
+    /**
+     * windows操作系统ping
+     * @param ipAddress
+     * @param pingTimes
+     * @param timeOut
+     * @return
+     */
     public boolean pingWindow(String ipAddress, int pingTimes, int timeOut) {
         BufferedReader in = null;
         // 将要执行的ping命令,此命令是windows格式的命令

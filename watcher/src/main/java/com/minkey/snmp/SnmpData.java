@@ -1,11 +1,5 @@
 package com.minkey.snmp;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
@@ -13,14 +7,13 @@ import org.snmp4j.TransportMapping;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.event.ResponseListener;
 import org.snmp4j.mp.SnmpConstants;
-import org.snmp4j.smi.Address;
-import org.snmp4j.smi.GenericAddress;
-import org.snmp4j.smi.Integer32;
-import org.snmp4j.smi.Null;
-import org.snmp4j.smi.OID;
-import org.snmp4j.smi.OctetString;
-import org.snmp4j.smi.VariableBinding;
+import org.snmp4j.smi.*;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class SnmpData {
 
@@ -47,7 +40,7 @@ public class SnmpData {
         return target;
     }
 
-    /*根据OID，获取单条消息*/
+    /**根据OID，获取单条消息*/
     public static void snmpGet(String ip, String community, String oid) {
 
         CommunityTarget target = createDefault(ip, community);
@@ -104,7 +97,7 @@ public class SnmpData {
         }
     }
 
-    /*根据OID列表，一次获取多条OID数据，并且以List形式返回*/
+    /**根据OID列表，一次获取多条OID数据，并且以List形式返回*/
     public static void snmpGetList(String ip, String community, List<String> oidList) {
         CommunityTarget target = createDefault(ip, community);
         Snmp snmp = null;

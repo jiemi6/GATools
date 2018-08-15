@@ -1,4 +1,6 @@
-package com.minkey.snmp;
+package com.minkey;
+
+import com.minkey.snmp.SnmpData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +24,9 @@ public class SnmpTest {
         String community = "public";
     public void testGet() {
 //        String oidval = "1.3.6.1.2.1.1.6.0";
-        String oidval = "1.3.6.1.2.1.25.3.3.1.2.1";
+        String oidval = "1.3.6.1.2.1.25.3.3.1";
 //        String oidval = "1.3.6.1.4.1.2021.4.5.0";
-        SnmpData.snmpGet(ip, community, oidval);
+        SnmpData.snmpAsynWalk(ip, community, oidval);
     }
 
 

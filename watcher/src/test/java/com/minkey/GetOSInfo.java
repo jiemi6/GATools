@@ -1,4 +1,4 @@
-package com.minkey.util;
+package com.minkey;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -108,9 +108,9 @@ public class GetOSInfo {
         System.out.println("载入库时搜索的路径列表：" + props.getProperty("java.library.path"));
         System.out.println("默认的暂时文件路径：" + props.getProperty("java.io.tmpdir"));
         System.out.println("一个或多个扩展文件夹的路径：" + props.getProperty("java.ext.dirs"));
-        System.out.println("操作系统的名称：" + props.getProperty("util.name"));
-        System.out.println("操作系统的构架：" + props.getProperty("util.arch"));
-        System.out.println("操作系统的版本号：" + props.getProperty("util.version"));
+        System.out.println("操作系统的名称：" + props.getProperty("os.name"));
+        System.out.println("操作系统的构架：" + props.getProperty("os.arch"));
+        System.out.println("操作系统的版本号：" + props.getProperty("os.version"));
         System.out.println("文件分隔符：" + props.getProperty("file.separator"));
         //在 unix 系统中是＂／＂
         System.out.println("路径分隔符：" + props.getProperty("path.separator"));
@@ -125,7 +125,7 @@ public class GetOSInfo {
     public static void main(String[] args) {
 //        getConfig();
 //        Config();
-//        all();
-        getIpAddress();
+        all();
+//        getIpAddress();
     }
 }

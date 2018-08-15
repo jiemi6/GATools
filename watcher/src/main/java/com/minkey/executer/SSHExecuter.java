@@ -1,24 +1,16 @@
 package com.minkey.executer;
 
 
+import com.jcraft.jsch.*;
+import com.minkey.entity.ConnectInfo;
+import com.minkey.entity.ResultInfo;
+import com.minkey.exception.SystemException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.SftpException;
-import com.minkey.entity.ConnectInfo;
-import com.minkey.entity.ResultInfo;
-import com.minkey.exception.SysException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ssh执行工具
@@ -36,11 +28,11 @@ public class SSHExecuter {
         connect(host, port, user, password,3000);
     }
 
-    public SSHExecuter(ConnectInfo ConnectInfo) throws SysException {
+    public SSHExecuter(ConnectInfo ConnectInfo) throws SystemException {
         try {
             connect(ConnectInfo.getHost(), ConnectInfo.getPort(), ConnectInfo.getUser(), ConnectInfo.getPwd(), ConnectInfo.getTimeout());
         } catch (JSchException e) {
-            throw new SysException("构造ssh执行工具异常",e);
+            throw new SystemException("构造ssh执行工具异常",e);
         }
     }
 
@@ -75,7 +67,7 @@ public class SSHExecuter {
         return session;
     }
 
-    public ResultInfo sendCmd(String command) throws SysException {
+    public ResultInfo sendCmd(String command) throws SystemException {
         return sendCmd(command, 200);
     }
 
@@ -87,7 +79,7 @@ public class SSHExecuter {
      * @return String 执行命令后的返回
      * @throws JSchException
      */
-    public ResultInfo sendCmd(String command, int delay) throws SysException {
+    public ResultInfo sendCmd(String command, int delay) throws SystemException {
         if (delay < 50) {
             delay = 50;
         }
@@ -102,7 +94,7 @@ public class SSHExecuter {
         try {
             channel = session.openChannel("exec");
         } catch (JSchException e) {
-            throw new SysException("打开ssh会话异常",e);
+            throw new SystemException("打开ssh会话异常",e);
         }
         ChannelExec ssh = (ChannelExec) channel;
         //返回的结果可能是标准信息,也可能是错误信息,所以两种输出都要获取
@@ -115,14 +107,14 @@ public class SSHExecuter {
             stdStream = ssh.getInputStream();
             errStream = ssh.getErrStream();
         } catch (IOException e) {
-            throw new SysException("构造ssh结果接收流异常",e);
+            throw new SystemException("构造ssh结果接收流异常",e);
         }
 
         ssh.setCommand(command);
         try {
             ssh.connect();
         } catch (JSchException e) {
-            throw new SysException("建立ssh连接异常",e);
+            throw new SystemException("建立ssh连接异常",e);
         }
 
         try {
@@ -158,7 +150,7 @@ public class SSHExecuter {
                 }
             }
         } catch (IOException e) {
-            throw new SysException("读取ssh执行结果异常",e);
+            throw new SystemException("读取ssh执行结果异常",e);
         } finally {
             channel.disconnect();
         }

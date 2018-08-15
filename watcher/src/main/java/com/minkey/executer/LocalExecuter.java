@@ -1,7 +1,7 @@
 package com.minkey.executer;
 
 import com.minkey.entity.ResultInfo;
-import com.minkey.exception.SysException;
+import com.minkey.exception.SystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,14 +11,14 @@ import java.io.InputStream;
 public class LocalExecuter {
     private final static Logger logger = LoggerFactory.getLogger(LocalExecuter.class);
 
-    public static ResultInfo exec(String command) throws SysException {
+    public static ResultInfo exec(String command) throws SystemException {
         String line = null;
 
         Process pro = null;
         try {
             pro = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
-            throw new SysException("读取sh执行异常", e);
+            throw new SystemException("读取sh执行异常", e);
         }
 
         //返回的结果可能是标准信息,也可能是错误信息,所以两种输出都要获取
@@ -62,7 +62,7 @@ public class LocalExecuter {
                 }
             }
         } catch (IOException e) {
-            throw new SysException("读取本地sh执行结果异常", e);
+            throw new SystemException("读取本地sh执行结果异常", e);
         } finally {
             pro.destroy();
         }
