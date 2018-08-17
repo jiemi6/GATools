@@ -1,7 +1,5 @@
 package com.minkey.entity;
 
-import com.alibaba.fastjson.JSONObject;
-
 /**
  * @author minkey
  * @version V1.0
@@ -9,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 public class ResultInfo {
     /**
     *返回状态码 （在linux中可以通过 echo $? 可知每步执行令执行的状态码）
+     * <br> 0: 正常返回
      */
     private int exitStuts;
     /**
@@ -19,12 +18,6 @@ public class ResultInfo {
         标准错误输出流内容
      */
     private String errRes;
-
-    /**
-     * 解析之后获取的自定义数据
-     */
-    private JSONObject usefulData;
-
 
     public ResultInfo(int exitStuts, String outRes, String errRes) {
         super();
@@ -75,7 +68,7 @@ public class ResultInfo {
 
     @Override
     public String toString() {
-        return "ResultInfo [exitStuts=" + exitStuts + ", outRes=" + outRes + ", data=" + usefulData + ", errRes=" + errRes + "]";
+        return "ResultInfo [exitStuts=" + exitStuts + ", outRes=" + outRes +  ", errRes=" + errRes + "]";
     }
 
     public void clear() {
@@ -83,7 +76,4 @@ public class ResultInfo {
         outRes = errRes = null;
     }
 
-    public void setUsefulData(JSONObject usefulData) {
-        this.usefulData = usefulData;
-    }
 }

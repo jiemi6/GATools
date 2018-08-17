@@ -7,8 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-
 /**
  * JSON结果返回封装。
  * 
@@ -132,6 +130,13 @@ public class JSONMessage {
 		}
 		return this;
 	}
+
+    public JSONMessage addData(Object data) {
+        if(data != null){
+            this.data = (JSONObject) JSONObject.toJSON(data);
+        }
+        return this;
+    }
 
 	@Override
 	public String toString() {

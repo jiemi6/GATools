@@ -1,9 +1,4 @@
-package com.minkey.command.impl;
-
-import com.alibaba.fastjson.JSONObject;
-import com.minkey.command.ICommand;
-import com.minkey.entity.ResultInfo;
-import com.minkey.exception.SystemException;
+package com.minkey.command;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,21 +7,7 @@ import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Ping implements ICommand {
-
-    @Override
-    public String commandStr() throws SystemException {
-        //linux 下必须带上-c 要不然不反回
-        return "ping -c 4 192.168.10.1";
-
-    }
-
-    @Override
-    public JSONObject result2JSON(ResultInfo resultInfo) throws SystemException {
-        JSONObject jo = new JSONObject();
-        jo.put("ok","c成功了");
-        return jo;
-    }
+public class Ping {
 
     /**
      * java测试ping，只能代表是否联通
@@ -46,7 +27,7 @@ public class Ping implements ICommand {
      *
      若line含有=18ms TTL=16字样,说明已经ping通,返回1,否則返回0.
      */
-    private int getCheckResult(String line) {
+    private static int getCheckResult(String line) {
         // System.out.println("控制台输出的结果为:"+line);
         Pattern pattern = Pattern.compile("(\\d+ms)(\\s+)(TTL=\\d+)", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(line);

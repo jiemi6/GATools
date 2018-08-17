@@ -1,0 +1,13 @@
+#禁用安全机制，可查看自带的接口，发布时禁用
+management:
+  security:
+    enabled: false
+
+#端口号.
+server:
+  port: 8081
+
+
+logging:
+  file: log/console.log
+
