@@ -1,15 +1,18 @@
 group 'com.minkey'
 
 
+
 subprojects {
 	version '1.0-SNAPSHOT'
 
 	apply plugin: 'java'
+	apply plugin: 'maven'
+	apply plugin: 'application'
 	apply plugin: 'idea'
+	apply plugin: 'org.springframework.boot'
 
 	sourceCompatibility=1.8
 	targetCompatibility=1.8
-
 
 	[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 	tasks.withType(JavaCompile) {
@@ -19,12 +22,22 @@ subprojects {
 
 	repositories {
     maven {url "http://maven.aliyun.com/nexus/content/groups/public"}
+//		maven {url "http://192.168.10.80:8081/nexus/content/groups/allinone/"}
 //		maven {        url "https://repo1.maven.org/maven2/"    }
 	}
 
-	artifacts {
-		archives file("build/libs/${project.name}-${version}.jar")
+//	artifacts {
+//		archives file("build/libs/${project.name}-${version}.jar")
+//	}
+
+
+}
+
+buildscript {
+	repositories {
+		maven {url "http://192.168.10.80:8081/nexus/content/groups/Framework-debug-Group/"}
 	}
-
-
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+	}
 }
