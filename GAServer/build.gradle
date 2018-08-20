@@ -1,6 +1,7 @@
 
 
 dependencies {
+    compile project(':watcher')
 
     compile 'com.alibaba:fastjson:1.2.29',
             'org.apache.commons:commons-lang3:3.4',
@@ -9,6 +10,7 @@ dependencies {
             'ch.qos.logback:logback-classic:1.2.3',
             'ch.qos.logback:logback-core:1.2.3'
 
+    compile "org.apache.httpcomponents:httpclient:4.5"
     //syslog组件包
     compile group: 'org.syslog4j', name: 'syslog4j', version: '0.9.30'
 
