@@ -57,6 +57,7 @@ public class LocalExecuter {
                 if (!pro.isAlive()) {
                     int code = pro.exitValue();
                     ResultInfo result = new ResultInfo(code, strBuffer.toString(), errResult.toString());
+                    logger.info(result.toString());
                     return result;
                 }
             }

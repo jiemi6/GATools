@@ -20,7 +20,7 @@ public class MainTest {
 
     public static void testLocalSH() {
         try {
-            ResultInfo resInfo = LocalExecuter.exec("192.168.1.1");
+            ResultInfo resInfo = LocalExecuter.exec("ping 192.168.1.1 -t");
             System.out.println(resInfo.toString());
         } catch (Exception e) {
             e.printStackTrace();

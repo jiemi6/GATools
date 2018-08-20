@@ -2,7 +2,6 @@ package com.minkey.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ErrorCodeEnum;
-import com.minkey.util.OSUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class JSONMessage {
-    static Logger logger = LoggerFactory.getLogger(OSUtil.class);
+    static Logger logger = LoggerFactory.getLogger(JSONMessage.class);
     /** 操作成功 */
     private static final int JSON_RESULT_SUCCESS = ErrorCodeEnum.SUCCESS.getCode();
 
@@ -25,7 +24,7 @@ public class JSONMessage {
     private int code = JSONMessage.JSON_RESULT_SUCCESS;
 
     /** 错误信息描述 */
-    private String rdesc;
+    private String msg;
 
     /**
      * 返回数据 
@@ -38,10 +37,10 @@ public class JSONMessage {
 		super();
 	}
 
-	private JSONMessage(final int code, final String rdesc) {
+	private JSONMessage(final int code, final String msg) {
     	super();
     	this.code = code;
-    	this.rdesc = rdesc;
+    	this.msg = msg;
     }
    
     /**
@@ -59,8 +58,8 @@ public class JSONMessage {
      * 
      * @return
      */
-    public static JSONMessage createSuccess(String rdesc) {
-        final JSONMessage jsonResult = new JSONMessage(JSONMessage.JSON_RESULT_SUCCESS, rdesc);
+    public static JSONMessage createSuccess(String msg) {
+        final JSONMessage jsonResult = new JSONMessage(JSONMessage.JSON_RESULT_SUCCESS, msg);
         return jsonResult;
     }
     
@@ -79,19 +78,19 @@ public class JSONMessage {
      * 
      * @return
      */
-    public static JSONMessage createFalied(final String rdesc) {
-        final JSONMessage jsonResult = new JSONMessage(JSONMessage.JSON_RESULT_FAILED, rdesc);
+    public static JSONMessage createFalied(final String msg) {
+        final JSONMessage jsonResult = new JSONMessage(JSONMessage.JSON_RESULT_FAILED, msg);
         return jsonResult;
     }
     
     /**
      * 自定义失败code
      * @param code  请从标准ErrorCodeEnum中获取
-     * @param rdesc
+     * @param msg
      * @return
      */
-    public static JSONMessage createFalied(final int code, final String rdesc){
-        final JSONMessage jsonResult = new JSONMessage(code, rdesc);
+    public static JSONMessage createFalied(final int code, final String msg){
+        final JSONMessage jsonResult = new JSONMessage(code, msg);
         return jsonResult;
     }
     
@@ -111,12 +110,12 @@ public class JSONMessage {
 		return time;
 	}
 	
-	public String getRdesc() {
-		return rdesc;
+	public String getMsg() {
+		return msg;
 	}
 
-	public void setRdesc(String rdesc) {
-		this.rdesc = rdesc;
+	public void setMsg(String msg) {
+		this.msg = msg;
 	}
 
 	/**
