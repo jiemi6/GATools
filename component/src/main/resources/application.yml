@@ -5,9 +5,9 @@ management:
 
 #端口号.
 server:
-  port: 8081
+  port: 8080
 
 
 logging:
-  file: log/console.log
+  file: logs/console.log
 
