@@ -1,4 +1,5 @@
 rootProject.name = "GATools"
 
-include "watcher"
+include "component"
+include "Detector"
 include "GAServer"

@@ -1,7 +1,6 @@
 group 'com.minkey'
 
 
-
 subprojects {
 	version '1.0-SNAPSHOT'
 
