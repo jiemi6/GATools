@@ -3,17 +3,15 @@
 dependencies {
     compile project(':component')
 
-    compile 'com.alibaba:fastjson:1.2.29',
-            'org.apache.commons:commons-lang3:3.4',
-            'commons-io:commons-io:2.4',
-            'org.slf4j:slf4j-api:1.7.25',
-            'ch.qos.logback:logback-classic:1.2.3',
-            'ch.qos.logback:logback-core:1.2.3'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.2.RELEASE'
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
+//    compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
 
     compile "org.apache.httpcomponents:httpclient:4.5"
     //syslog组件包
     compile group: 'org.syslog4j', name: 'syslog4j', version: '0.9.30'
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
