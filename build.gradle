@@ -34,7 +34,7 @@ subprojects {
 
 buildscript {
 	repositories {
-		maven {url "http://192.168.10.80:8081/nexus/content/groups/Framework-debug-Group/"}
+		maven {url "http://maven.aliyun.com/nexus/content/groups/public"}
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
