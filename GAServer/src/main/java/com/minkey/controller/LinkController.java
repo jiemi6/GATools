@@ -36,9 +36,9 @@ public class LinkController {
     }
 
     @RequestMapping("/query")
-    public String query(long linkId) {
+    public String query(Long linkId) {
         logger.info("start: 执行query设备 linkId={} ",linkId);
-        if(linkId == 0){
+        if(linkId == null){
             logger.info("linkId不能为空");
             return JSONMessage.createFalied("linkId不能为空").toString();
         }

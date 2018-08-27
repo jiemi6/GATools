@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.contants.ConfigEnum;
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
 import org.apache.commons.lang3.StringUtils;
@@ -59,5 +60,72 @@ public class ConfigController {
         }
     }
 
+
+    /**
+     * 系统注册，即录入一些资料
+     * @return
+     */
+    @RequestMapping("/register")
+    public String register() {
+
+        //直接存入config
+        ConfigEnum.SystemRegister.getConfigKey();
+
+        return JSONMessage.createSuccess().toString();
+
+    }
+
+
+    /**
+     * 日志最大保留天数，超过一定天数的日志将会被删除
+     * @return
+     */
+    @RequestMapping("/LogOverDay")
+    public String LogOverDay(Integer days) {
+
+
+        //直接存入config
+        ConfigEnum.LogOverDay.getConfigKey();
+
+        return JSONMessage.createSuccess().toString();
+
+    }
+
+
+
+    /**
+     * 报警短信配置
+     * @return
+     */
+    @RequestMapping("/smsAlarm")
+    public String smsAlarm() {
+        logger.info("start: 执行系统自检");
+        try{
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end:  执行系统自检");
+        }
+    }
+
+
+    /**
+     * 报警邮箱配置
+     * @return
+     */
+    @RequestMapping("/emailAlarm")
+    public String emailAlarm() {
+        logger.info("start: 执行系统自检");
+        try{
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end:  执行系统自检");
+        }
+    }
 
 }

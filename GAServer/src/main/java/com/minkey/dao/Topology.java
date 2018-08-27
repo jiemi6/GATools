@@ -11,24 +11,20 @@ public class Topology {
     private long topologyId;
 
     /**
-     * 所属于链路
+     * 问题id
      */
-    private long linkId;
+    private long errorId;
 
     /**
-     * 起始设备id
+     *  知识点具体内容
      */
-    private long fromDeviceId;
+    private String topologyDesc;
 
     /**
-     * 方向，true为正向，false为反向
+     * 点赞次数
      */
-    private boolean direction;
+    private int upNum;
 
-    /**
-     * 截止设备id；
-     */
-    private long toDeviceId;
 
 
 }

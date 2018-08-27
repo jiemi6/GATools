@@ -32,7 +32,7 @@ public class DeviceHandler {
         }
     }
 
-    public Device query(long deviceId) {
+    public Device query(Long deviceId) {
             return jdbcTemplate.queryForObject("select configKey, configData from "+tableName+" where deviceId= ?",new Object[]{deviceId},Device.class);
     }
 

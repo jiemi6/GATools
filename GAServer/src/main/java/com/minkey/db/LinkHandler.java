@@ -32,7 +32,7 @@ public class LinkHandler {
         }
     }
 
-    public Link query(long linkId) {
+    public Link query(Long linkId) {
             return jdbcTemplate.queryForObject("select configKey, configData from "+tableName+" where linkId= ?",new Object[]{linkId},Link.class);
     }
 

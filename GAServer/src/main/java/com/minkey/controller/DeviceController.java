@@ -3,7 +3,6 @@ package com.minkey.controller;
 import com.minkey.dao.Device;
 import com.minkey.db.DeviceHandler;
 import com.minkey.dto.JSONMessage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +36,9 @@ public class DeviceController {
     }
 
     @RequestMapping("/query")
-    public String query(long deviceId) {
+    public String query(Long deviceId) {
         logger.info("start: 执行query设备 deviceId={} ",deviceId);
-        if(deviceId == 0){
+        if(deviceId == null){
             logger.info("deviceId不能为空");
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }

@@ -1,7 +1,7 @@
 package com.minkey.controller;
 
-import com.minkey.dao.Link;
-import com.minkey.db.LinkHandler;
+import com.minkey.dao.Topology;
+import com.minkey.db.TopologyHandler;
 import com.minkey.dto.JSONMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,73 +10,73 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 链路接口
+ * 知识点接口
  */
 @RestController
-@RequestMapping("/link")
+@RequestMapping("/topology")
 public class TopologyController {
     private final static Logger logger = LoggerFactory.getLogger(TopologyController.class);
 
     @Autowired
-    LinkHandler linkHandler;
+    TopologyHandler topologyHandler;
 
     @RequestMapping("/insert")
-    public String insert(Link link) {
-        logger.info("start: 执行insert设备 link={} ",link);
+    public String insert(Topology topology) {
+        logger.info("start: 执行insert知识点 topology={} ",topology);
 
         try{
-            linkHandler.insert(link);
+            topologyHandler.insert(topology);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("end: 执行insert设备 link={} ",link);
+            logger.info("end: 执行insert知识点 topology={} ",topology);
         }
     }
 
-    @RequestMapping("/query")
-    public String query(long linkId) {
-        logger.info("start: 执行query设备 linkId={} ",linkId);
-        if(linkId == 0){
-            logger.info("linkId不能为空");
-            return JSONMessage.createFalied("linkId不能为空").toString();
+    /**
+     * 根据错误id，查询所有可能的知识点
+     * @param errorId
+     * @return
+     */
+    @RequestMapping("/query8errorId")
+    public String query8errorId(Long errorId) {
+        logger.info("start: 执行查询知识点 errorId={} ",errorId);
+        if(errorId == null){
+            logger.info("topologyId不能为空");
+            return JSONMessage.createFalied("topologyId不能为空").toString();
         }
         try{
-            return JSONMessage.createSuccess().addData(linkHandler.query(linkId)).toString();
+            return JSONMessage.createSuccess().addData(topologyHandler.query8errorId(errorId)).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("end: 执行query设备 linkId={} ",linkId);
+            logger.info("end: 执行查询知识点 errorId={} ",errorId);
         }
     }
 
-    @RequestMapping("/queryAll")
-    public String queryAll() {
-        logger.info("start: 执行query所有设备 ");
 
+    /**
+     * 点赞一次
+     * @return
+     */
+    @RequestMapping("/up")
+    public String up(Long topologyId) {
+        logger.info("start: 执行up知识点 ");
+        if(topologyId == null){
+            logger.info("topologyId不能为空");
+            return JSONMessage.createFalied("topologyId不能为空").toString();
+        }
         try{
-            return JSONMessage.createSuccess().addData(linkHandler.queryAll()).toString();
+            topologyHandler.up(topologyId);
+            return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("end: 执行query所有设备 ");
-        }
-    }
-
-    @RequestMapping("/queryCount")
-    public String queryCount() {
-        logger.info("start: 执行count所有设备 ");
-
-        try{
-            return JSONMessage.createSuccess().addData(linkHandler.queryCount()).toString();
-        }catch (Exception e){
-            logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
-        }finally {
-            logger.info("end: 执行count所有设备 ");
+            logger.info("end:执行up知识点  ");
         }
     }
 }

@@ -3,12 +3,12 @@ package com.minkey.dao;
 /**
  * 任务对象，数据来自别的数据库
  */
-public class Job {
+public class Task {
 
     /**
      * 任务id，主键
      */
-    private long jobId;
+    private long taskId;
 
     /**
      * 链路id
