@@ -6,7 +6,9 @@ management:
 #端口号.
 server:
   port: 8080
-
+  session:
+    #会话超时（秒）,10分钟。
+    timeout: 600
 
 logging:
   file: logs/console.log

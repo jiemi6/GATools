@@ -1,4 +1,4 @@
-package com.minkey.dao;
+package com.minkey.db.dao;
 
 /**
  * 链路类，基本单位，链路具有连接关系
@@ -19,4 +19,5 @@ public class Link {
      * 链路类型
      */
     private int linkType;
+
 }

@@ -1,6 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.dao.Device;
+import com.minkey.db.dao.Device;
 import com.minkey.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

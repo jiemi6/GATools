@@ -1,4 +1,4 @@
-package com.minkey.dao;
+package com.minkey.db.dao;
 
 /**
  *  设备所包含的服务，一个设备上可以跑多个服务
@@ -22,6 +22,9 @@ public class DeviceService {
 
     /**
      * 服务类型， 固定几种，直接定义在代码中
+     * 1 : 数据库 <br>
+     * 2 : ftp <br>
+     * 3 : ssh <br>
      */
     private int serviceType;
 

@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
  * 证书管理接口
  */
 @RestController
-@RequestMapping("/lincense")
-public class LincenseController {
-    private final static Logger logger = LoggerFactory.getLogger(LincenseController.class);
+@RequestMapping("/license")
+public class LicenseController {
+    private final static Logger logger = LoggerFactory.getLogger(LicenseController.class);
 
 
 

@@ -27,6 +27,13 @@ public class SystemController {
     public String check() {
         logger.info("start: 执行系统自检");
 
+        //ping 网关
+
+        //test本地数据库
+
+        //test 本地硬盘大小
+
+
         try{
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -93,7 +100,7 @@ public class SystemController {
     @RequestMapping("/setNetWork")
     public String setNetWork() {
 
-        //检查，
+        //检查规则
 
         //调用系统命令设置
 

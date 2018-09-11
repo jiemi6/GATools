@@ -5,24 +5,9 @@ import org.productivity.java.syslog4j.SyslogIF;
 import org.productivity.java.syslog4j.impl.net.udp.UDPNetSyslogConfig;
 
 import java.net.URLDecoder;
-import java.util.Date;
 
 public class SysLogUtil {
 
-    public static void main(String[] args) {
-
-
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("time：" + new Date().toString().substring(4, 20) + ";");
-        buffer.append("userID:" + "uuu1" + ";");
-        buffer.append("logType:" + "100" + ";");
-        buffer.append("actiom:" + "delete" + ";");
-        buffer.append("des:" + "312312323");
-
-        SysLogUtil log2 = new SysLogUtil();
-        log2.sendLog("172.18.10.123", 514, buffer.toString(), 1);
-
-    }
 
     /**
      * 发送syslog

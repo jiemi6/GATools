@@ -1,6 +1,6 @@
 package com.minkey.controller;
 
-import com.minkey.dao.Device;
+import com.minkey.db.dao.Device;
 import com.minkey.db.DeviceHandler;
 import com.minkey.dto.JSONMessage;
 import org.slf4j.Logger;
@@ -68,6 +68,25 @@ public class DeviceController {
 
     @RequestMapping("/queryCount")
     public String queryCount() {
+        logger.info("start: 执行count所有设备 ");
+
+        try{
+            return JSONMessage.createSuccess().addData(deviceHandler.queryCount()).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end: 执行count所有设备 ");
+        }
+    }
+
+
+    /**
+     * 查询某一个终端的实时资源消耗
+     * @return
+     */
+    @RequestMapping("/queryExplorer")
+    public String queryExplorer(Long deviceId) {
         logger.info("start: 执行count所有设备 ");
 
         try{

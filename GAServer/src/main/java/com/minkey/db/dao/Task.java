@@ -1,4 +1,4 @@
-package com.minkey.dao;
+package com.minkey.db.dao;
 
 /**
  * 任务对象，数据来自别的数据库

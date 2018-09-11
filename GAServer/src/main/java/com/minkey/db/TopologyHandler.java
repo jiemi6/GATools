@@ -1,6 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.dao.Topology;
+import com.minkey.db.dao.Topology;
 import com.minkey.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +19,6 @@ public class TopologyHandler {
     JdbcTemplate jdbcTemplate;
 
 
-    public void up(Long topologyId) {
-        int num = jdbcTemplate.update("update "+tableName+" where topologyId=?",Long.class);
-        if(num == 0){
-            logger.error("点赞知识点失败，topologyId={}",topologyId);
-        }
-    }
-
     public void insert(Topology topology) {
         int num = jdbcTemplate.update("replace into "+tableName+" (configKey, configData) VALUES (?,?)",new Object[]{topology});
 
@@ -34,8 +27,8 @@ public class TopologyHandler {
         }
     }
 
-    public List<Topology> query8errorId(long errorId) {
-            return jdbcTemplate.queryForList("select * from "+tableName+" where errorId= ? ORDER BY upNum desc",new Object[]{errorId},Topology.class);
+    public List<Topology> query8LinkId(Long linkId) {
+            return jdbcTemplate.queryForList("select * from "+tableName+" where errorId= ? ORDER BY upNum desc",new Object[]{linkId},Topology.class);
     }
 
 }

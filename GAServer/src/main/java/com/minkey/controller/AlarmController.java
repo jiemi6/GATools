@@ -22,6 +22,9 @@ public class AlarmController {
     @RequestMapping("/device")
     public String device() {
         logger.info("start: 执行系统自检");
+
+        //直接读syslog
+
         try{
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -58,6 +61,10 @@ public class AlarmController {
     @RequestMapping("/task")
     public String task() {
         logger.info("start: 执行系统自检");
+
+        //直接读第三方数据库
+
+
         try{
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

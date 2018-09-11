@@ -21,16 +21,19 @@ import java.util.List;
 import java.util.Map.Entry;
 
 
-
+/**
+ * http 请求客户端
+ *
+ */
 public class HttpClient {
 
 	public static String postRequest(String url,JSONObject param) throws SystemException {
 		CloseableHttpClient client = HttpClients.createDefault(); 
 		
 		RequestConfig requestConfig = RequestConfig.custom()  
-				//读取8秒超时
+				//读取3秒超时
 		        .setSocketTimeout(3000)  
-		        //连接8秒超时
+		        //连接3秒超时
 		        .setConnectTimeout(3000)
 		        .setConnectionRequestTimeout(3000)
 		        .build();

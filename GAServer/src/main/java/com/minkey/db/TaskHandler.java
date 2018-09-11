@@ -1,6 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.dao.Task;
+import com.minkey.db.dao.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

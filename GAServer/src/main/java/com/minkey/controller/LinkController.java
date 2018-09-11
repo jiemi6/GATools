@@ -1,6 +1,6 @@
 package com.minkey.controller;
 
-import com.minkey.dao.Link;
+import com.minkey.db.dao.Link;
 import com.minkey.db.LinkHandler;
 import com.minkey.dto.JSONMessage;
 import org.slf4j.Logger;
