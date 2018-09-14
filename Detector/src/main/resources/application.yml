@@ -5,7 +5,7 @@ management:
 
 #端口号.
 server:
-  port: 8080
+  port: ${port}
   session:
     #会话超时（秒）,10分钟。
     timeout: 600

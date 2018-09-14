@@ -1,5 +1,7 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.minkey.command.SnmpUtil;
 import com.minkey.dto.JSONMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,11 +61,12 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/snmp")
-    public String snmp() {
+    public String snmp(String ip,String oid) {
 
+        JSONObject jo = new SnmpUtil(ip).snmpWalk(oid);
         //第三方实现， 默认开启
 
-        return JSONMessage.createSuccess().toString();
+        return JSONMessage.createSuccess().addData(jo).toString();
 
     }
 

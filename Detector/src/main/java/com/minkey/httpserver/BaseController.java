@@ -10,7 +10,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.snmp4j.CommunityTarget;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -125,9 +124,9 @@ public class BaseController {
         }
 
         try{
-            CommunityTarget communityTarget = SnmpUtil.createTarget(ip,port,community,version,retry,timeout);
+            SnmpUtil snmpUtil = new SnmpUtil(ip,port,community,version,retry,timeout);
 
-            JSONObject reData = SnmpUtil.snmpGetList(communityTarget,oids);
+            JSONObject reData = snmpUtil.snmpGetList(oids);
 
             return JSONMessage.createSuccess().addData(reData).toString();
         }catch (Exception e){
@@ -182,9 +181,9 @@ public class BaseController {
             timeout = SnmpUtil.DEFAULT_TIMEOUT;
         }
         try{
-            CommunityTarget communityTarget = SnmpUtil.createTarget(ip,port,community,version,retry,timeout);
+            SnmpUtil snmpUtil = new SnmpUtil(ip,port,community,version,retry,timeout);
 
-            JSONObject reData = SnmpUtil.snmpWalk(communityTarget,oid);
+            JSONObject reData = snmpUtil.snmpWalk(oid);
 
             return JSONMessage.createSuccess().addData(reData).toString();
         }catch (Exception e){

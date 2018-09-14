@@ -73,7 +73,6 @@ public class SessionFilter implements Filter {
         HttpSession session = request.getSession(false);
         // session中包含user对象,则是登录状态
         if(session != null && session.getAttribute("user") != null){
-            // System.out.println("user:"+session.getAttribute("user"));
             return true;
         }
 

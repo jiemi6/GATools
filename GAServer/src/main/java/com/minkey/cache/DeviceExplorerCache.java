@@ -64,7 +64,7 @@ public class DeviceExplorerCache {
 
         //获取所有机器的ip，采用snmp方式访问
 
-
+//        logger.info("测试下 schedule！");
 
     }
 

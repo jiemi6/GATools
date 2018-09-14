@@ -2,7 +2,6 @@ package com.minkey;
 
 import com.minkey.command.SnmpUtil;
 import com.minkey.snmp.SnmpData;
-import org.snmp4j.CommunityTarget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +43,7 @@ public class SnmpTest {
         List<String> oidList = new ArrayList<String>();
         oidList.add("1.3.6.1.2.1.1.5.0");
         oidList.add("1.3.6.1.2.1.1.7.0");
-        CommunityTarget target = SnmpUtil.createDefault(ip);
-        SnmpUtil.snmpGetList(target, (String[]) oidList.toArray());
+        new SnmpUtil(ip).snmpGetList((String[]) oidList.toArray());
     }
 
 

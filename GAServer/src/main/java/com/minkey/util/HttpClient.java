@@ -1,6 +1,5 @@
 package com.minkey.util;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.IOUtils;
 import com.minkey.exception.SystemException;
 import org.apache.http.HttpEntity;
@@ -18,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 
@@ -27,7 +27,7 @@ import java.util.Map.Entry;
  */
 public class HttpClient {
 
-	public static String postRequest(String url,JSONObject param) throws SystemException {
+	public static String postRequest(String url,Map<String,String> param) throws SystemException {
 		CloseableHttpClient client = HttpClients.createDefault(); 
 		
 		RequestConfig requestConfig = RequestConfig.custom()  
@@ -39,9 +39,9 @@ public class HttpClient {
 		        .build();
 
 		// 创建参数队列
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();  
-		for(Entry entry :param.entrySet()){
-			formparams.add(new BasicNameValuePair(entry.getKey().toString(),  entry.getValue().toString()));
+        List<NameValuePair> formparams = new ArrayList<>();
+		for(Entry<String,String> entry :param.entrySet()){
+			formparams.add(new BasicNameValuePair(entry.getKey(),  entry.getValue()));
 		}
 		
 		HttpPost httpPost = new HttpPost(url);

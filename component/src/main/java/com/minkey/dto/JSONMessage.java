@@ -137,6 +137,15 @@ public class JSONMessage {
         return this;
     }
 
+    public JSONMessage addData(String key, Object data) {
+        if(data != null){
+            JSONObject jo = new JSONObject();
+            jo.put(key,data);
+            this.data = jo;
+        }
+        return this;
+    }
+
 	@Override
 	public String toString() {
 		try {

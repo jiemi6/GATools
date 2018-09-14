@@ -1,8 +1,9 @@
 package com.minkey.controller;
 
-import com.minkey.db.dao.Device;
 import com.minkey.db.DeviceHandler;
+import com.minkey.db.dao.Device;
 import com.minkey.dto.JSONMessage;
+import com.minkey.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +53,21 @@ public class DeviceController {
         }
     }
 
-    @RequestMapping("/queryAll")
-    public String queryAll() {
-        logger.info("start: 执行query所有设备 ");
+    @RequestMapping("/query8Page")
+    public String query8Page(Integer currentPage,Integer pageSize) {
+        logger.info("start: 执行分页查询设备 ");
 
         try{
-            return JSONMessage.createSuccess().addData(deviceHandler.queryAll()).toString();
+            Page page = new Page(currentPage,pageSize);
+
+            page = deviceHandler.query8Page(page);
+
+            return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("end: 执行query所有设备 ");
+            logger.info("end: 执行分页查询所有设备 ");
         }
     }
 
@@ -71,7 +76,7 @@ public class DeviceController {
         logger.info("start: 执行count所有设备 ");
 
         try{
-            return JSONMessage.createSuccess().addData(deviceHandler.queryCount()).toString();
+            return JSONMessage.createSuccess().addData("count",deviceHandler.queryCount()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
