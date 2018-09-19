@@ -1,14 +1,23 @@
 package com.minkey.controller;
 
 import com.minkey.db.DeviceHandler;
+import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
+import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.xml.ws.RequestWrapper;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 设备接口
@@ -21,12 +30,42 @@ public class DeviceController {
     @Autowired
     DeviceHandler deviceHandler;
 
+    @Autowired
+    DeviceServiceHandler deviceServiceHandler;
+
     @RequestMapping("/insert")
-    public String insert(Device device) {
+    public String insert( Device device) {
         logger.info("start: 执行insert设备 device={} ",device);
 
         try{
-            deviceHandler.insert(device);
+            deviceHandler.replace(device);
+
+            List<DeviceService> paramList = device.getDeviceServiceList();
+
+            deviceServiceHandler.insertAll(paramList);
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end: 执行insert设备 device={} ",device);
+        }
+    }
+
+    @RequestMapping("/update")
+    public String update( Device device) {
+        logger.info("start: 执行insert设备 device={} ",device);
+
+        try{
+            deviceHandler.replace(device);
+            //先删除
+            deviceServiceHandler.delete8DeviceId(device.getDeviceId());
+
+            List<DeviceService> paramList = device.getDeviceServiceList();
+
+            //在增加
+            deviceServiceHandler.insertAll(paramList);
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -44,7 +83,10 @@ public class DeviceController {
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
         try{
-            return JSONMessage.createSuccess().addData(deviceHandler.query(deviceId)).toString();
+
+            Device device = deviceHandler.query(deviceId);
+            device.setDeviceServiceList(deviceServiceHandler.query8Device(deviceId));
+            return JSONMessage.createSuccess().addData(device).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();

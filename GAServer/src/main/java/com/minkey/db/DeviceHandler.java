@@ -27,7 +27,7 @@ public class DeviceHandler {
         return count;
     }
 
-    public void insert(Device device) {
+    public void replace(Device device) {
         int num = jdbcTemplate.update("replace into "+tableName+" (configKey, configData) VALUES (?,?)",new Object[]{device});
 
         if(num == 0){

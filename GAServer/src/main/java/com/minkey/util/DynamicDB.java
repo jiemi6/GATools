@@ -7,12 +7,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.test.annotation.Commit;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Component
 public class DynamicDB {
     private final static Logger logger = LoggerFactory.getLogger(DynamicDB.class);
 

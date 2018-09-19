@@ -3,9 +3,14 @@ package com.minkey.controller;
 import com.minkey.db.dao.Link;
 import com.minkey.db.LinkHandler;
 import com.minkey.dto.JSONMessage;
+import com.minkey.exception.DataException;
+import com.minkey.util.DynamicDB;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DatabaseDriver;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,18 +25,46 @@ public class LinkController {
     @Autowired
     LinkHandler linkHandler;
 
+    @Autowired
+    DynamicDB dynamicDB;
+
     @RequestMapping("/insert")
     public String insert(Link link) {
-        logger.info("start: 执行insert设备 link={} ",link);
+        logger.info("start: 执行新增链路 link={} ",link);
+
+        if(StringUtils.isEmpty(link.getLinkName())
+                || StringUtils.isEmpty(link.getDbIp())
+                || StringUtils.isEmpty(link.getDbPwd())
+                || StringUtils.isEmpty(link.getDbUserName())
+                || StringUtils.isEmpty(link.getDbName())
+                || link.getDbPort() <= 0
+                || link.getLinkType() <= 0){
+
+            return JSONMessage.createFalied("参数错误").toString();
+        }
 
         try{
+            testDB(link);
+
             linkHandler.insert(link);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("end: 执行insert设备 link={} ",link);
+            logger.info("end: 执行新增链路 link={} ",link);
+        }
+    }
+
+    private void testDB(Link link){
+        try{
+            String jdbcUrl = "jdbc:mysql://"+link.getDbIp()+":"+link.getDbPort()+"/"+link.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
+            //先检查数据库是否正确
+            JdbcTemplate jdbcTemplate = dynamicDB.getJdbcTemplate(jdbcUrl,DatabaseDriver.MYSQL,link.getDbUserName(),link.getDbPwd());
+
+            jdbcTemplate.execute(DatabaseDriver.MYSQL.getValidationQuery());
+        }catch (Exception e){
+            throw new DataException("尝试连接数据库失败",e);
         }
     }
 

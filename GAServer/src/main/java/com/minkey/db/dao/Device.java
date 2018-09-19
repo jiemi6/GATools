@@ -1,5 +1,7 @@
 package com.minkey.db.dao;
 
+import java.util.List;
+
 /**
  * 设备对象，每个机器都是一个设备
  */
@@ -47,6 +49,11 @@ public class Device {
      * 图标id
      */
     private int icon;
+
+    /**
+     * 设备对应的服务
+     */
+    List<DeviceService> deviceServiceList;
 
     public long getDeviceId() {
         return deviceId;
@@ -102,5 +109,13 @@ public class Device {
 
     public void setIcon(int icon) {
         this.icon = icon;
+    }
+
+    public List<DeviceService> getDeviceServiceList() {
+        return deviceServiceList;
+    }
+
+    public void setDeviceServiceList(List<DeviceService> deviceServiceList) {
+        this.deviceServiceList = deviceServiceList;
     }
 }
