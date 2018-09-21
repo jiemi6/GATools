@@ -2,6 +2,7 @@ package com.minkey.db;
 
 import com.minkey.db.dao.User;
 import com.minkey.exception.DataException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,8 @@ public class UserHandler {
     }
 
     public void insert(User user) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,createTime) VALUES (?,?,?)"
-                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getCreateTime()});
+        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,status,wrongPwdNum,auth) VALUES (?,?,?,?,?,?)"
+                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getWrongPwdNum(),user.getAuth()});
 
         if(num == 0){
             throw new DataException("添加新用户失败");
@@ -95,11 +96,19 @@ public class UserHandler {
     }
 
     public User query(Long uid) {
-            return jdbcTemplate.queryForObject("select * from "+tableName+" where uid= ?",new Object[]{uid},User.class);
+        List<User>  userList = jdbcTemplate.query("select * from "+tableName+" where uid= ?",new Object[]{uid}, new BeanPropertyRowMapper<>(User.class));
+        if(CollectionUtils.isEmpty(userList)){
+            return null;
+        }
+        return userList.get(0);
     }
 
     public User query8Name(String uName) {
-        return jdbcTemplate.queryForObject("select * from "+tableName+" where uName= ?",new Object[]{uName},User.class);
+        List<User> userList =  jdbcTemplate.query("select * from "+tableName+" where uName= ?",new Object[]{uName}, new BeanPropertyRowMapper<>(User.class));
+        if(CollectionUtils.isEmpty(userList)){
+            return null;
+        }
+        return userList.get(0);
     }
 
     public List<User> queryAll() {

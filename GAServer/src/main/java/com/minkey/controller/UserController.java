@@ -156,8 +156,8 @@ public class UserController {
      * 添加用户
      * @return
      */
-    @RequestMapping("/add")
-    public String add(HttpSession session,User user) {
+    @RequestMapping("/insert")
+    public String insert(HttpSession session,User user) {
         logger.info("start: 执行添加用户");
         if(user == null){
             return JSONMessage.createFalied("参数错误").toString();
@@ -173,7 +173,7 @@ public class UserController {
         try{
             User dbUser = userHandler.query8Name(user.getuName());
 
-            if(user != null){
+            if(dbUser != null){
                 return JSONMessage.createFalied("用户名已经存在").toString();
             }
 

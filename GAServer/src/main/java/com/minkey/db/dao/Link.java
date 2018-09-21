@@ -1,8 +1,7 @@
 package com.minkey.db.dao;
 
-import com.minkey.dto.JSONMessage;
-import org.springframework.boot.jdbc.DatabaseDriver;
-import org.springframework.jdbc.core.JdbcTemplate;
+import com.alibaba.fastjson.JSONObject;
+import com.minkey.dto.DBConfig;
 
 /**
  * 链路类，基本单位，链路具有连接关系
@@ -24,31 +23,8 @@ public class Link {
      */
     private int linkType;
 
-    /**
-     * 链路数据库名称
-     */
-    private String dbName;
 
-    /**
-     * 链路数据库ip
-     */
-    private String dbIp;
-
-    /**
-     * 链路数据库端口
-     */
-    private int dbPort;
-
-    /**
-     * 链路数据库用户名
-     */
-    private String dbUserName;
-
-    /**
-     * 链路数据库密码
-     */
-    private String dbPwd;
-
+    private DBConfig dbConfig;
 
     public long getLinkId() {
         return linkId;
@@ -74,43 +50,18 @@ public class Link {
         this.linkType = linkType;
     }
 
-    public String getDbName() {
-        return dbName;
+    public DBConfig getDbConfig() {
+        return dbConfig;
     }
 
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
+    public void setDbConfig(DBConfig dbConfig) {
+        this.dbConfig = dbConfig;
+    }
+    public String dbConfigStr() {
+        return JSONObject.toJSON(dbConfig).toString();
     }
 
-    public String getDbIp() {
-        return dbIp;
-    }
-
-    public void setDbIp(String dbIp) {
-        this.dbIp = dbIp;
-    }
-
-    public int getDbPort() {
-        return dbPort;
-    }
-
-    public void setDbPort(int dbPort) {
-        this.dbPort = dbPort;
-    }
-
-    public String getDbUserName() {
-        return dbUserName;
-    }
-
-    public void setDbUserName(String dbUserName) {
-        this.dbUserName = dbUserName;
-    }
-
-    public String getDbPwd() {
-        return dbPwd;
-    }
-
-    public void setDbPwd(String dbPwd) {
-        this.dbPwd = dbPwd;
+    public void setDbConfigStr(String dbConfig) {
+        this.dbConfig = JSONObject.parseObject(dbConfig,DBConfig.class);
     }
 }

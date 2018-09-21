@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.test.annotation.Commit;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -24,8 +23,6 @@ public class DynamicDB {
      */
     private Map<String,JdbcTemplate> jdbcTemplateMap = new HashMap();
 
-
-
     public JdbcTemplate getJdbcTemplate(String url,DatabaseDriver databaseDriver,String userName ,String password){
         JdbcTemplate jdbcTemplate = null;
         try{
@@ -39,8 +36,8 @@ public class DynamicDB {
 
             jdbcTemplate.execute(databaseDriver.getValidationQuery());
         }catch (Exception e ){
-            logger.error("查询数据库异常",e);
-            throw  new DataException("测试数据库查询失败"+e.getCause().getCause().getMessage());
+            logger.error("构造数据库连接异常",e);
+            throw new DataException("构造数据库连接异常",e);
         }
 
         return jdbcTemplate;

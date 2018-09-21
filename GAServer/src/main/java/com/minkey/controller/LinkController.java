@@ -33,11 +33,11 @@ public class LinkController {
         logger.info("start: 执行新增链路 link={} ",link);
 
         if(StringUtils.isEmpty(link.getLinkName())
-                || StringUtils.isEmpty(link.getDbIp())
-                || StringUtils.isEmpty(link.getDbPwd())
-                || StringUtils.isEmpty(link.getDbUserName())
-                || StringUtils.isEmpty(link.getDbName())
-                || link.getDbPort() <= 0
+                || StringUtils.isEmpty(link.getDbConfig().getDbIp())
+                || StringUtils.isEmpty(link.getDbConfig().getDbPwd())
+                || StringUtils.isEmpty(link.getDbConfig().getDbUserName())
+                || StringUtils.isEmpty(link.getDbConfig().getDbName())
+                || link.getDbConfig().getDbPort() <= 0
                 || link.getLinkType() <= 0){
 
             return JSONMessage.createFalied("参数错误").toString();
@@ -58,11 +58,10 @@ public class LinkController {
 
     private void testDB(Link link){
         try{
-            String jdbcUrl = "jdbc:mysql://"+link.getDbIp()+":"+link.getDbPort()+"/"+link.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
+            String jdbcUrl = "jdbc:mysql://"+link.getDbConfig().getDbIp()+":"+link.getDbConfig().getDbPort()+"/"+link.getDbConfig().getDbName()+"?useUnicode=true&characterEncoding=utf-8";
             //先检查数据库是否正确
-            JdbcTemplate jdbcTemplate = dynamicDB.getJdbcTemplate(jdbcUrl,DatabaseDriver.MYSQL,link.getDbUserName(),link.getDbPwd());
+            JdbcTemplate jdbcTemplate = dynamicDB.getJdbcTemplate(jdbcUrl,DatabaseDriver.MYSQL,link.getDbConfig().getDbUserName(),link.getDbConfig().getDbPwd());
 
-            jdbcTemplate.execute(DatabaseDriver.MYSQL.getValidationQuery());
         }catch (Exception e){
             throw new DataException("尝试连接数据库失败",e);
         }

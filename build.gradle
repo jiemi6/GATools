@@ -6,9 +6,9 @@ subprojects {
 
 	apply plugin: 'java'
 	apply plugin: 'maven'
-	apply plugin: 'application'
 	apply plugin: 'idea'
 	apply plugin: 'org.springframework.boot'
+	apply plugin: 'application'
 
 	sourceCompatibility=1.8
 	targetCompatibility=1.8
@@ -20,15 +20,27 @@ subprojects {
 
 
 	repositories {
-    maven {url "http://maven.aliyun.com/nexus/content/groups/public"}
-//		maven {url "http://192.168.10.80:8081/nexus/content/groups/allinone/"}
-//		maven {        url "https://repo1.maven.org/maven2/"    }
+    	maven {url "http://maven.aliyun.com/nexus/content/groups/public"}
 	}
 
 //	artifacts {
 //		archives file("build/libs/${project.name}-${version}.jar")
 //	}
 
+	applicationDistribution.from("build/resources/main/application.properties") {
+		into "conf"
+	}
+
+	jar{
+		exclude("application.properties")
+	}
+
+	startScripts {
+		doLast {
+			delete windowsScript
+			unixScript.text = file("../common/scripts/app.sh").getText().replace("{main_class}", "${mainClassName}")
+		}
+	}
 
 }
 
