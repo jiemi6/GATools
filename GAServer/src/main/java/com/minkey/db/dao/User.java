@@ -28,6 +28,16 @@ public class User {
     private Long createUid;
 
     /**
+     * 联系电话
+     */
+    private String phone;
+
+    /**
+     * 电子邮箱
+     */
+    private String email;
+
+    /**
      * 用户状态：
      * <br> 1 : 正常
      * <br> 2 : 锁定，密码输入多次后，锁定
@@ -71,7 +81,6 @@ public class User {
      */
     private Integer auth = AUTH_R;
 
-
     /**
      * 用户权限:只读
      */
@@ -81,6 +90,28 @@ public class User {
      */
     public static final int  AUTH_WR = 2;
 
+    /**
+     * 用户登陆ip
+     */
+    private String loginIp;
+
+    /**
+     * ip登陆段控制，开始段 0.0.0.0为不控制
+     */
+    private String loginIpStart;
+    /**
+     * ip登陆段控制，结束段
+     */
+    private String loginIpEnd;
+
+    /**
+     * 登陆时间控制，开始段，只取时分秒，0代表不控制
+     */
+    private long loginTimeStart;
+    /**
+     * 登陆时间控制，结束段，只取时分秒
+     */
+    private long loginTimeEnd;
     public Long getUid() {
         return uid;
     }
@@ -151,5 +182,61 @@ public class User {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getLoginIp() {
+        return loginIp;
+    }
+
+    public void setLoginIp(String loginIp) {
+        this.loginIp = loginIp;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getLoginIpStart() {
+        return loginIpStart;
+    }
+
+    public void setLoginIpStart(String loginIpStart) {
+        this.loginIpStart = loginIpStart;
+    }
+
+    public String getLoginIpEnd() {
+        return loginIpEnd;
+    }
+
+    public void setLoginIpEnd(String loginIpEnd) {
+        this.loginIpEnd = loginIpEnd;
+    }
+
+    public long getLoginTimeStart() {
+        return loginTimeStart;
+    }
+
+    public void setLoginTimeStart(long loginTimeStart) {
+        this.loginTimeStart = loginTimeStart;
+    }
+
+    public long getLoginTimeEnd() {
+        return loginTimeEnd;
+    }
+
+    public void setLoginTimeEnd(long loginTimeEnd) {
+        this.loginTimeEnd = loginTimeEnd;
     }
 }

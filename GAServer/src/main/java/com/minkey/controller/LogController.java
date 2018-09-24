@@ -1,8 +1,11 @@
 package com.minkey.controller;
 
+import com.minkey.db.UserLogHandler;
 import com.minkey.dto.JSONMessage;
+import com.minkey.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogController {
     private final static Logger logger = LoggerFactory.getLogger(LogController.class);
 
+    @Autowired
+    UserLogHandler userLogHandler;
 
     /**
      * 设备日志
@@ -55,10 +60,11 @@ public class LogController {
      * @return
      */
     @RequestMapping("/user")
-    public String user() {
+    public String user(Page page) {
         logger.info("start: 执行系统自检");
         try{
-            return JSONMessage.createSuccess().toString();
+            page = userLogHandler.query8Page(page);
+            return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();

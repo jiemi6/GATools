@@ -23,7 +23,9 @@ public class Link {
      */
     private int linkType;
 
-
+    /**
+     * 链路对应的数据库信息
+     */
     private DBConfig dbConfig;
 
     public long getLinkId() {

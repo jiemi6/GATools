@@ -34,8 +34,14 @@ public class Device {
 
     /**
      * 所属区域
+     *
+     *             <option value="路由接入区">路由接入区</option>
+     *             <option selected="" value=" 边界保护区">&nbsp;边界保护区</option>
+     *             <option value="应用服务器">应用服务器</option>
+     *             <option value="安全隔离区">安全隔离区</option>
+     *             <option value="安全检测与管理区">安全检测与管理区</option>
      */
-    private String area;
+    private int area;
 
     /**
      * 网络区域： 内网/外网
@@ -87,11 +93,11 @@ public class Device {
         this.deviceType = deviceType;
     }
 
-    public String getArea() {
+    public int getArea() {
         return area;
     }
 
-    public void setArea(String area) {
+    public void setArea(int area) {
         this.area = area;
     }
 
@@ -118,4 +124,18 @@ public class Device {
     public void setDeviceServiceList(List<DeviceService> deviceServiceList) {
         this.deviceServiceList = deviceServiceList;
     }
+
+
+   public enum DeviceType{
+        FOLDER(2,"文件夹");
+
+        public final int type;
+        public final String name;
+
+        DeviceType(int type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+    }
+
 }

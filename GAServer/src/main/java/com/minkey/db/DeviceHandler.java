@@ -35,6 +35,13 @@ public class DeviceHandler {
         }
     }
 
+    public List<Device> queryAll() {
+        List<Device> devices = jdbcTemplate.query("select * from "+tableName+" where 1=1",
+        new BeanPropertyRowMapper<>(Device.class));
+
+        return devices;
+    }
+
     public Device query(Long deviceId) {
         List<Device> devices = jdbcTemplate.query("select * from "+tableName+" where deviceId= ?",
         new Object[]{deviceId},new BeanPropertyRowMapper<>(Device.class));

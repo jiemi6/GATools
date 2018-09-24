@@ -4,8 +4,7 @@ import com.minkey.db.UserHandler;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.log.UserLog;
-import com.minkey.util.StringUtil;
-import com.minkey.util.VCodeUtil;
+import com.minkey.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -90,7 +93,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/login")
-    public String login(HttpSession session,String uName,String pwd,String vcode) {
+    public String login(HttpSession session, HttpServletRequest request, String uName, String pwd, String vcode) {
         logger.info("start: 执行用户登陆");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
@@ -113,12 +116,45 @@ public class UserController {
                 return JSONMessage.createFalied("用户名密码错误").toString();
             }
 
+            //判断登陆ip
+            String loginIp = IPUtil.getClientIp(request);
+            long ipStart = IPUtil.ipToLong(user.getLoginIpStart());
+            long ipEnd = IPUtil.ipToLong(user.getLoginIpEnd());
+            if(ipStart == 0  && ipEnd== 0 ){
+                //不限制
+            }else{
+                long ip = IPUtil.ipToLong(loginIp);
+                if(ipStart > ip || ipEnd < ip){
+                    return JSONMessage.createFalied("非安全ip段内不允许登陆").toString();
+                }
+            }
+            user.setLoginIp(loginIp);
+
+            //判断登陆时间
+            if(user.getLoginTimeStart() == 0 && user.getLoginTimeEnd() ==0){
+                //不限制
+            }else {
+                SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");
+                try {
+                    Date now = sf.parse(sf.format(new Date()));
+                    Date beginTime = sf.parse(DateUtil.dateFormatStr(new Date(user.getLoginTimeStart()),DateUtil.format_time));
+                    Date endTime = sf.parse(DateUtil.dateFormatStr(new Date(user.getLoginTimeEnd()),DateUtil.format_time));
+                    Boolean flag = DateUtil.belongCalendar(now, beginTime, endTime);
+                    if(!flag){
+                        return JSONMessage.createFalied("非安全时间段内不允许登陆").toString();
+                    }
+                } catch (ParseException e) {
+                    logger.error("时间转换异常",e);
+                    return JSONMessage.createFalied("非安全时间段内不允许登陆,时间转换异常").toString();
+                }
+            }
+
             //放入session
             session.setAttribute("user",user);
             //清除错误次数
             userHandler.cleanWrongPwdTime(user.getUid());
             //记录登陆日志
-            userLog.log(user.getUid(),String.format("用户%s登陆成功",user.getuName()));
+            userLog.log(user,"用户登陆成功");
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -142,7 +178,7 @@ public class UserController {
             //移除session中user
             session.removeAttribute("user");
             //记录登陆日志
-            userLog.log(user.getUid(),String.format("用户%s登出成功",user.getuName()));
+            userLog.log(user,"用户登出成功");
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
