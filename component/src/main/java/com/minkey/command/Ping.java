@@ -15,11 +15,16 @@ public class Ping {
      * @return
      * @throws Exception
      */
-    public static boolean javaPing(String ipAddress) throws Exception {
+    public static boolean javaPing(String ipAddress){
         //超时应该在3钞以上
         int timeOut = 3000;
         // 当返回值是true时，说明host是可用的，false则不可。
-        boolean status = InetAddress.getByName(ipAddress).isReachable(timeOut);
+        boolean status = false;
+        try {
+            status = InetAddress.getByName(ipAddress).isReachable(timeOut);
+        } catch (IOException e) {
+            return false;
+        }
         return status;
     }
 
