@@ -19,6 +19,7 @@ public class DeviceExplorerScheduled {
 
     @Autowired
     DeviceHandler deviceHandler;
+
     /**
      * 获取所有设备
      */

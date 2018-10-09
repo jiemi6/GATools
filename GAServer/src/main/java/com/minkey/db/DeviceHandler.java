@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class DeviceHandler {
@@ -58,5 +59,25 @@ public class DeviceHandler {
         page.setData(devices);
 
         return page;
+    }
+
+    /**
+     * 根据ids批量获取设备
+     * @param deviceIds
+     * @return
+     */
+    public List<Device> query8Ids(Set<Long> deviceIds) {
+        if(CollectionUtils.isEmpty(deviceIds)){
+            return null;
+        }
+
+        StringBuffer sqlIds = new StringBuffer(" 1=1 ");
+        deviceIds.forEach(deviceId -> {
+            sqlIds.append("or deviceId=" +deviceId);
+        });
+        List<Device> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
+                new BeanPropertyRowMapper<>(Device.class));
+
+        return devices;
     }
 }

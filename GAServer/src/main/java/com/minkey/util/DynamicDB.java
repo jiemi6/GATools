@@ -44,15 +44,21 @@ public class DynamicDB {
     }
 
 
-    public void putIn(String key , JdbcTemplate jdbcTemplate){
+    public void putIn(String ip,int port , JdbcTemplate jdbcTemplate){
+        String key = createKey(ip,port);
         jdbcTemplateMap.put(key,jdbcTemplate);
     }
 
-    public JdbcTemplate get(String key){
+    public JdbcTemplate get(String ip,int port){
+        String key = createKey(ip,port);
         if(StringUtils.isEmpty(key)){
             return null;
         }
         return jdbcTemplateMap.get(key);
+    }
+
+    private String createKey(String ip, int port) {
+        return ip+":"+port;
     }
 
 }

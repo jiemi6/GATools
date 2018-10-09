@@ -127,6 +127,7 @@ public class Device {
 
 
    public enum DeviceType{
+        Detector(1,"探针"),
         FOLDER(2,"文件夹");
 
         public final int type;

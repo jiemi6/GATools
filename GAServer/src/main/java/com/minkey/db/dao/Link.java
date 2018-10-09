@@ -3,6 +3,8 @@ package com.minkey.db.dao;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.dto.DBConfig;
 
+import java.util.Set;
+
 /**
  * 链路类，基本单位，链路具有连接关系
  */
@@ -22,6 +24,11 @@ public class Link {
      * 链路类型
      */
     private int linkType;
+
+    /**
+     * 链路包含的所有的设备
+     */
+    private Set<Long> deviceSet;
 
     /**
      * 链路对应的数据库信息
@@ -54,6 +61,14 @@ public class Link {
 
     public DBConfig getDbConfig() {
         return dbConfig;
+    }
+
+    public Set<Long> getDeviceSet() {
+        return deviceSet;
+    }
+
+    public void setDeviceSet(Set<Long> deviceSet) {
+        this.deviceSet = deviceSet;
     }
 
     public void setDbConfig(DBConfig dbConfig) {
