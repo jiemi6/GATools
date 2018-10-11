@@ -1,21 +1,14 @@
 package com.minkey.db;
 
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.Link;
 import com.minkey.dto.Page;
 import com.minkey.exception.DataException;
-import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +40,7 @@ public class UserLogHandler {
         List<Map<String, Object>> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY userLogId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new ColumnMapRowMapper());
 
-        page.setTotalNum(queryCount());
+        page.setTotal(queryCount());
         page.setData(devices);
 
         return page;

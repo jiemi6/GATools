@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Scope("prototype")
 public class BaseController {
     Logger logger = LoggerFactory.getLogger(BaseController.class);
-    @RequestMapping("/")
-    public String home() {
-        return "index";
+    @RequestMapping("/check")
+    public String check() {
+        return JSONMessage.createSuccess().toString();
     }
 
 

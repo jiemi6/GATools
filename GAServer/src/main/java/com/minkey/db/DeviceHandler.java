@@ -52,6 +52,15 @@ public class DeviceHandler {
         return devices.get(0);
     }
 
+    public List<Device> query8Type(int deviceType) {
+        List<Device> devices = jdbcTemplate.query("select * from "+tableName+" where deviceType= ?",
+                new Object[]{deviceType},new BeanPropertyRowMapper<>(Device.class));
+        if(CollectionUtils.isEmpty(devices)){
+            return null;
+        }
+        return devices;
+    }
+
     public Page query8Page(Page page) {
         List<Device> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY deviceId limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Device.class));

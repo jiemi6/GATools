@@ -291,6 +291,25 @@ public class StringUtil {
 	}
 
 	/**
+	 * 是否是ip地址
+	 * @param ip
+	 * @return
+	 */
+	public static boolean isIp(String ip) {//判断是否是一个IP
+		boolean b = false;
+		ip = ip.trim();
+		if (ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
+			String s[] = ip.split("\\.");
+			if (Integer.parseInt(s[0]) < 255)
+				if (Integer.parseInt(s[1]) < 255)
+					if (Integer.parseInt(s[2]) < 255)
+						if (Integer.parseInt(s[3]) < 255)
+							b = true;
+		}
+		return  b;
+	}
+
+	/**
 	 * 功能描述：判断输入的字符串是否为纯汉字
 	 * 
 	 * @param str

@@ -56,6 +56,38 @@ public class LinkController {
         }
     }
 
+    @RequestMapping("/update")
+    public String update(Link link) {
+        logger.info("start: 执行新增链路 link={} ",link);
+        if(link.getLinkId() == 0){
+            return JSONMessage.createFalied("修改时id不能为空").toString();
+        }
+
+        if(StringUtils.isEmpty(link.getLinkName())
+                || StringUtils.isEmpty(link.getDbConfig().getDbIp())
+                || StringUtils.isEmpty(link.getDbConfig().getDbPwd())
+                || StringUtils.isEmpty(link.getDbConfig().getDbUserName())
+                || StringUtils.isEmpty(link.getDbConfig().getDbName())
+                || link.getDbConfig().getDbPort() <= 0
+                || link.getLinkType() <= 0){
+
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            testDB(link);
+
+            linkHandler.update(link);
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end: 执行新增链路 link={} ",link);
+        }
+    }
+
+
     private void testDB(Link link){
         try{
             String jdbcUrl = "jdbc:mysql://"+link.getDbConfig().getDbIp()+":"+link.getDbConfig().getDbPort()+"/"+link.getDbConfig().getDbName()+"?useUnicode=true&characterEncoding=utf-8";
@@ -86,10 +118,10 @@ public class LinkController {
 
     @RequestMapping("/queryAll")
     public String queryAll() {
-        logger.info("start: 执行query所有设备 ");
+        logger.info("start: 执行query所有链路");
 
         try{
-            return JSONMessage.createSuccess().addData(linkHandler.queryAll()).toString();
+            return JSONMessage.createSuccess().addData("list",linkHandler.queryAll()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
@@ -103,7 +135,7 @@ public class LinkController {
         logger.info("start: 执行count所有设备 ");
 
         try{
-            return JSONMessage.createSuccess().addData(linkHandler.queryCount()).toString();
+            return JSONMessage.createSuccess().addData("total",linkHandler.queryCount()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();

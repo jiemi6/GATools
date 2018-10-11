@@ -1,6 +1,7 @@
 package com.minkey.db.dao;
 
-import java.util.Objects;
+import com.alibaba.fastjson.JSONObject;
+import com.minkey.dto.BaseConfigData;
 
 /**
  *  设备所包含的服务，一个设备上可以跑多个服务
@@ -27,13 +28,19 @@ public class DeviceService {
      * 1 : 数据库 <br>
      * 2 : ftp <br>
      * 3 : ssh <br>
+     * 4 : 探针 <br>
      */
     private int serviceType;
+
+    public static final int SERVICETYPE_DB = 1;
+    public static final int SERVICETYPE_FTP = 2;
+    public static final int SERVICETYPE_SSH = 3;
+    public static final int SERVICETYPE_DETECTOR = 4;
 
     /**
      * 服务配置数据， 根据不同的服务，配置数据不一样， 这里存的是json
      */
-    private String configData;
+    private BaseConfigData configData;
 
     public long getServiceId() {
         return serviceId;
@@ -67,25 +74,20 @@ public class DeviceService {
         this.serviceType = serviceType;
     }
 
-    public String getConfigData() {
+    public BaseConfigData getConfigData() {
         return configData;
     }
 
-    public void setConfigData(String configData) {
+    public String configDataStr() {
+        if(configData == null){
+            return null;
+        }
+        return JSONObject.toJSONString(configData);
+    }
+
+    public void setConfigData(BaseConfigData configData) {
         this.configData = configData;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeviceService that = (DeviceService) o;
-        return serviceId == that.serviceId;
-    }
 
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(serviceId);
-    }
 }

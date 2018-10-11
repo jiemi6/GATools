@@ -175,10 +175,12 @@ public class UserController {
         logger.info("start: 执行用户登出");
         try{
             User user = (User) session.getAttribute("user");
-            //移除session中user
-            session.removeAttribute("user");
-            //记录登陆日志
-            userLog.log(user,"用户登出成功");
+            if(user != null){
+                //移除session中user
+                session.removeAttribute("user");
+                //记录登陆日志
+                userLog.log(user,"用户登出成功");
+            }
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -253,6 +255,30 @@ public class UserController {
         }
     }
 
+    /**
+     * 删除用户
+     * @return
+     */
+    @RequestMapping("/query")
+    public String query(Long uid) {
+        logger.info("start: 执行根据uid查询用户");
+        if(uid == null){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            User user = userHandler.query(uid);
+
+            return JSONMessage.createSuccess().addData(user).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end:  执行根据uid查询用户");
+        }
+    }
+
+
 
     /**
      * 重置用户密码
@@ -308,18 +334,18 @@ public class UserController {
      * @return
      */
     @RequestMapping("/update")
-    public String update(Long uid,String uName,String pwd,Integer auth) {
+    public String update(User user) {
         logger.info("start: 执行修改用户信息");
-        if(uid == null){
+        if(user.getUid() == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
 
-        if(auth == null && StringUtils.isEmpty(uName) && StringUtils.isEmpty(pwd)){
+        if(user.getAuth() == null && StringUtils.isEmpty(user.getuName()) ){
             return JSONMessage.createFalied("参数错误").toString();
         }
 
         try{
-            userHandler.update(uid,uName,StringUtil.md5(pwd),auth);
+            userHandler.update(user);
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

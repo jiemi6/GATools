@@ -31,22 +31,46 @@ public class UserHandler {
     }
 
     public void insert(User user) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,status,wrongPwdNum,auth) VALUES (?,?,?,?,?,?)"
-                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getWrongPwdNum(),user.getAuth()});
+        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,status,wrongPwdNum,auth,loginIpStart,loginIpEnd,loginTimeStart,loginTimeEnd) VALUES (?,?,?,?,?,?,?,?,?,?)"
+                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getWrongPwdNum(),user.getAuth(),user.getLoginIpStart(),user.getLoginIpEnd(),user.getLoginTimeStart(),user.getLoginTimeEnd()});
 
         if(num == 0){
             throw new DataException("添加新用户失败");
         }
     }
 
-    public void update(Long uid, String uName,String pwd,Integer auth) {
+    public void update(User user) {
+        Long uid = user.getUid();
+        String uName = user.getuName();
+        Integer auth = user.getAuth();
+
+
         StringBuffer sb = new StringBuffer("update "+tableName+" SET " );
         if(StringUtils.isNotEmpty(uName)){
-            sb.append(" uName = '"+uName+"'");
+            sb.append(" uName = '"+uName+"'").append(",");
         }
-        if(StringUtils.isNotEmpty(pwd)){
-            sb.append(" pwd = '"+pwd+"'");
+        if(StringUtils.isNotEmpty(user.getPhone())){
+            sb.append(" phone = '"+user.getPhone()+"'").append(",");
         }
+        if(StringUtils.isNotEmpty(user.getEmail())){
+            sb.append(" email = '"+user.getEmail()+"'").append(",");
+        }
+
+        if(user.getLoginTimeStart() != 0){
+            sb.append(" loginTimeStart = "+user.getLoginTimeStart()).append(",");
+        }
+        if(user.getLoginTimeEnd() != 0){
+            sb.append(" loginTimeEnd = "+user.getLoginTimeEnd()).append(",");
+        }
+
+        if(StringUtils.isNotEmpty(user.getLoginIpStart())){
+            sb.append(" loginIpStart = '"+user.getLoginIpStart()+"'").append(",");
+        }
+        if(StringUtils.isNotEmpty(user.getLoginIpEnd())){
+            sb.append(" loginIpEnd = '"+user.getLoginIpEnd()+"'").append(",");
+        }
+
+
         if(auth != null){
             sb.append(" auth = "+auth);
         }
@@ -76,7 +100,7 @@ public class UserHandler {
      * @param uid
      */
     public void wrongPwd(Long uid) {
-        int num = jdbcTemplate.update("update "+tableName+" set lockNum = lockNum + 1 where uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where uid= ?",new Object[]{uid});
 
         if(num == 0){
             throw new DataException("更新用户密码输入次数失败");
@@ -88,7 +112,7 @@ public class UserHandler {
      * @param uid
      */
     public void cleanWrongPwdTime(Long uid) {
-        int num = jdbcTemplate.update("update "+tableName+" set lockNum = 0 where uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 where uid= ?",new Object[]{uid});
 
         if(num == 0){
             throw new DataException("清除用户密码输入次数失败");

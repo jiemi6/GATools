@@ -19,7 +19,7 @@ public class DynamicDB {
 
     /**
      * 所有系统需要访问的数据库
-     * <br>key : ip:port <br/>
+     * <br>key : ip:port/dbName <br/>
      */
     private Map<String,JdbcTemplate> jdbcTemplateMap = new HashMap();
 
@@ -44,21 +44,21 @@ public class DynamicDB {
     }
 
 
-    public void putIn(String ip,int port , JdbcTemplate jdbcTemplate){
-        String key = createKey(ip,port);
+    public void putIn(String ip,int port ,String dbName, JdbcTemplate jdbcTemplate){
+        String key = createKey(ip,port,dbName);
         jdbcTemplateMap.put(key,jdbcTemplate);
     }
 
-    public JdbcTemplate get(String ip,int port){
-        String key = createKey(ip,port);
+    public JdbcTemplate get(String ip,int port,String dbName){
+        String key = createKey(ip,port,dbName);
         if(StringUtils.isEmpty(key)){
             return null;
         }
         return jdbcTemplateMap.get(key);
     }
 
-    private String createKey(String ip, int port) {
-        return ip+":"+port;
+    private String createKey(String ip, int port,String dbName) {
+        return ip+":"+port+"/"+dbName;
     }
 
 }

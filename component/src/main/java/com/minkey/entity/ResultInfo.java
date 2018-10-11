@@ -10,6 +10,7 @@ public class ResultInfo {
      * <br> 0: 正常返回
      */
     private int exitStuts;
+
     /**
         标准正确输出流内容
      */
@@ -60,10 +61,14 @@ public class ResultInfo {
      * @return
      */
     public boolean isEmptySuccess() {
-        if (this.getExitStuts() == 0 && "".equals(this.getErrRes()) && "".equals(this.getOutRes())) {
+        if (this.getExitStuts() == 0 && "".equals(this.getErrRes()) && !"".equals(this.getOutRes())) {
             return true;
         }
         return false;
+    }
+
+    public boolean isExitStutsOK() {
+        return this.getExitStuts() == 0 ;
     }
 
     @Override

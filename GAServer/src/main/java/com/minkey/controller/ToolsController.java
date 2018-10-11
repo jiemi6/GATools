@@ -2,9 +2,20 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
+import com.minkey.db.DeviceHandler;
+import com.minkey.db.DeviceServiceHandler;
+import com.minkey.db.dao.Device;
+import com.minkey.db.dao.DeviceService;
+import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.JSONMessage;
+import com.minkey.entity.ResultInfo;
+import com.minkey.executer.LocalExecuter;
+import com.minkey.executer.SSHExecuter;
+import com.minkey.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ToolsController {
     private final static Logger logger = LoggerFactory.getLogger(ToolsController.class);
 
+    @Autowired
+    DeviceHandler deviceHandler;
+
+    @Autowired
+    DeviceServiceHandler deviceServiceHandler;
+
+
 
 
     /**
@@ -23,10 +41,58 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping() {
+    public String ping(Integer netArea,String ip,Long deviceId) {
+        logger.info("start: 执行ping");
 
-        return JSONMessage.createSuccess().toString();
+        if(netArea == null){
+            netArea = Device.NETAREA_IN;
+        }
 
+        try{
+            if(StringUtils.isEmpty(ip)){
+                return JSONMessage.createFalied("ip不能为空").toString();
+            }
+
+            if(!StringUtil.isIp(ip)){
+                return JSONMessage.createFalied("ip格式不正确").toString();
+            }
+
+            String cmd = "ping "+ip;
+//            String cmd = "ping "+ip+ " -c 4";
+            ResultInfo resultInfo = null;
+            if(netArea == Device.NETAREA_IN){
+                //内网 直接执行
+                resultInfo = LocalExecuter.exec(cmd);
+            }else{
+                //获取探针
+                Device device = deviceHandler.query(deviceId);
+                //获取该探针的ssh服务
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
+
+                if(ssh == null){
+                    return JSONMessage.createFalied("探针没有配置ssh服务，无法执行命令").toString();
+                }
+
+                BaseConfigData configData = ssh.getConfigData();
+
+                SSHExecuter sshExecuter = new SSHExecuter(configData.getIp(), configData.getPort(), configData.getName(), configData.getPwd());
+                //执行命令
+                resultInfo = sshExecuter.sendCmd(cmd);
+            }
+
+            if(resultInfo.isExitStutsOK()){
+                return JSONMessage.createSuccess().addData("msg",resultInfo.getOutRes()).toString();
+            }else{
+                return JSONMessage.createSuccess().addData("msg",resultInfo.getErrRes()).toString();
+            }
+
+
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end: 执行ping");
+        }
     }
 
 
@@ -35,9 +101,59 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/telnet")
-    public String telnet() {
+    public String telnet(Integer netArea,String ip,int port,Long deviceId) {
+        logger.info("start: 执行telnet");
 
-        return JSONMessage.createSuccess().toString();
+        if(netArea == null){
+            netArea = Device.NETAREA_IN;
+        }
+
+        try{
+            if(StringUtils.isEmpty(ip)){
+                return JSONMessage.createFalied("ip不能为空").toString();
+            }
+
+            if(!StringUtil.isIp(ip)){
+                return JSONMessage.createFalied("ip格式不正确").toString();
+            }
+
+            String cmd = "ping "+ip;
+//            String cmd = "ping "+ip+ " -c 4";
+            ResultInfo resultInfo = null;
+            if(netArea == Device.NETAREA_IN){
+                //内网 直接执行
+                resultInfo = LocalExecuter.exec(cmd);
+            }else{
+                //获取探针
+                Device device = deviceHandler.query(deviceId);
+                //获取该探针的ssh服务
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_SSH);
+
+                if(ssh == null){
+                    return JSONMessage.createFalied("探针没有配置ssh服务，无法执行命令").toString();
+                }
+
+                BaseConfigData configData = ssh.getConfigData();
+
+                SSHExecuter sshExecuter = new SSHExecuter(configData.getIp(), configData.getPort(), configData.getName(), configData.getPwd());
+                //执行命令
+                resultInfo = sshExecuter.sendCmd(cmd);
+            }
+
+            if(resultInfo.isExitStutsOK()){
+                return JSONMessage.createSuccess().addData("msg",resultInfo.getOutRes()).toString();
+            }else{
+                return JSONMessage.createSuccess().addData("msg",resultInfo.getErrRes()).toString();
+            }
+
+            return JSONMessage.createSuccess().toString();
+
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end: 执行telnet");
+        }
 
     }
 
@@ -48,7 +164,6 @@ public class ToolsController {
      */
     @RequestMapping("/sshd")
     public String sshd() {
-
         //调用系统命令进行开关，
 
         return JSONMessage.createSuccess().toString();

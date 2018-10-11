@@ -1,20 +1,23 @@
 package com.minkey.db;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.db.dao.DeviceService;
+import com.minkey.dto.BaseConfigData;
+import com.minkey.dto.DBConfigData;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Set;
 
 @Component
 public class DeviceServiceHandler {
@@ -38,7 +41,7 @@ public class DeviceServiceHandler {
                         ps.setLong(1,argument.getDeviceId());
                         ps.setString(2,argument.getServiceName());
                         ps.setInt(3,argument.getServiceType());
-                        ps.setString(4,argument.getConfigData());
+                        ps.setString(4,argument.configDataStr());
                     }
                 });
 
@@ -55,7 +58,7 @@ public class DeviceServiceHandler {
 
     public DeviceService query(Long serviceId) {
         List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName+" where serviceId= ?",
-        new Object[]{serviceId},new BeanPropertyRowMapper<>(DeviceService.class));
+        new Object[]{serviceId},new DeviceServiceRowMapper());
         if(CollectionUtils.isEmpty(deviceServices)){
             return null;
         }
@@ -64,12 +67,49 @@ public class DeviceServiceHandler {
 
     public List<DeviceService> query8Device(long deviceId) {
         List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName +" where deviceId=?",
-                new Object[]{deviceId},new BeanPropertyRowMapper<>(DeviceService.class));
+                new Object[]{deviceId},new DeviceServiceRowMapper());
         return deviceServices;
+    }
+
+    public DeviceService query8Device(long deviceId, int serviceType) {
+        List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName +" where deviceId=? AND serviceType=?",
+                new Object[]{deviceId,serviceType},new DeviceServiceRowMapper());
+        if(CollectionUtils.isEmpty(deviceServices)){
+            return null;
+        }
+        return deviceServices.get(0);
     }
 
     public void delete8DeviceId(Long deviceId) {
         int num = jdbcTemplate.queryForObject("delete from "+tableName +" where deviceId=?",
                 new Object[]{deviceId},Integer.class);
     }
+
+    class DeviceServiceRowMapper implements RowMapper {
+        @Override
+        public DeviceService mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DeviceService deviceService =new DeviceService();
+            deviceService.setDeviceId(rs.getLong("deviceId"));
+            deviceService.setDeviceId(rs.getLong("serviceId"));
+            deviceService.setServiceName(rs.getString("serviceName"));
+            deviceService.setServiceType(rs.getInt("serviceType"));
+
+            switch (rs.getInt("serviceType")){
+                case DeviceService.SERVICETYPE_DB :
+                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),DBConfigData.class));
+                    break;
+                case DeviceService.SERVICETYPE_FTP :
+                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));
+                    break;
+                case DeviceService.SERVICETYPE_SSH :
+                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));
+                    break;
+
+                default:
+            }
+
+            return deviceService;
+        }
+    }
+
 }

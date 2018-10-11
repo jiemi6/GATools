@@ -2,6 +2,7 @@ package com.minkey.controller;
 
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
+import com.minkey.executer.LocalExecuter;
 import com.minkey.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,24 @@ public class SystemController {
      */
     @RequestMapping("/shutDown")
     public String shutDown(Boolean reboot) {
+        logger.info("start: 执行shutDown");
 
+        try{
+            if(reboot != null && reboot){
+                //重启
+                LocalExecuter.exec("shutdown -r now");
+            }else{
+                //关机
+                LocalExecuter.exec("shutdown -h now");
+            }
 
-        return JSONMessage.createSuccess().toString();
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("end:  执行关机命令");
+        }
 
     }
 
@@ -69,6 +85,9 @@ public class SystemController {
      */
     @RequestMapping("/bakupConfig")
     public String bakupConfig() {
+
+
+
         return JSONMessage.createSuccess().toString();
     }
 
@@ -94,6 +113,8 @@ public class SystemController {
             byte[] chars = new byte[(int) size];
             file.getInputStream().read(chars);
             String txt = StringUtil.byte2String(chars);
+
+
             logger.info(txt);
         } catch (IOException e) {
             e.printStackTrace();

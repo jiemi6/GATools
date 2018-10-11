@@ -4,7 +4,7 @@ import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.Task;
-import com.minkey.dto.DBConfig;
+import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,7 +43,7 @@ public class GetTask {
 
         linkList.forEach(link -> {
             //从链路中获取数据交换系统的数据库配置
-            DBConfig dbConfig = link.getDbConfig();
+            DBConfigData dbConfig = link.getDbConfig();
 
             List<Task> tasks =  queryAllTask(dbConfig);
 
@@ -58,16 +58,16 @@ public class GetTask {
      * @param dbConfig
      * @return
      */
-    private List<Task> queryAllTask(DBConfig dbConfig){
+    private List<Task> queryAllTask(DBConfigData dbConfig){
 
         //先从缓存中获取
-        JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getDbIp(),dbConfig.getDbPort());
+        JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getDbIp(),dbConfig.getDbPort(),dbConfig.getDbName());
         //没有就新建
         if(jdbcTemplate == null){
             String url = "jdbc:mysql://"+dbConfig.getDbIp()+":"+dbConfig.getDbPort()+"/"+dbConfig.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
             jdbcTemplate = dynamicDB.getJdbcTemplate(url,dbConfig.getDatabaseDriver(),dbConfig.getDbUserName(),dbConfig.getDbPwd());
             //放回缓存
-            dynamicDB.putIn(dbConfig.getDbIp(),dbConfig.getDbPort(),jdbcTemplate);
+            dynamicDB.putIn(dbConfig.getDbIp(),dbConfig.getDbPort(),dbConfig.getDbName(),jdbcTemplate);
         }
 
         //查询所有task

@@ -29,8 +29,8 @@ public class LinkHandler {
     }
 
     public void insert(Link link) {
-        int num = jdbcTemplate.update("INSERT into "+tableName+" ( linkName,linkType,dbConfig) VALUES (?,?,?)",
-                new Object[]{link.getLinkName(),link.getLinkType(),link.dbConfigStr()});
+        int num = jdbcTemplate.update("INSERT into "+tableName+" ( linkName,linkType,dbConfig,deviceSet) VALUES (?,?,?,?)",
+                new Object[]{link.getLinkName(),link.getLinkType(),link.dbConfigStr(),link.deviceIdsStr()});
 
         if(num == 0){
             throw new DataException("新增失败");
@@ -38,8 +38,8 @@ public class LinkHandler {
     }
 
     public void update(Link link) {
-        int num = jdbcTemplate.update("replace into "+tableName+" (linkId, linkName,linkType,dbConfig) VALUES (?,?,?,?)",
-                new Object[]{link.getLinkId(),link.getLinkName(),link.getLinkType(),link.dbConfigStr()});
+        int num = jdbcTemplate.update("replace into "+tableName+" (linkId, linkName,linkType,dbConfig,deviceSet) VALUES (?,?,?,?,?)",
+                new Object[]{link.getLinkId(),link.getLinkName(),link.getLinkType(),link.dbConfigStr(),link.deviceIdsStr()});
 
         if(num == 0){
             throw new DataException("更新失败");
@@ -47,7 +47,8 @@ public class LinkHandler {
     }
 
     public Link query(Long linkId) {
-        List<Link> linkList= jdbcTemplate.query("select * from "+tableName+" where linkId= ?",new Object[]{linkId}, new LinkRowMapper());
+        List<Link> linkList= jdbcTemplate.query("select * from "+tableName+" where linkId= ?",
+                new Object[]{linkId}, new LinkRowMapper());
         if(CollectionUtils.isEmpty(linkList)){
             return null;
         }
@@ -74,6 +75,7 @@ public class LinkHandler {
             link.setLinkName(rs.getString("linkName"));
             link.setLinkType(rs.getInt("linkType"));
             link.setDbConfigStr(rs.getString("dbConfig"));
+            link.setDeviceIdsStr(rs.getString("deviceSet"));
 
             return link;
         }

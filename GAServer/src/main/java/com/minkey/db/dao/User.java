@@ -1,5 +1,7 @@
 package com.minkey.db.dao;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.Date;
 
 /**
@@ -20,6 +22,7 @@ public class User {
     /**
      * 密码
      */
+    @JSONField(serialize=false)
     private String pwd;
 
     /**
@@ -56,6 +59,7 @@ public class User {
     /**
      * 用户密码输入错误次数
      */
+    @JSONField(serialize=false)
     private Integer wrongPwdNum = 0;
 
     /**
@@ -91,7 +95,7 @@ public class User {
     public static final int  AUTH_WR = 2;
 
     /**
-     * 用户登陆ip
+     * 当前用户登陆ip
      */
     private String loginIp;
 
