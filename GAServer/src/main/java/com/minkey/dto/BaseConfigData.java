@@ -1,5 +1,8 @@
 package com.minkey.dto;
 
+/**
+ * 基本配置类
+ */
 public class BaseConfigData {
     private String ip;
     private int port = 22;

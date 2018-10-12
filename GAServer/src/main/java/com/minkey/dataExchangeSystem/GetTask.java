@@ -61,13 +61,13 @@ public class GetTask {
     private List<Task> queryAllTask(DBConfigData dbConfig){
 
         //先从缓存中获取
-        JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getDbIp(),dbConfig.getDbPort(),dbConfig.getDbName());
+        JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getIp(),dbConfig.getPort(),dbConfig.getName());
         //没有就新建
         if(jdbcTemplate == null){
-            String url = "jdbc:mysql://"+dbConfig.getDbIp()+":"+dbConfig.getDbPort()+"/"+dbConfig.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
-            jdbcTemplate = dynamicDB.getJdbcTemplate(url,dbConfig.getDatabaseDriver(),dbConfig.getDbUserName(),dbConfig.getDbPwd());
+            String url = "jdbc:mysql://"+dbConfig.getIp()+":"+dbConfig.getPort()+"/"+dbConfig.getName()+"?useUnicode=true&characterEncoding=utf-8";
+            jdbcTemplate = dynamicDB.getJdbcTemplate(url,dbConfig.getDatabaseDriver(),dbConfig.getName(),dbConfig.getPwd());
             //放回缓存
-            dynamicDB.putIn(dbConfig.getDbIp(),dbConfig.getDbPort(),dbConfig.getDbName(),jdbcTemplate);
+            dynamicDB.putIn(dbConfig.getIp(),dbConfig.getPort(),dbConfig.getName(),jdbcTemplate);
         }
 
         //查询所有task

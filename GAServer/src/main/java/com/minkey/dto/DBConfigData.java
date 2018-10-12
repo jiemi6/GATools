@@ -16,8 +16,6 @@ public class DBConfigData extends BaseConfigData {
     private String dbName;
 
 
-
-
     public DatabaseDriver getDatabaseDriver() {
         return databaseDriver;
     }

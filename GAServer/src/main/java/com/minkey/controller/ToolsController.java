@@ -2,6 +2,7 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
+import com.minkey.command.Telnet;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
@@ -10,7 +11,7 @@ import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
-import com.minkey.executer.SSHExecuter;
+import com.minkey.util.DetectorUtil;
 import com.minkey.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -75,9 +76,8 @@ public class ToolsController {
 
                 BaseConfigData configData = ssh.getConfigData();
 
-                SSHExecuter sshExecuter = new SSHExecuter(configData.getIp(), configData.getPort(), configData.getName(), configData.getPwd());
                 //执行命令
-                resultInfo = sshExecuter.sendCmd(cmd);
+                resultInfo = DetectorUtil.executeSh(configData.getIp(),configData.getPort(),cmd);
             }
 
             if(resultInfo.isExitStutsOK()){
@@ -117,12 +117,10 @@ public class ToolsController {
                 return JSONMessage.createFalied("ip格式不正确").toString();
             }
 
-            String cmd = "ping "+ip;
-//            String cmd = "ping "+ip+ " -c 4";
-            ResultInfo resultInfo = null;
+            boolean isConnect ;
             if(netArea == Device.NETAREA_IN){
                 //内网 直接执行
-                resultInfo = LocalExecuter.exec(cmd);
+                isConnect = Telnet.doTelnet(ip,port);
             }else{
                 //获取探针
                 Device device = deviceHandler.query(deviceId);
@@ -135,18 +133,11 @@ public class ToolsController {
 
                 BaseConfigData configData = ssh.getConfigData();
 
-                SSHExecuter sshExecuter = new SSHExecuter(configData.getIp(), configData.getPort(), configData.getName(), configData.getPwd());
                 //执行命令
-                resultInfo = sshExecuter.sendCmd(cmd);
+                isConnect = DetectorUtil.telnetCmd(configData.getIp(),configData.getPort(),ip,port);
             }
 
-            if(resultInfo.isExitStutsOK()){
-                return JSONMessage.createSuccess().addData("msg",resultInfo.getOutRes()).toString();
-            }else{
-                return JSONMessage.createSuccess().addData("msg",resultInfo.getErrRes()).toString();
-            }
-
-            return JSONMessage.createSuccess().toString();
+            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
 
         }catch (Exception e){
             logger.error(e.getMessage(),e);
