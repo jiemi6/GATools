@@ -51,7 +51,7 @@ public class ConfigController {
             return JSONMessage.createFalied("configKey不能为空").toString();
         }
         try{
-            return JSONMessage.createSuccess().addData(configHandler.query(configKey)).toString();
+            return JSONMessage.createSuccess().addData("configData",configHandler.query(configKey)).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
