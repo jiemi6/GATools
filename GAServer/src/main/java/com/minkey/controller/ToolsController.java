@@ -8,10 +8,12 @@ import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
+import com.minkey.dto.DBConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.util.DetectorUtil;
+import com.minkey.util.DynamicDB;
 import com.minkey.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +36,8 @@ public class ToolsController {
     @Autowired
     DeviceServiceHandler deviceServiceHandler;
 
-
+    @Autowired
+    DynamicDB dynamicDB;
 
 
     /**
@@ -89,7 +92,7 @@ public class ToolsController {
 
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行ping");
         }
@@ -141,7 +144,7 @@ public class ToolsController {
 
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行telnet");
         }
@@ -161,6 +164,30 @@ public class ToolsController {
 
     }
 
+    @RequestMapping("/testDB")
+    public String testDB(DBConfigData dbConfigData){
+        logger.info("start: 执行测试数据库连接 dbConfigData={}",dbConfigData);
+
+        if(StringUtils.isEmpty(dbConfigData.getIp())
+                || StringUtils.isEmpty(dbConfigData.getPwd())
+                || StringUtils.isEmpty(dbConfigData.getName())
+                || StringUtils.isEmpty(dbConfigData.getDbName())
+                || dbConfigData.getPort() <= 0){
+
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            boolean isConnect = dynamicDB.testDB(dbConfigData);
+
+            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 执行测试数据库连接 ");
+        }
+    }
 
     /**
      * 设置本平台的snmp服务信息，方便其他软件读取。

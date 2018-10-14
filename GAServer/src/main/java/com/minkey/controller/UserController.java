@@ -62,7 +62,7 @@ public class UserController {
             session.setAttribute("vcode",String.valueOf(vcode));
         } catch (IOException e) {
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }
         return null;
     }
@@ -82,7 +82,7 @@ public class UserController {
             }
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行系统自检");
         }
@@ -159,7 +159,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  用户登陆成功");
         }
@@ -184,7 +184,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行用户登出");
         }
@@ -226,7 +226,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行添加用户");
         }
@@ -249,7 +249,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行删除用户");
         }
@@ -272,7 +272,7 @@ public class UserController {
             return JSONMessage.createSuccess().addData(user).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行根据uid查询用户");
         }
@@ -298,7 +298,7 @@ public class UserController {
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行重置用户密码");
         }
@@ -322,7 +322,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行解锁用户");
         }
@@ -350,7 +350,7 @@ public class UserController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行修改用户信息");
         }
@@ -370,7 +370,7 @@ public class UserController {
             return JSONMessage.createSuccess().addData("users",users).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 获取所有用户信息");
         }

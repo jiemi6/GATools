@@ -43,7 +43,7 @@ public class GetTask {
 
         linkList.forEach(link -> {
             //从链路中获取数据交换系统的数据库配置
-            DBConfigData dbConfig = link.getDbConfig();
+            DBConfigData dbConfig = link.getDbConfigData();
 
             List<Task> tasks =  queryAllTask(dbConfig);
 

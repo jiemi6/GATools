@@ -46,7 +46,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行insert设备 device={} ",device);
         }
@@ -69,7 +69,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行insert设备 device={} ",device);
         }
@@ -89,7 +89,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().addData(device).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行query设备 deviceId={} ",deviceId);
         }
@@ -107,7 +107,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行分页查询所有设备 ");
         }
@@ -121,7 +121,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().addData("count",deviceHandler.queryCount()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行count所有设备 ");
         }
@@ -140,7 +140,7 @@ public class DeviceController {
             return JSONMessage.createSuccess().addData(deviceHandler.queryCount()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行count所有设备 ");
         }

@@ -29,7 +29,7 @@ public class AlarmController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行系统自检");
         }
@@ -47,7 +47,7 @@ public class AlarmController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行系统自检");
         }
@@ -69,7 +69,7 @@ public class AlarmController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行系统自检");
         }

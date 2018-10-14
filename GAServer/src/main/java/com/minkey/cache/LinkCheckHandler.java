@@ -1,13 +1,13 @@
 package com.minkey.cache;
 
 import com.minkey.command.Ping;
+import com.minkey.contants.DeviceType;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.Link;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.exception.SystemException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
@@ -51,11 +51,11 @@ public class LinkCheckHandler {
         DeviceHandler deviceHandler = null;
 
 
-        Set<Long> deviceIds = link.getDeviceSet();
+        Set<Long> deviceIds = link.getDeviceIds();
         List<Device> linkDevices =deviceHandler.query8Ids(deviceIds);
 
         linkDeviceMap.forEach((aLong, device) -> {
-            if(device.getDeviceType() == Device.DeviceType.Detector.type){
+            if(device.getDeviceType() == DeviceType.detector){
                 //找到探针
                 detector = device;
             }
@@ -78,7 +78,7 @@ public class LinkCheckHandler {
         //先遍历一遍连接性
         linkDeviceMap.forEach((aLong, device) -> {
             //如果不是文件夹
-            if (device.getDeviceType() != Device.DeviceType.FOLDER.type) {
+            if (device.getDeviceType() != DeviceType.floder) {
                 testDevice(device);
             }
 
@@ -94,13 +94,13 @@ public class LinkCheckHandler {
     @Async
     public void getDeviceExplorer8Snmp(Device device) {
         //文件夹直接返回空
-        if (device.getDeviceType() != Device.DeviceType.FOLDER.type) {
+        if (device.getDeviceType() != DeviceType.floder) {
             return ;
         }
 
         //通过snmp命令获取 设备硬件信息
         // 如果是内网，或者是探针
-        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == Device.DeviceType.Detector.type){
+        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == DeviceType.detector){
 
         }else{
             //得到可以访问的探针
@@ -130,7 +130,7 @@ public class LinkCheckHandler {
         if (device == null) {
             throw new SystemException("设备不能为空");
         }
-        if (device.getDeviceType() == Device.DeviceType.FOLDER.type) {
+        if (device.getDeviceType() == DeviceType.floder) {
             //设备如果是文件夹，默认就是联通的
             return true;
         }
@@ -141,7 +141,7 @@ public class LinkCheckHandler {
 
         boolean isConnect = false;
         //如果是内网，或者是探针
-        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == Device.DeviceType.Detector.type){
+        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == DeviceType.detector){
             //直接访问
             isConnect = Ping.javaPing(device.getIp());
         }else{

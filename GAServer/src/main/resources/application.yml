@@ -11,6 +11,8 @@ server:
     timeout: 600
 
 logging:
+  level:
+    root: debug
   file: logs/console.log
 
 spring:

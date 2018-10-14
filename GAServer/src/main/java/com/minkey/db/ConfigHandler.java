@@ -1,6 +1,7 @@
 package com.minkey.db;
 
 import com.minkey.exception.DataException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,11 @@ public class ConfigHandler {
     }
 
     public Map<String, Object> query(String configKey) {
-            return jdbcTemplate.queryForMap("select configKey, configData from "+tableName+" where configKey= ?",new Object[]{configKey});
+        List<Map<String, Object>> configData = jdbcTemplate.queryForList("select configKey, configData from "+tableName+" where configKey= ?",new Object[]{configKey});
+        if(CollectionUtils.isEmpty(configData)){
+            return null;
+        }
+        return configData.get(0);
     }
 
     public List<Map<String, Object>> queryAll() {

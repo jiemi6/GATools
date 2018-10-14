@@ -29,8 +29,8 @@ public class LinkHandler {
     }
 
     public void insert(Link link) {
-        int num = jdbcTemplate.update("INSERT into "+tableName+" ( linkName,linkType,dbConfig,deviceSet) VALUES (?,?,?,?)",
-                new Object[]{link.getLinkName(),link.getLinkType(),link.dbConfigStr(),link.deviceIdsStr()});
+        int num = jdbcTemplate.update("INSERT into "+tableName+" ( linkName,linkType,dbConfigData,topologyNodes) VALUES (?,?,?,?)",
+                new Object[]{link.getLinkName(),link.getLinkType(),link.dbConfigDataStr(),link.topologyNodesStr()});
 
         if(num == 0){
             throw new DataException("新增失败");
@@ -38,8 +38,8 @@ public class LinkHandler {
     }
 
     public void update(Link link) {
-        int num = jdbcTemplate.update("replace into "+tableName+" (linkId, linkName,linkType,dbConfig,deviceSet) VALUES (?,?,?,?,?)",
-                new Object[]{link.getLinkId(),link.getLinkName(),link.getLinkType(),link.dbConfigStr(),link.deviceIdsStr()});
+        int num = jdbcTemplate.update("replace into "+tableName+" (linkId, linkName,linkType,dbConfigData,topologyNodes) VALUES (?,?,?,?,?)",
+                new Object[]{link.getLinkId(),link.getLinkName(),link.getLinkType(),link.dbConfigDataStr(),link.topologyNodesStr()});
 
         if(num == 0){
             throw new DataException("更新失败");
@@ -74,8 +74,8 @@ public class LinkHandler {
             link.setLinkId(rs.getLong("linkId"));
             link.setLinkName(rs.getString("linkName"));
             link.setLinkType(rs.getInt("linkType"));
-            link.setDbConfigStr(rs.getString("dbConfig"));
-            link.setDeviceIdsStr(rs.getString("deviceSet"));
+            link.setDbConfigDataStr(rs.getString("dbConfigData"));
+            link.setTopologyNodesStr(rs.getString("topologyNodes"));
 
             return link;
         }

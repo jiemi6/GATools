@@ -32,7 +32,7 @@ public class TaskController {
             return JSONMessage.createSuccess().addData(taskHandler.query(taskId)).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行query设备 taskId={} ",taskId);
         }
@@ -46,7 +46,7 @@ public class TaskController {
             return JSONMessage.createSuccess().addData(taskHandler.queryAll()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行query所有设备 ");
         }
@@ -60,7 +60,7 @@ public class TaskController {
             return JSONMessage.createSuccess().addData(taskHandler.queryCount()).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行count所有设备 ");
         }

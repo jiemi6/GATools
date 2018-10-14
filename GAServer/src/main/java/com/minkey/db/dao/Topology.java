@@ -1,5 +1,7 @@
 package com.minkey.db.dao;
 
+import com.minkey.dto.TopologyNode;
+
 import java.util.List;
 
 /**
@@ -22,23 +24,4 @@ public class Topology {
     private List<TopologyNode> topologyNodeList;
 
 
-    private class TopologyNode {
-        /**
-         * 划线起始设备
-         */
-        private long fromDeviceId;
-
-        /**
-         * 划线截至设备
-         */
-        private long toDeviceId;
-
-        /**
-         * 方向： 默认1：正向； -1 反向
-         */
-        private int direction = 1;
-
-
-
-    }
 }

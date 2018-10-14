@@ -1,5 +1,6 @@
 package com.minkey.util;
 
+import com.minkey.dto.DBConfigData;
 import com.minkey.exception.DataException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -37,12 +38,24 @@ public class DynamicDB {
             jdbcTemplate.execute(databaseDriver.getValidationQuery());
         }catch (Exception e ){
             logger.error("构造数据库连接异常",e);
-            throw new DataException("构造数据库连接异常",e);
+            throw new DataException("构造数据库连接异常");
         }
 
         return jdbcTemplate;
     }
 
+    public boolean testDB(DBConfigData dbConfigData){
+        try{
+            String jdbcUrl = "jdbc:mysql://"+dbConfigData.getIp()+":"+dbConfigData.getPort()+"/"+dbConfigData.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
+            //先检查数据库是否正确
+            JdbcTemplate jdbcTemplate = getJdbcTemplate(jdbcUrl,DatabaseDriver.MYSQL,dbConfigData.getName(),dbConfigData.getPwd());
+
+            return true;
+        }catch (Exception e){
+            logger.error("尝试连接数据库失败:"+dbConfigData.toString(),e);
+            return false;
+        }
+    }
 
     public void putIn(String ip,int port ,String dbName, JdbcTemplate jdbcTemplate){
         String key = createKey(ip,port,dbName);

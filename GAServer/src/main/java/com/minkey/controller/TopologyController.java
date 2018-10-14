@@ -29,7 +29,7 @@ public class TopologyController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行insert知识点 topology={} ",topology);
         }
@@ -51,7 +51,7 @@ public class TopologyController {
             return JSONMessage.createSuccess().addData(topologyHandler.query8LinkId(linkId)).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行查询知识点 linkId={} ",linkId);
         }

@@ -29,7 +29,7 @@ public class KnowledgeController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行insert知识点 knowledge={} ",knowledge);
         }
@@ -51,7 +51,7 @@ public class KnowledgeController {
             return JSONMessage.createSuccess().addData(knowledgeHandler.query8errorId(errorId)).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end: 执行查询知识点 errorId={} ",errorId);
         }
@@ -74,7 +74,7 @@ public class KnowledgeController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:执行up知识点  ");
         }

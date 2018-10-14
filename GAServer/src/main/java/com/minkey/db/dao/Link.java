@@ -3,9 +3,13 @@ package com.minkey.db.dao;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.dto.DBConfigData;
+import com.minkey.dto.TopologyNode;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,18 +29,20 @@ public class Link {
 
     /**
      * 链路类型
+     *
+     * @see com.minkey.contants.LinkType
      */
     private int linkType;
 
     /**
-     * 链路包含的所有的设备
+     * 链路包含拓扑节点
      */
-    private Set<Long> deviceSet;
+    private ArrayList<TopologyNode> topologyNodes;
 
     /**
      * 链路对应的数据库信息
      */
-    private DBConfigData dbConfig;
+    private DBConfigData dbConfigData;
 
     public long getLinkId() {
         return linkId;
@@ -62,40 +68,52 @@ public class Link {
         this.linkType = linkType;
     }
 
-    public DBConfigData getDbConfig() {
-        return dbConfig;
+    public List<TopologyNode> getTopologyNodes() {
+        return topologyNodes;
     }
 
-    public Set<Long> getDeviceSet() {
-        return deviceSet;
+    public void setTopologyNodes(ArrayList<TopologyNode> topologyNodes) {
+        this.topologyNodes = topologyNodes;
     }
 
-    public void setDeviceSet(Set<Long> deviceSet) {
-        this.deviceSet = deviceSet;
+    public DBConfigData getDbConfigData() {
+        return dbConfigData;
     }
 
-    public void setDbConfig(DBConfigData dbConfig) {
-        this.dbConfig = dbConfig;
+    public void setDbConfigData(DBConfigData dbConfigData) {
+        this.dbConfigData = dbConfigData;
     }
-    public String dbConfigStr() {
-        return JSONObject.toJSON(dbConfig).toString();
-    }
-
-    public void setDbConfigStr(String dbConfig) {
-        this.dbConfig = JSONObject.parseObject(dbConfig,DBConfigData.class);
+    public String dbConfigDataStr() {
+        return JSONObject.toJSON(dbConfigData).toString();
     }
 
-    public void setDeviceIdsStr(String deviceIdsStr) {
+    public void setDbConfigDataStr(String dbConfig) {
+        this.dbConfigData = JSONObject.parseObject(dbConfig,DBConfigData.class);
+    }
+
+    public void setTopologyNodesStr(String deviceIdsStr) {
         if(StringUtils.isEmpty(deviceIdsStr)){
             return;
         }
-        Set<Long> ids = new HashSet<>();
-        ids.addAll(JSONObject.parseArray(deviceIdsStr,Long.class));
-        this.deviceSet = ids;
+        ArrayList<TopologyNode> ids = new ArrayList<>();
+        ids.addAll(JSONObject.parseArray(deviceIdsStr,TopologyNode.class));
+        this.topologyNodes = ids;
     }
 
-    public String deviceIdsStr() {
+    public String topologyNodesStr() {
+        return JSONArray.toJSON(topologyNodes).toString();
+    }
 
-        return JSONArray.toJSON(deviceSet).toString();
+    public Set<Long> getDeviceIds() {
+        if(CollectionUtils.isEmpty(topologyNodes)){
+            return null;
+        }
+
+        Set<Long> deviceIds = new HashSet<>();
+        topologyNodes.forEach(topologyNode -> {
+            deviceIds.add(topologyNode.getFromDeviceId());
+            deviceIds.add(topologyNode.getToDeviceId());
+        });
+        return deviceIds;
     }
 }

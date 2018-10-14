@@ -4,6 +4,7 @@ import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class SystemController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行系统自检");
         }
@@ -71,7 +72,7 @@ public class SystemController {
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.toString()).toString();
+            return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             logger.info("end:  执行关机命令");
         }
@@ -140,11 +141,11 @@ public class SystemController {
 
 
     /**
-     * 设置网卡信息，ip，网关，子掩码等
+     * get网卡信息，ip，网关，子掩码等
      * @return
      */
-    @RequestMapping("/setNetWork")
-    public String setNetWork() {
+    @RequestMapping("/netWorkGet")
+    public String netWorkGet() {
 
         //检查规则
 
@@ -154,5 +155,41 @@ public class SystemController {
 
     }
 
+    /**
+     * 本机网络设置
+     * @return
+     */
+    @RequestMapping("/netWorkSet")
+    public String netWorkSet(String localIp,String subnetMask,String gateway,String dns,String dnsBak) {
+        logger.info("start: 执行系统注册信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
+        if(StringUtils.isEmpty(localIp)
+                ||StringUtils.isEmpty(subnetMask)
+                ||StringUtils.isEmpty(gateway)
+                ||StringUtils.isEmpty(dns)){
+            return JSONMessage.createFalied("参数缺失").toString();
+        }
+        if(StringUtil.isIp(localIp)
+                ||StringUtil.isIp(subnetMask)
+                ||StringUtil.isIp(gateway)
+                ||StringUtil.isIp(dns)){
+            return JSONMessage.createFalied("参数格式错误").toString();
+        }
+
+
+        try{
+            //调用命令设置,本会话内有效
+            //ifconfig eth0 192.168.1.155 netmask 255.255.255.0
+            LocalExecuter.exec("ifconfig eth0 "+localIp+" netmask "+subnetMask);
+            //route add default gw 192.168.1.1
+            LocalExecuter.exec("route add default gw "+gateway);
+
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 执行系统注册信息 ");
+        }
+    }
 
 }

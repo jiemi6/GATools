@@ -27,7 +27,7 @@ public class Device {
      * 1 : 探针 <br>
      * 2 : 文件夹 <br>
      * 3 :
-     *
+     *@see com.minkey.contants.DeviceType
      */
     private int deviceType;
 
@@ -123,20 +123,6 @@ public class Device {
 
     public void setDeviceServiceList(List<DeviceService> deviceServiceList) {
         this.deviceServiceList = deviceServiceList;
-    }
-
-
-   public enum DeviceType{
-        Detector(1,"探针"),
-        FOLDER(2,"文件夹");
-
-        public final int type;
-        public final String name;
-
-        DeviceType(int type, String name) {
-            this.type = type;
-            this.name = name;
-        }
     }
 
 }
