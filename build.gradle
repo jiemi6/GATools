@@ -33,14 +33,15 @@ subprojects {
 
 	jar{
 		exclude("application.properties")
-	}
+    }
 
-	startScripts {
-		doLast {
+    startScripts {
+        doLast {
 			delete windowsScript
-			unixScript.text = file("../common/scripts/app.sh").getText().replace("{main_class}", "${mainClassName}")
-		}
-	}
+            //classpath 增加 当前的conf目录
+			unixScript.text = unixScript.text.replace("CLASSPATH=\$APP_HOME", "CLASSPATH=\$APP_HOME/conf:\$APP_HOME")
+        }
+    }
 
 }
 
