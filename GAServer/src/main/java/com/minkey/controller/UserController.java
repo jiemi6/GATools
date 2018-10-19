@@ -1,10 +1,13 @@
 package com.minkey.controller;
 
 import com.minkey.db.UserHandler;
+import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
-import com.minkey.log.UserLog;
-import com.minkey.util.*;
+import com.minkey.util.DateUtil;
+import com.minkey.util.IPUtil;
+import com.minkey.util.StringUtil;
+import com.minkey.util.VCodeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +34,14 @@ import java.util.List;
 public class UserController {
     private final static Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    private final String moduleName = "用户模块";
+
     @Autowired
     UserHandler userHandler;
 
     @Autowired
-    UserLog userLog;
+    UserLogHandler userLogHandler;
+
 
     /**
      * 获取验证码
@@ -73,7 +79,7 @@ public class UserController {
      */
     @RequestMapping("/checkVCode")
     public String checkVCode(HttpSession session,String vcode) {
-
+        logger.info("start: 执行验证码检查");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
                 return JSONMessage.createSuccess().toString();
@@ -84,7 +90,7 @@ public class UserController {
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            logger.info("end:  执行验证码检查");
         }
     }
 
@@ -154,7 +160,7 @@ public class UserController {
             //清除错误次数
             userHandler.cleanWrongPwdTime(user.getUid());
             //记录登陆日志
-            userLog.log(user,"用户登陆成功");
+            userLogHandler.log(user,moduleName,"用户登陆成功");
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -179,7 +185,7 @@ public class UserController {
                 //移除session中user
                 session.removeAttribute("user");
                 //记录登陆日志
-                userLog.log(user,"用户登出成功");
+                userLogHandler.log(user,moduleName,"用户登出成功");
             }
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

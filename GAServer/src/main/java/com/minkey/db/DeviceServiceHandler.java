@@ -1,6 +1,7 @@
 package com.minkey.db;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
@@ -33,12 +34,12 @@ public class DeviceServiceHandler {
         return count;
     }
 
-    public void insertAll(List<DeviceService> deviceService) {
+    public void insertAll(Device device,List<DeviceService> deviceService) {
         int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,serviceType,configData) VALUES (?,?,?,?)",
                 deviceService,deviceService.size(), new ParameterizedPreparedStatementSetter<DeviceService>() {
                     @Override
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {
-                        ps.setLong(1,argument.getDeviceId());
+                        ps.setLong(1,device.getDeviceId());
                         ps.setString(2,argument.getServiceName());
                         ps.setInt(3,argument.getServiceType());
                         ps.setString(4,argument.configDataStr());
@@ -47,9 +48,9 @@ public class DeviceServiceHandler {
 
     }
 
-    public void insert(DeviceService deviceService) {
+    public void insert(Device device,DeviceService deviceService) {
         int num = jdbcTemplate.update("insert into "+tableName+" (deviceId,serviceName,serviceType,configData) VALUES (?,?,?,?)",
-                new Object[]{deviceService.getDeviceId(),deviceService.getServiceName(),deviceService.getServiceType(),deviceService.getConfigData()});
+                new Object[]{device.getDeviceId(),deviceService.getServiceName(),deviceService.getServiceType(),deviceService.getConfigData()});
 
         if(num == 0){
             throw new DataException("新增设备服务失败");
@@ -81,8 +82,7 @@ public class DeviceServiceHandler {
     }
 
     public void delete8DeviceId(Long deviceId) {
-        int num = jdbcTemplate.queryForObject("delete from "+tableName +" where deviceId=?",
-                new Object[]{deviceId},Integer.class);
+        int num = jdbcTemplate.update("delete from "+tableName +" where deviceId=?",new Object[]{deviceId});
     }
 
     class DeviceServiceRowMapper implements RowMapper {

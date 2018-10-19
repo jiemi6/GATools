@@ -1,7 +1,7 @@
 #禁用安全机制，可查看自带的接口，发布时禁用
 management:
   security:
-    enabled: false
+    enabled: true
 
 #端口号.
 server:
@@ -9,11 +9,12 @@ server:
   session:
     #会话超时（秒）,10分钟。
     timeout: 600
+  max-http-header-size: 8192
 
 logging:
   level:
-    root: debug
-  file: logs/console.log
+    root: info
+  file: log/console.log
 
 spring:
   datasource:

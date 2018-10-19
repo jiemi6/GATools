@@ -9,8 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Component;
 
+import java.sql.*;
 import java.util.List;
 import java.util.Set;
 
@@ -28,11 +30,45 @@ public class DeviceHandler {
         return count;
     }
 
+    public long insert(Device device) throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = jdbcTemplate.getDataSource().getConnection();
+            String sql =String.format("INSERT into "+tableName+" (deviceName,ip,deviceType,area,netArea,icon) VALUES (%s,%s,%s,%s,%s,%s)" ,
+                    "'"+device.getDeviceName()+"'","'"+device.getIp()+"'",device.getDeviceType(),device.getArea(),device.getNetArea(),device.getIcon()) ;
+
+            //通过传入第二个参数,就会产生主键返回给我们
+            ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.executeUpdate();
+
+            //返回的结果集中包含主键,注意：主键还可以是UUID,
+            //复合主键等,所以这里不是直接返回一个整型
+            rs = ps.getGeneratedKeys();
+            long id = 0;
+            if (rs.next()) {
+                id = rs.getInt(1);
+            }
+
+            return id;
+        }catch (Exception e){
+            throw e;
+        }finally {
+            JdbcUtils.closeStatement(ps);
+            JdbcUtils.closeResultSet(rs);
+            JdbcUtils.closeConnection(conn);
+        }
+
+    }
+
     public void replace(Device device) {
-        int num = jdbcTemplate.update("replace into "+tableName+" (configKey, configData) VALUES (?,?)",new Object[]{device});
+        int num = jdbcTemplate.update("replace into "+tableName+" (deviceId,deviceName,ip,deviceType,area,netArea,icon) VALUES (?,?,?,?,?,?,?)",
+                new Object[]{device.getDeviceId(),device.getDeviceName(),device.getIp(),device.getDeviceType(),device.getArea(),device.getNetArea(),device.getIcon()});
 
         if(num == 0){
-            throw new DataException("插入配置失败");
+            throw new DataException("插入失败");
         }
     }
 
@@ -88,5 +124,10 @@ public class DeviceHandler {
                 new BeanPropertyRowMapper<>(Device.class));
 
         return devices;
+    }
+
+    public void delete(long deviceId) {
+        int num = jdbcTemplate.update("delete from "+tableName +" where deviceId = ?",
+                new Object[]{deviceId});
     }
 }

@@ -140,7 +140,7 @@ public class ConfigController {
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行系统注册信息 ");
+            logger.info("end: 执行日志保留天数设置 ");
         }
     }
 
@@ -162,7 +162,7 @@ public class ConfigController {
      */
     @RequestMapping("/autoCheckTimes/set")
     public String autoCheckTimesSet(String[] checkTimes) {
-        logger.info("start: 执行日志保留天数设置 {}",checkTimes);
+        logger.info("start: 设置自动体检时间 {}",String.valueOf(checkTimes));
         if(ArrayUtils.isEmpty(checkTimes)){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -177,7 +177,7 @@ public class ConfigController {
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行系统注册信息 ");
+            logger.info("end: 设置自动体检时间 ");
         }
     }
 

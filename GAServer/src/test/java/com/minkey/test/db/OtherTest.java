@@ -1,14 +1,25 @@
 package com.minkey.test.db;
 
-import com.alibaba.fastjson.JSONObject;
-import com.minkey.db.dao.DeviceService;
+import com.minkey.MainRun;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class OtherTest
-{
+public class OtherTest{
+    private final static Logger logger = LoggerFactory.getLogger(MainRun.class);
+
+
     public static void main(String[] args) {
 
-        DeviceService data = JSONObject.parseObject("{'pwd':'dd'}",DeviceService.class);
+        logger.error(String.format("sdff %sds%s","'xxx'",2));
 
-        data = null;
+        String[] sd = new String[3];
+        sd[0] = "dddd";
+        sd[1] = "dddd";
+        sd[2] = "dddd";
+
+        logger.error(StringUtils.join(sd,","));
+
+
     }
 }

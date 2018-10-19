@@ -54,7 +54,7 @@ public class Device {
     /**
      * 图标id
      */
-    private int icon;
+    private String icon;
 
     /**
      * 设备对应的服务
@@ -109,11 +109,11 @@ public class Device {
         this.netArea = netArea;
     }
 
-    public int getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(int icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 

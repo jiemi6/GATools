@@ -1,4 +1,4 @@
-package com.minkey.core;
+package com.minkey.spring.mvc;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.HandlerExceptionResolver;

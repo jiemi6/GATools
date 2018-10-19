@@ -1,23 +1,22 @@
 package com.minkey.controller;
 
+import com.minkey.contants.DeviceType;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
+import com.minkey.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.xml.ws.RequestWrapper;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * 设备接口
@@ -37,12 +36,24 @@ public class DeviceController {
     public String insert( Device device) {
         logger.info("start: 执行insert设备 device={} ",device);
 
+        if(StringUtils.isEmpty(device.getDeviceName())){
+            return JSONMessage.createFalied("name不能为空格式错误").toString();
+        }
+
+        if(device.getDeviceType() != DeviceType.floder && StringUtils.isNotEmpty(device.getIp())){
+            if(!StringUtil.isIp(device.getIp())){
+                return JSONMessage.createFalied("ip格式错误").toString();
+            }
+        }
+
         try{
-            deviceHandler.replace(device);
+            long deviceId = deviceHandler.insert(device);
+            device.setDeviceId(deviceId);
 
             List<DeviceService> paramList = device.getDeviceServiceList();
-
-            deviceServiceHandler.insertAll(paramList);
+            if(!CollectionUtils.isEmpty(paramList)){
+                deviceServiceHandler.insertAll(device,paramList);
+            }
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -56,15 +67,30 @@ public class DeviceController {
     public String update( Device device) {
         logger.info("start: 执行insert设备 device={} ",device);
 
+        if(device.getDeviceId() < 0){
+            return JSONMessage.createFalied("deviceId错误").toString();
+        }
+
+        if(StringUtils.isEmpty(device.getDeviceName())){
+            return JSONMessage.createFalied("name不能为空格式错误").toString();
+        }
+
+        if(device.getDeviceType() != DeviceType.floder && StringUtils.isNotEmpty(device.getIp())){
+            if(!StringUtil.isIp(device.getIp())){
+                return JSONMessage.createFalied("ip格式错误").toString();
+            }
+        }
+
         try{
             deviceHandler.replace(device);
             //先删除
             deviceServiceHandler.delete8DeviceId(device.getDeviceId());
 
-            List<DeviceService> paramList = device.getDeviceServiceList();
-
-            //在增加
-            deviceServiceHandler.insertAll(paramList);
+            List<DeviceService> deviceServiceList = device.getDeviceServiceList();
+            if(!CollectionUtils.isEmpty(deviceServiceList)){
+                //在增加
+                deviceServiceHandler.insertAll(device ,deviceServiceList);
+            }
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -78,7 +104,7 @@ public class DeviceController {
     @RequestMapping("/query")
     public String query(Long deviceId) {
         logger.info("start: 执行query设备 deviceId={} ",deviceId);
-        if(deviceId == null){
+        if(deviceId == null || deviceId <=0){
             logger.info("deviceId不能为空");
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
@@ -127,6 +153,44 @@ public class DeviceController {
         }
     }
 
+    @RequestMapping("/delete")
+    public String delete(Long deviceId) {
+        logger.info("start: 执行删除设备 ");
+        if(deviceId == null || deviceId <=0){
+            logger.info("deviceId不能为空");
+            return JSONMessage.createFalied("deviceId不能为空").toString();
+        }
+
+        try{
+            //先删除
+            deviceServiceHandler.delete8DeviceId(deviceId);
+
+            deviceHandler.delete(deviceId);
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 执行删除设备 ");
+        }
+    }
+
+
+    @RequestMapping("/queryAllDetector")
+    public String queryAllDetector() {
+        logger.info("start: 查询所有探针设备 ");
+
+        try{
+            List<Device> all = deviceHandler.query8Type(DeviceType.detector);
+
+            return JSONMessage.createSuccess().addData("list",all).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 查询所有探针设备 ");
+        }
+    }
 
     /**
      * 查询某一个终端的实时资源消耗

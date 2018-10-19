@@ -13,14 +13,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @ServletComponentScan
 @EnableScheduling
 public class MainRun {
-
     public static void main(String[] args) {
-
         ConfigurableApplicationContext ctx = SpringApplication.run(MainRun.class, args);
 
         SpringUtils.setCtx(ctx);
+
     }
-
-
-
 }

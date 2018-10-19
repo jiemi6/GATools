@@ -1,4 +1,4 @@
-package com.minkey.dataExchangeSystem;
+package com.minkey.db.third.task;
 
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskHandler;
@@ -6,22 +6,27 @@ import com.minkey.db.dao.Link;
 import com.minkey.db.dao.Task;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 从数据交换系统，获取task信息
+ * 从数据交换系统，采集task信息
  * <br><br/>
  * 每天获取一次
  */
 
 @Component
-public class GetTask {
+public class TaskCollector {
+    private final static Logger logger = LoggerFactory.getLogger(TaskCollector.class);
 
     @Autowired
     TaskHandler taskHandler;
@@ -33,23 +38,51 @@ public class GetTask {
     @Autowired
     DynamicDB dynamicDB;
 
-    public void getAllTask(){
 
-        //查询所有链路
-        List<Link> linkList = linkHandler.queryAll();
-        if(CollectionUtils.isEmpty(linkList)){
+    @Value("${system.debug}")
+    private boolean isDebug;
+
+    /**
+     * 每天凌晨 1：30执行
+     */
+//    @Scheduled(cron="0 30 1 * ? *")
+    public void getAllTask(){
+        if(isDebug){
+            logger.error("测试抓取任务列表调度.");
+            return;
+        }
+        List<Link> linkList = null;
+        try {
+            //查询所有链路
+            linkList = linkHandler.queryAll();
+            if (CollectionUtils.isEmpty(linkList)) {
+                return;
+            }
+        }catch (Exception e){
+            logger.error("获取所有的链路异常",e);
             return;
         }
 
         linkList.forEach(link -> {
-            //从链路中获取数据交换系统的数据库配置
-            DBConfigData dbConfig = link.getDbConfigData();
+            List<Task> tasks = null;
+            try {
+                //从链路中获取数据交换系统的数据库配置
+                DBConfigData dbConfig = link.getDbConfigData();
 
-            List<Task> tasks =  queryAllTask(dbConfig);
+                tasks = queryAllTask(dbConfig);
 
-            //Minkey 把链路存到数据库中。
+            }catch (Exception e){
+                logger.error("从交换系统抓起任务列表异常",e);
+            }
 
-
+            if(!CollectionUtils.isEmpty(tasks)){
+                try {
+                    //把链路存到数据库中。
+                    taskHandler.repleaceAll(tasks);
+                }catch (Exception e){
+                    logger.error("把抓取过来的任务保存到数据库中异常",e);
+                }
+            }
         });
     }
 
@@ -59,7 +92,6 @@ public class GetTask {
      * @return
      */
     private List<Task> queryAllTask(DBConfigData dbConfig){
-
         //先从缓存中获取
         JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getIp(),dbConfig.getPort(),dbConfig.getName());
         //没有就新建
@@ -71,18 +103,22 @@ public class GetTask {
         }
 
         //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbtask");
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name, from tbtask");
 
         if(CollectionUtils.isEmpty(mapList)){
             return null;
         }
 
+        List<Task> tasks = new ArrayList<>(mapList.size());
+
         mapList.forEach(stringObjectMap -> {
+            Task task = new Task();
+            task.setTaskId((String)stringObjectMap.get("task"));
+            task.setTaskName((String) stringObjectMap.get("name"));
 
-
-
+            tasks.add(task);
         });
-        return null;
+        return tasks;
     }
 
 

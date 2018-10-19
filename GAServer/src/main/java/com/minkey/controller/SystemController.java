@@ -1,8 +1,13 @@
 package com.minkey.controller;
 
+import com.minkey.db.CheckHandler;
 import com.minkey.db.ConfigHandler;
+import com.minkey.db.dao.Check;
+import com.minkey.db.dao.CheckItem;
+import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.executer.LocalExecuter;
+import com.minkey.scheduled.SelfCheckJob;
 import com.minkey.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -13,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * 系统管理接口
@@ -26,6 +33,14 @@ public class SystemController {
     @Autowired
     ConfigHandler configHandler;
 
+    @Autowired
+    CheckHandler checkHandler;
+
+    @Autowired
+    SelfCheckJob selfCheckJob;
+
+    @Autowired
+    HttpSession session;
     /**
      * 系统自检
      * @return
@@ -34,15 +49,51 @@ public class SystemController {
     public String check() {
         logger.info("start: 执行系统自检");
 
-        //ping 网关
+        User user = (User) session.getAttribute("user");
 
-        //test本地数据库
-
-        //test 本地硬盘大小
-
+        long checkId;
+        try{
+            Check check = new Check();
+            check.setCheckName(user.getuName()+"发起本系统环境自检");
+            check.setCheckType(Check.CHECKTYPE_SYSTEMSELF);
+            check.setUid(user.getUid());
+            //存入数据库，获取id
+            checkId = checkHandler.insert(check);
+        }catch (Exception e){
+            //如果异常 认为db异常
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied("数据库错误，无法执行命令，"+e.getMessage()).toString();
+        }
 
         try{
-            return JSONMessage.createSuccess().toString();
+            //开始检查
+            selfCheckJob.check(checkId);
+            return JSONMessage.createSuccess().addData("checkId",checkId).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end:  执行系统自检");
+        }
+    }
+
+    /**
+     * 系统自检信息获取，页面不断扫描此接口获取数据
+     * @return
+     */
+    @RequestMapping("/checkInfo")
+    public String checkInfo(Long checkId,Integer index) {
+        logger.info("start: 获取当前系统自检信息");
+        if(checkId == null || checkId <= 0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        if(index == null || index <= 0){
+            index = 0;
+        }
+        try{
+            List<CheckItem> checkItems = selfCheckJob.getResultList(checkId,index);
+            return JSONMessage.createSuccess().addData("checkItems",checkItems).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

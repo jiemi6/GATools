@@ -1,0 +1,99 @@
+package com.minkey.scheduled;
+
+import com.minkey.db.CheckHandler;
+import com.minkey.db.CheckItemHandler;
+import com.minkey.db.dao.CheckItem;
+import com.minkey.dto.RateObj;
+import com.minkey.util.DiskUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DatabaseDriver;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+/**
+ * 本系统基本信息自检
+ */
+@Component
+public class SelfCheckJob {
+    private final static Logger logger = LoggerFactory.getLogger(SelfCheckJob.class);
+
+    /**
+     * 检查总共3步
+     */
+    private final int totalStep = 3 ;
+
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    CheckHandler checkHandler;
+    @Autowired
+    CheckItemHandler checkItemHandler;
+
+    public void check(long checkId) {
+        //异步执行check
+        startCheck(checkId);
+
+    }
+
+    @Async
+    public void startCheck(long checkId){
+        CheckItem checkItem;
+
+        //Minkey ping 网关
+
+        if(checkId != -1) {
+            try {
+                //test本地数据库
+                jdbcTemplate.execute(DatabaseDriver.MYSQL.getValidationQuery());
+                checkItem = new CheckItem(2,totalStep);
+                checkItem.setCheckId(checkId);
+                checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+                checkItem.setResultMsg("连接本地数据库成功");
+                addCheckItem(checkItem);
+            } catch (Exception e) {
+                checkItem = new CheckItem(2,totalStep);
+                checkItem.setCheckId(checkId);
+                checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
+                checkItem.setResultMsg("连接本地数据库失败" + e.getMessage());
+                addCheckItem(checkItem);
+            }
+        }
+
+        //test 本地硬盘大小
+        RateObj rateObj = DiskUtils.driver();
+        checkItem = new CheckItem(3,totalStep);
+        checkItem.setCheckId(checkId);
+        double rate = rateObj.getRate();
+        if(rate >=  0.75 && rate < 0.9){
+            checkItem.setResultLevel(CheckItem.RESULTLEVEL_WARN);
+        }else if (rate > 0.9){
+            checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
+        }else{
+            checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+        }
+        checkItem.setResultMsg("磁盘已经使用"+rateObj.getUseRateStr()+",剩余"+DiskUtils.FormetFileSize(Double.valueOf(rateObj.getFree()).longValue()));
+        addCheckItem(checkItem);
+
+    }
+
+
+    private void addCheckItem(CheckItem checkItem){
+        try {
+            checkItemHandler.insert(checkItem);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+
+    public List<CheckItem> getResultList(Long checkId, Integer index) {
+        List<CheckItem> checkItems  = checkItemHandler.query(checkId,index);
+        return  checkItems;
+    }
+}

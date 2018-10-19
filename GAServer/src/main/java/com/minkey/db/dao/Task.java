@@ -6,9 +6,9 @@ package com.minkey.db.dao;
 public class Task {
 
     /**
-     * 任务id，主键
+     * 任务id，主键,因为数据来源方用的字符串
      */
-    private long taskId;
+    private String taskId;
 
     /**
      * 链路id
@@ -27,5 +27,35 @@ public class Task {
     private String data;
 
 
+    public String getTaskId() {
+        return taskId;
+    }
 
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public long getLinkId() {
+        return linkId;
+    }
+
+    public void setLinkId(long linkId) {
+        this.linkId = linkId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public void setData(String data) {
+        this.data = data;
+    }
 }

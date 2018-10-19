@@ -1,8 +1,10 @@
 package com.minkey.filter;
 
 import com.minkey.dto.JSONMessage;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -11,21 +13,32 @@ import java.io.IOException;
 /**
  * 证书过滤
  */
-//@WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
+@WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
 public class LicenseFilter implements Filter {
 
     String NO_license = "您还没有注册license";
 
+    //Minkey 过滤url没补全
     final String[] includeUrls = new String[]{
+
             "/license.html",
             "/license/upFile",
             "/license/getCode"
     };
 
+    @Value("${system.debug}")
+    private boolean isDebug;
+
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
+
+        if(isDebug){
+            filterChain.doFilter(servletRequest, servletResponse);
+            return;
+        }
 
         String uri = request.getRequestURI();
 

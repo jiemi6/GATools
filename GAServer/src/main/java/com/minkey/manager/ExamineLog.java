@@ -1,4 +1,4 @@
-package com.minkey.log;
+package com.minkey.manager;
 
 import org.springframework.stereotype.Component;
 
