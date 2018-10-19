@@ -11,5 +11,5 @@ server:
     timeout: 600
 
 logging:
-  file: logs/console.log
+  file: log/console.log
 
