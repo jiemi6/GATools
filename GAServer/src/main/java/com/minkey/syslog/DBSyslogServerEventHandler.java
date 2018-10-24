@@ -1,5 +1,7 @@
 package com.minkey.syslog;
 
+import com.minkey.db.dao.Syslog;
+import com.minkey.util.SpringUtils;
 import org.productivity.java.syslog4j.server.SyslogServerEventHandlerIF;
 import org.productivity.java.syslog4j.server.SyslogServerEventIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
@@ -8,11 +10,13 @@ import org.productivity.java.syslog4j.server.SyslogServerIF;
 public class DBSyslogServerEventHandler implements SyslogServerEventHandlerIF {
     @Override
     public void event(SyslogServerIF syslogServer, SyslogServerEventIF event) {
-        //Minkey 存储到db中
-        event.getDate();
-        event.getHost();
-        event.getLevel();
-        event.getMessage();
+        Syslog syslog = new Syslog();
+        syslog.setCreateTime(event.getDate());
+        syslog.setHost(event.getHost());
+        syslog.setLevel(event.getLevel());
+        syslog.setMsg(event.getMessage());
 
+        //先扔到缓存中去
+        SpringUtils.getBean(DBSyslogManager.class).addLog(syslog);
     }
 }

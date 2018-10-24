@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -45,11 +46,11 @@ public class TaskCollector {
     /**
      * 每天凌晨 1：30执行
      */
-//    @Scheduled(cron="0 30 1 * ? *")
-    public void getAllTask(){
+    @Scheduled(cron="0 30 1 * * ?")
+    public void getTaskFromOtherDB(){
         if(isDebug){
             logger.error("测试抓取任务列表调度.");
-            return;
+//            return;
         }
         List<Link> linkList = null;
         try {
@@ -69,7 +70,7 @@ public class TaskCollector {
                 //从链路中获取数据交换系统的数据库配置
                 DBConfigData dbConfig = link.getDbConfigData();
 
-                tasks = queryAllTask(dbConfig);
+                tasks = queryAllTask(dbConfig,link);
 
             }catch (Exception e){
                 logger.error("从交换系统抓起任务列表异常",e);
@@ -77,8 +78,9 @@ public class TaskCollector {
 
             if(!CollectionUtils.isEmpty(tasks)){
                 try {
+                    taskHandler.del(link.getLinkId());
                     //把链路存到数据库中。
-                    taskHandler.repleaceAll(tasks);
+                    taskHandler.insertAll(tasks);
                 }catch (Exception e){
                     logger.error("把抓取过来的任务保存到数据库中异常",e);
                 }
@@ -89,21 +91,15 @@ public class TaskCollector {
     /**
      * 从数据交换系统获取任务列表
      * @param dbConfig
+     * @param link
      * @return
      */
-    private List<Task> queryAllTask(DBConfigData dbConfig){
+    private List<Task> queryAllTask(DBConfigData dbConfig, Link link){
         //先从缓存中获取
-        JdbcTemplate jdbcTemplate = dynamicDB.get(dbConfig.getIp(),dbConfig.getPort(),dbConfig.getName());
-        //没有就新建
-        if(jdbcTemplate == null){
-            String url = "jdbc:mysql://"+dbConfig.getIp()+":"+dbConfig.getPort()+"/"+dbConfig.getName()+"?useUnicode=true&characterEncoding=utf-8";
-            jdbcTemplate = dynamicDB.getJdbcTemplate(url,dbConfig.getDatabaseDriver(),dbConfig.getName(),dbConfig.getPwd());
-            //放回缓存
-            dynamicDB.putIn(dbConfig.getIp(),dbConfig.getPort(),dbConfig.getName(),jdbcTemplate);
-        }
+        JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
 
         //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name, from tbtask");
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name from tbtask");
 
         if(CollectionUtils.isEmpty(mapList)){
             return null;
@@ -113,9 +109,9 @@ public class TaskCollector {
 
         mapList.forEach(stringObjectMap -> {
             Task task = new Task();
-            task.setTaskId((String)stringObjectMap.get("task"));
+            task.setTaskId((String)stringObjectMap.get("taskId"));
             task.setTaskName((String) stringObjectMap.get("name"));
-
+            task.setLinkId(link.getLinkId());
             tasks.add(task);
         });
         return tasks;

@@ -1,7 +1,7 @@
 package com.minkey.controller;
 
-import com.minkey.db.dao.Knowledge;
 import com.minkey.db.KnowledgeHandler;
+import com.minkey.db.dao.Knowledge;
 import com.minkey.dto.JSONMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

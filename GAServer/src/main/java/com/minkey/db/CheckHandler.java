@@ -21,7 +21,7 @@ public class CheckHandler {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public Page query(Page page) {
+    public Page<Check> query8Page(Page<Check> page) {
         List<Check> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY checkId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Check.class));
 
@@ -67,7 +67,6 @@ public class CheckHandler {
             JdbcUtils.closeConnection(conn);
         }
     }
-
 
 
 }

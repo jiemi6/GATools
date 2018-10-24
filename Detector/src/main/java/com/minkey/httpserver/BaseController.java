@@ -1,6 +1,7 @@
 package com.minkey.httpserver;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.command.Ping;
 import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
 import com.minkey.dto.JSONMessage;
@@ -22,6 +23,32 @@ public class BaseController {
     @RequestMapping("/check")
     public String check() {
         return JSONMessage.createSuccess().toString();
+    }
+
+    /**
+     * sh命令代理
+     * @param ip
+     * @return
+     */
+    @RequestMapping("/ping")
+    public String ping(String ip) {
+        logger.info("exec ping [{}] start! " , ip);
+        if(StringUtils.isEmpty(ip)){
+            logger.error("ip 参数为空！");
+            return JSONMessage.createFalied("ip 参数为空！").toString();
+        }
+
+        try{
+            JSONObject data = new JSONObject();
+            boolean isConnect = Ping.javaPing(ip);
+            data.put("isConnect",isConnect);
+            return JSONMessage.createSuccess().addData(data).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            logger.info("exec ping [{}] end! " , ip);
+        }
     }
 
 
@@ -88,7 +115,7 @@ public class BaseController {
      * @param port
      * @return
      */
-    @RequestMapping("/snmpCmd/getList")
+    @RequestMapping("/snmp/get")
     public String snmpCmdGet(String ip,
                              Integer port,
                              Integer version,
@@ -145,7 +172,7 @@ public class BaseController {
      * @param port
      * @return
      */
-    @RequestMapping("/snmpCmd/walk")
+    @RequestMapping("/snmp/walk")
     public String snmpCmdWalk(String ip,
                               Integer port,
                               Integer version,

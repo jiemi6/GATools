@@ -1,34 +1,38 @@
 package com.minkey;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
 import com.minkey.snmp.SnmpData;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SnmpTest {
-
+    static Logger logger = LoggerFactory.getLogger(SnmpTest.class);
     /**
      * @param args
      */
     public static void main(String[] args) {
-        SnmpTest test = new SnmpTest();
 
-        test.testGet();
-//        test.testWalk();
+        SnmpTest snmpTest = new SnmpTest();
+
+        snmpTest.testGetList();
+//        snmpTest.testWalk();
 
     }
 
         String ip = "127.0.0.1";
-//        String ip = "192.168.10.162";
+//        String ip = "topwalkhndq.tpddns.cn";
         String community = "public";
 
 
-    public void testGet() {
-        String oidval = "1.3.6.1.2.1.1.1";
-//        String oidval = "1.3.6.1.2.1.25.3.3.1";
-//        String oidval = "1.3.6.1.4.1.2021.11.9.0";
+    public void testWalk() {
+        //cpu
+//        String oidval = "1.3.6.1.2.1.25.3.3.1.2";
+        //mem
+//        String oidval = "1.3.6.1.2.1.25.2.3.1";
+
+        String oidval = "1.3.6.1.2.1.25.2.1.4";
 //        CommunityTarget target = SnmpUtil.createDefault(ip);
 //        JSONObject jo = SnmpUtil.snmpGet(target, oidval);
 //        System.out.println(jo);
@@ -39,11 +43,13 @@ public class SnmpTest {
 
 
     public void testGetList() {
+//        SnmpUtil snmpUtil = new SnmpUtil("119.130.206.18");
+        SnmpUtil snmpUtil = new SnmpUtil("127.0.0.1");
+//        JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.16");
+        JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.10");
 
-        List<String> oidList = new ArrayList<String>();
-        oidList.add("1.3.6.1.2.1.1.5.0");
-        oidList.add("1.3.6.1.2.1.1.7.0");
-        new SnmpUtil(ip).snmpGetList((String[]) oidList.toArray());
+        logger.error(jo.toJSONString());
+
     }
 
 

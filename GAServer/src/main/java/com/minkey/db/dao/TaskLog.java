@@ -1,11 +1,12 @@
 package com.minkey.db.dao;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 任务对象执行日志，来自别交换系统数据库
  */
-public class TaskLog {
+public class TaskLog implements Serializable{
 
     /**
      * logid，主键,数据库生成
@@ -16,6 +17,8 @@ public class TaskLog {
      * 任务id
      */
     private String taskId;
+
+    private long linkId;
 
     /**
      * 数据来源方logid
@@ -106,5 +109,13 @@ public class TaskLog {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public long getLinkId() {
+        return linkId;
+    }
+
+    public void setLinkId(long linkId) {
+        this.linkId = linkId;
     }
 }

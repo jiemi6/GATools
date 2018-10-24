@@ -1,5 +1,6 @@
 package com.minkey.util;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.entity.ResultInfo;
 
 /**
@@ -9,6 +10,12 @@ import com.minkey.entity.ResultInfo;
 public class DetectorUtil {
 
     public static boolean check(String detectorIp,int detectorPort){
+
+
+        return true;
+    }
+
+    public static boolean ping(String detectorIp,int detectorPort,String ip){
 
 
         return true;
@@ -25,5 +32,29 @@ public class DetectorUtil {
 
 
         return true;
+    }
+
+    public static JSONObject snmpGet(String ip,
+                                         Integer port,
+                                         Integer version,
+                                         String community,
+                                         Integer retry,
+                                         Long timeout,
+                                         String oid) {
+
+
+        return null;
+    }
+
+    public static JSONObject snmpWalk(String ip,
+                                         Integer port,
+                                         Integer version,
+                                         String community,
+                                         Integer retry,
+                                         Long timeout,
+                                         String oid) {
+
+
+        return null;
     }
 }

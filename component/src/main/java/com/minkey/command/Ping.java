@@ -10,22 +10,31 @@ import java.util.regex.Pattern;
 public class Ping {
 
     /**
+     * ping命令默认超时时间
+     */
+    public static final int DEFALUT_TIMEOUT = 1000;
+
+    public static boolean javaPing(String ipAddress,int timeout){
+        if(timeout <= 0){
+            timeout = DEFALUT_TIMEOUT;
+        }
+        // 当返回值是true时，说明host是可用的，false则不可。
+        boolean status;
+        try {
+            status = InetAddress.getByName(ipAddress).isReachable(timeout);
+        } catch (IOException e) {
+            return false;
+        }
+        return status;
+    }
+    /**
      * java测试ping，只能代表是否联通
      * @param ipAddress
      * @return
      * @throws Exception
      */
     public static boolean javaPing(String ipAddress){
-        //超时应该在3钞以上
-        int timeOut = 3000;
-        // 当返回值是true时，说明host是可用的，false则不可。
-        boolean status = false;
-        try {
-            status = InetAddress.getByName(ipAddress).isReachable(timeOut);
-        } catch (IOException e) {
-            return false;
-        }
-        return status;
+       return javaPing(ipAddress,DEFALUT_TIMEOUT);
     }
 
     /**

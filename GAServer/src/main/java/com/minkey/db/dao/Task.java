@@ -6,7 +6,8 @@ package com.minkey.db.dao;
 public class Task {
 
     /**
-     * 任务id，主键,因为数据来源方用的字符串
+     *
+     * 任务id，来自不同数据库，可能重复，不能做主键
      */
     private String taskId;
 

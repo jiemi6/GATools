@@ -22,6 +22,12 @@ public class UserLogHandler {
     JdbcTemplate jdbcTemplate;
 
 
+    /**
+     * 插入一条用户日志
+     * @param user
+     * @param moduleName
+     * @param log
+     */
     public void log(User user, String moduleName, String log){
         UserLog userLog = new UserLog();
         userLog.setLoginIp(user.getLoginIp());
@@ -47,11 +53,12 @@ public class UserLogHandler {
     }
 
 
-    public Page query8Page(Page page) {
+    public Page<UserLog> query8Page(Page<UserLog> page) {
         List<UserLog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY userLogId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(UserLog.class));
 
         page.setTotal(queryCount());
+
         page.setData(devices);
 
         return page;

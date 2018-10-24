@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -46,11 +47,11 @@ public class TaskDayLogCollector {
     /**
      * 每一个小时执行一次，0分0秒开始执行
      */
-//    @Scheduled(cron="0 0 * * ? *")
-    public void getAllTask(){
+    @Scheduled(cron="0 0 * * * ?")
+    public void getTaskLogFromOtherDB(){
         if(isDebug){
-            logger.error("测试抓取任务列表调度.");
-            return;
+            logger.error("debug，测试抓取任务执行日志调度.");
+//            return;
         }
         List<Link> linkList = null;
         try {
@@ -70,9 +71,9 @@ public class TaskDayLogCollector {
                 //从链路中获取数据交换系统的数据库配置
                 DBConfigData dbConfig = link.getDbConfigData();
 
-                long maxLoggerId = taskLogHandler.queryMaxId();
+                long maxLoggerId = taskLogHandler.queryMaxId(link.getLinkId());
 
-                tasks = queryAllTaskLog(dbConfig,maxLoggerId);
+                tasks = queryAllTaskLog(dbConfig,link,maxLoggerId);
 
             }catch (Exception e){
                 logger.error("从交换系统抓起任务执行日志异常",e);
@@ -92,9 +93,10 @@ public class TaskDayLogCollector {
     /**
      * 从数据交换系统获取任务日志列表
      * @param dbConfig
+     * @param link
      * @return
      */
-    private List<TaskLog> queryAllTaskLog(DBConfigData dbConfig,long maxLoggerId){
+    private List<TaskLog> queryAllTaskLog(DBConfigData dbConfig, Link link, long maxLoggerId){
         //先从缓存中获取
         JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
 
@@ -110,13 +112,14 @@ public class TaskDayLogCollector {
 
         mapList.forEach(stringObjectMap -> {
             TaskLog taskLog = new TaskLog();
-            taskLog.setTargetLogId((Long)stringObjectMap.get("dayloggerid"));
-            taskLog.setTaskId((String) stringObjectMap.get("taskid"));
-            taskLog.setSuccessNum((Long)stringObjectMap.get("dayloggerid"));
-            taskLog.setSuccessNum((Long)stringObjectMap.get("totalSuccessNum"));
-            taskLog.setSuccessFlow((Long)stringObjectMap.get("totalSuccessFlow"));
-            taskLog.setErrorNum((Long)stringObjectMap.get("totalErrorNum"));
-            taskLog.setErrorFlow((Long)stringObjectMap.get("totalErrorFlow"));
+            taskLog.setTargetLogId(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
+            taskLog.setTaskId( stringObjectMap.get("taskid").toString());
+            taskLog.setLinkId(link.getLinkId());
+            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
+            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("totalSuccessNum").toString()));
+            taskLog.setSuccessFlow(Long.valueOf(stringObjectMap.get("totalSuccessFlow").toString()));
+            taskLog.setErrorNum(Long.valueOf(stringObjectMap.get("totalErrorNum").toString()));
+            taskLog.setErrorFlow(Long.valueOf(stringObjectMap.get("totalErrorFlow").toString()));
             taskLog.setCreateTime((Date) stringObjectMap.get("insertTimes"));
             tasks.add(taskLog);
         });

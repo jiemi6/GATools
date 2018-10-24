@@ -1,4 +1,4 @@
-package com.minkey.scheduled;
+package com.minkey.handler;
 
 import com.minkey.db.CheckHandler;
 import com.minkey.db.CheckItemHandler;
@@ -25,7 +25,7 @@ public class SelfCheckJob {
     /**
      * 检查总共3步
      */
-    private final int totalStep = 3 ;
+    private final int totalStep = 4 ;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -34,6 +34,9 @@ public class SelfCheckJob {
     CheckHandler checkHandler;
     @Autowired
     CheckItemHandler checkItemHandler;
+
+    @Autowired
+    DeviceStatusHandler deviceStatusHandler;
 
     public void check(long checkId) {
         //异步执行check
@@ -80,6 +83,20 @@ public class SelfCheckJob {
         checkItem.setResultMsg("磁盘已经使用"+rateObj.getUseRateStr()+",剩余"+DiskUtils.FormetFileSize(Double.valueOf(rateObj.getFree()).longValue()));
         addCheckItem(checkItem);
 
+        try {
+            deviceStatusHandler.init();
+            checkItem = new CheckItem(4,totalStep);
+            checkItem.setCheckId(checkId);
+            checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+            checkItem.setResultMsg("初始化内存数据成功");
+            addCheckItem(checkItem);
+        }catch (Exception e){
+            checkItem = new CheckItem(4,totalStep);
+            checkItem.setCheckId(checkId);
+            checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
+            checkItem.setResultMsg("初始化内存数据失败" + e.getMessage());
+            addCheckItem(checkItem);
+        }
     }
 
 

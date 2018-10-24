@@ -12,7 +12,7 @@ import java.util.List;
  * @param <E>
  *
  */
-public class Page<E extends Serializable> implements Serializable{
+public class Page<E> implements Serializable{
 	private static final long serialVersionUID = -2604733332467233750L;
 		
 	private static final int DEFAULT_PAGESIZE = 10;

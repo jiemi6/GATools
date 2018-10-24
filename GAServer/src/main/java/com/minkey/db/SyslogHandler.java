@@ -1,6 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.db.dao.TaskLog;
+import com.minkey.db.dao.Syslog;
 import com.minkey.dto.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +15,13 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Component
-public class TaskLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskLogHandler.class);
+public class SyslogHandler {
+    private final static Logger logger = LoggerFactory.getLogger(SyslogHandler.class);
 
-    private final String tableName = "t_taskLog";
+    private final String tableName = "t_syslog";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -38,9 +39,10 @@ public class TaskLogHandler {
         return count;
     }
 
-    public Page<TaskLog> query8page(Page<TaskLog> page) {
-        List<TaskLog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY logId desc limit ?,?",
-                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskLog.class));
+
+    public Page<Syslog> query8page(Page<Syslog> page) {
+        List<Syslog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY logId desc limit ?,?",
+                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Syslog.class));
 
         page.setData(devices);
 
@@ -51,23 +53,19 @@ public class TaskLogHandler {
     }
 
 
-    public void insertAll(List<TaskLog> taskLogs) {
+    public void insertAll(Set<Syslog> taskLogs) {
         if(CollectionUtils.isEmpty(taskLogs)){
             return;
         }
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetLogId,taskId,linkId,successNum,successFlow,errorNum,errorFlow,createTime) VALUES (?,?,?,?,?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (host,level,msg,createTime) VALUES (?,?,?,?)",
                 taskLogs,taskLogs.size(),
-                new ParameterizedPreparedStatementSetter<TaskLog>() {
+                new ParameterizedPreparedStatementSetter<Syslog>() {
                     @Override
-                    public void setValues(PreparedStatement ps, TaskLog argument) throws SQLException {
-                        ps.setLong(1,argument.getTargetLogId());
-                        ps.setString(2,argument.getTaskId());
-                        ps.setLong(3,argument.getLinkId());
-                        ps.setLong(4,argument.getSuccessNum());
-                        ps.setLong(5,argument.getSuccessFlow());
-                        ps.setLong(6,argument.getErrorNum());
-                        ps.setLong(7,argument.getErrorFlow());
-                        ps.setTimestamp(8,new Timestamp(argument.getCreateTime().getTime()));
+                    public void setValues(PreparedStatement ps, Syslog argument) throws SQLException {
+                        ps.setString(1,argument.getHost());
+                        ps.setInt(2,argument.getLevel());
+                        ps.setString(3,argument.getMsg());
+                        ps.setTimestamp(4,new Timestamp(argument.getCreateTime().getTime()));
                     }
                 });
     }

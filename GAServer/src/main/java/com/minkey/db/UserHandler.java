@@ -31,8 +31,8 @@ public class UserHandler {
     }
 
     public void insert(User user) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,status,wrongPwdNum,auth,loginIpStart,loginIpEnd,loginTimeStart,loginTimeEnd) VALUES (?,?,?,?,?,?,?,?,?,?)"
-                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getWrongPwdNum(),user.getAuth(),user.getLoginIpStart(),user.getLoginIpEnd(),user.getLoginTimeStart(),user.getLoginTimeEnd()});
+        int num = jdbcTemplate.update("insert into "+tableName+" (uName,pwd, createUid,status,phone,email,wrongPwdNum,auth,loginIpStart,loginIpEnd,loginTimeStart,loginTimeEnd) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
+                ,new Object[]{user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getPhone(),user.getEmail(),user.getWrongPwdNum(),user.getAuth(),user.getLoginIpStart(),user.getLoginIpEnd(),user.getLoginTimeStart(),user.getLoginTimeEnd()});
 
         if(num == 0){
             throw new DataException("添加新用户失败");
@@ -79,7 +79,7 @@ public class UserHandler {
         int num = jdbcTemplate.update(sb.toString());
 
         if(num == 0){
-            throw new DataException("修改用户失败");
+            throw new DataException("修改用户不存在");
         }
     }
 

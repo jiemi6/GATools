@@ -1,37 +1,55 @@
 package com.minkey.controller;
 
-import com.minkey.db.dao.Topology;
-import com.minkey.db.TopologyHandler;
+import com.minkey.db.LinkHandler;
+import com.minkey.db.dao.Link;
 import com.minkey.dto.JSONMessage;
+import com.minkey.dto.TopologyNode;
+import com.minkey.handler.DeviceStatusHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 网络拓扑接口
  */
 @RestController
-@RequestMapping("/topology")
+@RequestMapping(value = "/topology")
 public class TopologyController {
     private final static Logger logger = LoggerFactory.getLogger(TopologyController.class);
 
     @Autowired
-    TopologyHandler topologyHandler;
+    LinkHandler linkHandler;
 
-    @RequestMapping("/insert")
-    public String insert(Topology topology) {
-        logger.info("start: 执行insert知识点 topology={} ",topology);
+    @Autowired
+    DeviceStatusHandler linkCheckHandler;
+
+
+    @RequestMapping("/queryAll")
+    public String queryAll() {
+        logger.info("start: 执行查询所有拓扑节点");
 
         try{
-            topologyHandler.insert(topology);
-            return JSONMessage.createSuccess().toString();
+            List<TopologyNode> topologyNodes = new ArrayList<>();
+            List<Link> linkList = linkHandler.queryAll();
+            if(!CollectionUtils.isEmpty(linkList)){
+                linkList.forEach(link -> {
+                    topologyNodes.addAll(link.getTopologyNodes());
+                });
+            }
+
+            return JSONMessage.createSuccess().addData("list",topologyNodes).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行insert知识点 topology={} ",topology);
+            logger.info("end: 执行查询所有拓扑节点");
         }
     }
 
@@ -42,18 +60,43 @@ public class TopologyController {
      */
     @RequestMapping("/query8linkId")
     public String query8linkId(Long linkId) {
-        logger.info("start: 执行查询知识点 linkId={} ",linkId);
+        logger.info("start: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
         if(linkId == null){
-            logger.info("topologyId不能为空");
-            return JSONMessage.createFalied("topologyId不能为空").toString();
+            logger.info("linkId不能为空");
+            return JSONMessage.createFalied("linkId不能为空").toString();
         }
         try{
-            return JSONMessage.createSuccess().addData(topologyHandler.query8LinkId(linkId)).toString();
+            Link link = linkHandler.query(linkId);
+            List<TopologyNode> topologyNodes = new ArrayList<>();
+            if(link != null){
+                topologyNodes = link.getTopologyNodes();
+            }
+
+            return JSONMessage.createSuccess().addData("list",topologyNodes).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行查询知识点 linkId={} ",linkId);
+            logger.info("end: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
+        }
+    }
+
+
+    /**
+     * 查询所有设备的连接情况,每隔5秒重复刷新
+     * @return
+     */
+    @RequestMapping("/queryAllConnect")
+    public String queryAllConnect() {
+        logger.info("start: 查询所有可连接的设备");
+        try{
+            Set<Long> deviceId = linkCheckHandler.queryAllConnect();
+            return JSONMessage.createSuccess().addData("connectIds",deviceId).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 查询所有可连接的设备");
         }
     }
 

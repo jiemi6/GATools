@@ -97,11 +97,14 @@ public class DeviceHandler {
         return devices;
     }
 
-    public Page query8Page(Page page) {
+    public Page<Device> query8Page(Page<Device> page) {
         List<Device> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY deviceId limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Device.class));
 
         page.setData(devices);
+
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Integer.class);
+        page.setTotal(total);
 
         return page;
     }

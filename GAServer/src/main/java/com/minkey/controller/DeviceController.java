@@ -5,8 +5,10 @@ import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
+import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
+import com.minkey.handler.DeviceStatusHandler;
 import com.minkey.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,6 +33,9 @@ public class DeviceController {
 
     @Autowired
     DeviceServiceHandler deviceServiceHandler;
+
+    @Autowired
+    DeviceStatusHandler deviceStatusHandler;
 
     @RequestMapping("/insert")
     public String insert( Device device) {
@@ -123,10 +128,13 @@ public class DeviceController {
 
     @RequestMapping("/query8Page")
     public String query8Page(Integer currentPage,Integer pageSize) {
-        logger.info("start: 执行分页查询设备 ");
+        logger.info("start: 执行分页查询设备 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        if(currentPage == null || pageSize <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
 
         try{
-            Page page = new Page(currentPage,pageSize);
+            Page<Device> page = new Page(currentPage,pageSize);
 
             page = deviceHandler.query8Page(page);
 
@@ -198,15 +206,16 @@ public class DeviceController {
      */
     @RequestMapping("/queryExplorer")
     public String queryExplorer(Long deviceId) {
-        logger.info("start: 执行count所有设备 ");
+        logger.info("start: 查询某一个终端的实时资源消耗 deviceId={}",deviceId);
 
         try{
-            return JSONMessage.createSuccess().addData(deviceHandler.queryCount()).toString();
+            DeviceExplorer deviceExplorer = deviceStatusHandler.getDeviceExplorer(deviceId);
+            return JSONMessage.createSuccess().addData("deviceExplorer" ,deviceExplorer).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行count所有设备 ");
+            logger.info("end: 查询某一个终端的实时资源消耗 ");
         }
     }
 }

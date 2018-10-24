@@ -7,12 +7,13 @@ import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.executer.LocalExecuter;
-import com.minkey.scheduled.SelfCheckJob;
+import com.minkey.handler.SelfCheckJob;
 import com.minkey.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,12 @@ public class SystemController {
 
     @Autowired
     HttpSession session;
+
+
+    @Value("${system.debug}")
+    private boolean isDebug;
+
+
     /**
      * 系统自检
      * @return
@@ -83,7 +90,7 @@ public class SystemController {
      */
     @RequestMapping("/checkInfo")
     public String checkInfo(Long checkId,Integer index) {
-        logger.info("start: 获取当前系统自检信息");
+        logger.info("start: 获取当前系统自检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -111,6 +118,9 @@ public class SystemController {
     public String shutDown(Boolean reboot) {
         logger.info("start: 执行shutDown");
 
+        if(isDebug){
+            return JSONMessage.createSuccess("暂时不给调用，真的会关机的").toString();
+        }
         try{
             if(reboot != null && reboot){
                 //重启
@@ -243,4 +253,11 @@ public class SystemController {
         }
     }
 
+
+    @RequestMapping("/test")
+    public String test(){
+
+        int i = 1/0;
+        return JSONMessage.createSuccess().toString();
+    }
 }

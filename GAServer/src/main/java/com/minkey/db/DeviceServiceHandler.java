@@ -5,6 +5,7 @@ import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
+import com.minkey.dto.SnmpConfigData;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -35,22 +36,23 @@ public class DeviceServiceHandler {
     }
 
     public void insertAll(Device device,List<DeviceService> deviceService) {
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,serviceType,configData) VALUES (?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?)",
                 deviceService,deviceService.size(), new ParameterizedPreparedStatementSetter<DeviceService>() {
                     @Override
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {
                         ps.setLong(1,device.getDeviceId());
-                        ps.setString(2,argument.getServiceName());
-                        ps.setInt(3,argument.getServiceType());
-                        ps.setString(4,argument.configDataStr());
+                        ps.setString(2,device.getIp());
+                        ps.setString(3,argument.getServiceName());
+                        ps.setInt(4,argument.getServiceType());
+                        ps.setString(5,argument.configDataStr());
                     }
                 });
 
     }
 
     public void insert(Device device,DeviceService deviceService) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (deviceId,serviceName,serviceType,configData) VALUES (?,?,?,?)",
-                new Object[]{device.getDeviceId(),deviceService.getServiceName(),deviceService.getServiceType(),deviceService.getConfigData()});
+        int num = jdbcTemplate.update("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?,?)",
+                new Object[]{device.getDeviceId(),deviceService.getServiceName(),device.getIp(),deviceService.getServiceType(),deviceService.getConfigData()});
 
         if(num == 0){
             throw new DataException("新增设备服务失败");
@@ -72,6 +74,12 @@ public class DeviceServiceHandler {
         return deviceServices;
     }
 
+    public List<DeviceService> query8Type(int deviceServiceType) {
+        List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName +" where serviceType=?",
+                new Object[]{deviceServiceType},new DeviceServiceRowMapper());
+        return deviceServices;
+    }
+
     public DeviceService query8Device(long deviceId, int serviceType) {
         List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName +" where deviceId=? AND serviceType=?",
                 new Object[]{deviceId,serviceType},new DeviceServiceRowMapper());
@@ -90,7 +98,8 @@ public class DeviceServiceHandler {
         public DeviceService mapRow(ResultSet rs, int rowNum) throws SQLException {
             DeviceService deviceService =new DeviceService();
             deviceService.setDeviceId(rs.getLong("deviceId"));
-            deviceService.setDeviceId(rs.getLong("serviceId"));
+            deviceService.setIp(rs.getString("ip"));
+            deviceService.setServiceId(rs.getLong("serviceId"));
             deviceService.setServiceName(rs.getString("serviceName"));
             deviceService.setServiceType(rs.getInt("serviceType"));
 
@@ -98,14 +107,13 @@ public class DeviceServiceHandler {
                 case DeviceService.SERVICETYPE_DB :
                     deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),DBConfigData.class));
                     break;
-                case DeviceService.SERVICETYPE_FTP :
-                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));
+                case DeviceService.SERVICETYPE_SNMP :
+                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),SnmpConfigData.class));
                     break;
-                case DeviceService.SERVICETYPE_SSH :
+                default:
                     deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));
                     break;
 
-                default:
             }
 
             return deviceService;

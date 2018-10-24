@@ -19,6 +19,11 @@ public class DeviceService {
     private long deviceId;
 
     /**
+     * 冗余ip，服务的ip就是设备的ip
+     */
+    private String ip;
+
+    /**
      * 服务名称
      */
     private String serviceName;
@@ -28,7 +33,8 @@ public class DeviceService {
      * 1 : 数据库 <br>
      * 2 : ftp <br>
      * 3 : ssh <br>
-     * 4 : 探针 <br>
+     * 4 : 探针Http <br>
+     * 5 : snmp服务
      */
     private int serviceType;
 
@@ -36,11 +42,20 @@ public class DeviceService {
     public static final int SERVICETYPE_FTP = 2;
     public static final int SERVICETYPE_SSH = 3;
     public static final int SERVICETYPE_DETECTOR = 4;
+    public static final int SERVICETYPE_SNMP = 5;
 
     /**
      * 服务配置数据， 根据不同的服务，配置数据不一样， 这里存的是json
      */
     private BaseConfigData configData;
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
     public long getServiceId() {
         return serviceId;

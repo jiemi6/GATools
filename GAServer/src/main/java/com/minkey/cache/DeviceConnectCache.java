@@ -1,30 +1,16 @@
 package com.minkey.cache;
 
-import com.minkey.command.Ping;
-import com.minkey.db.DeviceHandler;
-import com.minkey.db.dao.Device;
-import com.minkey.dto.DeviceExplorer;
-import com.minkey.exception.SystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * 终端缓存
+ * 终端连接状态缓存
  */
-@Component
-public class DeviceCache {
-    private final static Logger logger = LoggerFactory.getLogger(DeviceCache.class);
-
-    @Autowired
-    static DeviceHandler deviceHandler;
+public class DeviceConnectCache {
+    private final static Logger logger = LoggerFactory.getLogger(DeviceConnectCache.class);
 
     /**
      * 正常的
@@ -40,13 +26,6 @@ public class DeviceCache {
      * 认为连接不上的
      */
     private static Set<Long> disabledSet = new HashSet<>();
-
-    /**
-     * 设备硬件资源map
-     * key ：硬件id
-     * value： 资源对象
-     */
-    private static Map<Long,DeviceExplorer> deviceExplorerMap = new HashMap<>();
 
     private static void putOk(Long deviceId){
         okSet.add(deviceId);
@@ -95,32 +74,22 @@ public class DeviceCache {
         }
     }
 
-
-    /**
-     * 批量获取
-     * @param deviceIds 需要获取的硬件id集合
-     * @return 得到的具有数据的结果，map的size小于等于参数ids的size
-     */
-    public static Map<Long,DeviceExplorer> getDeviceExplorerMap(Set<Long> deviceIds){
-        Map<Long,DeviceExplorer> returnMap = new HashMap<>(deviceIds.size());
-        deviceIds.forEach(aLong -> {
-            returnMap.put(aLong, deviceExplorerMap.get(aLong));
-        });
-
-        return returnMap;
+    public Set<Long> getOkSet() {
+        return okSet;
     }
 
     /**
-     * 获取硬件资源，有可能返回空
+     * 是否ok
      * @param deviceId
-     * @return 有可能返回null；
+     * @return
      */
-    public static DeviceExplorer getDeviceExplorer(Long deviceId){
-        return deviceExplorerMap.get(deviceId);
+    public boolean isOk(long deviceId){
+        return okSet.contains(deviceId);
     }
 
-
-    public static void putDeviceExplorer(long deviceId, DeviceExplorer deviceExplorer) {
-        deviceExplorerMap.put(deviceId,deviceExplorer);
+    public void cleanAll() {
+        okSet = new HashSet<>();
+        checkSet = new HashSet<>();
+        disabledSet = new HashSet<>();
     }
 }

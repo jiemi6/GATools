@@ -36,11 +36,11 @@ public class TaskHandler {
         return jdbcTemplate.queryForList("select configKey, configData from "+tableName,Task.class);
     }
 
-    public void repleaceAll(List<Task> tasks) {
+    public void insertAll(List<Task> tasks) {
         if(CollectionUtils.isEmpty(tasks)){
             return;
         }
-        String sql = null;
+        String sql = new String();
         List<String> sqlValues = new ArrayList<>(tasks.size());
         tasks.forEach(task -> {
             sqlValues.add(String.format("(%s,%s,%s)","'"+task.getTaskId()+"'","'"+task.getTaskName()+"'",task.getLinkId()));
@@ -48,10 +48,16 @@ public class TaskHandler {
         });
         sql += StringUtils.join(sqlValues,",");
 
-        int num = jdbcTemplate.update("replace into "+tableName+" (taskId, taskName,linkId) VALUES "+sql);
+        int num = jdbcTemplate.update("insert into "+tableName+" (taskId, taskName,linkId) VALUES "+sql);
 
         if(num == 0){
             throw new DataException("更新失败");
         }
+    }
+
+
+    public void del(Long linkId) {
+        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
+
     }
 }
