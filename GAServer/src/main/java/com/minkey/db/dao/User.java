@@ -15,7 +15,12 @@ public class User {
     private Long uid;
 
     /**
-     * 用户名称
+     * 用户真实姓名
+     */
+    private String name;
+
+    /**
+     * 用户登陆名称
      */
     private String uName;
 
@@ -122,6 +127,14 @@ public class User {
 
     public void setUid(Long uid) {
         this.uid = uid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getuName() {
