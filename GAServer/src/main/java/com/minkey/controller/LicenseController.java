@@ -5,22 +5,21 @@ import com.minkey.contants.ConfigEnum;
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.StringUtil;
+import com.minkey.util.SymmetricEncoder;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import java.util.Map;
 @RequestMapping("/license")
 public class LicenseController {
     private final static Logger logger = LoggerFactory.getLogger(LicenseController.class);
+
 
     @Autowired
     ConfigHandler configHandler;
@@ -45,17 +45,23 @@ public class LicenseController {
      */
     @RequestMapping("/up")
     public String  upFile(@RequestParam("file") MultipartFile file) throws IOException {
-        logger.info("start: 上传证书文件 file: {} ",file.getName());
+        logger.info("start: 上传证书文件 file: {} ",file.getOriginalFilename());
         try{
             String str = IOUtils.toString(file.getInputStream(), "utf-8");
-            logger.debug("license : {}" ,str);
+            if(StringUtils.isEmpty(str)){
+                //返回错误
+                return JSONMessage.createFalied("无效证书文件").toString();
+            }
 
-            Map<String, Object> configData = configHandler.query(configKey);
+            logger.info("license : {}" ,str);
+
+            Map<String, Object> dbData = configHandler.query(configKey);
+            JSONObject configData = JSONObject.parseObject((String) dbData.get("configData"));
             //得到数据库中的licenseKey
-            String licenseKey = (String) configData.get(LICENSEKEY);
+            String licenseKey = configData.getString(LICENSEKEY);
 
             //校验证书与key的关系，用key解密
-            String licenseData = null;
+            String licenseData = SymmetricEncoder.AESDncode(licenseKey,str);
 
             if(StringUtils.isEmpty(licenseData)){
                 //解密失败，返回错误
@@ -63,7 +69,7 @@ public class LicenseController {
             }
 
             //记录到数据库中
-            configData.put("licenseData",licenseData);
+            configData.put("licenseData",JSONObject.parse(licenseData));
             configHandler.insert(configKey, JSONObject.toJSONString(configData));
 
 
@@ -104,23 +110,52 @@ public class LicenseController {
     }
 
     /**
-     * 获取注册码文件
+     * 获取注册码key文件
      * @return
      */
     @RequestMapping("/keyExport")
-    public ResponseEntity<byte[]> keyExport() {
+    public String keyExport( HttpServletRequest request,
+                           HttpServletResponse response) {
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.add("Content-Disposition", "attachment; filename=licenseKey");
-        headers.add("Pragma", "no-cache");
-        headers.add("Expires", "0");
-        headers.add("Last-Modified", new Date().toString());
-        headers.add("ETag", String.valueOf(System.currentTimeMillis()));
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment;fileName=licenseKey");
 
-        String licenseKey = getKey();
+        try {
+            String licenseKey = getKey();
+            response.getWriter().write(licenseKey);
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
-        return new ResponseEntity<>(licenseKey.getBytes(), headers, HttpStatus.CREATED);
+
+    /**
+     * 获取license
+     * @return
+     */
+    @RequestMapping("/licenseExport")
+    public String licenseExport(String licenseKey,HttpServletResponse response) {
+
+        String licenseData = "";
+
+        JSONObject jo = new JSONObject();
+        jo.put("data","ok");
+        if(!StringUtils.isEmpty(licenseKey)){
+            licenseData = SymmetricEncoder.AESEncode(licenseKey,jo.toJSONString());
+        }
+
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment;fileName=licenseData");
+
+        try {
+            response.getWriter().write(licenseData);
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
 
     }
 

@@ -21,7 +21,11 @@ public class CustomMVCConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public HttpMessageConverter<String> responseBodyConverter() {
         StringHttpMessageConverter converter = new StringHttpMessageConverter(Charset.forName("UTF-8"));
-        converter.setSupportedMediaTypes(Arrays.asList(new MediaType("application", "json", Charset.forName("UTF-8"))));
+        converter.setSupportedMediaTypes(Arrays.asList(new MediaType("application", "json", Charset.forName("UTF-8"))
+//                ,MediaType.valueOf(MediaType.MULTIPART_FORM_DATA_VALUE)
+//                ,MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+        ));
+//        converter.setSupportedMediaTypes(Arrays.asList(MediaType.ALL));
         converter.setWriteAcceptCharset(false);
         return converter;
     }
