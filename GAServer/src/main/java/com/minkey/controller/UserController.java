@@ -42,13 +42,16 @@ public class UserController {
     @Autowired
     UserLogHandler userLogHandler;
 
+    @Autowired
+    HttpSession session;
+
 
     /**
      * 获取验证码
      * @return
      */
     @RequestMapping("/getVCode")
-    public String getVCode(HttpSession session,HttpServletResponse resp) {
+    public String getVCode(HttpServletResponse resp) {
         char[] vcode = VCodeUtil.getCode(VCodeUtil.VCODE_NUM);
 
         // 禁止图像缓存。
@@ -78,7 +81,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/checkVCode")
-    public String checkVCode(HttpSession session,String vcode) {
+    public String checkVCode(String vcode) {
         logger.info("start: 执行验证码检查");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
@@ -99,7 +102,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/login")
-    public String login(HttpSession session, HttpServletRequest request, String uName, String pwd, String vcode) {
+    public String login( HttpServletRequest request, String uName, String pwd, String vcode) {
         logger.info("start: 执行用户登陆");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
@@ -137,14 +140,14 @@ public class UserController {
             user.setLoginIp(loginIp);
 
             //判断登陆时间
-            if(user.getLoginTimeStart() == 0 && user.getLoginTimeEnd() ==0){
+            if(StringUtils.isEmpty(user.getLoginTimeStart()) && StringUtils.isEmpty(user.getLoginTimeEnd())){
                 //不限制
             }else {
                 SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");
                 try {
                     Date now = sf.parse(sf.format(new Date()));
-                    Date beginTime = sf.parse(DateUtil.dateFormatStr(new Date(user.getLoginTimeStart()),DateUtil.format_time));
-                    Date endTime = sf.parse(DateUtil.dateFormatStr(new Date(user.getLoginTimeEnd()),DateUtil.format_time));
+                    Date beginTime = sf.parse(user.getLoginTimeStart());
+                    Date endTime = sf.parse(user.getLoginTimeEnd());
                     Boolean flag = DateUtil.belongCalendar(now, beginTime, endTime);
                     if(!flag){
                         return JSONMessage.createFalied("非安全时间段内不允许登陆").toString();
@@ -177,7 +180,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/logout")
-    public String logout(HttpSession session) {
+    public String logout() {
         logger.info("start: 执行用户登出");
         try{
             User user = (User) session.getAttribute("user");
@@ -201,7 +204,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/insert")
-    public String insert(HttpSession session,User user) {
+    public String insert(User user) {
         logger.info("start: 执行添加用户");
         if(user == null){
             return JSONMessage.createFalied("参数错误").toString();
@@ -224,10 +227,15 @@ public class UserController {
             //密码加密
             user.setPwd(StringUtil.md5(user.getPwd()));
 
+            User sessionUser = (User)session.getAttribute("user");
+
             //设置创建人
-            user.setCreateUid(((User)session.getAttribute("user")).getUid());
+            user.setCreateUid(sessionUser.getUid());
 
             userHandler.insert(user);
+
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("用户%s新增用户%s成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -252,6 +260,11 @@ public class UserController {
         try{
             userHandler.del(uid);
 
+            User sessionUser = (User)session.getAttribute("user");
+
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("用户%s删除用户uid = %s成功",sessionUser.getuName(),uid));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -262,7 +275,7 @@ public class UserController {
     }
 
     /**
-     * 删除用户
+     * 查询用户
      * @return
      */
     @RequestMapping("/query")
@@ -301,6 +314,10 @@ public class UserController {
             String defaultPwd = StringUtil.md5("123456");
             userHandler.resetPwd(uid,defaultPwd);
 
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s重置用户密码 uid = %s 成功",sessionUser.getuName(),uid));
+
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -324,6 +341,10 @@ public class UserController {
 
         try{
             userHandler.cleanWrongPwdTime(uid);
+
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s解锁用户 uid = %s 成功",sessionUser.getuName(),uid));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -352,6 +373,10 @@ public class UserController {
 
         try{
             userHandler.update(user);
+
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s修改用户%s信息成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

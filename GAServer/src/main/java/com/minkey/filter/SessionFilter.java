@@ -41,7 +41,8 @@ public class SessionFilter implements Filter {
         if(isDebug){
             User user = new User();
             user.setUid(1l);
-            user.setuName("Filter_test");
+            user.setuName("Debug用户");
+            user.setLoginIp("127.127.127.127");
             request.getSession().setAttribute("user",user);
             filterChain.doFilter(servletRequest, servletResponse);
             return;

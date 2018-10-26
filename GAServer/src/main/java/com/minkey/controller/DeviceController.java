@@ -44,6 +44,9 @@ public class DeviceController {
         if(StringUtils.isEmpty(device.getDeviceName())){
             return JSONMessage.createFalied("name不能为空格式错误").toString();
         }
+        if(StringUtils.isEmpty(device.getIcon())){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
 
         if(device.getDeviceType() != DeviceType.floder && StringUtils.isNotEmpty(device.getIp())){
             if(!StringUtil.isIp(device.getIp())){

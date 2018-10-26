@@ -41,13 +41,13 @@ public class UserHandler {
 
     public void update(User user) {
         Long uid = user.getUid();
-        String uName = user.getuName();
+        String name = user.getuName();
         Integer auth = user.getAuth();
 
 
         StringBuffer sb = new StringBuffer("update "+tableName+" SET " );
-        if(StringUtils.isNotEmpty(uName)){
-            sb.append(" uName = '"+uName+"'").append(",");
+        if(StringUtils.isNotEmpty(name)){
+            sb.append(" name = '"+ name+"'").append(",");
         }
         if(StringUtils.isNotEmpty(user.getPhone())){
             sb.append(" phone = '"+user.getPhone()+"'").append(",");
@@ -56,11 +56,11 @@ public class UserHandler {
             sb.append(" email = '"+user.getEmail()+"'").append(",");
         }
 
-        if(user.getLoginTimeStart() != 0){
-            sb.append(" loginTimeStart = "+user.getLoginTimeStart()).append(",");
+        if(StringUtils.isNotEmpty(user.getLoginTimeStart())){
+            sb.append(" loginTimeStart = '"+user.getLoginTimeStart()+"'").append(",");
         }
-        if(user.getLoginTimeEnd() != 0){
-            sb.append(" loginTimeEnd = "+user.getLoginTimeEnd()).append(",");
+        if(StringUtils.isNotEmpty(user.getLoginTimeEnd())){
+            sb.append(" loginTimeEnd = '"+user.getLoginTimeEnd()+"'").append(",");
         }
 
         if(StringUtils.isNotEmpty(user.getLoginIpStart())){

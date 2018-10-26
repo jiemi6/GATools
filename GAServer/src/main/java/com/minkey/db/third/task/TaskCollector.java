@@ -1,9 +1,13 @@
 package com.minkey.db.third.task;
 
 import com.minkey.db.LinkHandler;
+import com.minkey.db.SourceHandler;
 import com.minkey.db.TaskHandler;
+import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.Link;
+import com.minkey.db.dao.Source;
 import com.minkey.db.dao.Task;
+import com.minkey.db.dao.TaskSource;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
 import org.slf4j.Logger;
@@ -16,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +37,11 @@ public class TaskCollector {
     @Autowired
     TaskHandler taskHandler;
 
+    @Autowired
+    TaskSourceHandler taskSourceHandler;
+
+    @Autowired
+    SourceHandler sourceHandler;
 
     @Autowired
     LinkHandler linkHandler;
@@ -64,97 +74,144 @@ public class TaskCollector {
             return;
         }
 
-        linkList.forEach(link -> {
-            List<Task> tasks = null;
+        for(Link link: linkList){
+            JdbcTemplate jdbcTemplate;
             try {
                 //从链路中获取数据交换系统的数据库配置
                 DBConfigData dbConfig = link.getDbConfigData();
-
-                tasks = queryAllTask(dbConfig,link);
-
-            }catch (Exception e){
-                logger.error("从交换系统抓起任务列表异常",e);
+                //先从缓存中获取
+                jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
+            } catch (Exception e) {
+                logger.error("从交换系统抓起任务列表异常", e);
+                continue;
             }
 
-            if(!CollectionUtils.isEmpty(tasks)){
-                try {
-                    taskHandler.del(link.getLinkId());
-                    //把链路存到数据库中。
-                    taskHandler.insertAll(tasks);
-                }catch (Exception e){
-                    logger.error("把抓取过来的任务保存到数据库中异常",e);
-                }
+            try {
+                //获取task
+                collectorTask(jdbcTemplate, link);
+            } catch (Exception e) {
+                logger.error("把抓取过来的任务保存到数据库中异常", e);
             }
-        });
+            try {
+                //获取taskSource
+                collectorTaskSource(jdbcTemplate, link);
+            } catch (Exception e) {
+                logger.error("把抓取过来的任务保存到数据库中异常", e);
+            }
+            try {
+                //获取Source
+                collectorSource(jdbcTemplate, link);
+            } catch (Exception e) {
+                logger.error("把抓取过来的任务保存到数据库中异常", e);
+            }
+        }
     }
 
     /**
-     * 从数据交换系统获取任务列表
-     * @param dbConfig
+     * 迁移tbtask所有数据到自己的 t_task表中
+     * @param jdbcTemplate
      * @param link
-     * @return
      */
-    private List<Task> queryAllTask(DBConfigData dbConfig, Link link){
-        //先从缓存中获取
-        JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
-
+    private void collectorTask(JdbcTemplate jdbcTemplate, Link link){
         //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name from tbtask");
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name from tbtask WHERE status <> '-100'");
 
         if(CollectionUtils.isEmpty(mapList)){
-            return null;
+            taskHandler.del(link.getLinkId());
+            return;
         }
 
         List<Task> tasks = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
             Task task = new Task();
-            task.setTaskId((String)stringObjectMap.get("taskId"));
+            task.setTargetId((String)stringObjectMap.get("taskId"));
             task.setTaskName((String) stringObjectMap.get("name"));
+            task.setLinkId(link.getLinkId());
+            task.setStatus(Integer.valueOf((String)stringObjectMap.get("status")));
+            tasks.add(task);
+        });
+
+        taskHandler.del(link.getLinkId());
+        if(!CollectionUtils.isEmpty(tasks)){
+            //把链路存到数据库中。
+            taskHandler.insertAll(tasks);
+        }
+
+    }
+
+    /**
+     * 迁移tbtaskdbsource所有数据到自己的 t_tasksource表中
+     * @param jdbcTemplate
+     * @param link
+     *
+     * `taskdbsourceid`  varchar(18) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
+    `taskid`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务ID' ,
+    `createdatetime`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间' ,
+    `sresourcesid`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '源id' ,
+    `tresourcesid`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '目的ID' ,
+     */
+    private void collectorTaskSource(JdbcTemplate jdbcTemplate, Link link){
+        //查询所有taskSource
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbtaskdbsource");
+
+        if(CollectionUtils.isEmpty(mapList)){
+            taskHandler.del(link.getLinkId());
+            return;
+        }
+
+        List<TaskSource> tasks = new ArrayList<>(mapList.size());
+
+        mapList.forEach(stringObjectMap -> {
+            TaskSource task = new TaskSource();
+            task.setTaskId((String)stringObjectMap.get("taskid"));
+            task.setTargetId((String) stringObjectMap.get("taskdbsourceid"));
+            task.setCreateTime((Date)stringObjectMap.get("createdatetime"));
+            task.setFromResourceId((String) stringObjectMap.get("sresourcesid"));
+            task.setToResourceId((String)stringObjectMap.get("tresourcesid"));
             task.setLinkId(link.getLinkId());
             tasks.add(task);
         });
-        return tasks;
+
+        taskSourceHandler.del(link.getLinkId());
+        if(!CollectionUtils.isEmpty(tasks)){
+            //把链路存到数据库中。
+            taskSourceHandler.insertAll(tasks);
+        }
+
     }
 
+    private void collectorSource(JdbcTemplate jdbcTemplate, Link link){
+        //查询所有source
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbresources");
 
-    /**
-     * 要访问的表的建表语句
-     * CREATE TABLE `tbtask` (
-     *   `taskid` varchar(15) NOT NULL COMMENT 'ID',
-     *   `bussid` varchar(15) DEFAULT NULL,
-     *   `name` varchar(30) NOT NULL COMMENT '任务名称',
-     *   `synchronouscycle` varchar(20) DEFAULT NULL,
-     *   `transfers` varchar(20) DEFAULT NULL COMMENT '同步条数',
-     *   `timecontrol` varchar(1) DEFAULT NULL,
-     *   `issavesourdata` varchar(5) NOT NULL COMMENT '源端数据保留，0为否1为是',
-     *   `isvirusscan` varchar(1) DEFAULT NULL COMMENT '是否杀毒：0为否1为是；',
-     *   `fileuplimit` int(11) DEFAULT NULL COMMENT '带宽分配',
-     *   `lastupdatetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     *   `suffixcheck` varchar(200) DEFAULT NULL,
-     *   `is2way` varchar(2) DEFAULT NULL,
-     *   `status` varchar(5) DEFAULT NULL COMMENT '-100表示已删除，0表示新增,(2,-3,3)停止,(22,23,26)启动中，(1,4,13,25,28,29)运行，(24,27)停止中，其他表示异常',
-     *   `createdatetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-     *   `istaskhighconf` varchar(2) DEFAULT NULL,
-     *   `priority` varchar(5) DEFAULT NULL,
-     *   `stardatetime` datetime DEFAULT NULL,
-     *   `enddatetime` datetime DEFAULT NULL,
-     *   `flux` int(11) DEFAULT NULL,
-     *   `runcount` int(11) DEFAULT NULL,
-     *   `tbmguserid` varchar(15) DEFAULT NULL COMMENT '负载均衡类型为1时，负载状态下节点异常是否允许切换，y允许，n不允许',
-     *   `tbtasktypeid` varchar(2) DEFAULT NULL COMMENT '任务类型',
-     *   `tbtaskgroupid` varchar(15) DEFAULT '1',
-     *   `tbdirectionid` varchar(2) DEFAULT NULL COMMENT '方向',
-     *   `tbactionid` varchar(2) DEFAULT NULL COMMENT '采集类型',
-     *   `exceptionnum` int(11) DEFAULT NULL COMMENT '异常连接次数',
-     *   `exceptiontime` int(11) DEFAULT NULL COMMENT '异常时间',
-     *   `triggertype` varchar(6) DEFAULT NULL COMMENT '触发类型',
-     *   `pkimpact` varchar(1) DEFAULT NULL COMMENT '主键冲突策略',
-     *   `no_traffic_alarm` varchar(10) DEFAULT NULL,
-     *   `runtime_memory` varchar(10) DEFAULT NULL,
-     *   `bakfilepath` varchar(100) DEFAULT NULL,
-     *   PRIMARY KEY (`taskid`)
-     * ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-     */
+        if(CollectionUtils.isEmpty(mapList)){
+            taskHandler.del(link.getLinkId());
+            return;
+        }
 
+        List<Source> sources = new ArrayList<>(mapList.size());
+
+        mapList.forEach(stringObjectMap -> {
+            Source task = new Source();
+            task.setTargetId((String) stringObjectMap.get("resourcesid"));
+            task.setSname((String)stringObjectMap.get("name"));
+            task.setIp((String) stringObjectMap.get("ip"));
+            task.setPort((Integer)stringObjectMap.get("port"));
+            task.setDbName((String) stringObjectMap.get("dbname"));
+            task.setName((String) stringObjectMap.get("username"));
+            task.setPwd((String) stringObjectMap.get("password"));
+            task.setSourceType((Integer)stringObjectMap.get("tbtypeid"));
+            task.setCreateTime((Date)stringObjectMap.get("createdate"));
+            task.setLinkId(link.getLinkId());
+            sources.add(task);
+        });
+
+        sourceHandler.del(link.getLinkId());
+        if(!CollectionUtils.isEmpty(sources)){
+            //把链路存到数据库中。
+            sourceHandler.insertAll(sources);
+        }
+
+    }
 }

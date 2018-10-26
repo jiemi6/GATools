@@ -4,12 +4,16 @@ package com.minkey.db.dao;
  * 任务对象，数据来自别的数据库
  */
 public class Task {
+    /**
+     * 自增主键
+     */
+    private long id;
 
     /**
      *
      * 任务id，来自不同数据库，可能重复，不能做主键
      */
-    private String taskId;
+    private String targetId;
 
     /**
      * 链路id
@@ -21,19 +25,17 @@ public class Task {
      */
     private String taskName;
 
-
     /**
-     * 从数据交换系统获取的数据本身
+     * -100表示已删除，0表示新增,(2,-3,3)停止,(22,23,26)启动中，(1,4,13,25,28,29)运行，(24,27)停止中，其他表示异常
      */
-    private String data;
+    private int status;
 
-
-    public String getTaskId() {
-        return taskId;
+    public String getTargetId() {
+        return targetId;
     }
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
+    public void setTargetId(String targetId) {
+        this.targetId = targetId;
     }
 
     public long getLinkId() {
@@ -52,11 +54,19 @@ public class Task {
         this.taskName = taskName;
     }
 
-    public String getData() {
-        return data;
+    public long getId() {
+        return id;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

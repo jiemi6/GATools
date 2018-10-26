@@ -2,7 +2,6 @@ package com.minkey.controller;
 
 import com.minkey.db.CheckHandler;
 import com.minkey.db.SyslogHandler;
-import com.minkey.db.TaskLogHandler;
 import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.Check;
 import com.minkey.db.dao.Syslog;
@@ -28,9 +27,6 @@ public class LogController {
     UserLogHandler userLogHandler;
 
     @Autowired
-    TaskLogHandler taskLogHandler;
-
-    @Autowired
     SyslogHandler syslogHandler;
 
     @Autowired
@@ -49,7 +45,7 @@ public class LogController {
         try{
             Page<TaskLog> page = new Page(currentPage,pageSize);
 
-            Page<TaskLog> logs = taskLogHandler.query8page(page);
+            Page<TaskLog> logs = null;
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);

@@ -20,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,7 +46,9 @@ public class LicenseController {
     public String  upFile(@RequestParam("file") MultipartFile file) throws IOException {
         logger.info("start: 上传证书文件 file: {} ",file.getOriginalFilename());
         try{
+            file.getBytes();
             String str = IOUtils.toString(file.getInputStream(), "utf-8");
+            str.getBytes();
             if(StringUtils.isEmpty(str)){
                 //返回错误
                 return JSONMessage.createFalied("无效证书文件").toString();
@@ -56,12 +57,17 @@ public class LicenseController {
             logger.info("license : {}" ,str);
 
             Map<String, Object> dbData = configHandler.query(configKey);
+
+            if(MapUtils.isEmpty(dbData)){
+                return JSONMessage.createFalied("请先生成licenseKey").toString();
+            }
+
             JSONObject configData = JSONObject.parseObject((String) dbData.get("configData"));
             //得到数据库中的licenseKey
             String licenseKey = configData.getString(LICENSEKEY);
 
             //校验证书与key的关系，用key解密
-            String licenseData = SymmetricEncoder.AESDncode(licenseKey,str);
+            byte[] licenseData = SymmetricEncoder.AESDncode(licenseKey.getBytes(), file.getBytes());
 
             if(StringUtils.isEmpty(licenseData)){
                 //解密失败，返回错误
@@ -69,7 +75,7 @@ public class LicenseController {
             }
 
             //记录到数据库中
-            configData.put("licenseData",JSONObject.parse(licenseData));
+            configData.put("licenseData",JSONObject.parse(new String(licenseData,"utf-8")));
             configHandler.insert(configKey, JSONObject.toJSONString(configData));
 
 
@@ -96,16 +102,25 @@ public class LicenseController {
 
     private String getKey(){
         String licenseKey = null;
-        Map<String, Object> configData = configHandler.query(configKey);
-        if(MapUtils.isNotEmpty(configData) && configData.get(LICENSEKEY) != null){
-            licenseKey = configData.get(LICENSEKEY).toString();
+        Map<String, Object> dbData = configHandler.query(configKey);
+        JSONObject configData;
+        if(MapUtils.isEmpty(dbData)){
+            configData = new JSONObject();
+        }else{
+
+            configData = JSONObject.parseObject((String) dbData.get("configData"));
+        }
+
+
+        if(configData.getString(LICENSEKEY) != null){
+            licenseKey = configData.getString(LICENSEKEY);
         }else{
             //生成一个key
             licenseKey = StringUtil.md5(Math.random()+"");
-            configData = new HashMap<>(1);
             configData.put(LICENSEKEY,licenseKey);
-            configHandler.insert(configKey, JSONObject.toJSONString(configData));
+            configHandler.insert(configKey, configData.toJSONString());
         }
+
         return licenseKey;
     }
 
@@ -137,13 +152,17 @@ public class LicenseController {
      */
     @RequestMapping("/licenseExport")
     public String licenseExport(String licenseKey,HttpServletResponse response) {
-
-        String licenseData = "";
+        logger.info("start: 根据key={}获取licenseData ",licenseKey);
+        if(StringUtils.isEmpty(licenseKey)){
+            //返回错误
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+        byte[] licenseData = null;
 
         JSONObject jo = new JSONObject();
         jo.put("data","ok");
         if(!StringUtils.isEmpty(licenseKey)){
-            licenseData = SymmetricEncoder.AESEncode(licenseKey,jo.toJSONString());
+            licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
         }
 
         response.setCharacterEncoding("utf-8");
@@ -151,7 +170,7 @@ public class LicenseController {
         response.setHeader("Content-Disposition", "attachment;fileName=licenseData");
 
         try {
-            response.getWriter().write(licenseData);
+            response.getOutputStream().write(licenseData);
             return null;
         } catch (IOException e) {
             return null;

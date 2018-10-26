@@ -17,10 +17,10 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @Component
-public class TaskLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskLogHandler.class);
+public class TaskDataLogHandler {
+    private final static Logger logger = LoggerFactory.getLogger(TaskDataLogHandler.class);
 
-    private final String tableName = "t_taskLog";
+    private final String tableName = "t_taskDataLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -38,13 +38,13 @@ public class TaskLogHandler {
         return count;
     }
 
-    public Page<TaskLog> query8page(Long linkId, Page<TaskLog> page) {
-        List<TaskLog> devices = jdbcTemplate.query("select * from "+tableName +" where linkId= ? ORDER BY logId desc limit ?,?",
-                new Object[]{linkId,page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskLog.class));
+    public Page<TaskLog> query8page(Page<TaskLog> page) {
+        List<TaskLog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY logId desc limit ?,?",
+                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskLog.class));
 
         page.setData(devices);
 
-        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName+" where linkId= ?  ",new Object[]{linkId},Integer.class);
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Integer.class);
         page.setTotal(total);
 
         return page;
@@ -73,12 +73,4 @@ public class TaskLogHandler {
     }
 
 
-    public TaskLog querySum(long linkId) {
-        List<TaskLog>  taskLogList = jdbcTemplate.query("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+" where linkId= ?",new Object[]{linkId}, new BeanPropertyRowMapper<>(TaskLog.class));
-        if(CollectionUtils.isEmpty(taskLogList)){
-            return null;
-        }
-        return taskLogList.get(0);
-
-    }
 }

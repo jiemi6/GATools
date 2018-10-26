@@ -1,7 +1,7 @@
 package com.minkey.db.third.task;
 
 import com.minkey.db.LinkHandler;
-import com.minkey.db.TaskLogHandler;
+import com.minkey.db.TaskDataLogHandler;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.DBConfigData;
@@ -21,17 +21,17 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 从数据交换系统，采集task执行日志信息
+ * 从数据交换系统，采集任务执行日志
  * <br><br/>
  * 每个小时获取一次
  */
 
 @Component
-public class TaskDayLogCollector {
-    private final static Logger logger = LoggerFactory.getLogger(TaskDayLogCollector.class);
+public class TaskDataLogCollector {
+    private final static Logger logger = LoggerFactory.getLogger(TaskDataLogCollector.class);
 
     @Autowired
-    TaskLogHandler taskLogHandler;
+    TaskDataLogHandler taskDataHandler;
 
 
     @Autowired
@@ -71,7 +71,7 @@ public class TaskDayLogCollector {
                 //从链路中获取数据交换系统的数据库配置
                 DBConfigData dbConfig = link.getDbConfigData();
 
-                long maxLoggerId = taskLogHandler.queryMaxId(link.getLinkId());
+                long maxLoggerId = taskDataHandler.queryMaxId(link.getLinkId());
 
                 tasks = queryAllTaskLog(dbConfig,link,maxLoggerId);
 
@@ -82,7 +82,7 @@ public class TaskDayLogCollector {
             if(!CollectionUtils.isEmpty(tasks)){
                 try {
                     //把链路存到数据库中。
-                    taskLogHandler.insertAll(tasks);
+                    taskDataHandler.insertAll(tasks);
                 }catch (Exception e){
                     logger.error("把抓取过来的任务执行日志保存到数据库中异常",e);
                 }
@@ -129,23 +129,43 @@ public class TaskDayLogCollector {
 
     /**
      * 要访问的表的建表语句
-     CREATE TABLE `tbdaylogger` (
-     `dayloggerid`  int(11) NOT NULL AUTO_INCREMENT ,
-     `taskid`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL ,
-     `totalSuccessNum`  bigint(100) NOT NULL ,
-     `totalSuccessFlow`  bigint(100) NOT NULL ,
-     `totalErrorFlow`  bigint(100) NOT NULL ,
-     `totalErrorNum`  bigint(100) NOT NULL ,
-     `insertTimes`  timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ,
-     `tname`  varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '表名称' ,
-     `isDelete`  varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
-     PRIMARY KEY (`dayloggerid`)
+     CREATE TABLE `tbdatalogger` (
+     `dataloggerid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' ,
+     `level`  varchar(15) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `datetime`  timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+     `uname`  varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `module`  varchar(150) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `program`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+     `ttaskid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `sourceresourceid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `subsourcetb`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+     `targetsourceid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `subtargettb`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+     `status`  varchar(6) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `datanum`  double NULL DEFAULT NULL ,
+     `descr`  text CHARACTER SET utf8 COLLATE utf8_general_ci NULL ,
+     `opertime`  timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ,
+     `alarmdisposeid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `tberrordictid`  varchar(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `datasize`  double NULL DEFAULT NULL ,
+     `sfile`  varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     `tfile`  varchar(765) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL ,
+     PRIMARY KEY (`dataloggerid`),
+     UNIQUE INDEX `dataloggerid` (`dataloggerid`) USING BTREE ,
+     INDEX `IDX_LEVEL` (`level`) USING BTREE ,
+     INDEX `IDX_DATETIME` (`datetime`) USING BTREE ,
+     INDEX `IDX_TASKID` (`ttaskid`) USING BTREE ,
+     INDEX `IDX_DATANUM` (`datanum`) USING BTREE ,
+     INDEX `IDX_DATASIZE` (`datasize`) USING BTREE ,
+     INDEX `IDX_SSOURCE` (`sourceresourceid`) USING BTREE ,
+     INDEX `IDX_TSOURCE` (`targetsourceid`) USING BTREE
      )
      ENGINE=InnoDB
      DEFAULT CHARACTER SET=utf8 COLLATE=utf8_general_ci
-     AUTO_INCREMENT=5
      ROW_FORMAT=DYNAMIC
      ;
      */
+
+
 
 }

@@ -35,16 +35,18 @@ public class Device {
     /**
      * 所属区域
      *
-     *             <option value="路由接入区">路由接入区</option>
-     *             <option selected="" value=" 边界保护区">&nbsp;边界保护区</option>
-     *             <option value="应用服务器">应用服务器</option>
-     *             <option value="安全隔离区">安全隔离区</option>
-     *             <option value="安全检测与管理区">安全检测与管理区</option>
+    *  1 = 路由接入区
+    *  2 = 边界保护区
+    *  3 = 应用服务器
+    *  4 = 安全隔离区
+    *  5 = 安全检测与管理区
      */
     private int area;
 
     /**
-     * 网络区域： 内网/外网
+     * 网络区域：
+     * 1 内网
+     * 2外网
      */
     private int netArea;
 

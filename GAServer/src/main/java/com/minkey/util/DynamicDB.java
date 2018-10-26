@@ -80,7 +80,7 @@ public class DynamicDB {
         JdbcTemplate jdbcTemplate = get(dbConfig.getIp(), dbConfig.getPort(), dbConfig.getName());
         //没有就新建
         if (jdbcTemplate == null) {
-            String url = "jdbc:mysql://" + dbConfig.getIp() + ":" + dbConfig.getPort() + "/" + dbConfig.getDbName() + "?useUnicode=true&characterEncoding=utf-8";
+            String url = "jdbc:mysql://" + dbConfig.getIp() + ":" + dbConfig.getPort() + "/" + dbConfig.getDbName() + "?useUnicode=true&characterEncoding=utf-8&autoReconnect=true";
             jdbcTemplate = getJdbcTemplate(url, dbConfig.getDatabaseDriver(), dbConfig.getName(), dbConfig.getPwd());
             //放回缓存
             putIn(dbConfig.getIp(), dbConfig.getPort(), dbConfig.getName(), jdbcTemplate);

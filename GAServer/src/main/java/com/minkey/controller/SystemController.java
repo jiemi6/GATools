@@ -119,7 +119,7 @@ public class SystemController {
         logger.info("start: 执行shutDown");
 
         if(isDebug){
-            return JSONMessage.createSuccess("暂时不给调用，真的会关机的").toString();
+            return JSONMessage.createSuccess("暂时不真正执行，真的会关机的").toString();
         }
         try{
             if(reboot != null && reboot){
@@ -222,7 +222,7 @@ public class SystemController {
      */
     @RequestMapping("/netWorkSet")
     public String netWorkSet(String localIp,String subnetMask,String gateway,String dns,String dnsBak) {
-        logger.info("start: 执行系统注册信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
+        logger.info("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
         if(StringUtils.isEmpty(localIp)
                 ||StringUtils.isEmpty(subnetMask)
                 ||StringUtils.isEmpty(gateway)
@@ -236,6 +236,9 @@ public class SystemController {
             return JSONMessage.createFalied("参数格式错误").toString();
         }
 
+        if(isDebug){
+            return JSONMessage.createSuccess("暂时不真正执行，返回成功").toString();
+        }
 
         try{
             //调用命令设置,本会话内有效

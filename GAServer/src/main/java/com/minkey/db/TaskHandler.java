@@ -1,16 +1,16 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.Task;
-import com.minkey.exception.DataException;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 @Component
@@ -40,19 +40,19 @@ public class TaskHandler {
         if(CollectionUtils.isEmpty(tasks)){
             return;
         }
-        String sql = new String();
-        List<String> sqlValues = new ArrayList<>(tasks.size());
-        tasks.forEach(task -> {
-            sqlValues.add(String.format("(%s,%s,%s)","'"+task.getTaskId()+"'","'"+task.getTaskName()+"'",task.getLinkId()));
 
-        });
-        sql += StringUtils.join(sqlValues,",");
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId, taskName,linkId,status) VALUES (?,?,?,?)",
+                tasks,tasks.size(),
+                new ParameterizedPreparedStatementSetter<Task>() {
+                    @Override
+                    public void setValues(PreparedStatement ps, Task argument) throws SQLException {
+                        ps.setString(1,argument.getTargetId());
+                        ps.setString(2,argument.getTaskName());
+                        ps.setLong(3,argument.getLinkId());
+                        ps.setInt(4,argument.getStatus());
+                    }
+                });
 
-        int num = jdbcTemplate.update("insert into "+tableName+" (taskId, taskName,linkId) VALUES "+sql);
-
-        if(num == 0){
-            throw new DataException("更新失败");
-        }
     }
 
 

@@ -116,11 +116,11 @@ public class User {
     /**
      * 登陆时间控制，开始段，只取时分秒，0代表不控制
      */
-    private long loginTimeStart;
+    private String loginTimeStart;
     /**
      * 登陆时间控制，结束段，只取时分秒
      */
-    private long loginTimeEnd;
+    private String loginTimeEnd;
     public Long getUid() {
         return uid;
     }
@@ -241,19 +241,19 @@ public class User {
         this.loginIpEnd = loginIpEnd;
     }
 
-    public long getLoginTimeStart() {
+    public String getLoginTimeStart() {
         return loginTimeStart;
     }
 
-    public void setLoginTimeStart(long loginTimeStart) {
+    public void setLoginTimeStart(String loginTimeStart) {
         this.loginTimeStart = loginTimeStart;
     }
 
-    public long getLoginTimeEnd() {
+    public String getLoginTimeEnd() {
         return loginTimeEnd;
     }
 
-    public void setLoginTimeEnd(long loginTimeEnd) {
+    public void setLoginTimeEnd(String loginTimeEnd) {
         this.loginTimeEnd = loginTimeEnd;
     }
 }
