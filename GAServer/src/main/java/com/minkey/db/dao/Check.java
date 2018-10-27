@@ -22,7 +22,7 @@ public class Check {
     /**
      * 系统一键自检
      */
-    public final static int CHECKTYPE_ALL = 1;
+    public final static int CHECKTYPE_ALLINONE = 1;
     /**
      * 设备体检
      */

@@ -2,6 +2,7 @@ package com.minkey.db;
 
 import com.minkey.db.dao.Check;
 import com.minkey.dto.Page;
+import com.minkey.exception.SystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CheckHandler {
     }
 
 
-    public long insert(Check check) throws SQLException {
+    public long insert(Check check){
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -60,7 +61,7 @@ public class CheckHandler {
 
             return id;
         }catch (Exception e){
-            throw e;
+            throw new SystemException(e);
         }finally {
             JdbcUtils.closeStatement(ps);
             JdbcUtils.closeResultSet(rs);

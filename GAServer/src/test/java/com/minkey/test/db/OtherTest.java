@@ -1,24 +1,25 @@
 package com.minkey.test.db;
 
 import com.minkey.MainRun;
-import org.apache.commons.lang3.StringUtils;
+import com.minkey.db.third.task.TaskCollector;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = MainRun.class)
 public class OtherTest{
     private final static Logger logger = LoggerFactory.getLogger(MainRun.class);
 
-
-    public static void main(String[] args) {
-
-        logger.error(String.format("sdff %sds%s","'xxx'",2));
-
-        String[] sd = new String[3];
-        sd[0] = "dddd";
-        sd[1] = "dddd";
-        sd[2] = "dddd";
-
-        logger.error(StringUtils.join(sd,","));
+    @Autowired
+    TaskCollector taskCollector;
+    @Test
+    public void test() {
+        taskCollector.getTaskFromOtherDB();
 
 
     }

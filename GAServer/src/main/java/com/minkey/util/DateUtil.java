@@ -28,13 +28,17 @@ public class DateUtil {
 
     /**
      * 字符串日期转为Date
-     * @param ld
+     * @param dateStr
      * @throws ParseException
      */
-    public static Date strFormatDate(String ld,String formatStr) throws ParseException {
+    public static Date strFormatDate(String dateStr,String formatStr) {
         DateFormat format = new SimpleDateFormat(formatStr);
-        Date lendDate = format.parse(ld);
-//		System.out.println(lendDate);
+        Date lendDate = null;
+        try {
+            lendDate = format.parse(dateStr);
+        } catch (ParseException e) {
+            return null;
+        }
         return lendDate;
     }
 

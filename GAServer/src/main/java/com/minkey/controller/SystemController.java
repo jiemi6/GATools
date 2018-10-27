@@ -257,10 +257,5 @@ public class SystemController {
     }
 
 
-    @RequestMapping("/test")
-    public String test(){
 
-        int i = 1/0;
-        return JSONMessage.createSuccess().toString();
-    }
 }
