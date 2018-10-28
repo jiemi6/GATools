@@ -20,6 +20,10 @@ public class Syslog {
      * 日志内容
      */
     private String msg;
+    /**
+     * 设备
+     */
+    private int facility;
 
     public void setHost(String host) {
         this.host = host;
@@ -51,5 +55,13 @@ public class Syslog {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public void setFacility(int facility) {
+        this.facility = facility;
+    }
+
+    public int getFacility() {
+        return facility;
     }
 }

@@ -57,15 +57,16 @@ public class SyslogHandler {
         if(CollectionUtils.isEmpty(taskLogs)){
             return;
         }
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (host,level,msg,createTime) VALUES (?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (host,level,facility,msg,createTime) VALUES (?,?,?,?,?)",
                 taskLogs,taskLogs.size(),
                 new ParameterizedPreparedStatementSetter<Syslog>() {
                     @Override
                     public void setValues(PreparedStatement ps, Syslog argument) throws SQLException {
                         ps.setString(1,argument.getHost());
                         ps.setInt(2,argument.getLevel());
-                        ps.setString(3,argument.getMsg());
-                        ps.setTimestamp(4,new Timestamp(argument.getCreateTime().getTime()));
+                        ps.setInt(3,argument.getFacility());
+                        ps.setString(4,argument.getMsg());
+                        ps.setTimestamp(5,new Timestamp(argument.getCreateTime().getTime()));
                     }
                 });
     }

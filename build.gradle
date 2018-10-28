@@ -36,13 +36,13 @@ subprojects {
     }
 
     startScripts {
-        doLast {
+		doLast {
 			delete windowsScript
-            //classpath 增加 当前的conf目录
-			unixScript.text = unixScript.text.replace("CLASSPATH=\$APP_HOME", "CLASSPATH=\$APP_HOME/conf:\$APP_HOME")
+            //springboot 原生shell适配classpath 增加 当前的conf目录
+//			unixScript.text = unixScript.text.replace("CLASSPATH=\$APP_HOME", "CLASSPATH=\$APP_HOME/conf:\$APP_HOME")
+			unixScript.text = file("../common/scripts/app.sh").getText().replace("{main_class}", "${mainClassName}")
         }
     }
-
 }
 
 buildscript {

@@ -743,5 +743,10 @@ public class StringUtil {
 
 		// System.out.println("从字符串中取值Email：" + parse("159818 fwhbj@163.com
 		// 07340"));
+		try {
+			Thread.sleep(10000000l);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.minkey.db.third.task;
 
+import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskLogHandler;
 import com.minkey.db.dao.Link;
@@ -57,37 +58,46 @@ public class TaskDayLogCollector {
         try {
             //查询所有链路
             linkList = linkHandler.queryAll();
-            if (CollectionUtils.isEmpty(linkList)) {
-                return;
-            }
         }catch (Exception e){
             logger.error("获取所有的链路异常",e);
             return;
         }
 
+        if (CollectionUtils.isEmpty(linkList)) {
+            return;
+        }
+
         linkList.forEach(link -> {
-            List<TaskLog> tasks = null;
-            try {
-                //从链路中获取数据交换系统的数据库配置
-                DBConfigData dbConfig = link.getDbConfigData();
-
-                long maxLoggerId = taskLogHandler.queryMaxId(link.getLinkId());
-
-                tasks = queryAllTaskLog(dbConfig,link,maxLoggerId);
-
-            }catch (Exception e){
-                logger.error("从交换系统抓起任务执行日志异常",e);
-            }
-
-            if(!CollectionUtils.isEmpty(tasks)){
-                try {
-                    //把链路存到数据库中。
-                    taskLogHandler.insertAll(tasks);
-                }catch (Exception e){
-                    logger.error("把抓取过来的任务执行日志保存到数据库中异常",e);
-                }
+            if (link.getLinkType() == LinkType.shujujiaohuan) {
+                //目前只做了数据交换
+                shujujiaohuan(link);
             }
         });
+    }
+
+
+    private void shujujiaohuan(Link link){
+        List<TaskLog> tasks = null;
+        try {
+            //从链路中获取数据交换系统的数据库配置
+            DBConfigData dbConfig = link.getDbConfigData();
+
+            long maxLoggerId = taskLogHandler.queryMaxId(link.getLinkId());
+
+            tasks = queryAllTaskLog(dbConfig, link, maxLoggerId);
+
+        } catch (Exception e) {
+            logger.error("从交换系统抓起任务执行日志异常", e);
+        }
+
+        if (!CollectionUtils.isEmpty(tasks)) {
+            try {
+                //把链路存到数据库中。
+                taskLogHandler.insertAll(tasks);
+            } catch (Exception e) {
+                logger.error("把抓取过来的任务执行日志保存到数据库中异常", e);
+            }
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.minkey.db.third.task;
 
+import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.SourceHandler;
 import com.minkey.db.TaskHandler;
@@ -86,26 +87,35 @@ public class TaskCollector {
                 continue;
             }
 
-            try {
-                //获取task
-                collectorTask(jdbcTemplate, link);
-            } catch (Exception e) {
-                logger.error("把抓取过来的任务保存到数据库中异常", e);
+
+            if (link.getLinkType() == LinkType.shujujiaohuan) {
+                shujujiaohuan(link,jdbcTemplate);
             }
-            try {
-                //获取taskSource
-                collectorTaskSource(jdbcTemplate, link);
-            } catch (Exception e) {
-                logger.error("把抓取过来的任务保存到数据库中异常", e);
-            }
-            try {
-                //获取Source
-                collectorSource(jdbcTemplate, link);
-            } catch (Exception e) {
-                logger.error("把抓取过来的任务保存到数据库中异常", e);
-            }
+
         }
     }
+
+    private void shujujiaohuan(Link link, JdbcTemplate jdbcTemplate) {
+        try {
+            //获取task
+            collectorTask(jdbcTemplate, link);
+        } catch (Exception e) {
+            logger.error("把抓取过来的任务保存到数据库中异常", e);
+        }
+        try {
+            //获取taskSource
+            collectorTaskSource(jdbcTemplate, link);
+        } catch (Exception e) {
+            logger.error("把抓取过来的任务保存到数据库中异常", e);
+        }
+        try {
+            //获取Source
+            collectorSource(jdbcTemplate, link);
+        } catch (Exception e) {
+            logger.error("把抓取过来的任务保存到数据库中异常", e);
+        }
+    }
+
 
     /**
      * 迁移tbtask所有数据到自己的 t_task表中
