@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Component
@@ -22,6 +23,10 @@ public class UserLogHandler {
     JdbcTemplate jdbcTemplate;
 
 
+    public void log(HttpSession session, String moduleName, String log){
+        User user = (User) session.getAttribute("user");
+        this.log(user,moduleName,log);
+    }
     /**
      * 插入一条用户日志
      * @param user

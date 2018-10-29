@@ -139,4 +139,22 @@ public class LinkController {
             logger.info("end: 执行count所有设备 ");
         }
     }
+
+    @RequestMapping("/delete")
+    public String delete(Long linkId) {
+        logger.info("start: 执行删除link, linkId={} ",linkId);
+        if(linkId == null){
+            return JSONMessage.createFalied("linkId不能为空").toString();
+        }
+        try{
+            linkHandler.del(linkId);
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 执行删除link ");
+        }
+    }
+
 }

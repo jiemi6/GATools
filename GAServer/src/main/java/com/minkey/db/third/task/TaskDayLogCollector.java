@@ -51,7 +51,7 @@ public class TaskDayLogCollector {
     @Scheduled(cron="0 0 * * * ?")
     public void getTaskLogFromOtherDB(){
         if(isDebug){
-            logger.error("debug，测试抓取任务执行日志调度.");
+            logger.error("debug，测试抓取任务执行日志daylog调度.");
 //            return;
         }
         List<Link> linkList = null;

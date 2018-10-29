@@ -37,8 +37,7 @@ public class DynamicDB {
 
             jdbcTemplate.execute(databaseDriver.getValidationQuery());
         }catch (Exception e ){
-            logger.error("构造数据库连接异常",e);
-            throw new DataException("构造数据库连接异常");
+            throw new DataException("构造数据库连接异常",e);
         }
 
         return jdbcTemplate;
@@ -52,7 +51,7 @@ public class DynamicDB {
 
             return true;
         }catch (Exception e){
-            logger.error("尝试连接数据库失败:"+dbConfigData.toString(),e);
+            logger.error("测试连接数据库失败:"+dbConfigData.toString(),e);
             return false;
         }
     }

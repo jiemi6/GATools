@@ -36,7 +36,7 @@ public class DeviceServiceHandler {
     }
 
     public void insertAll(Device device,List<DeviceService> deviceService) {
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?,?)",
                 deviceService,deviceService.size(), new ParameterizedPreparedStatementSetter<DeviceService>() {
                     @Override
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {

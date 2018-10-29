@@ -20,10 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 从数据交换系统，采集task信息
@@ -100,19 +97,19 @@ public class TaskCollector {
             //获取task
             collectorTask(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("把抓取过来的任务保存到数据库中异常", e);
+            logger.error("从数据交换系统抓取任务保存到数据库中异常", e);
         }
         try {
             //获取taskSource
             collectorTaskSource(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("把抓取过来的任务保存到数据库中异常", e);
+            logger.error("从数据交换系统抓取任务与数据源对应关系保存到数据库中异常", e);
         }
         try {
             //获取Source
             collectorSource(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("把抓取过来的任务保存到数据库中异常", e);
+            logger.error("从数据交换系统抓取数据源保存到数据库中异常", e);
         }
     }
 
@@ -123,8 +120,8 @@ public class TaskCollector {
      * @param link
      */
     private void collectorTask(JdbcTemplate jdbcTemplate, Link link){
-        //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name from tbtask WHERE status <> '-100'");
+            //查询所有task
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,status from tbtask WHERE status <> '-100'");
 
         if(CollectionUtils.isEmpty(mapList)){
             taskHandler.del(link.getLinkId());
@@ -193,12 +190,25 @@ public class TaskCollector {
 
     private void collectorSource(JdbcTemplate jdbcTemplate, Link link){
         //查询所有source
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbresources");
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from  tbresources ");
 
         if(CollectionUtils.isEmpty(mapList)){
             taskHandler.del(link.getLinkId());
             return;
         }
+
+        List<Map<String, Object>>  drivers = jdbcTemplate.queryForList("select * from  tbdatabase_driver");
+        Map<String,String> driverMap = new HashMap<>(drivers.size());
+        drivers.forEach(dbMap ->{
+            driverMap.put((String)dbMap.get("id"),(String)dbMap.get("db_version"));
+        });
+
+        List<Map<String, Object>>  sourceType = jdbcTemplate.queryForList("select * from  tbresourcetype");
+        Map<String,String> sourceTypeMap = new HashMap<>(drivers.size());
+        sourceType.forEach(dbSourceType ->{
+            sourceTypeMap.put((String)dbSourceType.get("resourcetypeid"),(String)dbSourceType.get("name"));
+
+        });
 
         List<Source> sources = new ArrayList<>(mapList.size());
 
@@ -211,7 +221,8 @@ public class TaskCollector {
             task.setDbName((String) stringObjectMap.get("dbname"));
             task.setName((String) stringObjectMap.get("username"));
             task.setPwd((String) stringObjectMap.get("password"));
-            task.setSourceType((Integer)stringObjectMap.get("tbtypeid"));
+            task.setSourceType(sourceTypeMap.get((String)stringObjectMap.get("tbresourcetypeid")));
+            task.setDbVersion(driverMap.get((String)stringObjectMap.get("db_driver_id")));
             task.setCreateTime((Date)stringObjectMap.get("createdate"));
             task.setLinkId(link.getLinkId());
             sources.add(task);

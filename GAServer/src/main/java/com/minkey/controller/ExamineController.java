@@ -161,8 +161,8 @@ public class ExamineController {
      * 体检信息获取，页面不断扫描此接口获取数据
      * @return
      */
-    @RequestMapping("/checkInfo")
-    public String checkInfo(Long checkId,Integer index) {
+    @RequestMapping("/checkResult")
+    public String checkResult(Long checkId,Integer index) {
         logger.info("start: 获取体检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();

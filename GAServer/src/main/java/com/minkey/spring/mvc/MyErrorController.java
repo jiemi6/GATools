@@ -4,7 +4,7 @@ import com.minkey.dto.JSONMessage;
 import org.springframework.boot.autoconfigure.web.ErrorController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,29 +19,28 @@ public class MyErrorController  implements ErrorController {
     public MyErrorController() {
     }
 
-//    @RequestMapping("/error")
-    public String error() {
-        System.out.println("ErrControlller.error");
-        return "my_error"; // 不使用/error， 可以返回其他的， 但是要保证这个视图存在， 比如存在 public/err.html
-    }
 
     @RequestMapping("/error")
+    @ResponseBody
     public Object index(Map<String,Object> map, HttpServletRequest request, HttpServletResponse response){
         Integer statusCode = (Integer) request.getAttribute("javax.servlet.error.status_code");
         String servlet_name = (String) request.getAttribute("javax.servlet.error.servlet_name");
         String message = (String) request.getAttribute("javax.servlet.error.message");
 
-        if(isAjax(request)){
-            //是ajax请求
-            return JSONMessage.createFalied(statusCode + ":" + message).toString();
-        }else{
-            //不是ajax请求
-            ModelAndView mv = new ModelAndView();
-            mv.addObject("error",message);
-            mv.addObject("url",request.getRequestURL());//发生异常的路径
-            mv.setViewName("my_error");//指定发生异常之后跳转页面
-            return mv;
-        }
+        //系统本身的异常，json返回
+        return JSONMessage.createFalied(statusCode,String.format("HTTP错误code=%s,url=%s,message=%s",statusCode,request.getRequestURL(),message)).toString();
+
+//        if(isAjax(request)){
+//            //是ajax请求
+//            return JSONMessage.createFalied(statusCode , message).toString();
+//        }else{
+//            //不是ajax请求
+//            ModelAndView mv = new ModelAndView();
+//            mv.addObject("error",message);
+//            mv.addObject("url",request.getRequestURL());//发生异常的路径
+//            mv.setViewName("my_error");//指定发生异常之后跳转页面
+//            return mv;
+//        }
     }
 
     @Override

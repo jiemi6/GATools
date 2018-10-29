@@ -46,8 +46,8 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping(Integer netArea,String ip,Long deviceId) {
-        logger.info("start: 执行ping");
+    public String ping(Integer netArea,String ip,Long detectorId) {
+        logger.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
@@ -72,13 +72,11 @@ public class ToolsController {
                 //内网 直接执行
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
-//                //获取探针
-//                Device device = deviceHandler.query(deviceId);
-                //获取该探针的ssh服务
-                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
+                //获取该探针服务
+                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
-                    return JSONMessage.createFalied("探针没有配置ssh服务，无法执行命令").toString();
+                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
                 }
 
                 BaseConfigData configData = ssh.getConfigData();
@@ -108,8 +106,8 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/telnet")
-    public String telnet(Integer netArea,String ip,int port,Long deviceId) {
-        logger.info("start: 执行telnet");
+    public String telnet(Integer netArea,String ip,int port,Long detectorId) {
+        logger.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,detectorId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
@@ -129,13 +127,11 @@ public class ToolsController {
                 //内网 直接执行
                 isConnect = Telnet.doTelnet(ip,port);
             }else{
-                //获取探针
-                Device device = deviceHandler.query(deviceId);
-                //获取该探针的ssh服务
-                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_SSH);
+                //获取该探针服务
+                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
-                    return JSONMessage.createFalied("探针没有配置ssh服务，无法执行命令").toString();
+                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
                 }
 
                 BaseConfigData configData = ssh.getConfigData();
@@ -152,25 +148,17 @@ public class ToolsController {
         }finally {
             logger.info("end: 执行telnet");
         }
-
     }
-
 
     /**
-     * ssh工具开关
+     *测试数据库
+     * @param dbConfigData
+     * @param detectorId
      * @return
      */
-    @RequestMapping("/sshd")
-    public String sshd() {
-        //调用系统命令进行开关，
-
-        return JSONMessage.createSuccess().toString();
-
-    }
-
     @RequestMapping("/testDB")
-    public String testDB(DBConfigData dbConfigData){
-        logger.info("start: 执行测试数据库连接 dbConfigData={}",dbConfigData);
+    public String testDB(Integer netArea,DBConfigData dbConfigData,Long detectorId){
+        logger.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,dbConfigData,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -182,7 +170,23 @@ public class ToolsController {
         }
 
         try{
-            boolean isConnect = dynamicDB.testDB(dbConfigData);
+            boolean isConnect;
+            if(netArea == Device.NETAREA_IN){
+                //内网直接测试
+                isConnect = dynamicDB.testDB(dbConfigData);
+            }else{
+                //获取该探针服务
+                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
+
+                if(ssh == null){
+                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                }
+
+                BaseConfigData configData = ssh.getConfigData();
+
+                //执行命令
+                isConnect = DetectorUtil.testDB(configData.getIp(),configData.getPort(),dbConfigData);
+            }
 
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
         }catch (Exception e){
@@ -194,31 +198,46 @@ public class ToolsController {
     }
 
     /**
-     * 设置本平台的snmp服务信息，方便其他软件读取。
+     * 协助访问其他服务器snmp工具
      * @return
      */
     @RequestMapping("/snmp")
-    public String snmp(String ip,String oid) {
+    public String snmp(Integer netArea,String ip,Integer port,String oid,Long decetorId) {
+        logger.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,decetorId,ip,port,oid);
 
-        JSONObject jo = new SnmpUtil(ip).snmpWalk(oid);
-        //第三方实现， 默认开启
+        if(StringUtils.isEmpty(ip)){
+            return JSONMessage.createFalied("ip不能为空").toString();
+        }
 
-        return JSONMessage.createSuccess().addData(jo).toString();
+        if(!StringUtil.isIp(ip)){
+            return JSONMessage.createFalied("ip格式不正确").toString();
+        }
 
+        try{
+            JSONObject jo;
+            if(netArea == Device.NETAREA_IN){
+                //内网直接测试
+                jo = new SnmpUtil(ip).snmpWalk(oid);
+            }else{
+                //获取该探针服务
+                DeviceService ssh = deviceServiceHandler.query8Device(decetorId,DeviceService.SERVICETYPE_DETECTOR);
+
+                if(ssh == null){
+                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                }
+
+                BaseConfigData configData = ssh.getConfigData();
+
+                //执行命令
+                jo = DetectorUtil.snmpWalk(configData.getIp(),configData.getPort(),ip,port);
+            }
+
+            return JSONMessage.createSuccess().addData("msg",jo).toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 执行测试数据库连接 ");
+        }
     }
-
-    /**
-     * 设置本平台的syslog推送目的地，发送给其他服务器的日志收集服务器
-     * @return
-     */
-    @RequestMapping("/syslog")
-    public String syslog() {
-
-
-
-        return JSONMessage.createSuccess().toString();
-
-    }
-
-
 }

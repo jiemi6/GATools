@@ -1,5 +1,6 @@
 package com.minkey.db;
 
+import com.minkey.db.dao.TaskDataLog;
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.Page;
 import org.slf4j.Logger;
@@ -51,15 +52,15 @@ public class TaskDataLogHandler {
     }
 
 
-    public void insertAll(List<TaskLog> taskLogs) {
+    public void insertAll(List<TaskDataLog> taskLogs) {
         if(CollectionUtils.isEmpty(taskLogs)){
             return;
         }
         int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetLogId,taskId,linkId,successNum,successFlow,errorNum,errorFlow,createTime) VALUES (?,?,?,?,?,?,?,?)",
                 taskLogs,taskLogs.size(),
-                new ParameterizedPreparedStatementSetter<TaskLog>() {
+                new ParameterizedPreparedStatementSetter<TaskDataLog>() {
                     @Override
-                    public void setValues(PreparedStatement ps, TaskLog argument) throws SQLException {
+                    public void setValues(PreparedStatement ps, TaskDataLog argument) throws SQLException {
                         ps.setLong(1,argument.getTargetLogId());
                         ps.setString(2,argument.getTaskId());
                         ps.setLong(3,argument.getLinkId());

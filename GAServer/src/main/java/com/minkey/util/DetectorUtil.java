@@ -1,6 +1,7 @@
 package com.minkey.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.dto.DBConfigData;
 import com.minkey.entity.ResultInfo;
 
 /**
@@ -34,7 +35,8 @@ public class DetectorUtil {
         return true;
     }
 
-    public static JSONObject snmpGet(String ip,
+    public static JSONObject snmpGet(String detectorIp,int detectorPort,
+                                     String ip,
                                          Integer port,
                                          Integer version,
                                          String community,
@@ -46,7 +48,16 @@ public class DetectorUtil {
         return null;
     }
 
-    public static JSONObject snmpWalk(String ip,
+    public static JSONObject snmpWalk(String detectorIp,int detectorPort,
+                                      String ip,
+                                      Integer port) {
+
+
+        return null;
+    }
+
+    public static JSONObject snmpWalk(String detectorIp,int detectorPort,
+                                      String ip,
                                          Integer port,
                                          Integer version,
                                          String community,
@@ -56,5 +67,10 @@ public class DetectorUtil {
 
 
         return null;
+    }
+
+    public static boolean testDB(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
+
+        return false;
     }
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
+import com.minkey.syslog.SysLogUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -185,35 +186,157 @@ public class ConfigController {
      * 报警短信配置
      * @return
      */
-    @RequestMapping("/smsAlarm")
-    public String smsAlarm() {
-        logger.info("start: 执行系统自检");
+    @RequestMapping("/smsAlarm/set")
+    public String smsAlarmSet(String smsUrl) {
+        logger.info("start: 执行报警短信配置");
         try{
+            //直接存入config
+            String configKey = ConfigEnum.SmsAlarmConfig.getConfigKey();
+            JSONObject configData = new JSONObject();
+            configData.put("smsUrl",smsUrl);
+            configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            logger.info("end:  执行报警短信配置");
         }
     }
+
+
+    /**
+     * 获取报警短信设置
+     * @return
+     */
+    @RequestMapping("/smsAlarm/get")
+    public String smsAlarmGet() {
+        String configKey = ConfigEnum.SmsAlarmConfig.getConfigKey();
+        return query(configKey);
+    }
+
 
 
     /**
      * 报警邮箱配置
      * @return
      */
-    @RequestMapping("/emailAlarm")
-    public String emailAlarm() {
-        logger.info("start: 执行系统自检");
+    @RequestMapping("/emailAlarm/set")
+    public String emailAlarmSet(String emailUser,String emailPwd,String emailServer) {
+        logger.info("start: 执行报警邮箱配置");
         try{
+            //直接存入config
+            String configKey = ConfigEnum.EmailAlarmConfig.getConfigKey();
+            JSONObject configData = new JSONObject();
+            configData.put("emailUser",emailUser);
+            configData.put("emailPwd",emailPwd);
+            configData.put("emailServer",emailServer);
+            configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            logger.info("end:  报警邮箱配置");
         }
+    }
+
+    /**
+     * 获取报警邮箱配置
+     * @return
+     */
+    @RequestMapping("/emailAlarm/get")
+    public String emailAlarmGet() {
+        String configKey = ConfigEnum.EmailAlarmConfig.getConfigKey();
+        return query(configKey);
+    }
+
+    /**
+     * 设置本平台的syslog推送目的地，发送给其他服务器的日志收集服务器
+     * @return
+     */
+    @RequestMapping("/syslog2other/set")
+    public String syslog2otherSet(Boolean open ,String ip, String port) {
+        if(open == null || open == false){
+            logger.info("start: 关闭syslog转发");
+            //关闭
+            SysLogUtil.closeSyslog2other();
+
+        }else{
+            logger.info("start: 配置syslog转发 ip={},port=" ,ip,port);
+            //保存配置
+            //启动发送
+            SysLogUtil.startSyslog2other(ip,port);
+        }
+
+        try{
+            //直接存入config
+            JSONObject configData = new JSONObject();
+            configData.put("open",open);
+            configData.put("ip",ip);
+            configData.put("port",port);
+            String configKey = ConfigEnum.Syslog2other.getConfigKey();
+            configHandler.insert(configKey,configData.toJSONString());
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end: 配置syslog完成");
+        }
+
+    }
+
+    /**
+     * 获取置本平台的syslog推送目的地
+     * @return
+     */
+    @RequestMapping("/syslog2other/get")
+    public String syslog2otherGet() {
+        String configKey = ConfigEnum.Syslog2other.getConfigKey();
+        return query(configKey);
+    }
+
+    /**
+     * ssh工具开关
+     * @return
+     */
+    @RequestMapping("/sshd/set")
+    public String sshdSet(Boolean open) {
+        logger.info("start: ssh工具 状态变更为 {}" ,open);
+        //调用系统命令进行开关，
+
+        if(open == null || open == false){
+            //停止sshd服务
+        }else{
+            //开启sshd服务
+        }
+
+        try{
+            //直接存入config
+            String configKey = ConfigEnum.Sshd.getConfigKey();
+            JSONObject configData = new JSONObject();
+            configData.put("open",open);
+            configHandler.insert(configKey,configData.toJSONString());
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            logger.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            logger.info("end:  ssh工具 状态变更完成");
+        }
+
+
+    }
+
+    /**
+     * 获取ssh工具开关配置
+     * @return
+     */
+    @RequestMapping("/sshd/get")
+    public String sshdGet() {
+        String configKey = ConfigEnum.Sshd.getConfigKey();
+        return query(configKey);
     }
 
 }

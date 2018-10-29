@@ -37,11 +37,11 @@ public class Source extends  DBConfigData{
     private String dbVersion;
 
     /**
-     * 01	无格式文件  ftp
-     * 02	数据库
-     * 03	格式文件 视频
+     * 	无格式文件  ftp
+     * 	数据库
+     * 	格式文件 视频
      */
-    private int sourceType;
+    private String sourceType;
 
     /**
      * 创建时间
@@ -89,11 +89,11 @@ public class Source extends  DBConfigData{
         this.dbVersion = dbVersion;
     }
 
-    public int getSourceType() {
+    public String getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(int sourceType) {
+    public void setSourceType(String sourceType) {
         this.sourceType = sourceType;
     }
 

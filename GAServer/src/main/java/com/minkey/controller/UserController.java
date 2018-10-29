@@ -184,9 +184,9 @@ public class UserController {
         logger.info("start: 执行用户登出");
         try{
             User user = (User) session.getAttribute("user");
+            //移除session中user
+            session.removeAttribute("user");
             if(user != null){
-                //移除session中user
-                session.removeAttribute("user");
                 //记录登陆日志
                 userLogHandler.log(user,moduleName,"用户登出成功");
             }
@@ -235,7 +235,7 @@ public class UserController {
             userHandler.insert(user);
 
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("用户%s新增用户%s成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 新增用户%s成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -263,7 +263,7 @@ public class UserController {
             User sessionUser = (User)session.getAttribute("user");
 
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("用户%s删除用户uid = %s成功",sessionUser.getuName(),uid));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除用户uid = %s成功",sessionUser.getuName(),uid));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -316,7 +316,7 @@ public class UserController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s重置用户密码 uid = %s 成功",sessionUser.getuName(),uid));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 重置用户密码 uid = %s 成功",sessionUser.getuName(),uid));
 
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
@@ -376,7 +376,7 @@ public class UserController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s修改用户%s信息成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 修改用户%s信息成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

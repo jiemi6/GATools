@@ -18,7 +18,7 @@ import java.util.List;
 public class SourceHandler {
     private final static Logger logger = LoggerFactory.getLogger(SourceHandler.class);
 
-    private final String tableName = "t_taskSource";
+    private final String tableName = "t_source";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -33,14 +33,22 @@ public class SourceHandler {
             return;
         }
 
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId, taskId,linkId,fromResourceId,toResourceId,createTime) VALUES (?,?,?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId,linkId,sname,dbVersion,sourceType,ip,port,dbName,name,pwd,createTime) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 taskSourceList,taskSourceList.size(),
                 new ParameterizedPreparedStatementSetter<Source>() {
                     @Override
                     public void setValues(PreparedStatement ps, Source argument) throws SQLException {
                         ps.setString(1,argument.getTargetId());
-                        ps.setLong(3,argument.getLinkId());
-                        ps.setTimestamp(6,new Timestamp(argument.getCreateTime().getTime()));
+                        ps.setLong(2,argument.getLinkId());
+                        ps.setString(3,argument.getSname());
+                        ps.setString(4,argument.getDbVersion());
+                        ps.setString(5,argument.getSourceType());
+                        ps.setString(6,argument.getIp());
+                        ps.setInt(7,argument.getPort());
+                        ps.setString(8,argument.getDbName());
+                        ps.setString(9,argument.getName());
+                        ps.setString(10,argument.getPwd());
+                        ps.setTimestamp(11,new Timestamp(argument.getCreateTime().getTime()));
                     }
                 });
     }

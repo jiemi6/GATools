@@ -32,5 +32,11 @@ public class DBConfigData extends BaseConfigData {
         this.dbName = dbName;
     }
 
-
+    @Override
+    public String toString() {
+        return "DBConfigData{" +
+                "databaseDriver=" + databaseDriver +
+                ", dbName='" + dbName + '\'' +
+                "} " + super.toString();
+    }
 }

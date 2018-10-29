@@ -25,6 +25,7 @@ public class SysLogUtil {
     public static final int SYSLOG_PORT = 514;
 
     private SyslogServerIF serverIF;
+
     /**
      * 发送syslog
      *
@@ -82,7 +83,7 @@ public class SysLogUtil {
             serverIF.initialize("udp",config);
             serverIF.run();
         } catch (Exception e) {
-            throw new SystemException("start syslog server Exception",e);
+            throw new SystemException("启动 syslog 服务器异常",e);
         }
     }
 
@@ -98,4 +99,18 @@ public class SysLogUtil {
         }
     }
 
+
+    /**
+     * 开启syslog代发功能
+     * @param ip
+     * @param port
+     */
+    public static void startSyslog2other(String ip, String port) {
+    }
+
+    /**
+     * 关闭syslog代发功能
+     */
+    public static void closeSyslog2other() {
+    }
 }

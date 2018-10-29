@@ -116,4 +116,16 @@ public class Link {
         });
         return deviceIds;
     }
+
+
+    @Override
+    public String toString() {
+        return "Link{" +
+                "linkId=" + linkId +
+                ", linkName='" + linkName + '\'' +
+                ", linkType=" + linkType +
+                ", topologyNodes=" + topologyNodes +
+                ", dbConfigData=" + dbConfigData +
+                '}';
+    }
 }

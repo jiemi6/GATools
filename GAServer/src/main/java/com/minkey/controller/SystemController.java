@@ -256,6 +256,12 @@ public class SystemController {
         }
     }
 
+    @RequestMapping("/test")
+    public String ttt(){
 
+        int i = 1/0;
+
+        return JSONMessage.createSuccess().toString();
+    }
 
 }

@@ -23,7 +23,7 @@ public class SelfCheckJob {
     private final static Logger logger = LoggerFactory.getLogger(SelfCheckJob.class);
 
     /**
-     * 检查总共3步
+     * 检查总共4步
      */
     private final int totalStep = 4 ;
 
@@ -49,6 +49,12 @@ public class SelfCheckJob {
         CheckItem checkItem;
 
         //Minkey ping 网关
+        checkItem = new CheckItem(1,totalStep);
+        checkItem.setCheckId(checkId);
+        checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+        checkItem.setResultMsg("ping 网关成功");
+        addCheckItem(checkItem);
+
 
         if(checkId != -1) {
             try {

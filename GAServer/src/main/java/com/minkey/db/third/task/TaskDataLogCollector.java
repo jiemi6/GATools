@@ -4,7 +4,7 @@ import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskDataLogHandler;
 import com.minkey.db.dao.Link;
-import com.minkey.db.dao.TaskLog;
+import com.minkey.db.dao.TaskDataLog;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
 import org.slf4j.Logger;
@@ -12,12 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public class TaskDataLogCollector {
     /**
      * 每一个小时执行一次，0分0秒开始执行
      */
-    @Scheduled(cron="0 0 * * * ?")
+//    @Scheduled(cron="0 0 * * * ?")
     public void getTaskLogFromOtherDB(){
         if(isDebug){
             logger.error("debug，测试抓取任务执行日志调度.");
@@ -76,7 +74,7 @@ public class TaskDataLogCollector {
     }
 
     private void shujujiaohuan(Link link){
-        List<TaskLog> tasks = null;
+        List<TaskDataLog> tasks = null;
         try {
             //从链路中获取数据交换系统的数据库配置
             DBConfigData dbConfig = link.getDbConfigData();
@@ -105,7 +103,7 @@ public class TaskDataLogCollector {
      * @param link
      * @return
      */
-    private List<TaskLog> queryAllTaskLog(DBConfigData dbConfig, Link link, long maxLoggerId){
+    private List<TaskDataLog> queryAllTaskLog(DBConfigData dbConfig, Link link, long maxLoggerId){
         //先从缓存中获取
         JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
 
@@ -117,20 +115,11 @@ public class TaskDataLogCollector {
             return null;
         }
 
-        List<TaskLog> tasks = new ArrayList<>(mapList.size());
+        List<TaskDataLog> tasks = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
-            TaskLog taskLog = new TaskLog();
-            taskLog.setTargetLogId(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
-            taskLog.setTaskId( stringObjectMap.get("taskid").toString());
-            taskLog.setLinkId(link.getLinkId());
-            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
-            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("totalSuccessNum").toString()));
-            taskLog.setSuccessFlow(Long.valueOf(stringObjectMap.get("totalSuccessFlow").toString()));
-            taskLog.setErrorNum(Long.valueOf(stringObjectMap.get("totalErrorNum").toString()));
-            taskLog.setErrorFlow(Long.valueOf(stringObjectMap.get("totalErrorFlow").toString()));
-            taskLog.setCreateTime((Date) stringObjectMap.get("insertTimes"));
-            tasks.add(taskLog);
+
+//            tasks.add(taskLog);
         });
         return tasks;
     }

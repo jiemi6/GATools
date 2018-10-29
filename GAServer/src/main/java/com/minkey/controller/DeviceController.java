@@ -3,8 +3,10 @@ package com.minkey.controller;
 import com.minkey.contants.DeviceType;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
+import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
+import com.minkey.db.dao.User;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
@@ -18,6 +20,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -27,6 +30,7 @@ import java.util.List;
 @RequestMapping("/device")
 public class DeviceController {
     private final static Logger logger = LoggerFactory.getLogger(DeviceController.class);
+    private final String moduleName = "设备管理模块";
 
     @Autowired
     DeviceHandler deviceHandler;
@@ -36,6 +40,12 @@ public class DeviceController {
 
     @Autowired
     DeviceStatusHandler deviceStatusHandler;
+
+    @Autowired
+    UserLogHandler userLogHandler;
+
+    @Autowired
+    HttpSession session;
 
     @RequestMapping("/insert")
     public String insert( Device device) {
@@ -62,6 +72,11 @@ public class DeviceController {
             if(!CollectionUtils.isEmpty(paramList)){
                 deviceServiceHandler.insertAll(device,paramList);
             }
+
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 新增设备，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
@@ -99,6 +114,10 @@ public class DeviceController {
                 //在增加
                 deviceServiceHandler.insertAll(device ,deviceServiceList);
             }
+
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 修改设备信息，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -166,7 +185,7 @@ public class DeviceController {
 
     @RequestMapping("/delete")
     public String delete(Long deviceId) {
-        logger.info("start: 执行删除设备 ");
+        logger.info("start: 执行删除设备 deviceId={} ",deviceId);
         if(deviceId == null || deviceId <=0){
             logger.info("deviceId不能为空");
             return JSONMessage.createFalied("deviceId不能为空").toString();
@@ -177,6 +196,11 @@ public class DeviceController {
             deviceServiceHandler.delete8DeviceId(deviceId);
 
             deviceHandler.delete(deviceId);
+
+            User sessionUser = (User)session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除设备信息，设备id=%s。",sessionUser.getuName(),deviceId));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             logger.error(e.getMessage(),e);
