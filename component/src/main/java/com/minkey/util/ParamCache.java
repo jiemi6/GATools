@@ -1,10 +1,9 @@
 package com.minkey.util;
 
 import com.alibaba.fastjson.JSONObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Properties;
@@ -16,9 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author minkey
  *
  */
+@Slf4j
 public class ParamCache {
-	static Logger logger = LoggerFactory.getLogger(OSUtil.class);
-
 	private static final String LOCAL_STR = "local";
 	/**
 	 * 配置文件缓存
@@ -49,7 +47,7 @@ public class ParamCache {
 			return value;
 		}
 
-		logger.warn("get local config is empty! key["+key+"]");
+		log.warn("get local config is empty! key["+key+"]");
 		return value;
 	}
 
@@ -63,12 +61,12 @@ public class ParamCache {
 	public static String getParam(String configName ,String key){
 		HashMap<String, String> configs = params.get(configName);
 		if(MapUtils.isEmpty(configs)){
-			logger.warn("get cloud config is empty! configName["+configName+"]key["+key+"]");
+			log.warn("get cloud config is empty! configName["+configName+"]key["+key+"]");
 			return null;
 		}
 		String v = configs.get(key);
 		if(StringUtils.isEmpty(key)){
-			logger.warn("get cloud config is empty! configName["+configName+"]key["+key+"]为空!");
+			log.warn("get cloud config is empty! configName["+configName+"]key["+key+"]为空!");
 		}
 		return v;
 	}
@@ -86,7 +84,7 @@ public class ParamCache {
 				continue;
 			}
 			newConfigMap.put(key.toString(), jo.get(key).toString().trim());
-			logger.info("download config from cloud. "+key+"="+jo.get(key));
+			log.info("download config from cloud. "+key+"="+jo.get(key));
 		}
 		params.put(configName, newConfigMap);
 	}
@@ -102,7 +100,7 @@ public class ParamCache {
 				continue;
 			}
 			localConfigMap.put(key.toString(), props.get(key).toString().trim());
-			logger.info("load local config. "+key+"="+props.get(key));
+			log.info("load local config. "+key+"="+props.get(key));
 		}
 		if(params.containsKey(LOCAL_STR)){
 			params.get(LOCAL_STR).putAll(localConfigMap);

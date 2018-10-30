@@ -16,9 +16,8 @@ import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.OSUtil;
 import com.minkey.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,11 +25,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 工具箱接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/tools")
 public class ToolsController {
-    private final static Logger logger = LoggerFactory.getLogger(ToolsController.class);
-
     @Autowired
     DeviceHandler deviceHandler;
 
@@ -47,7 +45,7 @@ public class ToolsController {
      */
     @RequestMapping("/ping")
     public String ping(Integer netArea,String ip,Long detectorId) {
-        logger.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
+        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
@@ -93,10 +91,10 @@ public class ToolsController {
 
 
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行ping");
+            log.info("end: 执行ping");
         }
     }
 
@@ -107,7 +105,7 @@ public class ToolsController {
      */
     @RequestMapping("/telnet")
     public String telnet(Integer netArea,String ip,int port,Long detectorId) {
-        logger.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,detectorId);
+        log.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,detectorId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
@@ -143,10 +141,10 @@ public class ToolsController {
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
 
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行telnet");
+            log.info("end: 执行telnet");
         }
     }
 
@@ -158,7 +156,7 @@ public class ToolsController {
      */
     @RequestMapping("/testDB")
     public String testDB(Integer netArea,DBConfigData dbConfigData,Long detectorId){
-        logger.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,dbConfigData,dbConfigData);
+        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,dbConfigData,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -190,10 +188,10 @@ public class ToolsController {
 
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行测试数据库连接 ");
+            log.info("end: 执行测试数据库连接 ");
         }
     }
 
@@ -203,7 +201,7 @@ public class ToolsController {
      */
     @RequestMapping("/snmp")
     public String snmp(Integer netArea,String ip,Integer port,String oid,Long decetorId) {
-        logger.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,decetorId,ip,port,oid);
+        log.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,decetorId,ip,port,oid);
 
         if(StringUtils.isEmpty(ip)){
             return JSONMessage.createFalied("ip不能为空").toString();
@@ -234,10 +232,10 @@ public class ToolsController {
 
             return JSONMessage.createSuccess().addData("msg",jo).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行测试数据库连接 ");
+            log.info("end: 执行测试数据库连接 ");
         }
     }
 }

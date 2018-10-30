@@ -1,6 +1,7 @@
 package com.minkey.syslog;
 
 import com.minkey.exception.SystemException;
+import lombok.extern.slf4j.Slf4j;
 import org.productivity.java.syslog4j.Syslog;
 import org.productivity.java.syslog4j.SyslogIF;
 import org.productivity.java.syslog4j.impl.net.udp.UDPNetSyslogConfig;
@@ -8,17 +9,13 @@ import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
 import org.productivity.java.syslog4j.server.impl.event.printstream.PrintStreamSyslogServerEventHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
 
+@Slf4j
 @Component
 public class SysLogUtil {
-
-    private final static Logger logger = LoggerFactory.getLogger(SysLogUtil.class);
-
     /**
      * syslog默认端口
      */
@@ -31,10 +28,10 @@ public class SysLogUtil {
      *
      * @param host
      * @param port
-     * @param log
+     * @param msg
      * @param level
      */
-    public void sendLog(String host, int port, String log, int level) throws SystemException {
+    public void sendLog(String host, int port, String msg, int level) throws SystemException {
         try {
             UDPNetSyslogConfig config = new UDPNetSyslogConfig();
             //设置syslog服务器端地址
@@ -45,9 +42,9 @@ public class SysLogUtil {
             Syslog.shutdown();
             //获取syslog的操作类，使用udp协议。syslog支持"udp", "tcp", "unix_syslog", "unix_socket"协议
             SyslogIF syslog = Syslog.createInstance("udp", config);
-            syslog.log(level, URLDecoder.decode(log, "utf-8"));
+            syslog.log(level, URLDecoder.decode(msg, "utf-8"));
 
-            logger.debug("syslog Server:" + host + ":" + port);
+            log.debug("syslog Server:" + host + ":" + port);
             /* 发送信息到服务器，2表示日志级别 范围为0~7的数字编码，表示了事件的严重程度。0最高，7最低
             * syslog为每个事件赋予几个不同的优先级：
             0 LOG_EMERG：紧急情况，需要立即通知技术人员。
@@ -95,7 +92,7 @@ public class SysLogUtil {
         try{
             serverIF.shutdown();
         } catch (Exception e) {
-            logger.error("shutdown syslog server Exception",e);
+            log.error("shutdown syslog server Exception",e);
         }
     }
 

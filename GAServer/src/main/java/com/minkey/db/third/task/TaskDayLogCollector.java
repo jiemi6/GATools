@@ -7,8 +7,7 @@ import com.minkey.db.dao.Link;
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,11 +25,9 @@ import java.util.Map;
  * <br><br/>
  * 每个小时获取一次
  */
-
+@Slf4j
 @Component
 public class TaskDayLogCollector {
-    private final static Logger logger = LoggerFactory.getLogger(TaskDayLogCollector.class);
-
     @Autowired
     TaskLogHandler taskLogHandler;
 
@@ -51,7 +48,7 @@ public class TaskDayLogCollector {
     @Scheduled(cron="0 0 * * * ?")
     public void getTaskLogFromOtherDB(){
         if(isDebug){
-            logger.error("debug，测试抓取任务执行日志daylog调度.");
+            log.error("debug，测试抓取任务执行日志daylog调度.");
 //            return;
         }
         List<Link> linkList = null;
@@ -59,7 +56,7 @@ public class TaskDayLogCollector {
             //查询所有链路
             linkList = linkHandler.queryAll();
         }catch (Exception e){
-            logger.error("获取所有的链路异常",e);
+            log.error("获取所有的链路异常",e);
             return;
         }
 
@@ -87,7 +84,7 @@ public class TaskDayLogCollector {
             tasks = queryAllTaskLog(dbConfig, link, maxLoggerId);
 
         } catch (Exception e) {
-            logger.error("从交换系统抓起任务执行日志异常", e);
+            log.error("从交换系统抓起任务执行日志异常", e);
         }
 
         if (!CollectionUtils.isEmpty(tasks)) {
@@ -95,7 +92,7 @@ public class TaskDayLogCollector {
                 //把链路存到数据库中。
                 taskLogHandler.insertAll(tasks);
             } catch (Exception e) {
-                logger.error("把抓取过来的任务执行日志保存到数据库中异常", e);
+                log.error("把抓取过来的任务执行日志保存到数据库中异常", e);
             }
         }
     }

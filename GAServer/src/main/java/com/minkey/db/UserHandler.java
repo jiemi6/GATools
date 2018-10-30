@@ -4,8 +4,6 @@ import com.minkey.db.dao.User;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,8 +16,6 @@ import java.util.List;
  */
 @Component
 public class UserHandler {
-    private final static Logger logger = LoggerFactory.getLogger(UserHandler.class);
-
     private final String tableName = "t_user";
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -84,14 +80,14 @@ public class UserHandler {
     }
 
     /**
-     * 重置密码
+     * 更新密码
      * @param uid
      */
     public void resetPwd(Long uid,String pwd) {
         int num = jdbcTemplate.update("update "+tableName+" set pwd = ? where uid= ?",new Object[]{pwd,uid});
 
         if(num == 0){
-            throw new DataException("重置用户密码失败");
+            throw new DataException("更新用户密码失败");
         }
     }
 

@@ -4,9 +4,8 @@ import com.minkey.db.LinkHandler;
 import com.minkey.db.dao.Link;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.DynamicDB;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 链路接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/link")
 public class LinkController {
-    private final static Logger logger = LoggerFactory.getLogger(LinkController.class);
-
     @Autowired
     LinkHandler linkHandler;
 
@@ -27,7 +25,7 @@ public class LinkController {
 
     @RequestMapping("/insert")
     public String insert(Link link) {
-        logger.info("start: 执行新增链路 link={} ",link);
+        log.info("start: 执行新增链路 link={} ",link);
 
         if(StringUtils.isEmpty(link.getLinkName())
                 || StringUtils.isEmpty(link.getDbConfigData().getIp())
@@ -49,16 +47,16 @@ public class LinkController {
             linkHandler.insert(link);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行新增链路 link={} ",link);
+            log.info("end: 执行新增链路 link={} ",link);
         }
     }
 
     @RequestMapping("/update")
     public String update(Link link) {
-        logger.info("start: 执行新增链路 link={} ",link);
+        log.info("start: 执行新增链路 link={} ",link);
         if(link.getLinkId() == 0){
             return JSONMessage.createFalied("修改时id不能为空").toString();
         }
@@ -83,10 +81,10 @@ public class LinkController {
             linkHandler.update(link);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行新增链路 link={} ",link);
+            log.info("end: 执行新增链路 link={} ",link);
         }
     }
 
@@ -96,53 +94,53 @@ public class LinkController {
 
     @RequestMapping("/query")
     public String query(Long linkId) {
-        logger.info("start: 执行query设备 linkId={} ",linkId);
+        log.info("start: 执行query设备 linkId={} ",linkId);
         if(linkId == null){
-            logger.info("linkId不能为空");
+            log.info("linkId不能为空");
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
 
         try{
             return JSONMessage.createSuccess().addData(linkHandler.query(linkId)).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行query设备 linkId={} ",linkId);
+            log.info("end: 执行query设备 linkId={} ",linkId);
         }
     }
 
     @RequestMapping("/queryAll")
     public String queryAll() {
-        logger.info("start: 执行query所有链路");
+        log.info("start: 执行query所有链路");
 
         try{
             return JSONMessage.createSuccess().addData("list",linkHandler.queryAll()).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行query所有设备 ");
+            log.info("end: 执行query所有设备 ");
         }
     }
 
     @RequestMapping("/queryCount")
     public String queryCount() {
-        logger.info("start: 执行count所有设备 ");
+        log.info("start: 执行count所有设备 ");
 
         try{
             return JSONMessage.createSuccess().addData("total",linkHandler.queryCount()).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行count所有设备 ");
+            log.info("end: 执行count所有设备 ");
         }
     }
 
     @RequestMapping("/delete")
     public String delete(Long linkId) {
-        logger.info("start: 执行删除link, linkId={} ",linkId);
+        log.info("start: 执行删除link, linkId={} ",linkId);
         if(linkId == null){
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
@@ -150,10 +148,10 @@ public class LinkController {
             linkHandler.del(linkId);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行删除link ");
+            log.info("end: 执行删除link ");
         }
     }
 

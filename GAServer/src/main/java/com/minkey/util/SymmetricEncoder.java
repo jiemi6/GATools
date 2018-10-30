@@ -1,7 +1,6 @@
 package com.minkey.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -9,12 +8,11 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
 
-/*
+/**
  * AES对称加密和解密
  */
+@Slf4j
 public class SymmetricEncoder {
-    private final static Logger logger = LoggerFactory.getLogger(SymmetricEncoder.class);
-
     /*
    * 加密
    * 1.构造密钥生成器
@@ -53,7 +51,7 @@ public class SymmetricEncoder {
           //11.将字符串返回
             return byte_AES;
         } catch (Exception e) {
-            logger.error("AES加密异常",e);
+            log.error("AES加密异常",e);
         }
         
         //如果有错就返加nulll
@@ -92,7 +90,7 @@ public class SymmetricEncoder {
 //            String AES_decode=new String(byte_decode,"utf-8");
             return byte_decode;
         } catch (Exception e) {
-            logger.error("AES解密异常",e);
+            log.error("AES解密异常",e);
         }
         
         //如果有错就返加nulll

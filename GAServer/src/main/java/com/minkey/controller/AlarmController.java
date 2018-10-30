@@ -5,8 +5,7 @@ import com.minkey.db.dao.AlarmLog;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,11 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 报警接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/alarm")
 public class AlarmController {
-    private final static Logger logger = LoggerFactory.getLogger(AlarmController.class);
-
     @Autowired
     AlarmLogHandler alarmLogHandler;
 
@@ -28,7 +26,7 @@ public class AlarmController {
      */
     @RequestMapping("/task")
     public String task(Integer currentPage, Integer pageSize, SeachParam seachParam, Long taskId) {
-        logger.info("start: 执行分页查询任务告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 执行分页查询任务告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -40,10 +38,10 @@ public class AlarmController {
 
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行分页查询任务告警 ");
+            log.info("end:  执行分页查询任务告警 ");
         }
     }
 
@@ -53,7 +51,7 @@ public class AlarmController {
      */
     @RequestMapping("/device")
     public String device(Integer currentPage,Integer pageSize, SeachParam seachParam, Long deviceId) {
-        logger.info("start: 分页查询设备告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询设备告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -65,10 +63,10 @@ public class AlarmController {
 
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  分页查询设备告警");
+            log.info("end:  分页查询设备告警");
         }
     }
 
@@ -78,7 +76,7 @@ public class AlarmController {
      */
     @RequestMapping("/link")
     public String link(Integer currentPage,Integer pageSize, SeachParam seachParam, Long linkId) {
-        logger.info("start: 分页查询链路告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询链路告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             Page<AlarmLog> page = new Page(currentPage,pageSize);
 
@@ -86,10 +84,10 @@ public class AlarmController {
 
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 分页查询链路告警");
+            log.info("end: 分页查询链路告警");
         }
     }
 

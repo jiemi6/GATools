@@ -3,8 +3,6 @@ package com.minkey.db;
 import com.minkey.db.dao.TaskDataLog;
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,8 +17,6 @@ import java.util.List;
 
 @Component
 public class TaskDataLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskDataLogHandler.class);
-
     private final String tableName = "t_taskDataLog";
     @Autowired
     JdbcTemplate jdbcTemplate;

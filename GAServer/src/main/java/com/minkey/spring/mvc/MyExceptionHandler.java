@@ -1,8 +1,7 @@
 package com.minkey.spring.mvc;
 
 import com.minkey.dto.JSONMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -10,9 +9,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 @ControllerAdvice
 public class MyExceptionHandler {
-    private final static Logger logger = LoggerFactory.getLogger(MyExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
@@ -20,7 +19,7 @@ public class MyExceptionHandler {
         String requestURI =  request.getRequestURI();
         String errorMsg = String.format("执行%s异常:%s",requestURI,e.getMessage());
 
-        logger.error(errorMsg,e);
+        log.error(errorMsg,e);
 
         //未捕获异常，也处理成json返回
         return JSONMessage.createFalied(errorMsg).toString();

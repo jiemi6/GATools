@@ -5,8 +5,7 @@ import com.jcraft.jsch.*;
 import com.minkey.entity.ConnectInfo;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +17,8 @@ import java.nio.charset.Charset;
  * @author minkey
  * @version V1.0
  */
+@Slf4j
 public class SSHExecuter {
-    private final static Logger logger = LoggerFactory.getLogger(SSHExecuter.class);
-
     private String charset = Charset.defaultCharset().toString();
     private Session session;
 
@@ -139,7 +137,7 @@ public class SSHExecuter {
                 }
                 if (ssh.isClosed()) {
                     int code = ssh.getExitStatus();
-                    logger.info("exit-status: " + code);
+                    log.info("exit-status: " + code);
                     ResultInfo result = new ResultInfo(code, strBuffer.toString(), errResult.toString());
                     return result;
                 }
@@ -179,16 +177,16 @@ public class SSHExecuter {
             SftpATTRS sftpATTRS = channel.lstat(remoteFile);
             if (sftpATTRS.isDir()) {
                 //目录
-                logger.debug("remote File:dir");
+                log.debug("remote File:dir");
                 channel.rmdir(remoteFile);
                 return true;
             } else if (sftpATTRS.isReg()) {
                 //文件
-                logger.debug("remote File:file");
+                log.debug("remote File:file");
                 channel.rm(remoteFile);
                 return true;
             } else {
-                logger.debug("remote File:unkown");
+                log.debug("remote File:unkown");
                 return false;
             }
         } catch (JSchException e) {
@@ -196,11 +194,11 @@ public class SSHExecuter {
                 channel.disconnect();
                 session.disconnect();
             }
-            logger.error("error", e);
+            log.error("error", e);
             return false;
         } catch (SftpException e) {
-            logger.info("meg" + e.getMessage());
-            logger.error("SftpException", e);
+            log.info("meg" + e.getMessage());
+            log.error("SftpException", e);
             return false;
         }
 
@@ -218,10 +216,10 @@ public class SSHExecuter {
             SftpATTRS sftpATTRS = channel.lstat(remoteFile);
             if (sftpATTRS.isDir() || sftpATTRS.isReg()) {
                 //目录 和文件
-                logger.info("remote File:dir");
+                log.info("remote File:dir");
                 return true;
             } else {
-                logger.info("remote File:unkown");
+                log.info("remote File:unkown");
                 return false;
             }
         } catch (JSchException e) {
@@ -231,7 +229,7 @@ public class SSHExecuter {
             }
             return false;
         } catch (SftpException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return false;
     }

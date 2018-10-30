@@ -28,6 +28,7 @@ public class SnmpExploreHandler {
 
     @Autowired
     DeviceServiceHandler deviceServiceHandler;
+
     /**
      * 设备对应的snmp服务缓存
      * key：设备id
@@ -58,7 +59,7 @@ public class SnmpExploreHandler {
         if(device == null || detectorService == null){
             return null;
         }
-
+//        DetectorUtil.snmpWalk();
 
 
         return null;

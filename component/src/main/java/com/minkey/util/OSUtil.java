@@ -1,8 +1,7 @@
 package com.minkey.util;
 
 import com.minkey.exception.SystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,8 +15,8 @@ import java.util.List;
  * @author minkey
  *
  */
+@Slf4j
 public class OSUtil {
-	static Logger logger = LoggerFactory.getLogger(OSUtil.class);
 	/**
 	 * 判断当前操作是否Windows.
 	 * 
@@ -57,7 +56,7 @@ public class OSUtil {
 						allA.add(ip);
 					}
 				} catch (Exception e) {
-					logger.error("Get Localhost exception",e);
+					log.error("Get Localhost exception",e);
 				}	
 				
 				Enumeration<NetworkInterface> netInterfaces = (Enumeration<NetworkInterface>) NetworkInterface.getNetworkInterfaces();
@@ -88,7 +87,7 @@ public class OSUtil {
 			throw new SystemException("Get this computer's ip is null.");
 		}
 
-		logger.debug("This computer ip is "+ip.getHostAddress());
+		log.debug("This computer ip is "+ip.getHostAddress());
 
 		
 		return ip.getHostAddress();

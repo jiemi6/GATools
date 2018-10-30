@@ -8,8 +8,6 @@ import com.minkey.dto.DBConfigData;
 import com.minkey.dto.SnmpConfigData;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -23,8 +21,6 @@ import java.util.List;
 
 @Component
 public class DeviceServiceHandler {
-    private final static Logger logger = LoggerFactory.getLogger(DeviceServiceHandler.class);
-
     private final String tableName = "t_deviceService";
     @Autowired
     JdbcTemplate jdbcTemplate;

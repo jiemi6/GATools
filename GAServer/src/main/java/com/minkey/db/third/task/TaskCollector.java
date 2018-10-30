@@ -11,8 +11,7 @@ import com.minkey.db.dao.Task;
 import com.minkey.db.dao.TaskSource;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,11 +26,9 @@ import java.util.*;
  * <br><br/>
  * 每天获取一次
  */
-
+@Slf4j
 @Component
 public class TaskCollector {
-    private final static Logger logger = LoggerFactory.getLogger(TaskCollector.class);
-
     @Autowired
     TaskHandler taskHandler;
 
@@ -57,7 +54,7 @@ public class TaskCollector {
     @Scheduled(cron="0 30 1 * * ?")
     public void getTaskFromOtherDB(){
         if(isDebug){
-            logger.error("测试抓取任务列表调度.");
+            log.error("测试抓取任务列表调度.");
 //            return;
         }
         List<Link> linkList = null;
@@ -68,7 +65,7 @@ public class TaskCollector {
                 return;
             }
         }catch (Exception e){
-            logger.error("获取所有的链路异常",e);
+            log.error("获取所有的链路异常",e);
             return;
         }
 
@@ -80,7 +77,7 @@ public class TaskCollector {
                 //先从缓存中获取
                 jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
             } catch (Exception e) {
-                logger.error("从交换系统抓起任务列表异常", e);
+                log.error("从交换系统抓起任务列表异常", e);
                 continue;
             }
 
@@ -97,19 +94,19 @@ public class TaskCollector {
             //获取task
             collectorTask(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("从数据交换系统抓取任务保存到数据库中异常", e);
+            log.error("从数据交换系统抓取任务保存到数据库中异常", e);
         }
         try {
             //获取taskSource
             collectorTaskSource(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("从数据交换系统抓取任务与数据源对应关系保存到数据库中异常", e);
+            log.error("从数据交换系统抓取任务与数据源对应关系保存到数据库中异常", e);
         }
         try {
             //获取Source
             collectorSource(jdbcTemplate, link);
         } catch (Exception e) {
-            logger.error("从数据交换系统抓取数据源保存到数据库中异常", e);
+            log.error("从数据交换系统抓取数据源保存到数据库中异常", e);
         }
     }
 

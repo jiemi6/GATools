@@ -2,8 +2,6 @@ package com.minkey.db;
 
 import com.minkey.db.dao.CheckItem;
 import com.minkey.exception.DataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,8 +11,6 @@ import java.util.List;
 
 @Component
 public class CheckItemHandler {
-    private final static Logger logger = LoggerFactory.getLogger(CheckItemHandler.class);
-
     private final String tableName = "t_checkItem";
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -31,6 +27,10 @@ public class CheckItemHandler {
 
     public List<CheckItem> query(Long checkId, Integer index) {
         return jdbcTemplate.query("select * from "+tableName+" where checkId= ? ORDER BY itemId LIMIT ?,10 ",new Object[]{checkId,index},new BeanPropertyRowMapper<>(CheckItem.class));
+    }
+
+    public List<CheckItem> queryAll(Long checkId) {
+        return jdbcTemplate.query("select * from "+tableName+" where checkId= ? ORDER BY itemId ",new BeanPropertyRowMapper<>(CheckItem.class));
     }
 
 }

@@ -18,8 +18,6 @@ import java.util.Set;
 
 @Component
 public class DeviceHandler {
-    private final static Logger logger = LoggerFactory.getLogger(DeviceHandler.class);
-
     private final String tableName = "t_device";
     @Autowired
     JdbcTemplate jdbcTemplate;

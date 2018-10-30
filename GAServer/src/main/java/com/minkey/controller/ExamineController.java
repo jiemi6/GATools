@@ -6,8 +6,7 @@ import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.handler.ExamineHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +17,10 @@ import java.util.List;
 /**
  * 体检
  */
+@Slf4j
 @RestController
 @RequestMapping("/examine")
 public class ExamineController {
-    private final static Logger logger = LoggerFactory.getLogger(ExamineController.class);
-
     @Autowired
     HttpSession session;
 
@@ -38,7 +36,7 @@ public class ExamineController {
      */
     @RequestMapping("/allInOne")
     public String allInOne() {
-        logger.info("start: 执行一键体检");
+        log.info("start: 执行一键体检");
 
         User user = (User) session.getAttribute("user");
 
@@ -54,10 +52,10 @@ public class ExamineController {
             examineHandler.doAllInOne(checkId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            log.info("end:  执行系统自检");
         }
     }
 
@@ -67,7 +65,7 @@ public class ExamineController {
      */
     @RequestMapping("/link")
     public String link(Long linkId) {
-        logger.info("start: 执行链路体检 linkId={} ",linkId);
+        log.info("start: 执行链路体检 linkId={} ",linkId);
         if(linkId == null){
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
@@ -86,10 +84,10 @@ public class ExamineController {
             examineHandler.doLink(checkId,linkId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行链路体检");
+            log.info("end:  执行链路体检");
         }
     }
 
@@ -99,7 +97,7 @@ public class ExamineController {
      */
     @RequestMapping("/device")
     public String device(Long deviceId) {
-        logger.info("start: 执行链路体检 linkId={} ",deviceId);
+        log.info("start: 执行设备体检 deviceId={} ",deviceId);
         if(deviceId == null){
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
@@ -107,8 +105,8 @@ public class ExamineController {
         User user = (User) session.getAttribute("user");
 
         Check check = new Check();
-        check.setCheckName(user.getuName()+"发起链路体检");
-        check.setCheckType(Check.CHECKTYPE_ALLINONE);
+        check.setCheckName(user.getuName()+"发起设备体检");
+        check.setCheckType(Check.CHECKTYPE_DEVICE);
         check.setUid(user.getUid());
         //存入数据库，获取id
         long checkId = checkHandler.insert(check);
@@ -118,10 +116,10 @@ public class ExamineController {
             examineHandler.doDevice(checkId,deviceId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行链路体检");
+            log.info("end:  执行设备体检");
         }
     }
 
@@ -131,7 +129,7 @@ public class ExamineController {
      */
     @RequestMapping("/task")
     public String task(Long taskId) {
-        logger.info("start: 执行链路体检 taskId={} ",taskId);
+        log.info("start: 执行任务体检 taskId={} ",taskId);
         if(taskId == null){
             return JSONMessage.createFalied("taskId不能为空").toString();
         }
@@ -150,10 +148,10 @@ public class ExamineController {
             examineHandler.doTask(checkId,taskId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行链路体检");
+            log.info("end:  执行任务体检");
         }
     }
 
@@ -163,7 +161,7 @@ public class ExamineController {
      */
     @RequestMapping("/checkResult")
     public String checkResult(Long checkId,Integer index) {
-        logger.info("start: 获取体检信息 checkId={}，index={}",checkId,index);
+        log.info("start: 获取体检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -176,11 +174,37 @@ public class ExamineController {
 
             return JSONMessage.createSuccess().addData("checkItems",checkItems).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行体检信息");
+            log.info("end:  执行体检信息");
         }
     }
+
+    /**
+     * 下载体检结果文件报告
+     * @return
+     */
+    @RequestMapping("/download")
+    public String download(Long checkId) {
+        log.info("start: 下载体检结果文件报告 checkId={}",checkId);
+        if(checkId == null || checkId <= 0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            List<CheckItem> checkItems = examineHandler.getResultList(checkId);
+
+            //Minkey 处理成文件返回
+
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end:  执行体检信息");
+        }
+    }
+
 
 }

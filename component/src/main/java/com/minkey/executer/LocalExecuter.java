@@ -2,15 +2,13 @@ package com.minkey.executer;
 
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
 
+@Slf4j
 public class LocalExecuter {
-    private final static Logger logger = LoggerFactory.getLogger(LocalExecuter.class);
-
     public static ResultInfo exec(String command) throws SystemException {
         String line = null;
 
@@ -57,7 +55,7 @@ public class LocalExecuter {
                 if (!pro.isAlive()) {
                     int code = pro.exitValue();
                     ResultInfo result = new ResultInfo(code, strBuffer.toString(), errResult.toString());
-                    logger.info(result.toString());
+                    log.info(result.toString());
                     return result;
                 }
             }

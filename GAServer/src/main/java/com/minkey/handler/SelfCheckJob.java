@@ -5,8 +5,7 @@ import com.minkey.db.CheckItemHandler;
 import com.minkey.db.dao.CheckItem;
 import com.minkey.dto.RateObj;
 import com.minkey.util.DiskUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,10 +17,9 @@ import java.util.List;
 /**
  * 本系统基本信息自检
  */
+@Slf4j
 @Component
 public class SelfCheckJob {
-    private final static Logger logger = LoggerFactory.getLogger(SelfCheckJob.class);
-
     /**
      * 检查总共4步
      */
@@ -75,7 +73,7 @@ public class SelfCheckJob {
         }
 
         //test 本地硬盘大小
-        RateObj rateObj = DiskUtils.driver();
+        RateObj rateObj = DiskUtils.LocalDriver();
         checkItem = new CheckItem(3,totalStep);
         checkItem.setCheckId(checkId);
         double rate = rateObj.getRate();
@@ -110,7 +108,7 @@ public class SelfCheckJob {
         try {
             checkItemHandler.insert(checkItem);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
         }
     }
 

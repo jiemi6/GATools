@@ -16,8 +16,6 @@ import java.util.List;
 
 @Component
 public class SourceHandler {
-    private final static Logger logger = LoggerFactory.getLogger(SourceHandler.class);
-
     private final String tableName = "t_source";
     @Autowired
     JdbcTemplate jdbcTemplate;

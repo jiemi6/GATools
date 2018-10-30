@@ -4,8 +4,7 @@ import com.minkey.db.TaskLogHandler;
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,11 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 统计分析
  */
+@Slf4j
 @RestController
 @RequestMapping("/analysis")
 public class AnalysisController {
-    private final static Logger logger = LoggerFactory.getLogger(AnalysisController.class);
-
     @Autowired
     TaskLogHandler taskLogHandler;
 
@@ -27,7 +25,7 @@ public class AnalysisController {
      */
     @RequestMapping("/task")
     public String task(Long linkId,Integer currentPage,Integer pageSize) {
-        logger.info("start: 执行分页查询任务统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 执行分页查询任务统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(linkId == null || linkId <=0
                 || currentPage == null || currentPage <=0
                 || pageSize == null || pageSize <=0){
@@ -39,10 +37,10 @@ public class AnalysisController {
             Page<TaskLog> logs = taskLogHandler.query8page(linkId,page);
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行分页查询任务统计分析数据列表 ");
+            log.info("end:  执行分页查询任务统计分析数据列表 ");
         }
     }
 
@@ -52,7 +50,7 @@ public class AnalysisController {
      */
     @RequestMapping("/taskCount")
     public String taskCount(Long linkId) {
-        logger.info("start: 执行查询任务统计分析数据总计");
+        log.info("start: 执行查询任务统计分析数据总计");
         if(linkId == null || linkId <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -61,10 +59,10 @@ public class AnalysisController {
             TaskLog allSum = taskLogHandler.querySum(linkId);
             return JSONMessage.createSuccess().addData("sum",allSum).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行分页查询任务统计分析数据列表 ");
+            log.info("end:  执行分页查询任务统计分析数据列表 ");
         }
     }
 

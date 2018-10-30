@@ -16,8 +16,6 @@ import java.util.List;
 
 @Component
 public class CheckHandler {
-    private final static Logger logger = LoggerFactory.getLogger(CheckHandler.class);
-
     private final String tableName = "t_check";
     @Autowired
     JdbcTemplate jdbcTemplate;

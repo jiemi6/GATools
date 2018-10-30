@@ -19,8 +19,6 @@ import java.util.Set;
 
 @Component
 public class SyslogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(SyslogHandler.class);
-
     private final String tableName = "t_syslog";
     @Autowired
     JdbcTemplate jdbcTemplate;

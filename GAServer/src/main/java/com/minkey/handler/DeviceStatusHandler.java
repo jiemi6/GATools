@@ -11,8 +11,7 @@ import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.Link;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.util.DetectorUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -29,10 +28,9 @@ import java.util.stream.Collectors;
 /**
  * 检查链路中的设备的连接状态
  */
+@Slf4j
 @Component
 public class DeviceStatusHandler {
-    private final static Logger logger = LoggerFactory.getLogger(DeviceStatusHandler.class);
-
     @Autowired
     private DeviceHandler deviceHandler;
 
@@ -46,20 +44,20 @@ public class DeviceStatusHandler {
     SnmpExploreHandler snmpExploreHandler;
 
     /**
+     * 设备联通性情况
+     */
+    @Autowired
+    DeviceConnectCache deviceConnectCache;
+    /**
      * 所有链路
      * key，主键链路id
      */
     private Map<Long,Link> allLinkMap = new HashMap<>();
     /**
      * 所有的设备
-     * key 主键设备id
+     * key： 主键设备id
      */
     private Map<Long,Device> allDeviceMap = new HashMap<>();
-
-    /**
-     * 设备联通性情况
-     */
-    DeviceConnectCache deviceConnectCache = new DeviceConnectCache();
 
     /**
      * 设备硬件资源map
@@ -70,7 +68,8 @@ public class DeviceStatusHandler {
 
     /**
      * 所有的探针服务缓存
-     * key : 设备id
+     * key : 探针设备id
+     * value ： 探针服务
      */
     private Map<Long,DeviceService> allDetectorServiceMap = new HashMap<>();
 
@@ -173,7 +172,7 @@ public class DeviceStatusHandler {
                 try {
                     testDeviceConnect(allDeviceMap.get(deviceId), deviceService);
                 }catch (Exception e){
-                    logger.error(e.getMessage(),e);
+                    log.error(e.getMessage(),e);
                 }
             }
         });
@@ -195,7 +194,7 @@ public class DeviceStatusHandler {
                         getDeviceExplorer(allDeviceMap.get(deviceId), deviceService);
                     }
                 }catch (Exception e){
-                    logger.error(e.getMessage(),e);
+                    log.error(e.getMessage(),e);
                 }
             }
         });
@@ -256,7 +255,7 @@ public class DeviceStatusHandler {
         }
 
         if (StringUtils.isEmpty(device.getIp())) {
-            logger.error("设备 {} ip不能为空",device.getDeviceName());
+            log.error("设备 {} ip不能为空",device.getDeviceName());
             return false;
         }
 
@@ -314,5 +313,9 @@ public class DeviceStatusHandler {
 
     public Set<Long> queryAllConnect() {
         return deviceConnectCache.getOkSet();
+    }
+
+    public Device getDevice8Id(Long deviceId) {
+        return allDeviceMap.get(deviceId);
     }
 }

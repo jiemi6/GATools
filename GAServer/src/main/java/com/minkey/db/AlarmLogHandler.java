@@ -15,8 +15,6 @@ import java.util.List;
 
 @Component
 public class AlarmLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(AlarmLogHandler.class);
-
     private final String tableName = "t_alarmLog";
     @Autowired
     JdbcTemplate jdbcTemplate;

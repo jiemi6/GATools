@@ -9,9 +9,8 @@ import com.minkey.dto.JSONMessage;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.handler.SelfCheckJob;
 import com.minkey.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +25,10 @@ import java.util.List;
 /**
  * 系统管理接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/system")
 public class SystemController {
-    private final static Logger logger = LoggerFactory.getLogger(SystemController.class);
-
     @Autowired
     ConfigHandler configHandler;
 
@@ -54,7 +52,7 @@ public class SystemController {
      */
     @RequestMapping("/check")
     public String check() {
-        logger.info("start: 执行系统自检");
+        log.info("start: 执行系统自检");
 
         User user = (User) session.getAttribute("user");
 
@@ -68,7 +66,7 @@ public class SystemController {
             checkId = checkHandler.insert(check);
         }catch (Exception e){
             //如果异常 认为db异常
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied("数据库错误，无法执行命令，"+e.getMessage()).toString();
         }
 
@@ -77,10 +75,10 @@ public class SystemController {
             selfCheckJob.check(checkId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            log.info("end:  执行系统自检");
         }
     }
 
@@ -90,7 +88,7 @@ public class SystemController {
      */
     @RequestMapping("/checkInfo")
     public String checkInfo(Long checkId,Integer index) {
-        logger.info("start: 获取当前系统自检信息 checkId={}，index={}",checkId,index);
+        log.info("start: 获取当前系统自检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -102,10 +100,10 @@ public class SystemController {
             List<CheckItem> checkItems = selfCheckJob.getResultList(checkId,index);
             return JSONMessage.createSuccess().addData("checkItems",checkItems).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行系统自检");
+            log.info("end:  执行系统自检");
         }
     }
 
@@ -116,7 +114,7 @@ public class SystemController {
      */
     @RequestMapping("/shutDown")
     public String shutDown(Boolean reboot) {
-        logger.info("start: 执行shutDown");
+        log.info("start: 执行shutDown");
 
         if(isDebug){
             return JSONMessage.createSuccess("暂时不真正执行，真的会关机的").toString();
@@ -132,10 +130,10 @@ public class SystemController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行关机命令");
+            log.info("end:  执行关机命令");
         }
 
     }
@@ -177,7 +175,7 @@ public class SystemController {
             String txt = StringUtil.byte2String(chars);
 
 
-            logger.info(txt);
+            log.info(txt);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -222,7 +220,7 @@ public class SystemController {
      */
     @RequestMapping("/netWorkSet")
     public String netWorkSet(String localIp,String subnetMask,String gateway,String dns,String dnsBak) {
-        logger.info("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
+        log.info("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
         if(StringUtils.isEmpty(localIp)
                 ||StringUtils.isEmpty(subnetMask)
                 ||StringUtils.isEmpty(gateway)
@@ -249,10 +247,10 @@ public class SystemController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行系统注册信息 ");
+            log.info("end: 执行系统注册信息 ");
         }
     }
 

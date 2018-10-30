@@ -1,9 +1,8 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.Task;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
@@ -15,8 +14,6 @@ import java.util.List;
 
 @Component
 public class TaskHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskHandler.class);
-
     private final String tableName = "t_task";
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -29,11 +26,17 @@ public class TaskHandler {
 
 
     public Task query(Long taskId) {
-            return jdbcTemplate.queryForObject("select configKey, configData from "+tableName+" where taskId= ?",new Object[]{taskId},Task.class);
+        List<Task> taskList= jdbcTemplate.query("select * from "+tableName+" where taskId= ?",
+            new Object[]{taskId}, new BeanPropertyRowMapper<>(Task.class));
+        if(CollectionUtils.isEmpty(taskList)){
+            return null;
+        }
+        return taskList.get(0);
+
     }
 
     public List<Task> queryAll() {
-        return jdbcTemplate.queryForList("select configKey, configData from "+tableName,Task.class);
+        return jdbcTemplate.query("select * from "+tableName, new BeanPropertyRowMapper<>(Task.class));
     }
 
     public void insertAll(List<Task> tasks) {

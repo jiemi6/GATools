@@ -16,8 +16,6 @@ import java.util.List;
 
 @Component
 public class LinkHandler {
-    private final static Logger logger = LoggerFactory.getLogger(LinkHandler.class);
-
     private final String tableName = "t_link";
     @Autowired
     JdbcTemplate jdbcTemplate;

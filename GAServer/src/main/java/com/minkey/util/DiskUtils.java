@@ -26,7 +26,7 @@ public class DiskUtils {
     /**
      * 获取硬盘总大小
      */
-    public static RateObj driver(){
+    public static RateObj LocalDriver(){
         // 当前文件系统类
         FileSystemView fsv = FileSystemView.getFileSystemView();
         // 列出所有 磁盘

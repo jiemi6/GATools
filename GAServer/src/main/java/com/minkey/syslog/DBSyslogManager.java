@@ -2,8 +2,7 @@ package com.minkey.syslog;
 
 import com.minkey.db.SyslogHandler;
 import com.minkey.db.dao.Syslog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -16,10 +15,9 @@ import java.util.Set;
 /**
  * 临时存储接受的syslog, 并间隔一段时间后批量刷入db
  */
+@Slf4j
 @Component
 public class DBSyslogManager {
-    private final static Logger logger = LoggerFactory.getLogger(DBSyslogManager.class);
-
     @Autowired
     SyslogHandler syslogHandler;
 
@@ -52,7 +50,7 @@ public class DBSyslogManager {
         try{
             syslogHandler.insertAll(dbSet);
         }catch (Exception e){
-            logger.error("存储syslog异常",e);
+            log.error("存储syslog异常",e);
         }
 
     }

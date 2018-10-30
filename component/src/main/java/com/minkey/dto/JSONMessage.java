@@ -2,9 +2,8 @@ package com.minkey.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ErrorCodeEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * JSON结果返回封装。
@@ -12,8 +11,8 @@ import org.slf4j.LoggerFactory;
  * @author 
  * 
  */
+@Slf4j
 public class JSONMessage {
-    static Logger logger = LoggerFactory.getLogger(JSONMessage.class);
     /** 操作成功 */
     private static final int JSON_RESULT_SUCCESS = ErrorCodeEnum.SUCCESS.getCode();
 
@@ -150,7 +149,7 @@ public class JSONMessage {
 		try {
 			return JSONObject.toJSONString(this);
 		} catch (Exception e) {
-		    logger.error("JSONMessage to String exception",e);
+		    log.error("JSONMessage to String exception",e);
 			return JSONMessage.createFalied("return jsonObject to String exception").toString();
 		}
 	}
@@ -163,7 +162,7 @@ public class JSONMessage {
         try{
             return JSONObject.parseObject(jsonStr,JSONMessage.class);
         }catch (Exception e){
-            logger.error("String to JSONMessage exception",e);
+            log.error("String to JSONMessage exception",e);
             return null;
         }
 

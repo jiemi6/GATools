@@ -2,9 +2,8 @@ package com.minkey.util;
 
 import com.minkey.dto.DBConfigData;
 import com.minkey.exception.DataException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,10 +13,9 @@ import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class DynamicDB {
-    private final static Logger logger = LoggerFactory.getLogger(DynamicDB.class);
-
     /**
      * 所有系统需要访问的数据库
      * <br>key : ip:port/dbName <br/>
@@ -51,7 +49,7 @@ public class DynamicDB {
 
             return true;
         }catch (Exception e){
-            logger.error("测试连接数据库失败:"+dbConfigData.toString(),e);
+            log.error("测试连接数据库失败:"+dbConfigData.toString(),e);
             return false;
         }
     }

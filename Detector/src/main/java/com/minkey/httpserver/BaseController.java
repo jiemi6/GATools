@@ -7,19 +7,17 @@ import com.minkey.command.Telnet;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
+@Slf4j
 @RestController
 @Scope("prototype")
 public class BaseController {
-    Logger logger = LoggerFactory.getLogger(BaseController.class);
     @RequestMapping("/check")
     public String check() {
         return JSONMessage.createSuccess().toString();
@@ -32,9 +30,9 @@ public class BaseController {
      */
     @RequestMapping("/ping")
     public String ping(String ip) {
-        logger.info("exec ping [{}] start! " , ip);
+        log.info("exec ping [{}] start! " , ip);
         if(StringUtils.isEmpty(ip)){
-            logger.error("ip 参数为空！");
+            log.error("ip 参数为空！");
             return JSONMessage.createFalied("ip 参数为空！").toString();
         }
 
@@ -44,10 +42,10 @@ public class BaseController {
             data.put("isConnect",isConnect);
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("exec ping [{}] end! " , ip);
+            log.info("exec ping [{}] end! " , ip);
         }
     }
 
@@ -59,9 +57,9 @@ public class BaseController {
      */
     @RequestMapping("/executeSh")
     public String executeSh(String cmdStr) {
-        logger.info("exec executeSh [{}] start! " , cmdStr);
+        log.info("exec executeSh [{}] start! " , cmdStr);
         if(StringUtils.isEmpty(cmdStr)){
-            logger.error("cmdStr 参数为空！");
+            log.error("cmdStr 参数为空！");
             return JSONMessage.createFalied("cmdStr 参数为空！").toString();
         }
 
@@ -69,10 +67,10 @@ public class BaseController {
             ResultInfo resultInfo = LocalExecuter.exec(cmdStr);
             return JSONMessage.createSuccess().addData(resultInfo).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("exec executeSh [{}] end! " , cmdStr);
+            log.info("exec executeSh [{}] end! " , cmdStr);
         }
     }
 
@@ -85,13 +83,13 @@ public class BaseController {
      */
     @RequestMapping("/telnetCmd")
     public String telnetCmd(String ip,int port) {
-        logger.info("exec telnetCmd [{} {}] start .",ip,port);
+        log.info("exec telnetCmd [{} {}] start .",ip,port);
         if(StringUtils.isEmpty(ip)){
-            logger.error("ip 参数为空！");
+            log.error("ip 参数为空！");
             return JSONMessage.createFalied("ip 参数为空！").toString();
         }
         if(port <= 0 ){
-            logger.error("port [{}] 小于 0 .",port);
+            log.error("port [{}] 小于 0 .",port);
             return JSONMessage.createFalied("port 参数不合法！").toString();
         }
         try{
@@ -101,10 +99,10 @@ public class BaseController {
             data.put("isConnect",isConnect);
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("exec telnetCmd  [{} {}] end .",ip,port);
+            log.info("exec telnetCmd  [{} {}] end .",ip,port);
         }
     }
 
@@ -123,14 +121,14 @@ public class BaseController {
                              Integer retry,
                              Long timeout,
                              String[] oids) {
-        logger.info("exec snmpCmdGetList [{}:{}-{}:V{}] start .",ip,port,community,version);
+        log.info("exec snmpCmdGetList [{}:{}-{}:V{}] start .",ip,port,community,version);
         if(ArrayUtils.isEmpty(oids)){
-            logger.error("oids 参数为空！");
+            log.error("oids 参数为空！");
             return JSONMessage.createFalied("oids 参数不能为空").toString();
         }
 
         if(StringUtils.isEmpty(ip)){
-            logger.error("目标机器 ip 为空！");
+            log.error("目标机器 ip 为空！");
             return JSONMessage.createFalied("目标机器 ip 为空").toString();
         }
 
@@ -157,10 +155,10 @@ public class BaseController {
 
             return JSONMessage.createSuccess().addData(reData).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("exec snmpCmdGetList [{}:{}-{}:V{}]  end .",ip,port,community,version);
+            log.info("exec snmpCmdGetList [{}:{}-{}:V{}]  end .",ip,port,community,version);
         }
 
 
@@ -180,15 +178,15 @@ public class BaseController {
                               Integer retry,
                               Long timeout,
                               String oid) {
-        logger.info("exec snmpCmdWalk [{}:{}-{}:V{}] start .",ip,port,community,version);
+        log.info("exec snmpCmdWalk [{}:{}-{}:V{}] start .",ip,port,community,version);
         if(StringUtils.isEmpty(oid)){
-            logger.error("oid 参数为空！");
+            log.error("oid 参数为空！");
             return JSONMessage.createFalied("oid 参数不能为空").toString();
         }
 
 
         if(StringUtils.isEmpty(ip)){
-            logger.error("目标机器 ip 为空！");
+            log.error("目标机器 ip 为空！");
             return JSONMessage.createFalied("目标机器 ip 为空").toString();
         }
 
@@ -214,10 +212,10 @@ public class BaseController {
 
             return JSONMessage.createSuccess().addData(reData).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            logger.info("exec snmpCmdWalk [{}:{}-{}:V{}] end .",ip,port,community,version);
+            log.info("exec snmpCmdWalk [{}:{}-{}:V{}] end .",ip,port,community,version);
         }
     }
 

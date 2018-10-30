@@ -5,10 +5,9 @@ import com.minkey.contants.ConfigEnum;
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
 import com.minkey.syslog.SysLogUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,50 +15,49 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 配置接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/config")
 public class ConfigController {
-    private final static Logger logger = LoggerFactory.getLogger(ConfigController.class);
-
     @Autowired
     ConfigHandler configHandler;
 
     @RequestMapping("/insert")
     public String insert(String configKey,String configData) {
-        logger.info("start: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+        log.info("start: 执行insert配置 configKey={} ,configData={}",configKey,configData);
         if(StringUtils.isEmpty(configKey)){
-            logger.info("configKey不能为空");
+            log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
         }
         if(StringUtils.isEmpty(configData)){
-            logger.info("configData不能为空");
+            log.info("configData不能为空");
             return JSONMessage.createFalied("configData不能为空").toString();
         }
         try{
             configHandler.insert(configKey,configData);
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+            log.info("end: 执行insert配置 configKey={} ,configData={}",configKey,configData);
         }
     }
 
     @RequestMapping("/query")
     public String query(String configKey) {
-        logger.info("start: 执行query配置 configKey={} ",configKey);
+        log.info("start: 执行query配置 configKey={} ",configKey);
         if(StringUtils.isEmpty(configKey)){
-            logger.info("configKey不能为空");
+            log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
         }
         try{
             return JSONMessage.createSuccess().addData(configHandler.query(configKey)).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行query配置 configKey={} ",configKey);
+            log.info("end: 执行query配置 configKey={} ",configKey);
         }
     }
 
@@ -81,7 +79,7 @@ public class ConfigController {
      */
     @RequestMapping("/systemInfo/set")
     public String systemInfoSet(String systemName,String managerName,String managerPhone,String managerEmail) {
-        logger.info("start: 执行系统注册信息 {},{},{},{}",systemName,managerName,managerPhone,managerEmail);
+        log.info("start: 执行系统注册信息 {},{},{},{}",systemName,managerName,managerPhone,managerEmail);
         if(StringUtils.isEmpty(systemName)
                 ||StringUtils.isEmpty(managerName)
                 ||StringUtils.isEmpty(managerPhone)
@@ -100,10 +98,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行系统注册信息 ");
+            log.info("end: 执行系统注册信息 ");
         }
     }
 
@@ -126,7 +124,7 @@ public class ConfigController {
      */
     @RequestMapping("/logOverDay/set")
     public String logOverDaySet(Integer logOverDay) {
-        logger.info("start: 执行日志保留天数设置 {}",logOverDay);
+        log.info("start: 执行日志保留天数设置 {}",logOverDay);
         if(logOverDay == null || logOverDay <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -138,10 +136,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行日志保留天数设置 ");
+            log.info("end: 执行日志保留天数设置 ");
         }
     }
 
@@ -163,7 +161,7 @@ public class ConfigController {
      */
     @RequestMapping("/autoCheckTimes/set")
     public String autoCheckTimesSet(String[] checkTimes) {
-        logger.info("start: 设置自动体检时间 {}",String.valueOf(checkTimes));
+        log.info("start: 设置自动体检时间 {}",String.valueOf(checkTimes));
         if(ArrayUtils.isEmpty(checkTimes)){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -175,10 +173,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 设置自动体检时间 ");
+            log.info("end: 设置自动体检时间 ");
         }
     }
 
@@ -188,7 +186,7 @@ public class ConfigController {
      */
     @RequestMapping("/smsAlarm/set")
     public String smsAlarmSet(String smsUrl) {
-        logger.info("start: 执行报警短信配置");
+        log.info("start: 执行报警短信配置");
         try{
             //直接存入config
             String configKey = ConfigEnum.SmsAlarmConfig.getConfigKey();
@@ -197,10 +195,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行报警短信配置");
+            log.info("end:  执行报警短信配置");
         }
     }
 
@@ -223,7 +221,7 @@ public class ConfigController {
      */
     @RequestMapping("/emailAlarm/set")
     public String emailAlarmSet(String emailUser,String emailPwd,String emailServer) {
-        logger.info("start: 执行报警邮箱配置");
+        log.info("start: 执行报警邮箱配置");
         try{
             //直接存入config
             String configKey = ConfigEnum.EmailAlarmConfig.getConfigKey();
@@ -234,10 +232,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  报警邮箱配置");
+            log.info("end:  报警邮箱配置");
         }
     }
 
@@ -258,12 +256,12 @@ public class ConfigController {
     @RequestMapping("/syslog2other/set")
     public String syslog2otherSet(Boolean open ,String ip, String port) {
         if(open == null || open == false){
-            logger.info("start: 关闭syslog转发");
+            log.info("start: 关闭syslog转发");
             //关闭
             SysLogUtil.closeSyslog2other();
 
         }else{
-            logger.info("start: 配置syslog转发 ip={},port=" ,ip,port);
+            log.info("start: 配置syslog转发 ip={},port=" ,ip,port);
             //保存配置
             //启动发送
             SysLogUtil.startSyslog2other(ip,port);
@@ -279,10 +277,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 配置syslog完成");
+            log.info("end: 配置syslog完成");
         }
 
     }
@@ -303,7 +301,7 @@ public class ConfigController {
      */
     @RequestMapping("/sshd/set")
     public String sshdSet(Boolean open) {
-        logger.info("start: ssh工具 状态变更为 {}" ,open);
+        log.info("start: ssh工具 状态变更为 {}" ,open);
         //调用系统命令进行开关，
 
         if(open == null || open == false){
@@ -320,10 +318,10 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  ssh工具 状态变更完成");
+            log.info("end:  ssh工具 状态变更完成");
         }
 
 

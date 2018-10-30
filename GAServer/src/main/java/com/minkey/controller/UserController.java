@@ -8,9 +8,8 @@ import com.minkey.util.DateUtil;
 import com.minkey.util.IPUtil;
 import com.minkey.util.StringUtil;
 import com.minkey.util.VCodeUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,11 +28,10 @@ import java.util.List;
 /**
  * 用户接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private final static Logger logger = LoggerFactory.getLogger(UserController.class);
-
     private final String moduleName = "用户模块";
 
     @Autowired
@@ -70,7 +68,7 @@ public class UserController {
 
             session.setAttribute("vcode",String.valueOf(vcode));
         } catch (IOException e) {
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }
         return null;
@@ -82,7 +80,7 @@ public class UserController {
      */
     @RequestMapping("/checkVCode")
     public String checkVCode(String vcode) {
-        logger.info("start: 执行验证码检查");
+        log.info("start: 执行验证码检查");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
                 return JSONMessage.createSuccess().toString();
@@ -90,10 +88,10 @@ public class UserController {
                 return JSONMessage.createFalied("验证码错误").toString();
             }
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行验证码检查");
+            log.info("end:  执行验证码检查");
         }
     }
 
@@ -103,7 +101,7 @@ public class UserController {
      */
     @RequestMapping("/login")
     public String login( HttpServletRequest request, String uName, String pwd, String vcode) {
-        logger.info("start: 执行用户登陆");
+        log.info("start: 执行用户登陆");
         try{
             if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
                 return JSONMessage.createFalied("验证码错误").toString();
@@ -153,7 +151,7 @@ public class UserController {
                         return JSONMessage.createFalied("非安全时间段内不允许登陆").toString();
                     }
                 } catch (ParseException e) {
-                    logger.error("时间转换异常",e);
+                    log.error("时间转换异常",e);
                     return JSONMessage.createFalied("非安全时间段内不允许登陆,时间转换异常").toString();
                 }
             }
@@ -167,10 +165,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  用户登陆成功");
+            log.info("end:  用户登陆成功");
         }
     }
 
@@ -181,7 +179,7 @@ public class UserController {
      */
     @RequestMapping("/logout")
     public String logout() {
-        logger.info("start: 执行用户登出");
+        log.info("start: 执行用户登出");
         try{
             User user = (User) session.getAttribute("user");
             //移除session中user
@@ -192,10 +190,10 @@ public class UserController {
             }
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行用户登出");
+            log.info("end:  执行用户登出");
         }
     }
 
@@ -205,7 +203,7 @@ public class UserController {
      */
     @RequestMapping("/insert")
     public String insert(User user) {
-        logger.info("start: 执行添加用户");
+        log.info("start: 执行添加用户");
         if(user == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -239,10 +237,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行添加用户");
+            log.info("end:  执行添加用户");
         }
     }
 
@@ -252,7 +250,7 @@ public class UserController {
      */
     @RequestMapping("/del")
     public String del(Long uid) {
-        logger.info("start: 执行删除用户");
+        log.info("start: 执行删除用户");
         if(uid == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -267,10 +265,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行删除用户");
+            log.info("end:  执行删除用户");
         }
     }
 
@@ -280,7 +278,7 @@ public class UserController {
      */
     @RequestMapping("/query")
     public String query(Long uid) {
-        logger.info("start: 执行根据uid查询用户");
+        log.info("start: 执行根据uid查询用户");
         if(uid == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -290,10 +288,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().addData(user).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行根据uid查询用户");
+            log.info("end:  执行根据uid查询用户");
         }
     }
 
@@ -305,7 +303,7 @@ public class UserController {
      */
     @RequestMapping("/resetPwd")
     public String resetPwd(Long uid) {
-        logger.info("start: 执行重置用户密码");
+        log.info("start: 执行重置用户密码");
         if(uid == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -320,12 +318,40 @@ public class UserController {
 
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行重置用户密码");
+            log.info("end:  执行重置用户密码");
         }
     }
+
+
+    /**
+     * 重置用户密码
+     * @return
+     */
+    @RequestMapping("/updatePwd")
+    public String updatePwd(String pwd) {
+        log.info("start: 执行修改当前登陆用户自己的密码");
+        if(StringUtils.isEmpty(pwd)){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            User sessionUser = (User)session.getAttribute("user");
+
+            String defaultPwd = StringUtil.md5(pwd);
+            userHandler.resetPwd(sessionUser.getUid(),defaultPwd);
+
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end:  执行修改当前登陆用户自己的密码");
+        }
+    }
+
 
 
     /**
@@ -334,7 +360,7 @@ public class UserController {
      */
     @RequestMapping("/unlock")
     public String unlock(Long uid) {
-        logger.info("start: 执行解锁用户");
+        log.info("start: 执行解锁用户");
         if(uid == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -348,10 +374,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行解锁用户");
+            log.info("end:  执行解锁用户");
         }
     }
 
@@ -362,7 +388,7 @@ public class UserController {
      */
     @RequestMapping("/update")
     public String update(User user) {
-        logger.info("start: 执行修改用户信息");
+        log.info("start: 执行修改用户信息");
         if(user.getUid() == null){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -380,10 +406,10 @@ public class UserController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 执行修改用户信息");
+            log.info("end: 执行修改用户信息");
         }
     }
 
@@ -394,16 +420,16 @@ public class UserController {
      */
     @RequestMapping("/queryAll")
     public String queryAll() {
-        logger.info("start: 获取所有用户信息");
+        log.info("start: 获取所有用户信息");
         try{
             List<User> users = userHandler.queryAll();
 
             return JSONMessage.createSuccess().addData("users",users).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 获取所有用户信息");
+            log.info("end: 获取所有用户信息");
         }
     }
 }

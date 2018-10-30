@@ -13,8 +13,6 @@ import java.util.Map;
 
 @Component
 public class ConfigHandler {
-    private final static Logger logger = LoggerFactory.getLogger(ConfigHandler.class);
-
     private final String tableName = "t_config";
     @Autowired
     JdbcTemplate jdbcTemplate;

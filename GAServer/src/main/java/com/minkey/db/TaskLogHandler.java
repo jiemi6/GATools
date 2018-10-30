@@ -2,8 +2,6 @@ package com.minkey.db;
 
 import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,22 +9,23 @@ import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class TaskLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskLogHandler.class);
-
     private final String tableName = "t_taskLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
 
     public long queryMaxId(long linkId) {
-        Long count = jdbcTemplate.queryForObject("select max(targetLogId) from "+tableName+" WHERE linkId=?",new Object[]{linkId},Long.class);
+        //targetLogId 为字符串，如果需要比较字符串大小，要先加0
+        Long count = jdbcTemplate.queryForObject("select max(targetLogId+0) from "+tableName+" WHERE linkId=?",new Object[]{linkId},Long.class);
         if(count == null){
             count = 0l;
         }
@@ -74,11 +73,22 @@ public class TaskLogHandler {
 
 
     public TaskLog querySum(long linkId) {
-        List<TaskLog>  taskLogList = jdbcTemplate.query("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+" where linkId= ?",new Object[]{linkId}, new BeanPropertyRowMapper<>(TaskLog.class));
-        if(CollectionUtils.isEmpty(taskLogList)){
-            return null;
+        Map<String, Object> taskLogList = jdbcTemplate.queryForMap("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+" where linkId= ?",new Object[]{linkId});
+        TaskLog taskLog = new TaskLog();
+        if(!CollectionUtils.isEmpty(taskLogList)){
+            taskLog.setSuccessNum(bigDecimal2long((BigDecimal)taskLogList.get("successNum")));
+            taskLog.setSuccessFlow(bigDecimal2long((BigDecimal)taskLogList.get("successFlow")));
+            taskLog.setErrorNum(bigDecimal2long((BigDecimal)taskLogList.get("errorNum")));
+            taskLog.setErrorFlow(bigDecimal2long((BigDecimal)taskLogList.get("errorFlow")));
         }
-        return taskLogList.get(0);
+        return taskLog;
 
+    }
+
+    private long bigDecimal2long(BigDecimal bigDecimal){
+        if(bigDecimal == null){
+            return 0;
+        }
+        return bigDecimal.longValue();
     }
 }

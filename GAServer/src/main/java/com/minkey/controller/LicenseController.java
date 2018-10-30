@@ -6,10 +6,9 @@ import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.StringUtil;
 import com.minkey.util.SymmetricEncoder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +24,10 @@ import java.util.Map;
 /**
  * 证书管理接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/license")
 public class LicenseController {
-    private final static Logger logger = LoggerFactory.getLogger(LicenseController.class);
-
-
     @Autowired
     ConfigHandler configHandler;
 
@@ -44,7 +41,7 @@ public class LicenseController {
      */
     @RequestMapping("/up")
     public String  upFile(@RequestParam("file") MultipartFile file) throws IOException {
-        logger.info("start: 上传证书文件 file: {} ",file.getOriginalFilename());
+        log.info("start: 上传证书文件 file: {} ",file.getOriginalFilename());
         try{
             file.getBytes();
             String str = IOUtils.toString(file.getInputStream(), "utf-8");
@@ -54,7 +51,7 @@ public class LicenseController {
                 return JSONMessage.createFalied("无效证书文件").toString();
             }
 
-            logger.info("license : {}" ,str);
+            log.info("license : {}" ,str);
 
             Map<String, Object> dbData = configHandler.query(configKey);
 
@@ -81,10 +78,10 @@ public class LicenseController {
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 上传证书文件");
+            log.info("end: 上传证书文件");
         }
 
     }
@@ -152,7 +149,7 @@ public class LicenseController {
      */
     @RequestMapping("/licenseExport")
     public String licenseExport(String licenseKey,HttpServletResponse response) {
-        logger.info("start: 根据key={}获取licenseData ",licenseKey);
+        log.info("start: 根据key={}获取licenseData ",licenseKey);
         if(StringUtils.isEmpty(licenseKey)){
             //返回错误
             return JSONMessage.createFalied("参数错误").toString();

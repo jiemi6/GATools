@@ -16,8 +16,6 @@ import java.util.List;
 
 @Component
 public class TaskSourceHandler {
-    private final static Logger logger = LoggerFactory.getLogger(TaskSourceHandler.class);
-
     private final String tableName = "t_taskSource";
     @Autowired
     JdbcTemplate jdbcTemplate;

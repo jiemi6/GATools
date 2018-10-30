@@ -2,14 +2,10 @@ package com.minkey.test.syslog;
 
 
 import com.minkey.syslog.SysLogUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 public class SysLogServerTest {
-
-    private final static Logger logger = LoggerFactory.getLogger(SysLogServerTest.class);
-
 
     public static void main(String[] args) {
         new SysLogServerTest().startS();
@@ -21,7 +17,7 @@ public class SysLogServerTest {
         try {
             SysLogUtil SysLogUtil = new SysLogUtil();
             SysLogUtil.startServer(514);
-            logger.error("start");
+            log.error("start");
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

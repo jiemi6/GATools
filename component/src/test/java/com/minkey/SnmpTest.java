@@ -3,12 +3,11 @@ package com.minkey;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
 import com.minkey.snmp.SnmpData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
+@Slf4j
 public class SnmpTest {
-    static Logger logger = LoggerFactory.getLogger(SnmpTest.class);
     /**
      * @param args
      */
@@ -48,7 +47,7 @@ public class SnmpTest {
 //        JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.16");
         JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.10");
 
-        logger.error(jo.toJSONString());
+        log.error(jo.toJSONString());
 
     }
 

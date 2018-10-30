@@ -9,8 +9,7 @@ import com.minkey.db.dao.TaskLog;
 import com.minkey.db.dao.UserLog;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 日志查看接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/log")
 public class LogController {
-    private final static Logger logger = LoggerFactory.getLogger(LogController.class);
-
     @Autowired
     UserLogHandler userLogHandler;
 
@@ -38,7 +36,7 @@ public class LogController {
      */
     @RequestMapping("/task")
     public String task(Integer currentPage,Integer pageSize) {
-        logger.info("start: 执行分页查询任务日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询任务日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -48,10 +46,10 @@ public class LogController {
             Page<TaskLog> logs = null;
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  执行分页查询任务日志 ");
+            log.info("end:  分页查询任务日志 ");
         }
     }
 
@@ -61,7 +59,7 @@ public class LogController {
      */
     @RequestMapping("/device")
     public String device(Integer currentPage,Integer pageSize) {
-        logger.info("start: 分页查询设备日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询设备日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -72,10 +70,10 @@ public class LogController {
             Page<Syslog> logs = syslogHandler.query8page(page);
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  分页查询设备日志");
+            log.info("end:  分页查询设备日志");
         }
     }
 
@@ -85,14 +83,14 @@ public class LogController {
      */
     @RequestMapping("/link")
     public String link(Integer currentPage,Integer pageSize) {
-        logger.info("start: 分页查询链路日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询链路日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end: 分页查询链路日志");
+            log.info("end: 分页查询链路日志");
         }
     }
 
@@ -103,7 +101,7 @@ public class LogController {
      */
     @RequestMapping("/user")
     public String user(Integer currentPage,Integer pageSize) {
-        logger.info("start: 分页查询用户日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询用户日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             Page<UserLog> page = new Page(currentPage,pageSize);
 
@@ -111,10 +109,10 @@ public class LogController {
 
             return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  分页查询用户日志");
+            log.info("end:  分页查询用户日志");
         }
     }
 
@@ -124,7 +122,7 @@ public class LogController {
      */
     @RequestMapping("/detection")
     public String detection(Integer currentPage,Integer pageSize) {
-        logger.info("start: 分页查询体检发起日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.info("start: 分页查询体检发起日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             Page<Check> page = new Page(currentPage,pageSize);
 
@@ -132,10 +130,10 @@ public class LogController {
 
             return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
-            logger.error(e.getMessage(),e);
+            log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            logger.info("end:  分页查询体检发起日志");
+            log.info("end:  分页查询体检发起日志");
         }
     }
 

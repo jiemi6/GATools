@@ -1,7 +1,6 @@
 package com.minkey.cache;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,9 +8,8 @@ import java.util.Set;
 /**
  * 终端连接状态缓存
  */
+@Component
 public class DeviceConnectCache {
-    private final static Logger logger = LoggerFactory.getLogger(DeviceConnectCache.class);
-
     /**
      * 正常的
      */

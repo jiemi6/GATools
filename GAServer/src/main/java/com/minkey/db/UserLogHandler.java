@@ -16,8 +16,6 @@ import java.util.List;
 
 @Component
 public class UserLogHandler {
-    private final static Logger logger = LoggerFactory.getLogger(UserLogHandler.class);
-
     private final String tableName = "t_userLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
