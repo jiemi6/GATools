@@ -26,7 +26,7 @@ public class SnmpUtil {
     public final static String DEFAULT_COMMUNITY = "public";
     public final static int DEFAULT_PORT = 161;
     public final static long DEFAULT_TIMEOUT = 3 * 1000L;
-    public final static int DEFAULT_RETRY = 3;
+    public final static int DEFAULT_RETRY = 2;
 
     private CommunityTarget communityTarget;
 

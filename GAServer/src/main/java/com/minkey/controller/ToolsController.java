@@ -227,7 +227,7 @@ public class ToolsController {
                 BaseConfigData configData = ssh.getConfigData();
 
                 //执行命令
-                jo = DetectorUtil.snmpWalk(configData.getIp(),configData.getPort(),ip,port);
+                jo = DetectorUtil.snmpWalk(configData.getIp(),configData.getPort(),ip,oid);
             }
 
             return JSONMessage.createSuccess().addData("msg",jo).toString();

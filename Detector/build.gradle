@@ -1,9 +1,6 @@
-apply plugin: 'application'
 
 dependencies {
     compile project(':component')
-
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
 
 }
 

@@ -1,6 +1,7 @@
 package com.minkey.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.command.SnmpUtil;
 import com.minkey.dto.DBConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
@@ -116,10 +117,10 @@ public class DetectorUtil {
 
     public static JSONObject snmpWalk(String detectorIp,int detectorPort,
                                       String ip,
-                                      Integer port) {
+                                      String oid) {
 
 
-        return null;
+        return snmpWalk(detectorIp,detectorPort,ip,SnmpUtil.DEFAULT_PORT, SnmpUtil.DEFAULT_VERSION,SnmpUtil.DEFAULT_COMMUNITY,SnmpUtil.DEFAULT_RETRY,SnmpUtil.DEFAULT_TIMEOUT,oid);
     }
 
     public static JSONObject snmpWalk(String detectorIp,int detectorPort,
@@ -130,7 +131,7 @@ public class DetectorUtil {
                                          Integer retry,
                                          Long timeout,
                                          String oid) {
-        String url = String.format("http://%s:%s/snmpWalk",detectorIp,detectorPort);
+        String url = String.format("http://%s:%s/snmp/walk",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",ip);
         param.put("port",port.toString());

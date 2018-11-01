@@ -16,19 +16,9 @@ sourceSets {
 dependencies {
     compile project(':component')
 
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.2.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.2.RELEASE'
-
-    compile "org.quartz-scheduler:quartz:2.2.1"
-
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
 //    compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
 
     compile "org.apache.httpcomponents:httpclient:4.5"
-    //syslog组件包
-    compile group: 'org.syslog4j', name: 'syslog4j', version: '0.9.30'
 
 }
 

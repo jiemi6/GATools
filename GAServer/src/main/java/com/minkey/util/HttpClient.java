@@ -35,7 +35,7 @@ public class HttpClient {
 		
 		RequestConfig requestConfig = RequestConfig.custom()  
 				//读取3秒超时
-		        .setSocketTimeout(3000)  
+		        .setSocketTimeout(30000)
 		        //连接3秒超时
 		        .setConnectTimeout(3000)
 		        .setConnectionRequestTimeout(3000)

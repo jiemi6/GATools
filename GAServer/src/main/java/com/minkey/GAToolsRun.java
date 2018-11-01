@@ -13,14 +13,14 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @ServletComponentScan
 @EnableScheduling
-public class MainRun {
+public class GAToolsRun {
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = SpringApplication.run(MainRun.class, args);
+        ConfigurableApplicationContext ctx = SpringApplication.run(GAToolsRun.class, args);
 
         SpringUtils.setCtx(ctx);
 
 
-        initSystem();
+//        initSystem();
     }
 
     public static void initSystem(){

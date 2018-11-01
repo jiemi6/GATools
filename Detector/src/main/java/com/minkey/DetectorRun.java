@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @EnableAutoConfiguration
 @SpringBootApplication
-public class MainRun {
+public class DetectorRun {
 
 
     public static void main(String[] args) {
 
-        SpringApplication.run(MainRun.class, args);
+        SpringApplication.run(DetectorRun.class, args);
 
     }
 

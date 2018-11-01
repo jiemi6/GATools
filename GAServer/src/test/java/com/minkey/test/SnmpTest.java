@@ -1,4 +1,4 @@
-package com.minkey.test.db;
+package com.minkey.test;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
