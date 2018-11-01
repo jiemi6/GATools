@@ -67,4 +67,55 @@ public class AnalysisController {
     }
 
 
+    //Minkey 缺少设备运行统计
+
+    /**
+     * 设备运行统计
+     * @param linkId
+     * @param currentPage
+     * @param pageSize
+     * @return
+     */
+    @RequestMapping("/device")
+    public String device(Long linkId,Integer currentPage,Integer pageSize) {
+        log.info("start: 执行分页查询设备运行统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        if(linkId == null || linkId <=0
+                || currentPage == null || currentPage <=0
+                || pageSize == null || pageSize <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+        try{
+            Page<TaskLog> page = new Page(currentPage,pageSize);
+
+            Page<TaskLog> logs = taskLogHandler.query8page(linkId,page);
+            return JSONMessage.createSuccess().addData(logs).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end:  执行分页查询设备运行统计分析数据列表 ");
+        }
+    }
+
+    /**
+     * 设备运行统计分析 总计
+     * @return
+     */
+    @RequestMapping("/deviceCount")
+    public String deviceCount(Long linkId) {
+        log.info("start: 执行查询设备运行统计分析数据总计");
+        if(linkId == null || linkId <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+        try{
+
+            TaskLog allSum = taskLogHandler.querySum(linkId);
+            return JSONMessage.createSuccess().addData("sum",allSum).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end:  执行分页查询设备运行统计分析数据列表 ");
+        }
+    }
 }

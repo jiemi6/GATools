@@ -4,8 +4,6 @@ import com.minkey.db.dao.Device;
 import com.minkey.dto.Page;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -117,9 +115,9 @@ public class DeviceHandler {
             return null;
         }
 
-        StringBuffer sqlIds = new StringBuffer(" 1=1 ");
+        StringBuffer sqlIds = new StringBuffer(" 1=2 ");
         deviceIds.forEach(deviceId -> {
-            sqlIds.append("or deviceId=" +deviceId);
+            sqlIds.append(" or deviceId=" +deviceId);
         });
         List<Device> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
                 new BeanPropertyRowMapper<>(Device.class));

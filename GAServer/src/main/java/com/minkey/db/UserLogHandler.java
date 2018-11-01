@@ -4,8 +4,6 @@ import com.minkey.db.dao.User;
 import com.minkey.db.dao.UserLog;
 import com.minkey.dto.Page;
 import com.minkey.exception.DataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -57,12 +55,12 @@ public class UserLogHandler {
 
 
     public Page<UserLog> query8Page(Page<UserLog> page) {
-        List<UserLog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY userLogId desc limit ?,?",
+        List<UserLog> userLogs = jdbcTemplate.query("select * from "+tableName +" ORDER BY userLogId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(UserLog.class));
 
         page.setTotal(queryCount());
 
-        page.setData(devices);
+        page.setData(userLogs);
 
         return page;
     }

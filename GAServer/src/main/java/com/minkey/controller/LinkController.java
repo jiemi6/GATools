@@ -33,7 +33,7 @@ public class LinkController {
                 || StringUtils.isEmpty(link.getDbConfigData().getName())
                 || StringUtils.isEmpty(link.getDbConfigData().getDbName())
                 || link.getDbConfigData().getPort() <= 0
-                || link.getLinkType() <= 0){
+                || link.getLinkType() == null){
 
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -113,7 +113,6 @@ public class LinkController {
     @RequestMapping("/queryAll")
     public String queryAll() {
         log.info("start: 执行query所有链路");
-
         try{
             return JSONMessage.createSuccess().addData("list",linkHandler.queryAll()).toString();
         }catch (Exception e){
@@ -121,6 +120,21 @@ public class LinkController {
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             log.info("end: 执行query所有设备 ");
+        }
+    }
+
+
+    @RequestMapping("/queryAllIdAndName")
+    public String queryAllIdAndName() {
+        log.info("start: 查询所有链路id和名称");
+
+        try{
+            return JSONMessage.createSuccess().addData("list",linkHandler.queryAllIdAndName()).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end: 查询所有链路id和名称");
         }
     }
 

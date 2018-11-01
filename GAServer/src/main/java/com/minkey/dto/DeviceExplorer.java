@@ -1,6 +1,7 @@
 package com.minkey.dto;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.minkey.contants.MyLevel;
 import org.apache.commons.collections4.MapUtils;
 
 import java.util.Map;
@@ -83,5 +84,27 @@ public class DeviceExplorer {
         diskRate.setUse(use/disks.size());
         diskRate.setMax(max/disks.size());
         return  diskRate;
+    }
+
+    /**
+     * 根据cpu,disk,mem使用比率一起判断级别
+     * 只要有一项高 就代表高
+     * @return
+     */
+    public int judgeLevel(){
+        RateObj cpu = this.getCpu();
+        RateObj disk = this.getDisk();
+
+        if(cpu.judgeLevel() == MyLevel.LEVEL_ERROR
+                || disk.judgeLevel() == MyLevel.LEVEL_ERROR
+                || mem.judgeLevel() == MyLevel.LEVEL_ERROR){
+            return MyLevel.LEVEL_ERROR;
+        }else if(cpu.judgeLevel() == MyLevel.LEVEL_WARN
+                || disk.judgeLevel() == MyLevel.LEVEL_WARN
+                || mem.judgeLevel() == MyLevel.LEVEL_WARN){
+            return MyLevel.LEVEL_WARN;
+        }else{
+            return MyLevel.LEVEL_NORMAL;
+        }
     }
 }

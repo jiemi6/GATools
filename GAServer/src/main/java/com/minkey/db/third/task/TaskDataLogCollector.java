@@ -116,7 +116,7 @@ public class TaskDataLogCollector {
 
         mapList.forEach(stringObjectMap -> {
 
-//            tasks.add(taskLog);
+//            tasks.insert(taskLog);
         });
         return tasks;
     }

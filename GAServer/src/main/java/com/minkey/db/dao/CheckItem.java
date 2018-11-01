@@ -1,5 +1,7 @@
 package com.minkey.db.dao;
 
+import com.minkey.contants.MyLevel;
+
 /**
  * 检查细项
  */
@@ -31,11 +33,9 @@ public class CheckItem {
 
     /**
      * 结果级别
+     * @see  com.minkey.contants.MyLevel
      */
-    private int resultLevel;
-    public static int RESULTLEVEL_NORMAL = 1;
-    public static int RESULTLEVEL_WARN = 2;
-    public static int RESULTLEVEL_ERROR = 3;
+    private int resultLevel = MyLevel.LEVEL_NORMAL;
 
     /**
      * 检查项目类型
@@ -48,11 +48,8 @@ public class CheckItem {
      */
     private int errorType = 0;
 
-    public CheckItem() {
-    }
-
-    public CheckItem(int step, int totalStep) {
-        this.step = step;
+    public CheckItem(long checkId, Integer totalStep) {
+        this.checkId = checkId;
         this.totalStep = totalStep;
     }
 

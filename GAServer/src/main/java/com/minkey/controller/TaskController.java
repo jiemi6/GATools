@@ -56,7 +56,6 @@ public class TaskController {
     @RequestMapping("/queryCount")
     public String queryCount() {
         log.info("start: 执行count所有设备 ");
-
         try{
             return JSONMessage.createSuccess().addData(taskHandler.queryCount()).toString();
         }catch (Exception e){

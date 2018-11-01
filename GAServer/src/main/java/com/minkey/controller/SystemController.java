@@ -1,5 +1,7 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.minkey.contants.ConfigEnum;
 import com.minkey.db.CheckHandler;
 import com.minkey.db.ConfigHandler;
 import com.minkey.db.dao.Check;
@@ -18,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 系统管理接口
@@ -144,11 +148,24 @@ public class SystemController {
      * @return
      */
     @RequestMapping("/bakupConfig")
-    public String bakupConfig() {
+    public String bakupConfig(HttpServletResponse response) {
+        log.info("start: 备份设置");
 
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("multipart/form-data");
+        response.setHeader("Content-Disposition", "attachment;fileName=config.data");
 
+        try {
+            byte[] data =StringUtil.string2Byte("ceshi一个数据");
 
-        return JSONMessage.createSuccess().toString();
+            //Minkey 备份设置 未完成
+            response.getOutputStream().write(data);
+            return null;
+        } catch (IOException e) {
+            return null;
+        }finally {
+            log.info("end: 备份设置");
+        }
     }
 
 
@@ -157,8 +174,9 @@ public class SystemController {
      * @return
      */
     @RequestMapping("/reloadConfig")
-    public String reloadConfig(@RequestParam("fileName") MultipartFile file) {
-        if(file.isEmpty()){
+    public String reloadConfig(@RequestParam("file") MultipartFile file) throws IOException {
+        log.info("start: 导入配置文件");
+        if(file== null || file.isEmpty()){
             return JSONMessage.createFalied("上传文件为空").toString();
         }
         String fileName = file.getOriginalFilename();
@@ -169,19 +187,13 @@ public class SystemController {
             return JSONMessage.createFalied("上传文件太大").toString();
         }
 
-        try {
-            byte[] chars = new byte[(int) size];
-            file.getInputStream().read(chars);
-            String txt = StringUtil.byte2String(chars);
+        byte[] chars =  file.getBytes();
+        String data = StringUtil.byte2String(chars);
 
-
-            log.info(txt);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return JSONMessage.createSuccess().toString();
-
+        //Minkey 导入配置文件未完成
+        log.info("导入的数据"+data);
+        log.info("end: 导入配置文件");
+        return JSONMessage.createSuccess("导入成功").toString();
     }
 
 
@@ -192,8 +204,11 @@ public class SystemController {
      */
     @RequestMapping("/reset")
     public String reset() {
-        return JSONMessage.createSuccess().toString();
 
+        //Minkey 重置系统未完成
+
+
+        return JSONMessage.createSuccess("重置成功").toString();
     }
 
 
@@ -206,12 +221,15 @@ public class SystemController {
     @RequestMapping("/netWorkGet")
     public String netWorkGet() {
 
+        //读取配置
+        String configKey = ConfigEnum.NewWork.getConfigKey();
+
+        Map<String, Object> data = configHandler.query(configKey);
         //检查规则
 
         //调用系统命令设置
 
-        return JSONMessage.createSuccess().toString();
-
+        return JSONMessage.createSuccess().addData(data).toString();
     }
 
     /**
@@ -222,28 +240,39 @@ public class SystemController {
     public String netWorkSet(String localIp,String subnetMask,String gateway,String dns,String dnsBak) {
         log.info("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
         if(StringUtils.isEmpty(localIp)
-                ||StringUtils.isEmpty(subnetMask)
-                ||StringUtils.isEmpty(gateway)
-                ||StringUtils.isEmpty(dns)){
+                || StringUtils.isEmpty(subnetMask)
+                || StringUtils.isEmpty(gateway)
+                || StringUtils.isEmpty(dns)){
             return JSONMessage.createFalied("参数缺失").toString();
         }
-        if(StringUtil.isIp(localIp)
-                ||StringUtil.isIp(subnetMask)
-                ||StringUtil.isIp(gateway)
-                ||StringUtil.isIp(dns)){
+        if(!StringUtil.isIp(localIp)
+                || !StringUtil.isIp(subnetMask)
+                || !StringUtil.isIp(gateway)
+                || !StringUtil.isIp(dns)){
             return JSONMessage.createFalied("参数格式错误").toString();
         }
 
-        if(isDebug){
-            return JSONMessage.createSuccess("暂时不真正执行，返回成功").toString();
-        }
-
         try{
-            //调用命令设置,本会话内有效
-            //ifconfig eth0 192.168.1.155 netmask 255.255.255.0
-            LocalExecuter.exec("ifconfig eth0 "+localIp+" netmask "+subnetMask);
-            //route add default gw 192.168.1.1
-            LocalExecuter.exec("route add default gw "+gateway);
+
+            if(!isDebug){
+                //调用命令设置,本会话内有效
+                //ifconfig eth0 192.168.1.155 netmask 255.255.255.0
+                LocalExecuter.exec("ifconfig eth0 "+localIp+" netmask "+subnetMask);
+                //route insert default gw 192.168.1.1
+                LocalExecuter.exec("route insert default gw "+gateway);
+            }
+
+            //Minkey 设置网关
+
+            JSONObject config = new JSONObject();
+            config.put("localIp",localIp);
+            config.put("subnetMask",subnetMask);
+            config.put("gateway",gateway);
+            config.put("dns",dns);
+            config.put("dnsBak",dnsBak);
+
+            String configKey = ConfigEnum.NewWork.getConfigKey();
+            configHandler.insert(configKey,config.toJSONString());
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

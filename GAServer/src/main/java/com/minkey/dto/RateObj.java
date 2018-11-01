@@ -1,5 +1,7 @@
 package com.minkey.dto;
 
+import com.minkey.contants.MyLevel;
+
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -78,4 +80,18 @@ public class RateObj {
     }
 
 
+    /**
+     * 根据比率判断级别
+     * @return
+     */
+    public int judgeLevel(){
+        double rate = this.getRate();
+        if(rate >=  0.75 && rate < 0.9){
+            return MyLevel.LEVEL_WARN;
+        }else if (rate > 0.9){
+            return MyLevel.LEVEL_ERROR;
+        }else{
+            return MyLevel.LEVEL_NORMAL;
+        }
+    }
 }

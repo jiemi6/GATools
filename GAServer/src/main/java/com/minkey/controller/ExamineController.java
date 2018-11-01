@@ -1,6 +1,7 @@
 package com.minkey.controller;
 
 import com.minkey.db.CheckHandler;
+import com.minkey.db.CheckItemHandler;
 import com.minkey.db.dao.Check;
 import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.User;
@@ -30,6 +31,9 @@ public class ExamineController {
     @Autowired
     ExamineHandler examineHandler;
 
+    @Autowired
+    CheckItemHandler checkItemHandler;
+
     /**
      * 一键体检
      * @return
@@ -44,10 +48,10 @@ public class ExamineController {
         check.setCheckName(user.getuName()+"发起一键体检");
         check.setCheckType(Check.CHECKTYPE_ALLINONE);
         check.setUid(user.getUid());
-        //存入数据库，获取id
-        long checkId = checkHandler.insert(check);
 
         try{
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
             //开始检查
             examineHandler.doAllInOne(checkId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
@@ -76,10 +80,10 @@ public class ExamineController {
         check.setCheckName(user.getuName()+"发起链路体检");
         check.setCheckType(Check.CHECKTYPE_ALLINONE);
         check.setUid(user.getUid());
-        //存入数据库，获取id
-        long checkId = checkHandler.insert(check);
 
         try{
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
             //开始检查
             examineHandler.doLink(checkId,linkId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
@@ -108,10 +112,10 @@ public class ExamineController {
         check.setCheckName(user.getuName()+"发起设备体检");
         check.setCheckType(Check.CHECKTYPE_DEVICE);
         check.setUid(user.getUid());
-        //存入数据库，获取id
-        long checkId = checkHandler.insert(check);
 
         try{
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
             //开始检查
             examineHandler.doDevice(checkId,deviceId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
@@ -170,7 +174,7 @@ public class ExamineController {
             index = 0;
         }
         try{
-            List<CheckItem> checkItems = examineHandler.getResultList(checkId,index);
+            List<CheckItem> checkItems = checkItemHandler.query(checkId,index);
 
             return JSONMessage.createSuccess().addData("checkItems",checkItems).toString();
         }catch (Exception e){
@@ -193,9 +197,9 @@ public class ExamineController {
         }
 
         try{
-            List<CheckItem> checkItems = examineHandler.getResultList(checkId);
+            List<CheckItem> checkItems = checkItemHandler.queryAll(checkId);
 
-            //Minkey 处理成文件返回
+            //Minkey 下载体检结果文件
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

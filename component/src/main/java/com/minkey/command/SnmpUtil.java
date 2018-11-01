@@ -61,7 +61,7 @@ public class SnmpUtil {
     /**
      * 根据OID，获取单条消息
      */
-    public JSONObject snmpGet(String oid) {
+    public JSONObject snmpGet(String oid) throws IOException {
 
         Snmp snmp = null;
         try {
@@ -90,9 +90,6 @@ public class SnmpUtil {
                 log.debug("SNMP GET one OID value finished !");
                 return data;
             }
-        } catch (Exception e) {
-            log.error("SNMP Get Exception:" , e);
-            return null;
         } finally {
             if (snmp != null) {
                 try {
@@ -403,4 +400,7 @@ public class SnmpUtil {
         snmp.close();
     }
 
+    public boolean testConnect() {
+        return true;
+    }
 }

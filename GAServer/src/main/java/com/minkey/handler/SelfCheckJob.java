@@ -1,5 +1,6 @@
 package com.minkey.handler;
 
+import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckHandler;
 import com.minkey.db.CheckItemHandler;
 import com.minkey.db.dao.CheckItem;
@@ -47,9 +48,8 @@ public class SelfCheckJob {
         CheckItem checkItem;
 
         //Minkey ping 网关
-        checkItem = new CheckItem(1,totalStep);
-        checkItem.setCheckId(checkId);
-        checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+        checkItem = new CheckItem(checkId,totalStep);
+        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
         checkItem.setResultMsg("ping 网关成功");
         addCheckItem(checkItem);
 
@@ -58,15 +58,13 @@ public class SelfCheckJob {
             try {
                 //test本地数据库
                 jdbcTemplate.execute(DatabaseDriver.MYSQL.getValidationQuery());
-                checkItem = new CheckItem(2,totalStep);
-                checkItem.setCheckId(checkId);
-                checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+                checkItem = new CheckItem(checkId,totalStep);
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
                 checkItem.setResultMsg("连接本地数据库成功");
                 addCheckItem(checkItem);
             } catch (Exception e) {
-                checkItem = new CheckItem(2,totalStep);
-                checkItem.setCheckId(checkId);
-                checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
+                checkItem = new CheckItem(checkId,totalStep);
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
                 checkItem.setResultMsg("连接本地数据库失败" + e.getMessage());
                 addCheckItem(checkItem);
             }
@@ -74,30 +72,20 @@ public class SelfCheckJob {
 
         //test 本地硬盘大小
         RateObj rateObj = DiskUtils.LocalDriver();
-        checkItem = new CheckItem(3,totalStep);
-        checkItem.setCheckId(checkId);
-        double rate = rateObj.getRate();
-        if(rate >=  0.75 && rate < 0.9){
-            checkItem.setResultLevel(CheckItem.RESULTLEVEL_WARN);
-        }else if (rate > 0.9){
-            checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
-        }else{
-            checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
-        }
+        checkItem = new CheckItem(checkId,totalStep);
+        checkItem.setResultLevel(rateObj.judgeLevel());
         checkItem.setResultMsg("磁盘已经使用"+rateObj.getUseRateStr()+",剩余"+DiskUtils.FormetFileSize(Double.valueOf(rateObj.getFree()).longValue()));
         addCheckItem(checkItem);
 
         try {
             deviceStatusHandler.init();
-            checkItem = new CheckItem(4,totalStep);
-            checkItem.setCheckId(checkId);
-            checkItem.setResultLevel(CheckItem.RESULTLEVEL_NORMAL);
+            checkItem = new CheckItem(checkId,totalStep);
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
             checkItem.setResultMsg("初始化内存数据成功");
             addCheckItem(checkItem);
         }catch (Exception e){
-            checkItem = new CheckItem(4,totalStep);
-            checkItem.setCheckId(checkId);
-            checkItem.setResultLevel(CheckItem.RESULTLEVEL_ERROR);
+            checkItem = new CheckItem(checkId,totalStep);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
             checkItem.setResultMsg("初始化内存数据失败" + e.getMessage());
             addCheckItem(checkItem);
         }
@@ -111,6 +99,7 @@ public class SelfCheckJob {
             log.error(e.getMessage(), e);
         }
     }
+
 
 
     public List<CheckItem> getResultList(Long checkId, Integer index) {

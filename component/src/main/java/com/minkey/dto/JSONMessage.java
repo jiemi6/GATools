@@ -117,6 +117,10 @@ public class JSONMessage {
 		this.msg = msg;
 	}
 
+	public boolean isSuccess(){
+        return code == JSONMessage.JSON_RESULT_SUCCESS;
+    }
+
 	/**
 	 * 增加数据,放置jsonObject 并转换成string赋值
 	 * @param data
@@ -137,7 +141,10 @@ public class JSONMessage {
     }
 
     public JSONMessage addData(String key, Object data) {
-        this.data = new JSONObject();
+	    if(this.data == null){
+            this.data = new JSONObject();
+        }
+
         if(data != null){
             this.data.put(key,data);
         }
@@ -159,12 +166,9 @@ public class JSONMessage {
 	    if(StringUtils.isEmpty(jsonStr)){
 	        return null;
         }
-        try{
-            return JSONObject.parseObject(jsonStr,JSONMessage.class);
-        }catch (Exception e){
-            log.error("String to JSONMessage exception",e);
-            return null;
-        }
+
+        return JSONObject.parseObject(jsonStr,JSONMessage.class);
+
 
     }
 }

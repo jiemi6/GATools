@@ -32,7 +32,7 @@ public class Link {
      *
      * @see com.minkey.contants.LinkType
      */
-    private int linkType;
+    private Integer linkType;
 
     /**
      * 链路包含拓扑节点
@@ -60,11 +60,11 @@ public class Link {
         this.linkName = linkName;
     }
 
-    public int getLinkType() {
+    public Integer getLinkType() {
         return linkType;
     }
 
-    public void setLinkType(int linkType) {
+    public void setLinkType(Integer linkType) {
         this.linkType = linkType;
     }
 
@@ -111,8 +111,7 @@ public class Link {
 
         Set<Long> deviceIds = new HashSet<>();
         topologyNodes.forEach(topologyNode -> {
-            deviceIds.add(topologyNode.getFromDeviceId());
-            deviceIds.add(topologyNode.getToDeviceId());
+            deviceIds.addAll(topologyNode.allDeviceId());
         });
         return deviceIds;
     }

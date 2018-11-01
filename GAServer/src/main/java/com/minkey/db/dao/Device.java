@@ -127,4 +127,11 @@ public class Device {
         this.deviceServiceList = deviceServiceList;
     }
 
+    /**
+     * s是否在内网
+     * @return
+     */
+    public boolean isNetAreaIn(){
+        return netArea == NETAREA_IN;
+    }
 }

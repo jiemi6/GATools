@@ -327,20 +327,24 @@ public class UserController {
 
 
     /**
-     * 重置用户密码
+     * 用户修改密码
      * @return
      */
     @RequestMapping("/updatePwd")
-    public String updatePwd(String pwd) {
-        log.info("start: 执行修改当前登陆用户自己的密码");
-        if(StringUtils.isEmpty(pwd)){
+    public String updatePwd(String oldPwd,String newPwd) {
+        log.info("start: 执行修改当前登陆用户自己的密码 ");
+        if(StringUtils.isEmpty(newPwd)){
             return JSONMessage.createFalied("参数错误").toString();
         }
 
         try{
             User sessionUser = (User)session.getAttribute("user");
 
-            String defaultPwd = StringUtil.md5(pwd);
+            if(StringUtils.equals(sessionUser.getPwd(),StringUtil.md5(oldPwd))){
+                return JSONMessage.createFalied("原密码错误").toString();
+            }
+
+            String defaultPwd = StringUtil.md5(newPwd);
             userHandler.resetPwd(sessionUser.getUid(),defaultPwd);
 
             return JSONMessage.createSuccess().toString();

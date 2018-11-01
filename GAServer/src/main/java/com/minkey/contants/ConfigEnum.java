@@ -4,15 +4,17 @@ public enum  ConfigEnum {
 
     SystemRegister("SystemInfo","系统注册信息"),
 
-    SmsAlarmConfig("smsAlarm","短信报警设置"),
+    SmsAlarmConfig("SmsAlarm","短信报警设置"),
 
-    EmailAlarmConfig("emailAlarm","email报警设置"),
+    EmailAlarmConfig("EmailAlarm","email报警设置"),
 
-    Syslog2other("syslog2other","syslog转发给其他服务器配置"),
+    Syslog2other("Syslog2other","syslog转发给其他服务器配置"),
 
-    Sshd("sshd","os有关sshd配置"),
+    Sshd("Sshd","os有关sshd配置"),
 
     AutoCheckTimes("AutoCheckTimes","系统自检时间"),
+
+    NewWork("NewWork","本系统网卡设置"),
 
     LicenseData("LicenseData","证书相关数据"),
 

@@ -165,6 +165,7 @@ public class DeviceStatusHandler {
      */
     @Scheduled(cron = "0/5 * * * * ?")
     public void reflashConnect() {
+        //Minkey 不应该只刷新link，应该刷一次所有设备？
         allLinkMap.forEach((aLong, link) ->  {
             DeviceService deviceService = allLinkServiceMap.get(aLong);
             Set<Long> allDeviceId = link.getDeviceIds();
@@ -248,7 +249,7 @@ public class DeviceStatusHandler {
         deviceConnectCache.putConnect(deviceId,isConnect);
     }
 
-    private boolean pingTest(Device device,DeviceService detectorService) {
+    public boolean pingTest(Device device,DeviceService detectorService) {
         if (device.getDeviceType() == DeviceType.floder) {
             //设备如果是文件夹，默认就是联通的
             return true;

@@ -3,9 +3,8 @@ package com.minkey.db;
 import com.minkey.db.dao.Link;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -55,6 +54,10 @@ public class LinkHandler {
 
     public List<Link> queryAll() {
         return jdbcTemplate.query("select * from "+tableName,new LinkRowMapper());
+    }
+
+    public List<Link> queryAllIdAndName() {
+        return jdbcTemplate.query("select linkId,linkName from "+tableName,new BeanPropertyRowMapper<>(Link.class));
     }
 
     public void del(Long linkId) {

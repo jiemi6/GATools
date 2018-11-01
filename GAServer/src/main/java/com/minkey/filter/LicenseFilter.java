@@ -18,7 +18,7 @@ public class LicenseFilter implements Filter {
 
     String NO_license = "您还没有注册license";
 
-    //Minkey 过滤url没补全
+    //Minkey license白名单url没补全
     final String[] includeUrls = new String[]{
 
             "/license.html",

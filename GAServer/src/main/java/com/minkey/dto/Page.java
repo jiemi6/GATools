@@ -1,7 +1,6 @@
 package com.minkey.dto;
 
 import com.minkey.exception.SystemException;
-import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -56,12 +55,7 @@ public class Page<E> implements Serializable{
 	}
 	
 	public void setData(List<E> list) {
-		if(CollectionUtils.isEmpty(list)){
-			this.total = 0;
-		}else{
-			this.total = list.size();
-			this.list = list;
-		}
+		this.list = list;
 	}
 	
 	public void setTotal(int total) {

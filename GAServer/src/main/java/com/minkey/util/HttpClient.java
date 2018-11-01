@@ -2,6 +2,7 @@ package com.minkey.util;
 
 import com.alibaba.fastjson.util.IOUtils;
 import com.minkey.exception.SystemException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -11,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import java.util.Map.Entry;
  * http 请求客户端
  *
  */
+@Slf4j
 public class HttpClient {
 
 	public static String postRequest(String url,Map<String,String> param) throws SystemException {
@@ -40,8 +43,10 @@ public class HttpClient {
 
 		// 创建参数队列
         List<NameValuePair> formparams = new ArrayList<>();
-		for(Entry<String,String> entry :param.entrySet()){
-			formparams.add(new BasicNameValuePair(entry.getKey(),  entry.getValue()));
+        if(!CollectionUtils.isEmpty(param)) {
+			for (Entry<String, String> entry : param.entrySet()) {
+				formparams.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+			}
 		}
 		
 		HttpPost httpPost = new HttpPost(url);
@@ -70,7 +75,8 @@ public class HttpClient {
 			}
 			return buffer.toString();
 		} catch (Exception e) {
-			throw new SystemException("httpClient请求异常",e);
+			log.error("httpClient请求异常",e);
+			return null;
 		}finally{
 			IOUtils.close(reader);
 			IOUtils.close(in);

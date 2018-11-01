@@ -30,6 +30,8 @@ public class LogController {
     @Autowired
     CheckHandler checkHandler;
 
+    //Minkey 日志里搜索功能没加
+
     /**
      * 任务日志
      * @return
@@ -84,6 +86,9 @@ public class LogController {
     @RequestMapping("/link")
     public String link(Integer currentPage,Integer pageSize) {
         log.info("start: 分页查询链路日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        if(currentPage == null || pageSize <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
         try{
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -102,6 +107,9 @@ public class LogController {
     @RequestMapping("/user")
     public String user(Integer currentPage,Integer pageSize) {
         log.info("start: 分页查询用户日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        if(currentPage == null || pageSize <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
         try{
             Page<UserLog> page = new Page(currentPage,pageSize);
 
@@ -123,6 +131,9 @@ public class LogController {
     @RequestMapping("/detection")
     public String detection(Integer currentPage,Integer pageSize) {
         log.info("start: 分页查询体检发起日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        if(currentPage == null || pageSize <=0){
+            return JSONMessage.createFalied("参数错误").toString();
+        }
         try{
             Page<Check> page = new Page(currentPage,pageSize);
 
