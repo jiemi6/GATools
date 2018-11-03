@@ -300,10 +300,10 @@ public class StringUtil {
 		ip = ip.trim();
 		if (ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
 			String s[] = ip.split("\\.");
-			if (Integer.parseInt(s[0]) < 255)
-				if (Integer.parseInt(s[1]) < 255)
-					if (Integer.parseInt(s[2]) < 255)
-						if (Integer.parseInt(s[3]) < 255)
+			if (Integer.parseInt(s[0]) < 256)
+				if (Integer.parseInt(s[1]) < 256)
+					if (Integer.parseInt(s[2]) < 256)
+						if (Integer.parseInt(s[3]) < 256)
 							b = true;
 		}
 		return  b;

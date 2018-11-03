@@ -40,4 +40,14 @@ public class BaseConfigData {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+
+    @Override
+    public String toString() {
+        return "BaseConfigData{" +
+                "ip='" + ip + '\'' +
+                ", port=" + port +
+                ", name='" + name + '\'' +
+                ", pwd='" + pwd + '\'' +
+                '}';
+    }
 }

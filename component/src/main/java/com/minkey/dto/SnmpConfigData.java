@@ -28,4 +28,12 @@ public class SnmpConfigData extends BaseConfigData {
     public void setVersion(int version) {
         this.version = version;
     }
+
+    @Override
+    public String toString() {
+        return "SnmpConfigData{" +
+                "community='" + community + '\'' +
+                ", version=" + version +
+                "} " + super.toString();
+    }
 }

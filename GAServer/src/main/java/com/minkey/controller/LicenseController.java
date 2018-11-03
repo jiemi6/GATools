@@ -2,8 +2,10 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
+import com.minkey.contants.ErrorCodeEnum;
 import com.minkey.db.ConfigHandler;
 import com.minkey.dto.JSONMessage;
+import com.minkey.util.DateUtil;
 import com.minkey.util.StringUtil;
 import com.minkey.util.SymmetricEncoder;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -32,6 +35,10 @@ public class LicenseController {
     ConfigHandler configHandler;
 
     final String LICENSEKEY = "licenseKey";
+    final String LICENSEDATAKEY = "configData";
+
+    final String DATA_DEADLINE = "deadline";
+    final String DATA_PUBLISHER = "publisher";
 
     final String configKey = ConfigEnum.LicenseData.getConfigKey();
 
@@ -58,7 +65,7 @@ public class LicenseController {
                 return JSONMessage.createFalied("请先生成licenseKey").toString();
             }
 
-            JSONObject configData = JSONObject.parseObject((String) dbData.get("configData"));
+            JSONObject configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
             //得到数据库中的licenseKey
             String licenseKey = configData.getString(LICENSEKEY);
 
@@ -104,7 +111,7 @@ public class LicenseController {
             configData = new JSONObject();
         }else{
 
-            configData = JSONObject.parseObject((String) dbData.get("configData"));
+            configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
         }
 
 
@@ -156,7 +163,8 @@ public class LicenseController {
         byte[] licenseData = null;
 
         JSONObject jo = new JSONObject();
-        jo.put("data","ok");
+        jo.put(DATA_DEADLINE, "2020-01-01");
+        jo.put(DATA_PUBLISHER, "XXX有限公司");
         if(!StringUtils.isEmpty(licenseKey)){
             licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
         }
@@ -171,9 +179,30 @@ public class LicenseController {
         } catch (IOException e) {
             return null;
         }
-
     }
 
 
+    /**
+     * 获取licesen数据信息
+     * @return
+     */
+    @RequestMapping("/check")
+    public String check() {
+
+        Map<String, Object> dbData = configHandler.query(configKey);
+
+        if(MapUtils.isEmpty(dbData)){
+            return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
+        }
+
+
+        JSONObject configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+        if(configData == null){
+            return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
+        }
+
+        return JSONMessage.createSuccess().addData(configData).toString();
+
+    }
 
 }

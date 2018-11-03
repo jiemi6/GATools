@@ -81,6 +81,11 @@ public class JSONMessage {
         final JSONMessage jsonResult = new JSONMessage(JSONMessage.JSON_RESULT_FAILED, msg);
         return jsonResult;
     }
+
+    public static JSONMessage createFalied(final ErrorCodeEnum msg) {
+        final JSONMessage jsonResult = new JSONMessage(msg.getCode(), msg.getMsg());
+        return jsonResult;
+    }
     
     /**
      * 自定义失败code

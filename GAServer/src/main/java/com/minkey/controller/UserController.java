@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.contants.ErrorCodeEnum;
 import com.minkey.db.UserHandler;
 import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.User;
@@ -170,6 +171,16 @@ public class UserController {
         }finally {
             log.info("end:  用户登陆成功");
         }
+    }
+
+    @RequestMapping("/loginUserInfo")
+    public String loginUserInfo() {
+        User user = (User) session.getAttribute("user");
+        if(user == null){
+            return  JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString();
+        }
+
+        return JSONMessage.createSuccess().addData(user).toString();
     }
 
 

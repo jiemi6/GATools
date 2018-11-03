@@ -8,7 +8,11 @@ package com.minkey.contants;
 public enum ErrorCodeEnum {
 	/** 成功 */
 	SUCCESS(0,"成功"),
-	
+
+	No_license(-100,"无授权证书"),
+	No_Login(-200,"无登陆用户"),
+	No_Auth(-300,"无权限"),
+
 	/** 未定义错误 */
 	UNKNOWN(-1,"未定义错误");
 	

@@ -5,6 +5,7 @@ import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
+import com.minkey.dto.FTPConfigData;
 import com.minkey.dto.SnmpConfigData;
 import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
@@ -37,8 +38,8 @@ public class DeviceServiceHandler {
                     @Override
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {
                         ps.setLong(1,device.getDeviceId());
-                        ps.setString(2,device.getIp());
-                        ps.setString(3,argument.getServiceName());
+                        ps.setString(2,argument.getServiceName());
+                        ps.setString(3,device.getIp());
                         ps.setInt(4,argument.getServiceType());
                         ps.setString(5,argument.configDataStr());
                     }
@@ -105,6 +106,9 @@ public class DeviceServiceHandler {
                     break;
                 case DeviceService.SERVICETYPE_SNMP :
                     deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),SnmpConfigData.class));
+                    break;
+                case DeviceService.SERVICETYPE_FTP :
+                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),FTPConfigData.class));
                     break;
                 default:
                     deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));

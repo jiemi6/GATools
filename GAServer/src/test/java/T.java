@@ -1,20 +1,17 @@
+import com.minkey.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
+
 import java.security.Provider;
 import java.security.Security;
 import java.util.TreeSet;
 
+@Slf4j
 public class T {
 
-    public static void main(String[] args) {
-
-        TreeSet<String> algorithms = new TreeSet<>();
-        for (Provider provider : Security.getProviders())
-            for (Provider.Service service : provider.getServices())
-                if (service.getType().equals("Signature"))
-                    algorithms.add(service.getAlgorithm());
-        for (String algorithm : algorithms)
-            System.out.println(algorithm);
-
-
+    @Test
+    public void testIp(){
+        log.error(""+StringUtil.isIp("10.10.10.4"));
+        log.error(""+StringUtil.isIp("255.10.10.4"));
     }
-
 }
