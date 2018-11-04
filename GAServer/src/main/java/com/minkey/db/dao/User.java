@@ -11,8 +11,10 @@ public class User {
 
     /**
      * 用户id，自增主键
+     * 100以内为保留id，不允许删除
      */
     private Long uid;
+
 
     /**
      * 用户真实姓名
@@ -255,5 +257,32 @@ public class User {
 
     public void setLoginTimeEnd(String loginTimeEnd) {
         this.loginTimeEnd = loginTimeEnd;
+    }
+
+    public boolean canWrite(){
+        return auth == AUTH_WR;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid=" + uid +
+                ", name='" + name + '\'' +
+                ", uName='" + uName + '\'' +
+                ", pwd='" + pwd + '\'' +
+                ", createUid=" + createUid +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", status=" + status +
+                ", wrongPwdNum=" + wrongPwdNum +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", auth=" + auth +
+                ", loginIp='" + loginIp + '\'' +
+                ", loginIpStart='" + loginIpStart + '\'' +
+                ", loginIpEnd='" + loginIpEnd + '\'' +
+                ", loginTimeStart='" + loginTimeStart + '\'' +
+                ", loginTimeEnd='" + loginTimeEnd + '\'' +
+                '}';
     }
 }

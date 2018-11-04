@@ -134,4 +134,19 @@ public class Device {
     public boolean isNetAreaIn(){
         return netArea == NETAREA_IN;
     }
+
+
+    @Override
+    public String toString() {
+        return "Device{" +
+                "deviceId=" + deviceId +
+                ", deviceName='" + deviceName + '\'' +
+                ", ip='" + ip + '\'' +
+                ", deviceType=" + deviceType +
+                ", area=" + area +
+                ", netArea=" + netArea +
+                ", icon='" + icon + '\'' +
+                ", deviceServiceList=" + deviceServiceList +
+                '}';
+    }
 }

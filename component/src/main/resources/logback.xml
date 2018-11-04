@@ -31,7 +31,7 @@
     </appender>
 
     <!--指定最基础的日志输出级别-->
-    <root level="INFO">
+    <root level="debug">
         <!--appender将会添加到这个loger-->
         <appender-ref ref="consoleLog"/>
         <appender-ref ref="consoleFileLog"/>

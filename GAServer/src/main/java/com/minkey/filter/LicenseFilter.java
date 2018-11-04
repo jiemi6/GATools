@@ -1,5 +1,6 @@
 package com.minkey.filter;
 
+import com.minkey.contants.ErrorCodeEnum;
 import com.minkey.dto.JSONMessage;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -11,19 +12,20 @@ import java.io.IOException;
 
 
 /**
- * 证书过滤
+ * 证书过滤，第一个执行
  */
 @WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
 public class LicenseFilter implements Filter {
 
-    String NO_license = "您还没有注册license";
-
-    //Minkey license白名单url没补全
+    //license白名单url
     final String[] includeUrls = new String[]{
-
             "/license.html",
-            "/license/upFile",
-            "/license/getCode"
+            //Minkey 生成证书到时候要删掉
+            "/license/licenseExport",
+
+            "/license/up",
+            "/license/keyExport",
+            "/license/key"
     };
 
     @Value("${system.debug}")
@@ -60,7 +62,7 @@ public class LicenseFilter implements Filter {
         String requestType = request.getHeader("X-Requested-With");
         //判断是否是ajax请求
         if(requestType!=null && "XMLHttpRequest".equals(requestType)){
-            response.getWriter().write(JSONMessage.createFalied(this.NO_license).toString());
+            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
             response.sendRedirect(request.getContextPath()+"/license.html");

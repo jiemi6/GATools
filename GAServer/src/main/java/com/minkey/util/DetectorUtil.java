@@ -118,8 +118,6 @@ public class DetectorUtil {
     public static JSONObject snmpWalk(String detectorIp,int detectorPort,
                                       String ip,
                                       String oid) {
-
-
         return snmpWalk(detectorIp,detectorPort,ip,SnmpUtil.DEFAULT_PORT, SnmpUtil.DEFAULT_VERSION,SnmpUtil.DEFAULT_COMMUNITY,SnmpUtil.DEFAULT_RETRY,SnmpUtil.DEFAULT_TIMEOUT,oid);
     }
 

@@ -21,7 +21,7 @@ public class LinkHandler {
 
 
     public Integer queryCount() {
-        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Integer.class);
+        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+ " WHERE status>-1 ",Integer.class);
         return count;
     }
 
@@ -44,7 +44,7 @@ public class LinkHandler {
     }
 
     public Link query(Long linkId) {
-        List<Link> linkList= jdbcTemplate.query("select * from "+tableName+" where linkId= ?",
+        List<Link> linkList= jdbcTemplate.query("select * from "+tableName+" where status>-1 AND linkId= ?",
                 new Object[]{linkId}, new LinkRowMapper());
         if(CollectionUtils.isEmpty(linkList)){
             return null;
@@ -53,19 +53,16 @@ public class LinkHandler {
     }
 
     public List<Link> queryAll() {
-        return jdbcTemplate.query("select * from "+tableName,new LinkRowMapper());
+        return jdbcTemplate.query("select * from "+tableName + " WHERE status>-1 ",new LinkRowMapper());
     }
 
     public List<Link> queryAllIdAndName() {
-        return jdbcTemplate.query("select linkId,linkName from "+tableName,new BeanPropertyRowMapper<>(Link.class));
+        return jdbcTemplate.query("select linkId,linkName from "+tableName + " WHERE status>-1 ",new BeanPropertyRowMapper<>(Link.class));
     }
 
     public void del(Long linkId) {
-        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
-
-        if(num == 0){
-            throw new DataException("删除失败");
-        }
+        //软删除
+        int num = jdbcTemplate.update("UPDATE "+tableName+" SET status=-1 where linkId= ?",new Object[]{linkId});
     }
 
     class LinkRowMapper implements RowMapper{

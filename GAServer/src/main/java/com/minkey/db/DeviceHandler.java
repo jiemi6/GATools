@@ -129,4 +129,36 @@ public class DeviceHandler {
         int num = jdbcTemplate.update("delete from "+tableName +" where deviceId = ?",
                 new Object[]{deviceId});
     }
+
+    public List<Device> query8ips(Set<String> ips) {
+        if(CollectionUtils.isEmpty(ips)){
+            return null;
+        }
+
+        StringBuffer sqlIds = new StringBuffer(" 1=2 ");
+        ips.forEach(ip -> {
+            sqlIds.append(" or ip=" + ip);
+        });
+        List<Device> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
+                new BeanPropertyRowMapper<>(Device.class));
+
+        return devices;
+
+    }
+
+    public List<Device> query8IdAndType(Long deviceId, Integer type) {
+        StringBuffer whereStr = new StringBuffer(" where 1=1 " );
+        if(deviceId != null && deviceId >0){
+            whereStr.append(" AND deviceId = "+deviceId);
+        }
+
+        if(type != null ){
+            whereStr.append(" AND deviceType = "+ type);
+        }
+
+        List<Device> devices = jdbcTemplate.query("select * from "+tableName + whereStr,
+                new BeanPropertyRowMapper<>(Device.class));
+
+        return devices;
+    }
 }

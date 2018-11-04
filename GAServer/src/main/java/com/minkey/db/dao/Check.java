@@ -87,4 +87,15 @@ public class Check {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        return "Check{" +
+                "checkId=" + checkId +
+                ", checkName='" + checkName + '\'' +
+                ", checkType=" + checkType +
+                ", uid=" + uid +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

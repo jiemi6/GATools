@@ -106,4 +106,17 @@ public class AlarmLog {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        return "AlarmLog{" +
+                "logId=" + logId +
+                ", bid=" + bid +
+                ", bType=" + bType +
+                ", type=" + type +
+                ", msg='" + msg + '\'' +
+                ", level=" + level +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

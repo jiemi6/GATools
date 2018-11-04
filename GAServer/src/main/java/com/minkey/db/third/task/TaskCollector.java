@@ -121,7 +121,7 @@ public class TaskCollector {
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,status from tbtask WHERE status <> '-100'");
 
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del(link.getLinkId());
+            taskHandler.del8LinkId(link.getLinkId());
             return;
         }
 
@@ -136,7 +136,7 @@ public class TaskCollector {
             tasks.add(task);
         });
 
-        taskHandler.del(link.getLinkId());
+        taskHandler.del8LinkId(link.getLinkId());
         if(!CollectionUtils.isEmpty(tasks)){
             //把链路存到数据库中。
             taskHandler.insertAll(tasks);
@@ -160,7 +160,7 @@ public class TaskCollector {
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbtaskdbsource");
 
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del(link.getLinkId());
+            taskHandler.del8LinkId(link.getLinkId());
             return;
         }
 
@@ -190,7 +190,7 @@ public class TaskCollector {
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from  tbresources ");
 
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del(link.getLinkId());
+            taskHandler.del8LinkId(link.getLinkId());
             return;
         }
 

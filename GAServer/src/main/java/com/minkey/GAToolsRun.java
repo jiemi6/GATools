@@ -20,7 +20,7 @@ public class GAToolsRun {
         SpringUtils.setCtx(ctx);
 
 
-//        initSystem();
+        initSystem();
     }
 
     public static void initSystem(){

@@ -1,7 +1,8 @@
 package com.minkey.db;
 
-import com.minkey.db.dao.TaskLog;
+import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.Page;
+import com.minkey.dto.SeachParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class TaskLogHandler {
+public class TaskDayLogHandler {
     private final String tableName = "t_taskLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -37,28 +38,33 @@ public class TaskLogHandler {
         return count;
     }
 
-    public Page<TaskLog> query8page(Long linkId, Page<TaskLog> page) {
-        List<TaskLog> devices = jdbcTemplate.query("select * from "+tableName +" where linkId= ? ORDER BY logId desc limit ?,?",
-                new Object[]{linkId,page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskLog.class));
+    public Page<TaskDayLog> query8page(Long linkId, Page<TaskDayLog> page, SeachParam seachParam) {
+        StringBuffer whereStr = new StringBuffer(" where linkId=" + linkId);
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+        List<TaskDayLog> devices = jdbcTemplate.query("select * from "+tableName + whereStr +" ORDER BY logId desc limit ?,?",
+                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskDayLog.class));
 
         page.setData(devices);
 
-        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName+" where linkId= ?  ",new Object[]{linkId},Integer.class);
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName + whereStr,Integer.class);
         page.setTotal(total);
 
         return page;
     }
 
 
-    public void insertAll(List<TaskLog> taskLogs) {
-        if(CollectionUtils.isEmpty(taskLogs)){
+    public void insertAll(List<TaskDayLog> taskDayLogs) {
+        if(CollectionUtils.isEmpty(taskDayLogs)){
             return;
         }
         int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetLogId,taskId,linkId,successNum,successFlow,errorNum,errorFlow,createTime) VALUES (?,?,?,?,?,?,?,?)",
-                taskLogs,taskLogs.size(),
-                new ParameterizedPreparedStatementSetter<TaskLog>() {
+                taskDayLogs, taskDayLogs.size(),
+                new ParameterizedPreparedStatementSetter<TaskDayLog>() {
                     @Override
-                    public void setValues(PreparedStatement ps, TaskLog argument) throws SQLException {
+                    public void setValues(PreparedStatement ps, TaskDayLog argument) throws SQLException {
                         ps.setLong(1,argument.getTargetLogId());
                         ps.setString(2,argument.getTaskId());
                         ps.setLong(3,argument.getLinkId());
@@ -72,16 +78,21 @@ public class TaskLogHandler {
     }
 
 
-    public TaskLog querySum(long linkId) {
-        Map<String, Object> taskLogList = jdbcTemplate.queryForMap("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+" where linkId= ?",new Object[]{linkId});
-        TaskLog taskLog = new TaskLog();
-        if(!CollectionUtils.isEmpty(taskLogList)){
-            taskLog.setSuccessNum(bigDecimal2long((BigDecimal)taskLogList.get("successNum")));
-            taskLog.setSuccessFlow(bigDecimal2long((BigDecimal)taskLogList.get("successFlow")));
-            taskLog.setErrorNum(bigDecimal2long((BigDecimal)taskLogList.get("errorNum")));
-            taskLog.setErrorFlow(bigDecimal2long((BigDecimal)taskLogList.get("errorFlow")));
+    public TaskDayLog querySum(long linkId, SeachParam seachParam) {
+        StringBuffer whereStr = new StringBuffer(" where linkId=" + linkId);
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
         }
-        return taskLog;
+
+        Map<String, Object> taskLogList = jdbcTemplate.queryForMap("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+ whereStr);
+        TaskDayLog taskDayLog = new TaskDayLog();
+        if(!CollectionUtils.isEmpty(taskLogList)){
+            taskDayLog.setSuccessNum(bigDecimal2long((BigDecimal)taskLogList.get("successNum")));
+            taskDayLog.setSuccessFlow(bigDecimal2long((BigDecimal)taskLogList.get("successFlow")));
+            taskDayLog.setErrorNum(bigDecimal2long((BigDecimal)taskLogList.get("errorNum")));
+            taskDayLog.setErrorFlow(bigDecimal2long((BigDecimal)taskLogList.get("errorFlow")));
+        }
+        return taskDayLog;
 
     }
 

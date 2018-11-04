@@ -94,4 +94,17 @@ public class UserLog {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        return "UserLog{" +
+                "userLogId=" + userLogId +
+                ", uid=" + uid +
+                ", loginIp='" + loginIp + '\'' +
+                ", uName='" + uName + '\'' +
+                ", moduleName='" + moduleName + '\'' +
+                ", msg='" + msg + '\'' +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

@@ -226,8 +226,8 @@ public class BaseController {
     }
 
     @RequestMapping("/testDB")
-    public String testDB(Integer netArea, DBConfigData dbConfigData, Long detectorId){
-        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,dbConfigData,dbConfigData);
+    public String testDB(DBConfigData dbConfigData){
+        log.info("start: 执行测试数据库连接 dbConfigData={}",dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())

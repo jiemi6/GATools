@@ -4,3 +4,4 @@ dependencies {
 
 }
 
+mainClassName="com.minkey.DetectorRun"

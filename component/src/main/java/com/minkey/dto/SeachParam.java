@@ -78,14 +78,13 @@ public class SeachParam {
     }
 
     public boolean hasDataParam(){
-        return StringUtils.isNotEmpty(startDate) && StringUtils.isNotEmpty(endDate);
+        return StringUtils.isNotEmpty(startDate) || StringUtils.isNotEmpty(endDate);
     }
 
     public String buildDateBetweenSql(){
         if(!hasDataParam()){
             return null;
         }
-
 
         if(this.startDate() == null){
             this.setStartDate("2010-10-10");

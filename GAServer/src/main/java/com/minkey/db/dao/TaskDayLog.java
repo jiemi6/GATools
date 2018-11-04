@@ -4,14 +4,18 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 任务对象执行日志，来自别交换系统数据库
+ * 任务对象执行统计日志，来自别交换系统数据库
  */
-public class TaskDataLog implements Serializable{
+public class TaskDayLog implements Serializable{
 
     /**
      * logid，主键,数据库生成
      */
     private String logId;
+    /**
+     * 数据来源方logid
+     */
+    private long targetLogId;
 
     /**
      * 任务id
@@ -19,14 +23,9 @@ public class TaskDataLog implements Serializable{
     private String taskId;
 
     /**
-     * 区分链路
+     * 冗余链路id，区分链路
      */
     private long linkId;
-
-    /**
-     * 数据来源方logid
-     */
-    private long targetLogId;
 
     /**
      * 成功数
@@ -120,5 +119,20 @@ public class TaskDataLog implements Serializable{
 
     public void setLinkId(long linkId) {
         this.linkId = linkId;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskDayLog{" +
+                "logId='" + logId + '\'' +
+                ", targetLogId=" + targetLogId +
+                ", taskId='" + taskId + '\'' +
+                ", linkId=" + linkId +
+                ", successNum=" + successNum +
+                ", successFlow=" + successFlow +
+                ", errorNum=" + errorNum +
+                ", errorFlow=" + errorFlow +
+                ", createTime=" + createTime +
+                '}';
     }
 }

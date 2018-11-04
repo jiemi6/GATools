@@ -13,10 +13,6 @@ public class Syslog {
      */
     private int level;
     /**
-     * 发生时间
-     */
-    private Date createTime;
-    /**
      * 日志内容
      */
     private String msg;
@@ -24,6 +20,10 @@ public class Syslog {
      * 设备
      */
     private int facility;
+    /**
+     * 发生时间
+     */
+    private Date createTime;
 
     public void setHost(String host) {
         this.host = host;
@@ -63,5 +63,16 @@ public class Syslog {
 
     public int getFacility() {
         return facility;
+    }
+
+    @Override
+    public String toString() {
+        return "Syslog{" +
+                "host='" + host + '\'' +
+                ", level=" + level +
+                ", msg='" + msg + '\'' +
+                ", facility=" + facility +
+                ", createTime=" + createTime +
+                '}';
     }
 }

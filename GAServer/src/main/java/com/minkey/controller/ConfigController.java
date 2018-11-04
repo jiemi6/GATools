@@ -249,6 +249,9 @@ public class ConfigController {
         return query(configKey);
     }
 
+
+    @Autowired
+    SysLogUtil sysLogUtil;
     /**
      * 设置本平台的syslog推送目的地，发送给其他服务器的日志收集服务器
      * @return
@@ -258,13 +261,13 @@ public class ConfigController {
         if(open == null || open == false){
             log.info("start: 关闭syslog转发");
             //关闭
-            SysLogUtil.closeSyslog2other();
+            sysLogUtil.closeSyslog2other();
 
         }else{
             log.info("start: 配置syslog转发 ip={},port=" ,ip,port);
             //保存配置
             //启动发送
-            SysLogUtil.startSyslog2other(ip,port);
+            sysLogUtil.startSyslog2other(ip,port);
         }
 
         try{

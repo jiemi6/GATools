@@ -28,7 +28,7 @@ public class MyErrorController  implements ErrorController {
         String message = (String) request.getAttribute("javax.servlet.error.message");
 
         //系统本身的异常，json返回
-        return JSONMessage.createFalied(statusCode,String.format("HTTP错误,url=%s,message=%s",statusCode,request.getRequestURL(),message)).toString();
+        return JSONMessage.createFalied(statusCode,String.format("HTTP错误,url=%s,message=%s",request.getRequestURL(),message)).toString();
 
 //        if(isAjax(request)){
 //            //是ajax请求

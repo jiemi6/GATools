@@ -16,10 +16,10 @@ sourceSets {
 dependencies {
     compile project(':component')
 
-//    compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.2.RELEASE'
 
     compile "org.apache.httpcomponents:httpclient:4.5"
 
 }
 
-mainClassName="com.minkey.MainRun"
+mainClassName="com.minkey.GAToolsRun"

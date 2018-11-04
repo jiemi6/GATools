@@ -146,13 +146,14 @@ public class JSONMessage {
     }
 
     public JSONMessage addData(String key, Object data) {
+        if(data == null){
+            return this;
+        }
 	    if(this.data == null){
             this.data = new JSONObject();
         }
 
-        if(data != null){
-            this.data.put(key,data);
-        }
+        this.data.put(key,data);
         return this;
     }
 

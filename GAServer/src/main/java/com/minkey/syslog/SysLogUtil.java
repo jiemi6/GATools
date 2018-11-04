@@ -102,12 +102,17 @@ public class SysLogUtil {
      * @param ip
      * @param port
      */
-    public static void startSyslog2other(String ip, String port) {
+    public void startSyslog2other(String ip, String port) {
+        //只发送收集过来的所有syslog
     }
 
     /**
      * 关闭syslog代发功能
      */
-    public static void closeSyslog2other() {
+    public void closeSyslog2other() {
+
+        shutdown();
+
+
     }
 }

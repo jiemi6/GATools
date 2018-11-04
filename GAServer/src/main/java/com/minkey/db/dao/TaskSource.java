@@ -97,4 +97,18 @@ public class TaskSource {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+
+    @Override
+    public String toString() {
+        return "TaskSource{" +
+                "id=" + id +
+                ", targetId='" + targetId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", linkId=" + linkId +
+                ", fromResourceId='" + fromResourceId + '\'' +
+                ", toResourceId='" + toResourceId + '\'' +
+                ", createTime=" + createTime +
+                '}';
+    }
 }

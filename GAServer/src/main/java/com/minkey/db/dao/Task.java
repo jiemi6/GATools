@@ -69,4 +69,15 @@ public class Task {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", targetId='" + targetId + '\'' +
+                ", linkId=" + linkId +
+                ", taskName='" + taskName + '\'' +
+                ", status=" + status +
+                '}';
+    }
 }

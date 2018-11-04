@@ -105,4 +105,15 @@ public class DeviceService {
     }
 
 
+    @Override
+    public String toString() {
+        return "DeviceService{" +
+                "serviceId=" + serviceId +
+                ", deviceId=" + deviceId +
+                ", ip='" + ip + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                ", serviceType=" + serviceType +
+                ", configData=" + configData +
+                '}';
+    }
 }

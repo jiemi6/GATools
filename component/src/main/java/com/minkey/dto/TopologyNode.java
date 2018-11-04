@@ -25,6 +25,8 @@ public class TopologyNode {
 
     private List<TopologyNode> child;
 
+    private List<Long> include;
+
     public TopologyNode() {
         super();
     }
@@ -71,5 +73,13 @@ public class TopologyNode {
             });
         }
         return all;
+    }
+
+    public List<Long> getInclude() {
+        return include;
+    }
+
+    public void setInclude(List<Long> include) {
+        this.include = include;
     }
 }

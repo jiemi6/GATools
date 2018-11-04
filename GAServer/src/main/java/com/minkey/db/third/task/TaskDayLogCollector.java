@@ -2,9 +2,9 @@ package com.minkey.db.third.task;
 
 import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;
-import com.minkey.db.TaskLogHandler;
+import com.minkey.db.TaskDayLogHandler;
 import com.minkey.db.dao.Link;
-import com.minkey.db.dao.TaskLog;
+import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ import java.util.Map;
 @Component
 public class TaskDayLogCollector {
     @Autowired
-    TaskLogHandler taskLogHandler;
+    TaskDayLogHandler taskDayLogHandler;
 
 
     @Autowired
@@ -74,12 +74,12 @@ public class TaskDayLogCollector {
 
 
     private void shujujiaohuan(Link link){
-        List<TaskLog> tasks = null;
+        List<TaskDayLog> tasks = null;
         try {
             //从链路中获取数据交换系统的数据库配置
             DBConfigData dbConfig = link.getDbConfigData();
 
-            long maxLoggerId = taskLogHandler.queryMaxId(link.getLinkId());
+            long maxLoggerId = taskDayLogHandler.queryMaxId(link.getLinkId());
 
             tasks = queryAllTaskLog(dbConfig, link, maxLoggerId);
 
@@ -90,7 +90,7 @@ public class TaskDayLogCollector {
         if (!CollectionUtils.isEmpty(tasks)) {
             try {
                 //把链路存到数据库中。
-                taskLogHandler.insertAll(tasks);
+                taskDayLogHandler.insertAll(tasks);
             } catch (Exception e) {
                 log.error("把抓取过来的任务执行日志保存到数据库中异常", e);
             }
@@ -103,7 +103,7 @@ public class TaskDayLogCollector {
      * @param link
      * @return
      */
-    private List<TaskLog> queryAllTaskLog(DBConfigData dbConfig, Link link, long maxLoggerId){
+    private List<TaskDayLog> queryAllTaskLog(DBConfigData dbConfig, Link link, long maxLoggerId){
         //先从缓存中获取
         JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
 
@@ -115,20 +115,20 @@ public class TaskDayLogCollector {
             return null;
         }
 
-        List<TaskLog> tasks = new ArrayList<>(mapList.size());
+        List<TaskDayLog> tasks = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
-            TaskLog taskLog = new TaskLog();
-            taskLog.setTargetLogId(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
-            taskLog.setTaskId( stringObjectMap.get("taskid").toString());
-            taskLog.setLinkId(link.getLinkId());
-            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
-            taskLog.setSuccessNum(Long.valueOf(stringObjectMap.get("totalSuccessNum").toString()));
-            taskLog.setSuccessFlow(Long.valueOf(stringObjectMap.get("totalSuccessFlow").toString()));
-            taskLog.setErrorNum(Long.valueOf(stringObjectMap.get("totalErrorNum").toString()));
-            taskLog.setErrorFlow(Long.valueOf(stringObjectMap.get("totalErrorFlow").toString()));
-            taskLog.setCreateTime((Date) stringObjectMap.get("insertTimes"));
-            tasks.add(taskLog);
+            TaskDayLog taskDayLog = new TaskDayLog();
+            taskDayLog.setTargetLogId(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
+            taskDayLog.setTaskId( stringObjectMap.get("taskid").toString());
+            taskDayLog.setLinkId(link.getLinkId());
+            taskDayLog.setSuccessNum(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
+            taskDayLog.setSuccessNum(Long.valueOf(stringObjectMap.get("totalSuccessNum").toString()));
+            taskDayLog.setSuccessFlow(Long.valueOf(stringObjectMap.get("totalSuccessFlow").toString()));
+            taskDayLog.setErrorNum(Long.valueOf(stringObjectMap.get("totalErrorNum").toString()));
+            taskDayLog.setErrorFlow(Long.valueOf(stringObjectMap.get("totalErrorFlow").toString()));
+            taskDayLog.setCreateTime((Date) stringObjectMap.get("insertTimes"));
+            tasks.add(taskDayLog);
         });
         return tasks;
     }

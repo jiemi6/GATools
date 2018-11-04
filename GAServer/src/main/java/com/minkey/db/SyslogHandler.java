@@ -2,8 +2,8 @@ package com.minkey.db;
 
 import com.minkey.db.dao.Syslog;
 import com.minkey.dto.Page;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.minkey.dto.SeachParam;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,13 +38,34 @@ public class SyslogHandler {
     }
 
 
-    public Page<Syslog> query8page(Page<Syslog> page) {
-        List<Syslog> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY logId desc limit ?,?",
+    public Page<Syslog> query8page(Page<Syslog> page, SeachParam seachParam, Set<String> paramIps) {
+        StringBuffer whereStr = new StringBuffer(" where 1=1");
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+        if(seachParam.getLevel() != null ){
+            whereStr.append(" AND level = "+ seachParam.getLevel());
+        }
+
+        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
+            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        }
+
+        if(!CollectionUtils.isEmpty(paramIps)){
+            whereStr.append(" AND ( 1=2 ");
+            paramIps.forEach(paramIp -> {
+                whereStr.append(" or host='"+paramIp+"'");
+            });
+            whereStr.append(")");
+        }
+
+        List<Syslog> devices = jdbcTemplate.query("select * from "+tableName + whereStr + " ORDER BY logId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Syslog.class));
 
         page.setData(devices);
 
-        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Integer.class);
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName + whereStr,Integer.class);
         page.setTotal(total);
 
         return page;

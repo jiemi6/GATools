@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class TaskHandler {
@@ -59,8 +60,23 @@ public class TaskHandler {
     }
 
 
-    public void del(Long linkId) {
+    public void del8LinkId(Long linkId) {
         int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
 
+    }
+
+    public List<Task> query8Ids(Set<Long> taskIds) {
+        if(CollectionUtils.isEmpty(taskIds)){
+            return null;
+        }
+
+        StringBuffer sqlIds = new StringBuffer(" 1=2 ");
+        taskIds.forEach(taskId -> {
+            sqlIds.append(" or taskId=" + taskId);
+        });
+        List<Task> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
+                new BeanPropertyRowMapper<>(Task.class));
+
+        return devices;
     }
 }

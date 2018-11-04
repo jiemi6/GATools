@@ -1,37 +1,36 @@
 package com.minkey.filter;
 
+import com.minkey.contants.ErrorCodeEnum;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * 登陆过滤
+ * 登陆过滤，第二个执行
  */
-@WebFilter(filterName = "sessionFilter",urlPatterns = {"/*"})
+//@WebFilter(filterName = "sessionFilter",urlPatterns = {"/*"})
 public class SessionFilter implements Filter {
 
-    //标示符：表示当前用户未登录(可根据自己项目需要改为json样式)
-    String NO_LOGIN = "您还未登录";
-
-    //Minkey 不需要登录就可以访问的路径(比如:注册登录等)
+    //不需要登录就可以访问的路径(比如:注册登录等)
     final String[] includeUrls = new String[]{
+            //必须过滤掉另外一个过滤器的值，
             "/license.html",
-            "/license/upFile",
-            "/license/getCode",
 
+
+            "/user/getVCode",
+            "/user/checkVCode",
+            "/user/login",
             "login.html"
     };
 
     @Value("${system.debug}")
     private boolean isDebug;
-
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -66,10 +65,10 @@ public class SessionFilter implements Filter {
         String requestType = request.getHeader("X-Requested-With");
         //判断是否是ajax请求
         if(requestType!=null && "XMLHttpRequest".equals(requestType)){
-            response.getWriter().write(JSONMessage.createFalied(this.NO_LOGIN).toString());
+            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
-            response.sendRedirect(request.getContextPath()+"/user/login.html");
+            response.sendRedirect(request.getContextPath()+"/login.html");
         }
         return;
     }

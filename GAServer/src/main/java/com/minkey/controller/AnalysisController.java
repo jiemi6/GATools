@@ -1,11 +1,17 @@
 package com.minkey.controller;
 
-import com.minkey.db.TaskLogHandler;
-import com.minkey.db.dao.TaskLog;
+import com.minkey.db.DeviceLogHandler;
+import com.minkey.db.LinkHandler;
+import com.minkey.db.TaskDayLogHandler;
+import com.minkey.db.dao.DeviceLog;
+import com.minkey.db.dao.Link;
+import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
+import com.minkey.dto.SeachParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,14 +23,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/analysis")
 public class AnalysisController {
     @Autowired
-    TaskLogHandler taskLogHandler;
+    TaskDayLogHandler taskDayLogHandler;
+
+    @Autowired
+    DeviceLogHandler deviceLogHandler;
+
+    @Autowired
+    LinkHandler linkHandler;
 
     /**
      * 任务统计分析 分页数据
      * @return
      */
     @RequestMapping("/task")
-    public String task(Long linkId,Integer currentPage,Integer pageSize) {
+    public String task(Long linkId,Integer currentPage,Integer pageSize, SeachParam seachParam) {
         log.info("start: 执行分页查询任务统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(linkId == null || linkId <=0
                 || currentPage == null || currentPage <=0
@@ -32,9 +44,9 @@ public class AnalysisController {
             return JSONMessage.createFalied("参数错误").toString();
         }
         try{
-            Page<TaskLog> page = new Page(currentPage,pageSize);
+            Page<TaskDayLog> page = new Page(currentPage,pageSize);
 
-            Page<TaskLog> logs = taskLogHandler.query8page(linkId,page);
+            Page<TaskDayLog> logs = taskDayLogHandler.query8page(linkId,page,seachParam);
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -49,14 +61,14 @@ public class AnalysisController {
      * @return
      */
     @RequestMapping("/taskCount")
-    public String taskCount(Long linkId) {
+    public String taskCount(Long linkId, SeachParam seachParam) {
         log.info("start: 执行查询任务统计分析数据总计");
         if(linkId == null || linkId <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
         try{
 
-            TaskLog allSum = taskLogHandler.querySum(linkId);
+            TaskDayLog allSum = taskDayLogHandler.querySum(linkId,seachParam);
             return JSONMessage.createSuccess().addData("sum",allSum).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -66,9 +78,6 @@ public class AnalysisController {
         }
     }
 
-
-    //Minkey 缺少设备运行统计
-
     /**
      * 设备运行统计
      * @param linkId
@@ -77,7 +86,7 @@ public class AnalysisController {
      * @return
      */
     @RequestMapping("/device")
-    public String device(Long linkId,Integer currentPage,Integer pageSize) {
+    public String device(Long linkId, Integer currentPage, Integer pageSize , SeachParam seachParam) {
         log.info("start: 执行分页查询设备运行统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(linkId == null || linkId <=0
                 || currentPage == null || currentPage <=0
@@ -85,9 +94,16 @@ public class AnalysisController {
             return JSONMessage.createFalied("参数错误").toString();
         }
         try{
-            Page<TaskLog> page = new Page(currentPage,pageSize);
+            Page<DeviceLog> page = new Page(currentPage,pageSize);
 
-            Page<TaskLog> logs = taskLogHandler.query8page(linkId,page);
+            Link link = linkHandler.query(linkId);
+            if(link == null || CollectionUtils.isEmpty(link.getDeviceIds())){
+                page.setTotal(0);
+                return JSONMessage.createSuccess().addData(page).toString();
+            }
+            //Minkey 设备运行统计实现
+            Page<DeviceLog> logs = deviceLogHandler.query8Page(page, seachParam,link.getDeviceIds());
+
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -102,15 +118,20 @@ public class AnalysisController {
      * @return
      */
     @RequestMapping("/deviceCount")
-    public String deviceCount(Long linkId) {
+    public String deviceCount(Long linkId, SeachParam seachParam) {
         log.info("start: 执行查询设备运行统计分析数据总计");
         if(linkId == null || linkId <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
         try{
+            Link link = linkHandler.query(linkId);
+            if(link == null || CollectionUtils.isEmpty(link.getDeviceIds())){
+                return JSONMessage.createSuccess().toString();
+            }
+            //Minkey 设备运行统计
+            deviceLogHandler.querySum(linkId,seachParam);
 
-            TaskLog allSum = taskLogHandler.querySum(linkId);
-            return JSONMessage.createSuccess().addData("sum",allSum).toString();
+            return JSONMessage.createSuccess().addData("sum",null).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

@@ -2,6 +2,8 @@ package com.minkey.contants;
 
 public interface DeviceType {
 
+    public static int unKnow = -1;
+
     /**文件夹*/
     public static int floder = 1;
     /**探针*/

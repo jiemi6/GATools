@@ -2,16 +2,19 @@ package com.minkey.db;
 
 import com.minkey.db.dao.Check;
 import com.minkey.dto.Page;
+import com.minkey.dto.SeachParam;
 import com.minkey.exception.SystemException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Component;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 
 @Component
@@ -20,11 +23,28 @@ public class CheckHandler {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public Page<Check> query8Page(Page<Check> page) {
-        List<Check> devices = jdbcTemplate.query("select * from "+tableName +" ORDER BY checkId desc limit ?,?",
+    public Page<Check> query8Page(Page<Check> page, SeachParam seachParam, Long uid) {
+        StringBuffer whereStr = new StringBuffer(" where 1=1");
+        if(uid != null && uid >0){
+            whereStr.append(" AND uid = "+uid);
+        }
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+        if(seachParam.getLevel() != null ){
+            whereStr.append(" AND level = "+ seachParam.getLevel());
+        }
+
+        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
+            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        }
+
+
+        List<Check> devices = jdbcTemplate.query("select * from "+tableName + whereStr + " ORDER BY checkId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Check.class));
 
-        page.setTotal(queryCount());
+        page.setTotal(jdbcTemplate.queryForObject("select count(*) from "+tableName + whereStr,Integer.class));
         page.setData(devices);
 
         return page;

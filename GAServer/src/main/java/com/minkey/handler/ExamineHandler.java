@@ -166,8 +166,13 @@ public class ExamineHandler {
     }
 
     public void doTask(long checkId, Long taskId) {
+        //需要检查任务数据源 和 数据存放地 两边的情况
+
+        //检查任务进程是否存在
+
     }
 
     public void doLink(long checkId, Long linkId) {
+        //链路报警主要是设备连通性的报警
     }
 }

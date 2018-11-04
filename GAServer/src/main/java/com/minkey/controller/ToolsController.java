@@ -156,7 +156,7 @@ public class ToolsController {
      */
     @RequestMapping("/testDB")
     public String testDB(Integer netArea,DBConfigData dbConfigData,Long detectorId){
-        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,dbConfigData,dbConfigData);
+        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,detectorId,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -235,7 +235,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行测试数据库连接 ");
+            log.info("end: 执行snmp工具 ");
         }
     }
 }

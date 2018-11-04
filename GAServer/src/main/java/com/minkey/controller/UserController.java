@@ -266,6 +266,11 @@ public class UserController {
             return JSONMessage.createFalied("参数错误").toString();
         }
 
+        //保留id内用户不允许删除
+        if(uid < 100){
+            return JSONMessage.createFalied("保留用户不允许删除").toString();
+        }
+
         try{
             userHandler.del(uid);
 

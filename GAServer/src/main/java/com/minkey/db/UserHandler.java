@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 系统用户
@@ -140,9 +141,26 @@ public class UserHandler {
     public void del(Long uid) {
         int num = jdbcTemplate.update("DELETE FROM "+tableName+" where uid= ?",new Object[]{uid});
 
-        if(num == 0){
-            throw new DataException("删除用户不存在");
+    }
+
+    /**
+     * 根据ids批量获取用户
+     * @param deviceIds
+     * @return
+     */
+    public List<User> query8Ids(Set<Long> deviceIds) {
+        if(CollectionUtils.isEmpty(deviceIds)){
+            return null;
         }
+
+        StringBuffer sqlIds = new StringBuffer(" 1=2 ");
+        deviceIds.forEach(uid -> {
+            sqlIds.append(" or uid=" +uid);
+        });
+        List<User> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
+                new BeanPropertyRowMapper<>(User.class));
+
+        return devices;
     }
 
 }

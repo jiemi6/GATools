@@ -1,7 +1,7 @@
 package com.minkey.test.db;
 
 import com.minkey.GAToolsRun;
-import com.minkey.db.TaskLogHandler;
+import com.minkey.db.TaskDayLogHandler;
 import com.minkey.db.third.task.TaskCollector;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -18,11 +18,11 @@ public class OtherTest{
     TaskCollector taskCollector;
 
     @Autowired
-    TaskLogHandler taskLogHandler;
+    TaskDayLogHandler taskDayLogHandler;
     @Test
     public void test() {
 //        taskCollector.getTaskFromOtherDB();
         log.error("xxxx");
-        taskLogHandler.querySum(1);
+        taskDayLogHandler.querySum(1,null);
     }
 }

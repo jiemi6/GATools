@@ -104,4 +104,17 @@ public class Source extends  DBConfigData{
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+    @Override
+    public String toString() {
+        return "Source{" +
+                "id=" + id +
+                ", targetId='" + targetId + '\'' +
+                ", linkId=" + linkId +
+                ", sname='" + sname + '\'' +
+                ", dbVersion='" + dbVersion + '\'' +
+                ", sourceType='" + sourceType + '\'' +
+                ", createTime=" + createTime +
+                "} " + super.toString();
+    }
 }

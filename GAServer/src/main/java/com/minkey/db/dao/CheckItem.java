@@ -48,6 +48,9 @@ public class CheckItem {
      */
     private int errorType = 0;
 
+    public CheckItem(){
+    }
+
     public CheckItem(long checkId, Integer totalStep) {
         this.checkId = checkId;
         this.totalStep = totalStep;
@@ -115,5 +118,19 @@ public class CheckItem {
 
     public void setTotalStep(int totalStep) {
         this.totalStep = totalStep;
+    }
+
+    @Override
+    public String toString() {
+        return "CheckItem{" +
+                "itemId=" + itemId +
+                ", checkId=" + checkId +
+                ", resultMsg='" + resultMsg + '\'' +
+                ", step=" + step +
+                ", totalStep=" + totalStep +
+                ", resultLevel=" + resultLevel +
+                ", itemType=" + itemType +
+                ", errorType=" + errorType +
+                '}';
     }
 }

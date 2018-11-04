@@ -4,8 +4,7 @@ import com.minkey.db.dao.AlarmLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import com.minkey.exception.DataException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -42,6 +41,12 @@ public class AlarmLogHandler {
         if(seachParam.getType() != null ){
             whereStr.append(" AND type = "+ seachParam.getType());
         }
+
+        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
+            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        }
+
+
 
         List<AlarmLog> devices = jdbcTemplate.query("select * from "+tableName + whereStr.toString()+" ORDER BY logId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(AlarmLog.class));
