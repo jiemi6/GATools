@@ -6,6 +6,7 @@ import com.minkey.dto.JSONMessage;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -14,7 +15,7 @@ import java.io.IOException;
 /**
  * 登陆过滤，第二个执行
  */
-//@WebFilter(filterName = "sessionFilter",urlPatterns = {"/*"})
+@WebFilter(filterName = "sessionFilter",urlPatterns = {"/*"})
 public class SessionFilter implements Filter {
 
     //不需要登录就可以访问的路径(比如:注册登录等)
@@ -63,12 +64,14 @@ public class SessionFilter implements Filter {
         }
 
         String requestType = request.getHeader("X-Requested-With");
+        response.setContentType("application/json;charset=UTF-8");
         //判断是否是ajax请求
         if(requestType!=null && "XMLHttpRequest".equals(requestType)){
             response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
-            response.sendRedirect(request.getContextPath()+"/login.html");
+//            response.sendRedirect(request.getContextPath()+"/login.html");
+            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
         }
         return;
     }

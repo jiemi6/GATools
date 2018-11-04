@@ -60,12 +60,14 @@ public class LicenseFilter implements Filter {
         }
 
         String requestType = request.getHeader("X-Requested-With");
+        response.setContentType("application/json;charset=UTF-8");
         //判断是否是ajax请求
         if(requestType!=null && "XMLHttpRequest".equals(requestType)){
             response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
-            response.sendRedirect(request.getContextPath()+"/license.html");
+//            response.sendRedirect(request.getContextPath()+"/license.html");
+            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
         }
         return;
 
@@ -82,8 +84,7 @@ public class LicenseFilter implements Filter {
     }
 
     private boolean checkLicense() {
-
-        return false;
+        return true;
     }
 
     @Override
