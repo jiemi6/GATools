@@ -14,10 +14,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +73,13 @@ public class LogController {
             JSONObject ipJson  = new JSONObject();
             if(!CollectionUtils.isEmpty(logs.getList())){
                 Set<String> ips = logs.getList().stream().filter(syslog -> StringUtils.isNotEmpty(syslog.getHost())).map(syslog -> syslog.getHost()).collect(Collectors.toSet());
-                Map<Long,Device> nameMap = deviceHandler.query8ips(ips).stream().collect(Collectors.toMap(Device::getDeviceId, Device -> Device ));
+                List<Device> deviceList = deviceHandler.query8ips(ips);
+                Map<Long,Device> nameMap ;
+                if (CollectionUtils.isEmpty(deviceList)) {
+                    nameMap = new HashMap<>();
+                }else{
+                    nameMap = deviceList.stream().collect(Collectors.toMap(Device::getDeviceId, Device -> Device ));
+                }
                 //得到差集，数据库中未知的设备
                 Set<String> unKnowIps = new HashSet<>();
                 unKnowIps.addAll(ips);
