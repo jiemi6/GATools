@@ -44,30 +44,32 @@ public class UserController {
     @Autowired
     HttpSession session;
 
+    private final String vCodeKey = "vcode";
 
     /**
      * 获取验证码
      * @return
      */
     @RequestMapping("/getVCode")
-    public String getVCode(HttpServletResponse resp) {
+    public String getVCode(HttpServletResponse response,HttpServletRequest request) {
         char[] vcode = VCodeUtil.getCode(VCodeUtil.VCODE_NUM);
 
         // 禁止图像缓存。
-        resp.setHeader("Pragma", "no-cache");
-        resp.setHeader("Cache-Control", "no-cache");
-        resp.setDateHeader("Expires", -1);
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", -1);
 
-        resp.setContentType("image/jpeg");
+        response.setContentType("image/jpeg");
 
         // 将图像输出到Servlet输出流中。
         ServletOutputStream sos;
         try {
-            sos = resp.getOutputStream();
+            request.getSession();
+            sos = response.getOutputStream();
             ImageIO.write(VCodeUtil.generateCodeAndPic(vcode), "jpeg", sos);
             sos.close();
 
-            session.setAttribute("vcode",String.valueOf(vcode));
+            request.getSession().setAttribute(vCodeKey,String.valueOf(vcode));
         } catch (IOException e) {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -83,7 +85,7 @@ public class UserController {
     public String checkVCode(String vcode) {
         log.info("start: 执行验证码检查");
         try{
-            if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
+            if(StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
                 return JSONMessage.createSuccess().toString();
             }else{
                 return JSONMessage.createFalied("验证码错误").toString();
@@ -104,7 +106,7 @@ public class UserController {
     public String login( HttpServletRequest request, String uName, String pwd, String vcode) {
         log.info("start: 执行用户登陆");
         try{
-            if(StringUtils.equals(vcode,(String)session.getAttribute("vcode"))){
+            if(StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
                 return JSONMessage.createFalied("验证码错误").toString();
             }
 
@@ -115,23 +117,26 @@ public class UserController {
             }
 
             if(user.getWrongPwdNum() >= User.MAX_WRONGPWDNUM){
-                return JSONMessage.createFalied("用户名密码错误次数达到上限，用户锁定").toString();
+                return JSONMessage.createFalied("用户名密码错误次数达到上限，用户锁定，请联系管理员重置密码。").toString();
             }
 
             if(!StringUtils.equals(StringUtil.md5(pwd),user.getPwd())){
-                //增加锁定次数
-                userHandler.wrongPwd(user.getUid());
+                //admin用户
+                if(user.getUid() != User.ADMIN_UID){
+                    //增加锁定次数
+                    userHandler.wrongPwd(user.getUid());
+                }
                 return JSONMessage.createFalied("用户名密码错误").toString();
             }
 
             //判断登陆ip
             String loginIp = IPUtil.getClientIp(request);
-            long ipStart = IPUtil.ipToLong(user.getLoginIpStart());
-            long ipEnd = IPUtil.ipToLong(user.getLoginIpEnd());
-            if(ipStart == 0  && ipEnd== 0 ){
+            Long ipStart = IPUtil.ipToLong(user.getLoginIpStart());
+            Long ipEnd = IPUtil.ipToLong(user.getLoginIpEnd());
+            if(ipStart == null  && ipEnd== null ){
                 //不限制
             }else{
-                long ip = IPUtil.ipToLong(loginIp);
+                Long ip = IPUtil.ipToLong(loginIp);
                 if(ipStart > ip || ipEnd < ip){
                     return JSONMessage.createFalied("非安全ip段内不允许登陆").toString();
                 }
@@ -162,14 +167,15 @@ public class UserController {
             //清除错误次数
             userHandler.cleanWrongPwdTime(user.getUid());
             //记录登陆日志
-            userLogHandler.log(user,moduleName,"用户登陆成功");
+            userLogHandler.log(user,moduleName,String.format("用户%s登陆成功",uName));
 
-            return JSONMessage.createSuccess().toString();
+            return JSONMessage.createSuccess().addData("sessionId",session.getId()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  用户登陆成功");
+            session.removeAttribute(vCodeKey);
+            log.info("end:  用户登陆完成");
         }
     }
 

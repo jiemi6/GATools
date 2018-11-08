@@ -45,7 +45,7 @@ public class TaskCollector {
     DynamicDB dynamicDB;
 
 
-    @Value("${system.debug}")
+    @Value("${system.debug:false}")
     private boolean isDebug;
 
     /**

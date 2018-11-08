@@ -18,19 +18,21 @@ import java.io.IOException;
 @WebFilter(filterName = "sessionFilter",urlPatterns = {"/*"})
 public class SessionFilter implements Filter {
 
+    private final String no_login = "/login.html";
     //不需要登录就可以访问的路径(比如:注册登录等)
     final String[] includeUrls = new String[]{
+            no_login,
             //必须过滤掉另外一个过滤器的值，
             "/license.html",
 
 
             "/user/getVCode",
             "/user/checkVCode",
-            "/user/login",
-            "login.html"
+            "/user/login"
+
     };
 
-    @Value("${system.debug}")
+    @Value("${system.debug:false}")
     private boolean isDebug;
 
     @Override
@@ -70,8 +72,8 @@ public class SessionFilter implements Filter {
             response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
-//            response.sendRedirect(request.getContextPath()+"/login.html");
-            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
+            response.sendRedirect(request.getContextPath()+no_login);
+//            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_Login).toString());
         }
         return;
     }

@@ -20,7 +20,7 @@ public class JSONMessage {
     private static final int JSON_RESULT_FAILED = ErrorCodeEnum.UNKNOWN.getCode();
 
     /** 状态 */
-    private int code = JSONMessage.JSON_RESULT_SUCCESS;
+    private int code = JSONMessage.JSON_RESULT_FAILED;
 
     /** 错误信息描述 */
     private String msg;

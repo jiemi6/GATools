@@ -137,7 +137,7 @@ public class DeviceHandler {
 
         StringBuffer sqlIds = new StringBuffer(" 1=2 ");
         ips.forEach(ip -> {
-            sqlIds.append(" or ip=" + ip);
+            sqlIds.append(" or ip='" + ip +"'");
         });
         List<Device> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
                 new BeanPropertyRowMapper<>(Device.class));

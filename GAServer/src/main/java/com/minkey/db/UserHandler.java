@@ -97,6 +97,7 @@ public class UserHandler {
      * @param uid
      */
     public void wrongPwd(Long uid) {
+
         int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where uid= ?",new Object[]{uid});
 
         if(num == 0){

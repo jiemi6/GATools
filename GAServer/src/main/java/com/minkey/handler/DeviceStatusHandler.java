@@ -218,8 +218,8 @@ public class DeviceStatusHandler {
 
         DeviceExplorer deviceExplorer = null;
         //通过snmp命令获取 设备硬件信息
-        // 如果是内网，或者是探针
-        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == DeviceType.detector){
+        // 如果是内网，就直接探测
+        if(device.getNetArea() == Device.NETAREA_IN ){
             deviceExplorer = snmpExploreHandler.get(device);
         }else{
             //通过探针获取硬件信息
@@ -261,10 +261,13 @@ public class DeviceStatusHandler {
         }
 
         boolean isConnect = false;
-        //如果是内网，或者是探针
-        if(device.getNetArea() == Device.NETAREA_IN || device.getDeviceType() == DeviceType.detector){
+        //如果是内网，
+        if(device.getNetArea() == Device.NETAREA_IN ){
             //直接访问
             isConnect = Ping.javaPing(device.getIp(),1000);
+        }else if(device.getDeviceType() == DeviceType.detector){
+            //如果是探针自己，发送探针check
+            return DetectorUtil.check(detectorService.getIp(),detectorService.getConfigData().getPort());
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             if(detectorService == null){

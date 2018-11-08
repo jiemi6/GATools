@@ -7,8 +7,8 @@ import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
 import com.minkey.dto.FTPConfigData;
 import com.minkey.dto.SnmpConfigData;
-import com.minkey.exception.DataException;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
@@ -39,7 +39,7 @@ public class DeviceServiceHandler {
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {
                         ps.setLong(1,device.getDeviceId());
                         ps.setString(2,argument.getServiceName());
-                        ps.setString(3,device.getIp());
+                        ps.setString(3, StringUtils.isEmpty(argument.getIp()) ? device.getIp() :argument.getIp());
                         ps.setInt(4,argument.getServiceType());
                         ps.setString(5,argument.configDataStr());
                     }
@@ -47,14 +47,6 @@ public class DeviceServiceHandler {
 
     }
 
-    public void insert(Device device,DeviceService deviceService) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?,?)",
-                new Object[]{device.getDeviceId(),deviceService.getServiceName(),device.getIp(),deviceService.getServiceType(),deviceService.getConfigData()});
-
-        if(num == 0){
-            throw new DataException("新增设备服务失败");
-        }
-    }
 
     public DeviceService query(Long serviceId) {
         List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName+" where serviceId= ?",

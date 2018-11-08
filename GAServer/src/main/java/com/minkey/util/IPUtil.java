@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 
 public class IPUtil {
 
-
     public static String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
         if(StringUtils.isNotEmpty(ip) && !"unKnown".equalsIgnoreCase(ip)){
@@ -33,7 +32,10 @@ public class IPUtil {
       * @param strIp
       * @return
       */
-    public static long ipToLong(String strIp) {
+    public static Long ipToLong(String strIp) {
+        if(strIp == null ){
+            return null;
+        }
         String[]ip = strIp.split("\\.");
         return (Long.parseLong(ip[0]) << 24) + (Long.parseLong(ip[1]) << 16) + (Long.parseLong(ip[2]) << 8) + Long.parseLong(ip[3]);
     }

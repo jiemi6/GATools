@@ -6,4 +6,12 @@ package com.minkey.contants;
 public interface Modules {
 
     public static final  String user ="用户模块";
+
+    public static final String config ="系统配置";
+
+    public static final String license ="证书管理";
+
+    public static final String link ="链路管理";
+
+
 }

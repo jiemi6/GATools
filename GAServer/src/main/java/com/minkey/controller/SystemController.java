@@ -2,8 +2,10 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
+import com.minkey.contants.Modules;
 import com.minkey.db.CheckHandler;
 import com.minkey.db.ConfigHandler;
+import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.Check;
 import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.User;
@@ -43,10 +45,13 @@ public class SystemController {
     SelfCheckJob selfCheckJob;
 
     @Autowired
+    UserLogHandler userLogHandler;
+
+    @Autowired
     HttpSession session;
 
 
-    @Value("${system.debug}")
+    @Value("${system.debug:false}")
     private boolean isDebug;
 
 
@@ -124,6 +129,10 @@ public class SystemController {
             return JSONMessage.createSuccess("暂时不真正执行，真的会关机的").toString();
         }
         try{
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s %s系统 ",sessionUser.getuName(),reboot?"重启":"关机"));
+
             if(reboot != null && reboot){
                 //重启
                 LocalExecuter.exec("shutdown -r now");
@@ -160,6 +169,11 @@ public class SystemController {
 
             //Minkey 备份设置 未完成
             response.getOutputStream().write(data);
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 备份系统设置 ",sessionUser.getuName()));
+
             return null;
         } catch (IOException e) {
             return null;
@@ -193,6 +207,11 @@ public class SystemController {
         //Minkey 导入配置文件未完成
         log.info("导入的数据"+data);
         log.info("end: 导入配置文件");
+
+        User sessionUser = (User) session.getAttribute("user");
+        //记录用户日志
+        userLogHandler.log(sessionUser, Modules.link,String.format("%s 导入配置文件，恢复系统设置 ",sessionUser.getuName()));
+
         return JSONMessage.createSuccess("导入成功").toString();
     }
 
@@ -207,6 +226,9 @@ public class SystemController {
 
         //Minkey 重置系统未完成
 
+        User sessionUser = (User) session.getAttribute("user");
+        //记录用户日志
+        userLogHandler.log(sessionUser, Modules.link,String.format("%s 恢复出厂设置 ",sessionUser.getuName()));
 
         return JSONMessage.createSuccess("重置成功").toString();
     }
@@ -273,6 +295,10 @@ public class SystemController {
 
             String configKey = ConfigEnum.NewWork.getConfigKey();
             configHandler.insert(configKey,config.toJSONString());
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 设置本机网络 ",sessionUser.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

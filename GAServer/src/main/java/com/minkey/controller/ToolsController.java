@@ -51,14 +51,18 @@ public class ToolsController {
             netArea = Device.NETAREA_IN;
         }
 
-        try{
-            if(StringUtils.isEmpty(ip)){
-                return JSONMessage.createFalied("ip不能为空").toString();
-            }
+        if(netArea == Device.NETAREA_OUT && detectorId == null){
+            return JSONMessage.createFalied("请选择一个探针").toString();
+        }
 
-            if(!StringUtil.isIp(ip)){
-                return JSONMessage.createFalied("ip格式不正确").toString();
-            }
+        if(StringUtils.isEmpty(ip)){
+            return JSONMessage.createFalied("ip不能为空").toString();
+        }
+
+        if(!StringUtil.isIp(ip)){
+            return JSONMessage.createFalied("ip格式不正确").toString();
+        }
+        try{
 
             String cmd = "ping "+ip+ " -c 4";
             if(OSUtil.isWindowsOS()){

@@ -17,9 +17,10 @@ import java.io.IOException;
 @WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
 public class LicenseFilter implements Filter {
 
+    private final String no_license = "/license.html";
     //license白名单url
     final String[] includeUrls = new String[]{
-            "/license.html",
+            no_license,
             //Minkey 生成证书到时候要删掉
             "/license/licenseExport",
 
@@ -28,9 +29,8 @@ public class LicenseFilter implements Filter {
             "/license/key"
     };
 
-    @Value("${system.debug}")
+    @Value("${system.debug:false}")
     private boolean isDebug;
-
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -66,8 +66,8 @@ public class LicenseFilter implements Filter {
             response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
         }else{
             //重定向到登录页(需要在static文件夹下建立此html文件)
-//            response.sendRedirect(request.getContextPath()+"/license.html");
-            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
+            response.sendRedirect(request.getContextPath()+no_license);
+//            response.getWriter().write(JSONMessage.createFalied(ErrorCodeEnum.No_license).toString());
         }
         return;
 
@@ -84,6 +84,9 @@ public class LicenseFilter implements Filter {
     }
 
     private boolean checkLicense() {
+//        JSONObject license = SpringUtils.getBean(LicenseController.class).getLicenseData();
+
+
         return true;
     }
 

@@ -15,6 +15,8 @@ public class User {
      */
     private Long uid;
 
+    public static final long SYSTEM_UID = -1;
+    public static final long ADMIN_UID = 1;
 
     /**
      * 用户真实姓名
@@ -25,6 +27,8 @@ public class User {
      * 用户登陆名称
      */
     private String uName;
+
+    private String iconId;
 
     /**
      * 密码
@@ -259,6 +263,14 @@ public class User {
         this.loginTimeEnd = loginTimeEnd;
     }
 
+    public String getIconId() {
+        return iconId;
+    }
+
+    public void setIconId(String iconId) {
+        this.iconId = iconId;
+    }
+
     public boolean canWrite(){
         return auth == AUTH_WR;
     }
@@ -269,6 +281,7 @@ public class User {
                 "uid=" + uid +
                 ", name='" + name + '\'' +
                 ", uName='" + uName + '\'' +
+                ", iconId='" + iconId + '\'' +
                 ", pwd='" + pwd + '\'' +
                 ", createUid=" + createUid +
                 ", phone='" + phone + '\'' +
@@ -285,4 +298,5 @@ public class User {
                 ", loginTimeEnd='" + loginTimeEnd + '\'' +
                 '}';
     }
+
 }

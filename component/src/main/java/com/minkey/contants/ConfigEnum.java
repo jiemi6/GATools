@@ -12,6 +12,8 @@ public enum  ConfigEnum {
 
     Sshd("Sshd","os有关sshd配置"),
 
+    Snmp("Snmp","os有关Snmp配置"),
+
     AutoCheckTimes("AutoCheckTimes","系统自检时间"),
 
     NewWork("NewWork","本系统网卡设置"),

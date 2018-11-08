@@ -33,6 +33,8 @@ subprojects {
 
 	jar{
 		exclude("application.properties")
+		exclude("static")
+		exclude("templates")
     }
 
     startScripts {

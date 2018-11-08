@@ -8,6 +8,7 @@ import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,7 +75,7 @@ public class LogController {
 
             JSONObject ipJson  = new JSONObject();
             if(!CollectionUtils.isEmpty(logs.getList())){
-                Set<String> ips = logs.getList().stream().map(syslog -> syslog.getHost()).collect(Collectors.toSet());
+                Set<String> ips = logs.getList().stream().filter(syslog -> StringUtils.isNotEmpty(syslog.getHost())).map(syslog -> syslog.getHost()).collect(Collectors.toSet());
                 Map<Long,Device> nameMap = deviceHandler.query8ips(ips).stream().collect(Collectors.toMap(Device::getDeviceId, Device -> Device ));
                 //得到差集，数据库中未知的设备
                 Set<String> unKnowIps = new HashSet<>();

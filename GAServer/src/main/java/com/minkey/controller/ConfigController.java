@@ -2,15 +2,22 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
+import com.minkey.contants.Modules;
 import com.minkey.db.ConfigHandler;
+import com.minkey.db.UserLogHandler;
+import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.syslog.SysLogUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * 配置接口
@@ -21,6 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ConfigController {
     @Autowired
     ConfigHandler configHandler;
+
+    @Autowired
+    UserLogHandler userLogHandler;
+
+    @Autowired
+    HttpSession httpSession;
 
     @RequestMapping("/insert")
     public String insert(String configKey,String configData) {
@@ -52,7 +65,13 @@ public class ConfigController {
             return JSONMessage.createFalied("configKey不能为空").toString();
         }
         try{
-            return JSONMessage.createSuccess().addData(configHandler.query(configKey)).toString();
+            Map<String, Object>  data = configHandler.query(configKey);
+
+            if(MapUtils.isNotEmpty(data)){
+                //去掉key，不返回
+                data.remove("configKey");
+            }
+            return JSONMessage.createSuccess().addData(data).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -96,6 +115,10 @@ public class ConfigController {
             configData.put("managerPhone",managerPhone);
             configData.put("managerEmail",managerEmail);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置系统注册资料",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -134,6 +157,10 @@ public class ConfigController {
             JSONObject configData = new JSONObject();
             configData.put("LogOverDay",logOverDay);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置日志回滚日期",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -171,6 +198,10 @@ public class ConfigController {
             JSONObject configData = new JSONObject();
             configData.put("checkTimes",checkTimes);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置自动体检时间",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -193,6 +224,10 @@ public class ConfigController {
             JSONObject configData = new JSONObject();
             configData.put("smsUrl",smsUrl);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置短信告警信息",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -230,6 +265,10 @@ public class ConfigController {
             configData.put("emailPwd",emailPwd);
             configData.put("emailServer",emailServer);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置邮箱告警信息",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -278,6 +317,10 @@ public class ConfigController {
             configData.put("port",port);
             String configKey = ConfigEnum.Syslog2other.getConfigKey();
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s设置syslog转发信息",user.getuName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -306,11 +349,14 @@ public class ConfigController {
     public String sshdSet(Boolean open) {
         log.info("start: ssh工具 状态变更为 {}" ,open);
         //调用系统命令进行开关，
+        if(open == null ){
+            open = false;
+        }
 
-        if(open == null || open == false){
-            //停止sshd服务
+        if(open){
+            //开启snmp服务
         }else{
-            //开启sshd服务
+            //停止snmp服务
         }
 
         try{
@@ -319,6 +365,10 @@ public class ConfigController {
             JSONObject configData = new JSONObject();
             configData.put("open",open);
             configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s %s Ssh组件",user.getuName(),open?"开启":"关闭"));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -337,6 +387,55 @@ public class ConfigController {
     @RequestMapping("/sshd/get")
     public String sshdGet() {
         String configKey = ConfigEnum.Sshd.getConfigKey();
+        return query(configKey);
+    }
+
+    /**
+     * snmp工具开关
+     * @return
+     */
+    @RequestMapping("/snmp/set")
+    public String snmpSet(Boolean open) {
+        log.info("start: snmp工具 状态变更为 {}" ,open);
+        //调用系统命令进行开关，
+        if(open == null ){
+            open = false;
+        }
+
+        if(open){
+            //开启snmp服务
+        }else{
+            //停止snmp服务
+        }
+
+        try{
+            //直接存入config
+            String configKey = ConfigEnum.Snmp.getConfigKey();
+            JSONObject configData = new JSONObject();
+            configData.put("open",open);
+            configHandler.insert(configKey,configData.toJSONString());
+
+            User user = (User) httpSession.getAttribute("user");
+            userLogHandler.log(user, Modules.config, String.format("%s %s Snmp组件",user.getuName(),open?"开启":"关闭"));
+
+            return JSONMessage.createSuccess().toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end:  ssh工具 状态变更完成");
+        }
+
+
+    }
+
+    /**
+     * 获取ssh工具开关配置
+     * @return
+     */
+    @RequestMapping("/snmp/get")
+    public String snmpGet() {
+        String configKey = ConfigEnum.Snmp.getConfigKey();
         return query(configKey);
     }
 

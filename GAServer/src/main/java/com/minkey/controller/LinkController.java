@@ -1,7 +1,10 @@
 package com.minkey.controller;
 
+import com.minkey.contants.Modules;
 import com.minkey.db.LinkHandler;
+import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.Link;
+import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.DynamicDB;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * 链路接口
@@ -22,6 +27,11 @@ public class LinkController {
 
     @Autowired
     DynamicDB dynamicDB;
+    @Autowired
+    UserLogHandler userLogHandler;
+
+    @Autowired
+    HttpSession session;
 
     @RequestMapping("/insert")
     public String insert(Link link) {
@@ -45,6 +55,11 @@ public class LinkController {
             }
 
             linkHandler.insert(link);
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 新建链路，链路名称=%s ",sessionUser.getuName(),link.getLinkName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -79,6 +94,11 @@ public class LinkController {
             }
 
             linkHandler.update(link);
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 修改链路，链路名称=%s ",sessionUser.getuName(),link.getLinkName()));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -160,6 +180,11 @@ public class LinkController {
         }
         try{
             linkHandler.del(linkId);
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 删除链路，链路id=%s ",sessionUser.getuName(),linkId));
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

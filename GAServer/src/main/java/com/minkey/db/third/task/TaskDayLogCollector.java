@@ -39,7 +39,7 @@ public class TaskDayLogCollector {
     DynamicDB dynamicDB;
 
 
-    @Value("${system.debug}")
+    @Value("${system.debug:false}")
     private boolean isDebug;
 
     /**

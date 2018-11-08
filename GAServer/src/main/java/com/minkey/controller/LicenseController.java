@@ -3,9 +3,11 @@ package com.minkey.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
 import com.minkey.contants.ErrorCodeEnum;
+import com.minkey.contants.Modules;
 import com.minkey.db.ConfigHandler;
+import com.minkey.db.UserLogHandler;
+import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
-import com.minkey.util.DateUtil;
 import com.minkey.util.StringUtil;
 import com.minkey.util.SymmetricEncoder;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -33,6 +35,11 @@ import java.util.Map;
 public class LicenseController {
     @Autowired
     ConfigHandler configHandler;
+    @Autowired
+    UserLogHandler userLogHandler;
+
+    @Autowired
+    HttpSession session;
 
     final String LICENSEKEY = "licenseKey";
     final String LICENSEDATAKEY = "configData";
@@ -57,6 +64,11 @@ public class LicenseController {
                 return JSONMessage.createFalied("无效证书文件").toString();
             }
 
+            if(file.getSize() > 3*1024){
+                //返回错误
+                return JSONMessage.createFalied("无效证书文件").toString();
+            }
+
             log.info("license : {}" ,str);
 
             Map<String, Object> dbData = configHandler.query(configKey);
@@ -77,10 +89,17 @@ public class LicenseController {
                 return JSONMessage.createFalied("无效证书文件").toString();
             }
 
+            JSONObject licenseDataJson = (JSONObject) JSONObject.parse(new String(licenseData,"utf-8"));
             //记录到数据库中
-            configData.put("licenseData",JSONObject.parse(new String(licenseData,"utf-8")));
+            configData.put("licenseData",licenseDataJson);
             configHandler.insert(configKey, JSONObject.toJSONString(configData));
 
+            //赋值给缓存
+            this.licenseData = licenseDataJson;
+
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.license,String.format("%s 导入新证书，licenseData=%s ",sessionUser.getuName(),licenseData));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -195,14 +214,32 @@ public class LicenseController {
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
 
-
         JSONObject configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
         if(configData == null){
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
 
         return JSONMessage.createSuccess().addData(configData).toString();
+    }
 
+
+    private JSONObject licenseData;
+
+    public JSONObject getLicenseData() {
+        return licenseData;
+    }
+
+    public void init(){
+        String licenseKey = getKey();
+        log.info("生成系统证书key："+licenseKey);
+
+        Map<String, Object> dbData = configHandler.query(configKey);
+
+        if(MapUtils.isEmpty(dbData)){
+            return;
+        }
+
+        licenseData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
     }
 
 }

@@ -41,7 +41,7 @@ done
 #方法1 :指定classpath=configpath加上jars
 #CLASS_PATH="$CONFIG_PATH$jars"
 #方法2 ：直接用*号表示
-CLASS_PATH="$CONFIG_PATH:$APP_HOME/../lib/*"
+CLASS_PATH="$CONFIG_PATH:$APP_HOME/../lib/*:$APP_HOME/../resources"
 
 
 ################################### 
