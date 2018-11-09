@@ -44,14 +44,14 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping(Integer netArea,String ip,Long detectorId) {
-        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
+    public String ping(Integer netArea,String ip,Long deviceId) {
+        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,deviceId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
         }
 
-        if(netArea == Device.NETAREA_OUT && detectorId == null){
+        if(netArea == Device.NETAREA_OUT && deviceId == null){
             return JSONMessage.createFalied("请选择一个探针").toString();
         }
 
@@ -75,7 +75,7 @@ public class ToolsController {
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
                     return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
@@ -108,8 +108,8 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/telnet")
-    public String telnet(Integer netArea,String ip,int port,Long detectorId) {
-        log.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,detectorId);
+    public String telnet(Integer netArea,String ip,int port,Long deviceId) {
+        log.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,deviceId);
 
         if(netArea == null){
             netArea = Device.NETAREA_IN;
@@ -130,7 +130,7 @@ public class ToolsController {
                 isConnect = Telnet.doTelnet(ip,port);
             }else{
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
                     return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
@@ -155,12 +155,12 @@ public class ToolsController {
     /**
      *测试数据库
      * @param dbConfigData
-     * @param detectorId
+     * @param deviceId
      * @return
      */
     @RequestMapping("/testDB")
-    public String testDB(Integer netArea,DBConfigData dbConfigData,Long detectorId){
-        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,detectorId,dbConfigData);
+    public String testDB(Integer netArea,DBConfigData dbConfigData,Long deviceId){
+        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,deviceId,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -178,7 +178,7 @@ public class ToolsController {
                 isConnect = dynamicDB.testDB(dbConfigData);
             }else{
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
                     return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
@@ -204,8 +204,8 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/snmp")
-    public String snmp(Integer netArea,String ip,Integer port,String oid,Long decetorId) {
-        log.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,decetorId,ip,port,oid);
+    public String snmp(Integer netArea,String ip,Integer port,String oid,Long deviceId) {
+        log.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,deviceId,ip,port,oid);
 
         if(StringUtils.isEmpty(ip)){
             return JSONMessage.createFalied("ip不能为空").toString();
@@ -222,7 +222,7 @@ public class ToolsController {
                 jo = new SnmpUtil(ip).snmpWalk(oid);
             }else{
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(decetorId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
                     return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();

@@ -1,12 +1,8 @@
 package com.minkey.db;
 
-import com.alibaba.fastjson.JSONObject;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
-import com.minkey.dto.DBConfigData;
-import com.minkey.dto.FTPConfigData;
-import com.minkey.dto.SnmpConfigData;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,21 +88,8 @@ public class DeviceServiceHandler {
             deviceService.setServiceName(rs.getString("serviceName"));
             deviceService.setServiceType(rs.getInt("serviceType"));
 
-            switch (rs.getInt("serviceType")){
-                case DeviceService.SERVICETYPE_DB :
-                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),DBConfigData.class));
-                    break;
-                case DeviceService.SERVICETYPE_SNMP :
-                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),SnmpConfigData.class));
-                    break;
-                case DeviceService.SERVICETYPE_FTP :
-                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),FTPConfigData.class));
-                    break;
-                default:
-                    deviceService.setConfigData(JSONObject.parseObject(rs.getString("configData"),BaseConfigData.class));
-                    break;
-
-            }
+            BaseConfigData baseConfigData = DeviceService.conventConfigData8str(rs.getInt("serviceType"),rs.getString("configData"));
+            deviceService.setConfigData(baseConfigData);
 
             return deviceService;
         }

@@ -65,8 +65,8 @@ public class UserLogHandler {
             whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
         }
 
-        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
-            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        if(StringUtils.isNotEmpty(seachParam.getKeyword())){
+            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyword()+"%");
         }
 
         List<UserLog> userLogs = jdbcTemplate.query("select * from "+tableName + whereStr +" ORDER BY userLogId desc limit ?,?",

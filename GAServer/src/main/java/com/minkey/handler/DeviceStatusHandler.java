@@ -78,7 +78,7 @@ public class DeviceStatusHandler {
      * key ：链路id，
      * value ：探针服务
      */
-    private Map<Long,DeviceService> allLinkServiceMap = new HashMap<>();
+    private Map<Long,DeviceService> allLinkDetectorServiceMap = new HashMap<>();
 
 
     private void cleanAllCache(){
@@ -89,7 +89,7 @@ public class DeviceStatusHandler {
         //清空探针缓存
         allDetectorServiceMap = new HashMap<>();
         //清空链路探针缓存
-        allLinkServiceMap = new HashMap<>();
+        allLinkDetectorServiceMap = new HashMap<>();
         //设备连接情况缓存
         deviceConnectCache.cleanAll();
 
@@ -150,7 +150,7 @@ public class DeviceStatusHandler {
                     //找探针服务
                     DeviceService deviceService = allDetectorServiceMap.get(deviceId);
                     //放入缓存
-                    allLinkServiceMap.put(link.getLinkId(),deviceService);
+                    allLinkDetectorServiceMap.put(link.getLinkId(),deviceService);
                     break;
                 }
             }
@@ -167,7 +167,8 @@ public class DeviceStatusHandler {
     public void reflashConnect() {
         //Minkey 不应该只刷新link，应该刷一次所有设备？
         allLinkMap.forEach((aLong, link) ->  {
-            DeviceService deviceService = allLinkServiceMap.get(aLong);
+            //有可能为空，链路没有配探针
+            DeviceService deviceService = allLinkDetectorServiceMap.get(aLong);
             Set<Long> allDeviceId = link.getDeviceIds();
             for (Long deviceId:allDeviceId){
                 try {
@@ -186,7 +187,7 @@ public class DeviceStatusHandler {
     @Scheduled(cron = "0/5 * * * * ?")
     public void reflashExplorer() {
         allLinkMap.forEach((aLong, link) ->  {
-            DeviceService deviceService = allLinkServiceMap.get(aLong);
+            DeviceService deviceService = allLinkDetectorServiceMap.get(aLong);
             Set<Long> allDeviceId = link.getDeviceIds();
             for (Long deviceId:allDeviceId){
                 try {
@@ -261,13 +262,18 @@ public class DeviceStatusHandler {
         }
 
         boolean isConnect = false;
+        if(device.getDeviceType() == DeviceType.detector) {
+            //如果自己是探针，而且没有配置探针服务
+            if(detectorService == null){
+                return false;
+            }
+            //如果是探针自己，发送探针check
+            return DetectorUtil.check(detectorService.getIp(), detectorService.getConfigData().getPort());
+        }
         //如果是内网，
         if(device.getNetArea() == Device.NETAREA_IN ){
             //直接访问
             isConnect = Ping.javaPing(device.getIp(),1000);
-        }else if(device.getDeviceType() == DeviceType.detector){
-            //如果是探针自己，发送探针check
-            return DetectorUtil.check(detectorService.getIp(),detectorService.getConfigData().getPort());
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             if(detectorService == null){

@@ -42,11 +42,9 @@ public class AlarmLogHandler {
             whereStr.append(" AND type = "+ seachParam.getType());
         }
 
-        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
-            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        if(StringUtils.isNotEmpty(seachParam.getKeyword())){
+            whereStr.append(" AND msg LIKE '%"+ seachParam.getKeyword()+"%'");
         }
-
-
 
         List<AlarmLog> devices = jdbcTemplate.query("select * from "+tableName + whereStr.toString()+" ORDER BY logId desc limit ?,?",
                 new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(AlarmLog.class));

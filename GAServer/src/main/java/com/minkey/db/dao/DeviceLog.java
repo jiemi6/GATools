@@ -8,6 +8,7 @@ import java.util.Date;
  * 设备log
  */
 public class DeviceLog {
+    private long deviceLogId;
 
     private long deviceId;
 
@@ -85,10 +86,19 @@ public class DeviceLog {
         this.createTime = createTime;
     }
 
+    public long getDeviceLogId() {
+        return deviceLogId;
+    }
+
+    public void setDeviceLogId(long deviceLogId) {
+        this.deviceLogId = deviceLogId;
+    }
+
     @Override
     public String toString() {
         return "DeviceLog{" +
-                "deviceId=" + deviceId +
+                "deviceLogId=" + deviceLogId +
+                ", deviceId=" + deviceId +
                 ", ip='" + ip + '\'' +
                 ", level=" + level +
                 ", type=" + type +

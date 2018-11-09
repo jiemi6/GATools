@@ -1,7 +1,12 @@
 package com.minkey.db.dao;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.minkey.dto.BaseConfigData;
+import com.minkey.dto.DBConfigData;
+import com.minkey.dto.FTPConfigData;
+import com.minkey.dto.SnmpConfigData;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  设备所包含的服务，一个设备上可以跑多个服务
@@ -93,6 +98,14 @@ public class DeviceService {
         return configData;
     }
 
+    public void setConfigData(BaseConfigData configData) {
+        this.configData = configData;
+    }
+
+    /**
+     * 获取str时候，从data转换
+     * @return
+     */
     public String configDataStr() {
         if(configData == null){
             return null;
@@ -100,8 +113,17 @@ public class DeviceService {
         return JSONObject.toJSONString(configData);
     }
 
-    public void setConfigData(BaseConfigData configData) {
-        this.configData = configData;
+    /**
+     * 专门提供给前端放入字符串作为数据
+     */
+    @JSONField(serialize=false)
+    private String configDataStr;
+    public void setConfigDataStr(String configDataStr) {
+        this.configDataStr = configDataStr;
+    }
+
+    public String getConfigDataStr() {
+        return configDataStr;
     }
 
 
@@ -116,4 +138,24 @@ public class DeviceService {
                 ", configData=" + configData +
                 '}';
     }
+
+
+    public static final BaseConfigData conventConfigData8str(int serviceType,String configDataStr){
+        if(StringUtils.isEmpty(configDataStr)){
+            return null;
+        }
+
+        switch (serviceType){
+            case DeviceService.SERVICETYPE_DB :
+                return JSONObject.parseObject(configDataStr,DBConfigData.class);
+            case DeviceService.SERVICETYPE_SNMP :
+                return JSONObject.parseObject(configDataStr,SnmpConfigData.class);
+            case DeviceService.SERVICETYPE_FTP :
+                return JSONObject.parseObject(configDataStr,FTPConfigData.class);
+            default:
+                return JSONObject.parseObject(configDataStr,BaseConfigData.class);
+        }
+    }
+
+
 }

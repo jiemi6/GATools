@@ -36,8 +36,8 @@ public class CheckHandler {
             whereStr.append(" AND level = "+ seachParam.getLevel());
         }
 
-        if(StringUtils.isNotEmpty(seachParam.getKeyWord())){
-            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyWord()+"%");
+        if(StringUtils.isNotEmpty(seachParam.getKeyword())){
+            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyword()+"%");
         }
 
 

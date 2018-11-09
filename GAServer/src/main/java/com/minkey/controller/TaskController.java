@@ -3,6 +3,7 @@ package com.minkey.controller;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.Task;
 import com.minkey.dto.JSONMessage;
+import com.minkey.dto.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,4 +66,27 @@ public class TaskController {
             log.info("end: 执行count所有设备 ");
         }
     }
+
+    /**
+     * 任务监控查询
+     * @return
+     */
+    @RequestMapping("/monitor")
+    public String monitor(Long linkId, Integer currentPage, Integer pageSize  ) {
+        log.info("start: 任务监控查询 ");
+        try{
+            Page page = new Page(currentPage,pageSize);
+
+            //Minkey 任务监控还没做
+            return JSONMessage.createSuccess().addData(page).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end: 任务监控查询 ");
+        }
+    }
+
+
+
 }

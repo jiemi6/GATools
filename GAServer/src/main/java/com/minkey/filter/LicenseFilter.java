@@ -9,6 +9,10 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -17,17 +21,19 @@ import java.io.IOException;
 @WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
 public class LicenseFilter implements Filter {
 
-    private final String no_license = "/license.html";
-    //license白名单url
-    final String[] includeUrls = new String[]{
-            no_license,
-            //Minkey 生成证书到时候要删掉
-            "/license/licenseExport",
+    public static final String no_license = "/license.html";
 
-            "/license/up",
-            "/license/keyExport",
-            "/license/key"
-    };
+    protected List<Pattern> patterns = new ArrayList<Pattern>();
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        patterns.add(Pattern.compile(no_license));
+
+        patterns.add(Pattern.compile("/license/up"));
+        patterns.add(Pattern.compile("/license/keyExport"));
+        patterns.add(Pattern.compile("/license/key"));
+
+        patterns.add(Pattern.compile(".*[(\\.js)||(\\.css)||(\\.png)||(\\.tff)]"));
+    }
 
     @Value("${system.debug:false}")
     private boolean isDebug;
@@ -45,10 +51,10 @@ public class LicenseFilter implements Filter {
         String uri = request.getRequestURI();
 
         //是否需要过滤
-        boolean needFilter = isNeedFilter(uri);
+        boolean notNeed = notNeedFilter(uri);
 
         //不需要过滤直接传给下一个过滤器
-        if (!needFilter) {
+        if (notNeed) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
@@ -73,14 +79,14 @@ public class LicenseFilter implements Filter {
 
     }
 
-    private boolean isNeedFilter(String uri) {
-        for (String includeUrl : includeUrls) {
-            if(includeUrl.equals(uri)) {
-                return false;
+    private boolean notNeedFilter(String url) {
+        for (Pattern pattern : patterns) {
+            Matcher matcher = pattern.matcher(url);
+            if (matcher.matches()) {
+                return true;
             }
         }
-
-        return true;
+        return false;
     }
 
     private boolean checkLicense() {
@@ -90,10 +96,6 @@ public class LicenseFilter implements Filter {
         return true;
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
 
     @Override
     public void destroy() {

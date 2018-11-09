@@ -43,7 +43,7 @@ public class AlarmController {
      * @return
      */
     @RequestMapping("/task")
-    public String task(Integer currentPage, Integer pageSize, SeachParam seachParam, Long taskId) {
+    public String task(Integer currentPage, Integer pageSize, SeachParam seachParam, Long bid) {
         log.info("start: 执行分页查询任务告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
@@ -52,7 +52,7 @@ public class AlarmController {
         try{
             Page<AlarmLog> page = new Page(currentPage,pageSize);
 
-            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_TASK,page,seachParam,taskId);
+            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_TASK,page,seachParam,bid);
 
 
             Object nameJson = null;
@@ -77,7 +77,7 @@ public class AlarmController {
      * @return
      */
     @RequestMapping("/device")
-    public String device(Integer currentPage,Integer pageSize, SeachParam seachParam, Long deviceId) {
+    public String device(Integer currentPage,Integer pageSize, SeachParam seachParam, Long bid) {
         log.info("start: 分页查询设备告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
@@ -86,7 +86,7 @@ public class AlarmController {
         try{
             Page<AlarmLog> page = new Page(currentPage,pageSize);
 
-            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_DEVICE,page, seachParam, deviceId);
+            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_DEVICE,page, seachParam, bid);
 
             Object nameJson = null;
             if(!CollectionUtils.isEmpty(logs.getList())){
@@ -111,12 +111,12 @@ public class AlarmController {
      * @return
      */
     @RequestMapping("/link")
-    public String link(Integer currentPage,Integer pageSize, SeachParam seachParam, Long linkId) {
+    public String link(Integer currentPage,Integer pageSize, SeachParam seachParam, Long bid) {
         log.info("start: 分页查询链路告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             Page<AlarmLog> page = new Page(currentPage,pageSize);
 
-            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_LINK,page, seachParam, linkId);
+            Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_LINK,page, seachParam, bid);
 
             Object nameJson = null;
             if(!CollectionUtils.isEmpty(logs.getList())){

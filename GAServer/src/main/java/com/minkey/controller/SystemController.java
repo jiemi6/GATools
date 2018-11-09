@@ -135,10 +135,13 @@ public class SystemController {
 
             if(reboot != null && reboot){
                 //重启
-                LocalExecuter.exec("shutdown -r now");
+                //Minkey 关机命令暂时使用假的
+                LocalExecuter.exec("shutdown -k now");
+//                LocalExecuter.exec("shutdown -r now");
             }else{
                 //关机
-                LocalExecuter.exec("shutdown -h now");
+                LocalExecuter.exec("shutdown -k now");
+//                LocalExecuter.exec("shutdown -h now");
             }
 
             return JSONMessage.createSuccess().toString();

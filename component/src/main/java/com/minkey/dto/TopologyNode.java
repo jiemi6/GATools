@@ -23,9 +23,15 @@ public class TopologyNode {
      */
     private int direction = 1;
 
+    /**
+     * 往下递归的子节点
+     */
     private List<TopologyNode> child;
 
-    private List<Long> include;
+    /**
+     * 当为文件夹的时候，直接存放所有设备的ids
+     */
+    private List<Long> deviceIds;
 
     public TopologyNode() {
         super();
@@ -75,11 +81,11 @@ public class TopologyNode {
         return all;
     }
 
-    public List<Long> getInclude() {
-        return include;
+    public List<Long> getDeviceIds() {
+        return deviceIds;
     }
 
-    public void setInclude(List<Long> include) {
-        this.include = include;
+    public void setDeviceIds(List<Long> deviceIds) {
+        this.deviceIds = deviceIds;
     }
 }

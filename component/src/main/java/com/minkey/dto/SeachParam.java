@@ -10,7 +10,7 @@ public class SeachParam {
     /**
      * 关键字
      */
-    private String keyWord;
+    private String keyword;
 
     private String startDate;
     private String endDate;
@@ -53,12 +53,12 @@ public class SeachParam {
     }
 
 
-    public String getKeyWord() {
-        return keyWord;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public Integer getLevel() {
@@ -86,10 +86,10 @@ public class SeachParam {
             return null;
         }
 
-        if(this.startDate() == null){
+        if(this.startDate == null){
             this.setStartDate("2010-10-10");
         }
-        if(this.endDate() == null){
+        if(this.endDate == null){
             this.setEndDate("2099-10-10");
         }
 

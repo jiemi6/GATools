@@ -7,6 +7,7 @@ import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.User;
+import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
@@ -46,28 +47,62 @@ public class DeviceController {
     @Autowired
     HttpSession session;
 
-    @RequestMapping("/insert")
-    public String insert( Device device) {
-        log.info("start: 执行insert设备 device={} ",device);
-
+    private JSONMessage checkParam(Device device){
         if(StringUtils.isEmpty(device.getDeviceName())){
-            return JSONMessage.createFalied("name不能为空格式错误").toString();
+            return JSONMessage.createFalied("name不能为空格式错误");
         }
         if(StringUtils.isEmpty(device.getIcon())){
-            return JSONMessage.createFalied("参数错误").toString();
+            return JSONMessage.createFalied("图标不能为空");
         }
 
         if(device.getDeviceType() != DeviceType.floder && StringUtils.isNotEmpty(device.getIp())){
             if(!StringUtil.isIp(device.getIp())){
-                return JSONMessage.createFalied("ip格式错误").toString();
+                return JSONMessage.createFalied("ip格式错误");
             }
         }
 
+
+
+        List<DeviceService> paramList = device.getDeviceServiceList();
+        if(!CollectionUtils.isEmpty(paramList)){
+            for(DeviceService deviceService : paramList) {
+                String configDataStr = deviceService.getConfigDataStr();
+                if(StringUtils.isEmpty(configDataStr)){
+                    return JSONMessage.createFalied("服务配置不能为空");
+                }
+
+                BaseConfigData baseConfigData = DeviceService.conventConfigData8str(deviceService.getServiceType(),deviceService.getConfigDataStr());
+                deviceService.setConfigData(baseConfigData);
+
+                if (deviceService.getServiceType() == DeviceService.SERVICETYPE_DETECTOR && StringUtils.isEmpty(deviceService.getIp())) {
+                    return JSONMessage.createFalied("探针服务ip不能为空");
+                }
+                if(device.getDeviceType() != DeviceType.floder){
+                    if(deviceService.getConfigData() == null){
+                        return JSONMessage.createFalied(String.format("服务%s没有配置数据",deviceService.getServiceName()));
+                    }
+                }
+            }
+        }
+
+        return JSONMessage.createSuccess();
+    }
+
+    @RequestMapping("/insert")
+    public String insert( Device device) {
+        log.info("start: 执行insert设备 device={} ",device);
+
+        //检查参数
+        JSONMessage jsonMessage = checkParam(device);
+        if(!jsonMessage.isSuccess()){
+            return jsonMessage.toString();
+        }
+
         try{
+            List<DeviceService> paramList = device.getDeviceServiceList();
             long deviceId = deviceHandler.insert(device);
             device.setDeviceId(deviceId);
 
-            List<DeviceService> paramList = device.getDeviceServiceList();
             if(!CollectionUtils.isEmpty(paramList)){
                 deviceServiceHandler.insertAll(device,paramList);
             }
@@ -93,15 +128,12 @@ public class DeviceController {
             return JSONMessage.createFalied("deviceId错误").toString();
         }
 
-        if(StringUtils.isEmpty(device.getDeviceName())){
-            return JSONMessage.createFalied("name不能为空格式错误").toString();
+        //检查参数
+        JSONMessage jsonMessage = checkParam(device);
+        if(!jsonMessage.isSuccess()){
+            return jsonMessage.toString();
         }
 
-        if(device.getDeviceType() != DeviceType.floder && StringUtils.isNotEmpty(device.getIp())){
-            if(!StringUtil.isIp(device.getIp())){
-                return JSONMessage.createFalied("ip格式错误").toString();
-            }
-        }
 
         try{
             deviceHandler.replace(device);

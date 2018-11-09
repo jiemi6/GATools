@@ -9,7 +9,7 @@ dependencies {
 
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
     //log4jdbc，数据库日志打印组件
-//    compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
+    compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
 
     compile 'com.alibaba:fastjson:1.2.29',
             'org.apache.commons:commons-lang3:3.4',
