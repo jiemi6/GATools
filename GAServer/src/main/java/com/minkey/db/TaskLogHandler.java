@@ -1,6 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.db.dao.AlarmLog;
+import com.minkey.db.dao.TaskLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import org.apache.commons.lang3.StringUtils;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class AlarmLogHandler {
-    private final String tableName = "t_alarmLog";
+public class TaskLogHandler {
+    private final String tableName = "t_taskLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -24,7 +24,7 @@ public class AlarmLogHandler {
         return count;
     }
 
-    public Page<AlarmLog> query8page(int bType, Page<AlarmLog> page, SeachParam seachParam, Long bid) {
+    public Page<TaskLog> query8page(int bType, Page<TaskLog> page, SeachParam seachParam, Long bid) {
         StringBuffer whereStr = new StringBuffer(" where bType=" + bType);
         if(bid != null && bid >0){
             whereStr.append(" AND bid = "+bid);
@@ -45,8 +45,8 @@ public class AlarmLogHandler {
             whereStr.append(" AND msg LIKE '%"+ seachParam.getKeyword()+"%'");
         }
 
-        List<AlarmLog> devices = jdbcTemplate.query("select * from "+tableName + whereStr.toString()+" ORDER BY logId desc limit ?,?",
-                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(AlarmLog.class));
+        List<TaskLog> devices = jdbcTemplate.query("select * from "+tableName + whereStr.toString()+" ORDER BY logId desc limit ?,?",
+                new Object[]{page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(TaskLog.class));
 
         page.setData(devices);
 
@@ -57,9 +57,9 @@ public class AlarmLogHandler {
     }
 
 
-    public void insert(AlarmLog alarmLog) {
-        int num = jdbcTemplate.update("insert into "+tableName+" (bid,bType,type, level,msg,createTime) VALUES (?,?,?,?,?,?)"
-                ,new Object[]{alarmLog.getBid(),alarmLog.getbType(),alarmLog.getType(),alarmLog.getLevel(),alarmLog.getMsg(),alarmLog.getCreateTime()});
+    public void insert(TaskLog taskLog) {
+        int num = jdbcTemplate.update("insert into "+tableName+" (taskId,linkId,level,errorType,msg) VALUES (?,?,?,?,?)"
+                ,new Object[]{taskLog.getTaskId(),taskLog.getLinkId(),taskLog.getLevel(),taskLog.getErrorType(),taskLog.getMsg()});
 
 
     }

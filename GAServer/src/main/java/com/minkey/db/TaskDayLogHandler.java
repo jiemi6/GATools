@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Component
 public class TaskDayLogHandler {
-    private final String tableName = "t_taskLog";
+    private final String tableName = "t_taskDayLog";
     @Autowired
     JdbcTemplate jdbcTemplate;
 

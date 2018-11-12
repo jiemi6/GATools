@@ -37,7 +37,7 @@ public class CheckHandler {
         }
 
         if(StringUtils.isNotEmpty(seachParam.getKeyword())){
-            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyword()+"%");
+            whereStr.append(" AND checkName LIKE '%"+ seachParam.getKeyword()+"%'");
         }
 
 

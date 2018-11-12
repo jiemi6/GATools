@@ -1,5 +1,13 @@
-
 dependencies {
+    compile 'com.alibaba:fastjson:1.2.29',
+            'org.apache.commons:commons-lang3:3.4',
+            'commons-net:commons-net:3.6',
+            'org.apache.commons:commons-collections4:4.1',
+            'commons-io:commons-io:2.4',
+            'org.slf4j:slf4j-api:1.7.25',
+            'ch.qos.logback:logback-classic:1.2.3',
+            'ch.qos.logback:logback-core:1.2.3'
+
 //    compile  files('lib/SugarNMSTool.jar')
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-jdbc', version: '1.5.2.RELEASE'
@@ -7,17 +15,18 @@ dependencies {
 
     compile "org.quartz-scheduler:quartz:2.2.1"
 
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.41'
+    //mysql驱动包
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
+    //oracle 驱动包
+//    compile group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
+    compile  files('lib/ojdbc14-10.2.0.4.0.jar')
+    //sql server驱动包
+    compile group:'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.0.0.jre8'
+
     //log4jdbc，数据库日志打印组件
     compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'
 
-    compile 'com.alibaba:fastjson:1.2.29',
-            'org.apache.commons:commons-lang3:3.4',
-            'org.apache.commons:commons-collections4:4.1',
-            'commons-io:commons-io:2.4',
-            'org.slf4j:slf4j-api:1.7.25',
-            'ch.qos.logback:logback-classic:1.2.3',
-            'ch.qos.logback:logback-core:1.2.3'
+
     //log注解包
     compile 'org.projectlombok:lombok:1.16.18'
 
@@ -27,6 +36,7 @@ dependencies {
     compile group: 'org.snmp4j', name: 'snmp4j', version: '2.6.3'
     //syslog组件包
     compile group: 'org.syslog4j', name: 'syslog4j', version: '0.9.30'
+
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

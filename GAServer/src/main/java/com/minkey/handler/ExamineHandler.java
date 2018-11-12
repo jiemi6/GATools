@@ -7,9 +7,11 @@ import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckItemHandler;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
+import com.minkey.db.LinkHandler;
 import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
+import com.minkey.db.dao.Link;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 检查log
@@ -43,6 +48,9 @@ public class ExamineHandler {
 
     @Autowired
     DeviceHandler deviceHandler;
+
+    @Autowired
+    LinkHandler linkHandler;
 
     public void doAllInOne(long checkId) {
     }
@@ -71,7 +79,7 @@ public class ExamineHandler {
         List<DeviceService> deviceServiceList;
         //默认就只有一步 就是检查连接
         int totalStep = 1;
-        //Minkey 检查网络联通性
+        //Minkey 检查网络联通性,暂时只支持内网
         boolean isConnect = deviceStatusHandler.pingTest(device,null);
 
         if(isConnect){
@@ -115,7 +123,7 @@ public class ExamineHandler {
         if(CollectionUtils.isEmpty(deviceServiceList)){
             checkItem = checkStepCache.createNextItem(checkId);
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("设备[%s]没有配置服务",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("设备[%s]没有配置服务!",device.getDeviceName()));
         }else{
             deviceServiceList.forEach(deviceService -> {
                 checkDeviceService(checkId,device,deviceService);
@@ -124,7 +132,6 @@ public class ExamineHandler {
 
     }
 
-    @Async
     void checkDeviceService(long checkId, Device device, DeviceService deviceService) {
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
         int level = MyLevel.LEVEL_NORMAL;
@@ -168,11 +175,63 @@ public class ExamineHandler {
     public void doTask(long checkId, Long taskId) {
         //需要检查任务数据源 和 数据存放地 两边的情况
 
+
         //检查任务进程是否存在
 
     }
 
     public void doLink(long checkId, Long linkId) {
         //链路报警主要是设备连通性的报警
+        Link link = linkHandler.query(linkId);
+        if(link == null){
+            return ;
+        }
+        Set<Long> deviceIds = link.getDeviceIds();
+        if(CollectionUtils.isEmpty(deviceIds)){
+            return;
+        }
+
+        List<Device> deviceList = deviceHandler.query8Ids(deviceIds);
+        if(CollectionUtils.isEmpty(deviceList)){
+            return;
+        }
+        Map<Long,Device> deviceMap = deviceList.stream().collect(Collectors.toMap(Device::getDeviceId, Device -> Device ));
+
+        int totalStep = deviceMap.size()+1+1;
+        checkStepCache.create(checkId,totalStep);
+        CheckItem checkItem = checkStepCache.createNextItem(checkId);
+        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("开始检查链路中所有设备连通情况，该设备个数：%s",deviceMap.size()));
+        checkItemHandler.insert(checkItem);
+
+        boolean allisConnect = true;
+        for(Long deviceId : deviceIds){
+            Device device = deviceMap.get(deviceId);
+
+            boolean isConnect = deviceStatusHandler.pingTest(device,null);
+
+            if(isConnect){
+                //创建检查步数 缓存
+                checkItem = checkStepCache.createNextItem(checkId);
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("设备[%s]网络状态正常",device.getDeviceName()));
+                checkItemHandler.insert(checkItem);
+            }else{
+                //不通就只有一步
+                checkItem = checkStepCache.createNextItem(checkId);
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]中设备[%s]无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
+                checkItemHandler.insert(checkItem);
+                allisConnect = false;
+            }
+        }
+
+
+        if(allisConnect){
+            checkItem = checkStepCache.createNextItem(checkId);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]网络状态正常",link.getLinkName()));
+            checkItemHandler.insert(checkItem);
+        }else{
+            checkItem = checkStepCache.createNextItem(checkId);
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("链路[%s]中有断线设备！",link.getLinkName()));
+            checkItemHandler.insert(checkItem);
+        }
     }
 }

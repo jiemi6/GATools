@@ -21,6 +21,9 @@ subprojects {
 
 	repositories {
     	maven {url "http://maven.aliyun.com/nexus/content/groups/public"}
+//		maven { url 'http://maven.oschina.net/content/groups/public/' }
+//		maven { url "http://maven.springframework.org/release" }
+//        maven { url 'http://repo.spring.io/libs-release' }
 	}
 
 //	artifacts {

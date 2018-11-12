@@ -60,64 +60,72 @@ public class CheckItem {
         return itemId;
     }
 
-    public void setItemId(long itemId) {
+    public CheckItem setItemId(long itemId) {
         this.itemId = itemId;
+        return this;
     }
 
     public long getCheckId() {
         return checkId;
     }
 
-    public void setCheckId(long checkId) {
+    public CheckItem setCheckId(long checkId) {
         this.checkId = checkId;
+        return this;
     }
 
     public String getResultMsg() {
         return resultMsg;
     }
 
-    public void setResultMsg(String resultMsg) {
+    public CheckItem setResultMsg(String resultMsg) {
         this.resultMsg = resultMsg;
+        return this;
     }
 
     public int getResultLevel() {
         return resultLevel;
     }
 
-    public void setResultLevel(int resultLevel) {
+    public CheckItem setResultLevel(int resultLevel) {
         this.resultLevel = resultLevel;
+        return this;
     }
 
     public int getItemType() {
         return itemType;
     }
 
-    public void setItemType(int itemType) {
+    public CheckItem setItemType(int itemType) {
         this.itemType = itemType;
+        return this;
     }
 
     public int getErrorType() {
         return errorType;
     }
 
-    public void setErrorType(int errorType) {
+    public CheckItem setErrorType(int errorType) {
         this.errorType = errorType;
+        return this;
     }
 
     public int getStep() {
         return step;
     }
 
-    public void setStep(int step) {
+    public CheckItem setStep(int step) {
         this.step = step;
+        return this;
     }
 
     public int getTotalStep() {
         return totalStep;
     }
 
-    public void setTotalStep(int totalStep) {
+    public CheckItem setTotalStep(int totalStep) {
         this.totalStep = totalStep;
+        return this;
     }
 
     @Override

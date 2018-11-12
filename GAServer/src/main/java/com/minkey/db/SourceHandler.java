@@ -1,9 +1,8 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.Source;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
@@ -25,6 +24,17 @@ public class SourceHandler {
         Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Long.class);
         return count;
     }
+
+    public Source query(Long linkId, Long sourceId) {
+        List<Source> taskList= jdbcTemplate.query("select * from "+tableName+" where linkId= ? AND targetId= ?",
+                new Object[]{linkId,sourceId}, new BeanPropertyRowMapper<>(Source.class));
+        if(CollectionUtils.isEmpty(taskList)){
+            return null;
+        }
+        return taskList.get(0);
+
+    }
+
 
     public void insertAll(List<Source> taskSourceList) {
         if(CollectionUtils.isEmpty(taskSourceList)){

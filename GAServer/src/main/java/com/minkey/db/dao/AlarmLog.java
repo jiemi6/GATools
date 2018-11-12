@@ -45,9 +45,6 @@ public class AlarmLog {
      * 告警级别
      */
     private int level;
-    public static int LEVEL_NORMAL = 1;
-    public static int LEVEL_WARN = 2;
-    public static int LEVEL_ERROR = 3;
 
     private Date createTime;
 

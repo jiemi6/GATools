@@ -103,7 +103,7 @@ public class SysLogUtil {
      * @param port
      */
     public void startSyslog2other(String ip, String port) {
-        //只发送收集过来的所有syslog
+        //Minkey 只发送收集过来的所有syslog
     }
 
     /**

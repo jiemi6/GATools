@@ -153,7 +153,7 @@ public class JSONMessage {
             this.data = new JSONObject();
         }
 
-        this.data.put(key,data);
+        this.data.put(key,JSONObject.toJSON(data));
         return this;
     }
 

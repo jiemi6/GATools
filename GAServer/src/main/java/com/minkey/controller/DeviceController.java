@@ -265,7 +265,9 @@ public class DeviceController {
     @RequestMapping("/queryExplorer")
     public String queryExplorer(Long deviceId) {
         log.info("start: 查询某一个终端的实时资源消耗 deviceId={}",deviceId);
-
+        if(deviceId == null || deviceId <=0){
+            return JSONMessage.createFalied("deviceId不能为空").toString();
+        }
         try{
             DeviceExplorer deviceExplorer = deviceStatusHandler.getDeviceExplorer(deviceId);
             return JSONMessage.createSuccess().addData("deviceExplorer" ,deviceExplorer).toString();

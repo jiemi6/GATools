@@ -1,9 +1,8 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.TaskSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
@@ -24,6 +23,16 @@ public class TaskSourceHandler {
     public long queryCount() {
         Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Long.class);
         return count;
+    }
+
+    public TaskSource query(Long linkId,Long taskId) {
+        List<TaskSource> taskList= jdbcTemplate.query("select * from "+tableName+" where linkId= ? AND taskId= ?",
+                new Object[]{linkId,taskId}, new BeanPropertyRowMapper<>(TaskSource.class));
+        if(CollectionUtils.isEmpty(taskList)){
+            return null;
+        }
+        return taskList.get(0);
+
     }
 
     public void insertAll(List<TaskSource> taskSourceList) {
@@ -49,6 +58,7 @@ public class TaskSourceHandler {
 
     public void del(Long linkId) {
         int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
-
     }
+
+
 }
