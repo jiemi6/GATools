@@ -13,7 +13,7 @@ public class TestJDBC {
         String url = "jdbc:mysql://"+ip+":"+port+"/"+dbName+"?useUnicode=true&characterEncoding=utf-8";
 
 
-        JdbcTemplate jdbcTemplate = new DynamicDB().getJdbcTemplate(url, DatabaseDriver.MYSQL,"root","root");
+        JdbcTemplate jdbcTemplate = new DynamicDB().getMysqlJdbcTemplate(url, DatabaseDriver.MYSQL,"root","root");
 
         int i  = jdbcTemplate.queryForObject("select count(*) from zhi_items",Integer.class);
 

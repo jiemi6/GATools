@@ -1,13 +1,14 @@
 package com.minkey.db.dao;
 
 import com.minkey.dto.DBConfigData;
+import org.springframework.boot.jdbc.DatabaseDriver;
 
 import java.util.Date;
 
 /**
  * 数据源对象
  *
- * 复用，当为ftp时，dbname存的是ftp路径
+ * 复用，当为ftp时，super.dbname存的是ftp路径
  */
 public class Source extends  DBConfigData{
 
@@ -27,7 +28,7 @@ public class Source extends  DBConfigData{
     private long linkId;
 
     /**
-     * 名称
+     * 资源名称，来自数据源方
      */
     private String sname;
 
@@ -42,6 +43,9 @@ public class Source extends  DBConfigData{
      * 	格式文件 视频
      */
     private String sourceType;
+    public static final String sourceType_db = "数据库";
+    public static final String sourceType_ftp = "无格式文件";
+    public static final String sourceType_video = "格式文件";
 
     /**
      * 创建时间
@@ -103,6 +107,20 @@ public class Source extends  DBConfigData{
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    @Override
+    public DatabaseDriver getDatabaseDriver() {
+        //重写父类的获取数据库类型方法，根据拿过来的dbVersion字符串判断
+        String lowerStr = dbVersion.toLowerCase();
+        if(lowerStr.contains("oracle")){
+            return DatabaseDriver.ORACLE;
+        }else if(lowerStr.contains("sqlserver")){
+            return DatabaseDriver.SQLSERVER;
+        }else{
+            //默认都是mysql
+            return DatabaseDriver.MYSQL;
+        }
     }
 
     @Override

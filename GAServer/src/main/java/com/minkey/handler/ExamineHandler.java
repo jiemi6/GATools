@@ -4,14 +4,8 @@ import com.minkey.cache.CheckStepCache;
 import com.minkey.cache.DeviceConnectCache;
 import com.minkey.command.SnmpUtil;
 import com.minkey.contants.MyLevel;
-import com.minkey.db.CheckItemHandler;
-import com.minkey.db.DeviceHandler;
-import com.minkey.db.DeviceServiceHandler;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.dao.CheckItem;
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.DeviceService;
-import com.minkey.db.dao.Link;
+import com.minkey.db.*;
+import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +45,7 @@ public class ExamineHandler {
 
     @Autowired
     LinkHandler linkHandler;
+
 
     public void doAllInOne(long checkId) {
     }
@@ -170,14 +165,6 @@ public class ExamineHandler {
         checkItem.setResultLevel(level);
         checkItem.setResultMsg(msg);
         checkItemHandler.insert(checkItem);
-    }
-
-    public void doTask(long checkId, Long taskId) {
-        //需要检查任务数据源 和 数据存放地 两边的情况
-
-
-        //检查任务进程是否存在
-
     }
 
     public void doLink(long checkId, Long linkId) {

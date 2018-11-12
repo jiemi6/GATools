@@ -25,9 +25,9 @@ public class TaskSourceHandler {
         return count;
     }
 
-    public TaskSource query(Long linkId,Long taskId) {
+    public TaskSource query(Long linkId,String taskTargetId) {
         List<TaskSource> taskList= jdbcTemplate.query("select * from "+tableName+" where linkId= ? AND taskId= ?",
-                new Object[]{linkId,taskId}, new BeanPropertyRowMapper<>(TaskSource.class));
+                new Object[]{linkId,taskTargetId}, new BeanPropertyRowMapper<>(TaskSource.class));
         if(CollectionUtils.isEmpty(taskList)){
             return null;
         }

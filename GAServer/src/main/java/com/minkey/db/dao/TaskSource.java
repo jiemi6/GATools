@@ -17,7 +17,7 @@ public class TaskSource {
      */
     private String targetId;
     /**
-     * 任务id
+     * 数据来源方的任务id
      */
     private String taskId;
 

@@ -25,7 +25,7 @@ public class SourceHandler {
         return count;
     }
 
-    public Source query(Long linkId, Long sourceId) {
+    public Source query(Long linkId, String sourceId) {
         List<Source> taskList= jdbcTemplate.query("select * from "+tableName+" where linkId= ? AND targetId= ?",
                 new Object[]{linkId,sourceId}, new BeanPropertyRowMapper<>(Source.class));
         if(CollectionUtils.isEmpty(taskList)){

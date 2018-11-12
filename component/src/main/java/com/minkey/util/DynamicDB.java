@@ -16,23 +16,38 @@ import java.util.Map;
 @Slf4j
 @Component
 public class DynamicDB {
+    public static final int default_timeout = 1000;
+
+
     /**
      * 所有系统需要访问的数据库
      * <br>key : ip:port/dbName <br/>
      */
     private Map<String,JdbcTemplate> jdbcTemplateMap = new HashMap();
 
-    public JdbcTemplate getJdbcTemplate(String url,DatabaseDriver databaseDriver,String userName ,String password){
-        JdbcTemplate jdbcTemplate = null;
+
+    private JdbcTemplate getJdbcTemplate(DatabaseDriver databaseDriver, String ip,int port,String dbName, String userName , String password){
+        JdbcTemplate jdbcTemplate ;
+        String jdbcUrl ;
+        if(databaseDriver == DatabaseDriver.MYSQL){
+            jdbcUrl = "jdbc:mysql://"+ip+":"+port+"/"+dbName+"?useUnicode=true&characterEncoding=utf-8";
+        }else if(databaseDriver == DatabaseDriver.ORACLE){
+            jdbcUrl = "jdbc:oracle:thin:@//"+ip+":"+port+"/"+dbName;
+        }else if(databaseDriver == DatabaseDriver.SQLSERVER){
+            jdbcUrl = "jdbcUrl:jdbc:sqlserver://"+ip+":"+port+";databasename="+dbName;
+        }else {
+            throw new DataException("暂不支持数据库类型="+databaseDriver);
+        }
+
         try{
             DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create()
-                    .url(url)
+                    .url(jdbcUrl)
                     .driverClassName(databaseDriver.getDriverClassName())
                     .username(userName)
                     .password(password);
             DataSource dataSource = dataSourceBuilder.build();
             jdbcTemplate = new JdbcTemplate(dataSource);
-
+            jdbcTemplate.setQueryTimeout(default_timeout);
             jdbcTemplate.execute(databaseDriver.getValidationQuery());
         }catch (Exception e ){
             throw new DataException("构造数据库连接异常",e);
@@ -43,9 +58,9 @@ public class DynamicDB {
 
     public boolean testDB(DBConfigData dbConfigData){
         try{
-            String jdbcUrl = "jdbc:mysql://"+dbConfigData.getIp()+":"+dbConfigData.getPort()+"/"+dbConfigData.getDbName()+"?useUnicode=true&characterEncoding=utf-8";
             //先检查数据库是否正确
-            JdbcTemplate jdbcTemplate = getJdbcTemplate(jdbcUrl,DatabaseDriver.MYSQL,dbConfigData.getName(),dbConfigData.getPwd());
+            JdbcTemplate jdbcTemplate = getJdbcTemplate(dbConfigData.getDatabaseDriver(),dbConfigData.getIp(),dbConfigData.getPort()
+                    ,dbConfigData.getDbName(),dbConfigData.getName(),dbConfigData.getPwd());
 
             return true;
         }catch (Exception e){
@@ -72,15 +87,15 @@ public class DynamicDB {
     }
 
 
-    public JdbcTemplate get8dbConfig(DBConfigData dbConfig) {
+    public JdbcTemplate get8dbConfig(DBConfigData dbConfigData) {
         //先从缓存中获取
-        JdbcTemplate jdbcTemplate = get(dbConfig.getIp(), dbConfig.getPort(), dbConfig.getName());
+        JdbcTemplate jdbcTemplate = get(dbConfigData.getIp(), dbConfigData.getPort(), dbConfigData.getName());
         //没有就新建
         if (jdbcTemplate == null) {
-            String url = "jdbc:mysql://" + dbConfig.getIp() + ":" + dbConfig.getPort() + "/" + dbConfig.getDbName() + "?useUnicode=true&characterEncoding=utf-8&autoReconnect=true";
-            jdbcTemplate = getJdbcTemplate(url, dbConfig.getDatabaseDriver(), dbConfig.getName(), dbConfig.getPwd());
+            jdbcTemplate = getJdbcTemplate(dbConfigData.getDatabaseDriver(),dbConfigData.getIp(),dbConfigData.getPort()
+                    ,dbConfigData.getDbName(),dbConfigData.getName(),dbConfigData.getPwd());
             //放回缓存
-            putIn(dbConfig.getIp(), dbConfig.getPort(), dbConfig.getName(), jdbcTemplate);
+            putIn(dbConfigData.getIp(), dbConfigData.getPort(), dbConfigData.getName(), jdbcTemplate);
         }
 
         return jdbcTemplate;
