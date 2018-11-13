@@ -1,13 +1,23 @@
 package com.minkey.handler;
 
 import com.minkey.cache.CheckStepCache;
-import com.minkey.cache.DeviceConnectCache;
+import com.minkey.cache.DeviceCache;
+import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.command.SnmpUtil;
 import com.minkey.contants.MyLevel;
-import com.minkey.db.*;
-import com.minkey.db.dao.*;
-import com.minkey.dto.DeviceExplorer;
+import com.minkey.db.CheckItemHandler;
+import com.minkey.db.DeviceHandler;
+import com.minkey.db.DeviceServiceHandler;
+import com.minkey.db.LinkHandler;
+import com.minkey.db.dao.CheckItem;
+import com.minkey.db.dao.Device;
+import com.minkey.db.dao.DeviceService;
+import com.minkey.db.dao.Link;
+import com.minkey.dto.*;
+import com.minkey.executer.SSHExecuter;
 import com.minkey.util.DetectorUtil;
+import com.minkey.util.DynamicDB;
+import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -20,7 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 检查log
+ * 体检类，发起体检并保存检查结果
  */
 @Slf4j
 @Component
@@ -29,13 +39,16 @@ public class ExamineHandler {
     CheckItemHandler checkItemHandler;
 
     @Autowired
-    DeviceConnectCache deviceConnectCache;
+    DeviceCache deviceCache;
 
     @Autowired
     DeviceStatusHandler deviceStatusHandler;
 
     @Autowired
     DeviceServiceHandler deviceServiceHandler;
+
+    @Autowired
+    DeviceExplorerCache deviceExplorerCache;
 
     @Autowired
     CheckStepCache checkStepCache;
@@ -45,6 +58,12 @@ public class ExamineHandler {
 
     @Autowired
     LinkHandler linkHandler;
+
+    @Autowired
+    DynamicDB dynamicDB;
+
+    @Autowired
+    FTPUtil ftpUtil;
 
 
     public void doAllInOne(long checkId) {
@@ -70,12 +89,14 @@ public class ExamineHandler {
             return;
         }
 
+        //找到探针服务
+        DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(deviceId);
         //该设备所有的服务
         List<DeviceService> deviceServiceList;
         //默认就只有一步 就是检查连接
         int totalStep = 1;
         //Minkey 检查网络联通性,暂时只支持内网
-        boolean isConnect = deviceStatusHandler.pingTest(device,null);
+        boolean isConnect = deviceStatusHandler.pingTest(device,detectorService);
 
         if(isConnect){
             deviceServiceList = deviceServiceHandler.query8Device(deviceId);
@@ -97,8 +118,8 @@ public class ExamineHandler {
             return;
         }
 
-        //获取硬件情况，只能获取内网的， 外网需要探针
-        DeviceExplorer deviceExplorer = deviceStatusHandler.getDeviceExplorer(deviceId);
+        //从缓存中直接获取硬件情况
+        DeviceExplorer deviceExplorer = deviceExplorerCache.getDeviceExplorer(deviceId);
         checkItem = checkStepCache.createNextItem(checkId);
         if(deviceExplorer == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
@@ -114,23 +135,33 @@ public class ExamineHandler {
         }
         checkItemHandler.insert(checkItem);
 
+        //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
+        if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
+            checkItem.setResultLevel(MyLevel.LEVEL_WARN);
+            checkItem.setResultMsg(String.format("设备[%s]属于外网设备，并且没有找到可用的探针服务，无法得知设备信息。",device.getDeviceName()));
+            checkItemHandler.insert(checkItem);
+            return;
+        }
+
         //检查该设备所有服务
         if(CollectionUtils.isEmpty(deviceServiceList)){
             checkItem = checkStepCache.createNextItem(checkId);
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
             checkItem.setResultMsg(String.format("设备[%s]没有配置服务!",device.getDeviceName()));
+            checkItemHandler.insert(checkItem);
         }else{
             deviceServiceList.forEach(deviceService -> {
-                checkDeviceService(checkId,device,deviceService);
+                checkDeviceService(checkId,device,deviceService,detectorService);
             });
         }
 
     }
 
-    void checkDeviceService(long checkId, Device device, DeviceService deviceService) {
+    void checkDeviceService(long checkId, Device device, DeviceService deviceService,DeviceService detectorService) {
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
         int level = MyLevel.LEVEL_NORMAL;
-        boolean isOk= false;
+        BaseConfigData baseConfigData;
+        boolean isOk;
         String msg = "";
         switch (deviceService.getServiceType()){
             //如果是探针，调用探针的check接口
@@ -140,24 +171,63 @@ public class ExamineHandler {
                 msg = String.format("设备[%s]探针服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
                 break;
             case DeviceService.SERVICETYPE_DB:
-                //Minkey db服务检查
-                level = MyLevel.LEVEL_NORMAL;
-                msg = String.format("设备[%s]数据库服务正常%s",device.getDeviceName());
+                DBConfigData dbConfigData = (DBConfigData) deviceService.getConfigData();
+                if(device.isNetAreaIn()){
+                    isOk = dynamicDB.testDB(dbConfigData);
+                }else{
+                    if(detectorService == null){
+                        isOk = false;
+                    }else{
+                        isOk = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),dbConfigData);
+                    }
+                }
+                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
+                msg = String.format("设备[%s]数据库服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
                 break;
             case DeviceService.SERVICETYPE_SNMP:
-                SnmpUtil snmpUtil =new SnmpUtil(deviceService.getIp());
-                isOk = snmpUtil.testConnect();
-                level = MyLevel.LEVEL_NORMAL;
+                SnmpConfigData snmpConfigData = (SnmpConfigData) deviceService.getConfigData();
+                SnmpUtil snmpUtil =new SnmpUtil(snmpConfigData);
+                if(device.isNetAreaIn()){
+                    isOk = snmpUtil.testConnect();
+                }else{
+                    if(detectorService == null){
+                        isOk = false;
+                    }else{
+                        isOk = DetectorUtil.testSNMP(detectorService.getIp(),detectorService.getConfigData().getPort(),snmpConfigData);
+                    }
+                }
+
+                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
                 msg = String.format("设备[%s]SNMP服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
                 break;
             case DeviceService.SERVICETYPE_FTP:
-                isOk = true;
-                level = MyLevel.LEVEL_NORMAL;
+                FTPConfigData ftpConfigData = (FTPConfigData) deviceService.getConfigData();
+                if(device.isNetAreaIn()){
+                    isOk = ftpUtil.testFTPConnect(ftpConfigData);
+                }else{
+                    if(detectorService == null){
+                        isOk = false;
+                    }else{
+                        isOk = DetectorUtil.testFTP(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
+                    }
+                }
+
+                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
                 msg = String.format("设备[%s]FTP服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
                 break;
             case DeviceService.SERVICETYPE_SSH:
-                isOk = true;
-                level = MyLevel.LEVEL_NORMAL;
+                baseConfigData = deviceService.getConfigData();
+                if(device.isNetAreaIn()){
+                    isOk = SSHExecuter.testConnect(baseConfigData);
+                }else{
+                    if(detectorService == null){
+                        isOk = false;
+                    }else{
+                        isOk = DetectorUtil.testSSH(detectorService.getIp(),detectorService.getConfigData().getPort(), baseConfigData);
+                    }
+                }
+
+                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
                 msg = String.format("设备%s的SSH服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
                 break;
         }
@@ -220,5 +290,8 @@ public class ExamineHandler {
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("链路[%s]中有断线设备！",link.getLinkName()));
             checkItemHandler.insert(checkItem);
         }
+    }
+
+    public void doTask(long checkId, Long taskId) {
     }
 }

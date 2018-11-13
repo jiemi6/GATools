@@ -13,9 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 报警接口
@@ -48,7 +46,7 @@ public class IndexController {
                 deviceIds.addAll(link.getDeviceIds());
             });
 
-            JSONObject allDeviceJson = new JSONObject();
+            Map<Long,JSONObject> allDeviceJson = new HashMap<>();
             if(!CollectionUtils.isEmpty(deviceIds)){
                 //获取该id对应的所有设备名称和ip
                 List<Device> allDevice = deviceHandler.query8Ids(deviceIds);
@@ -58,7 +56,7 @@ public class IndexController {
                         deviceJson.put("ip",device.getIp());
                         deviceJson.put("deviceName",device.getDeviceName());
 
-                        allDeviceJson.put(device.getDeviceId()+"",deviceJson);
+                        allDeviceJson.put(device.getDeviceId(),deviceJson);
                     });
                 }
             }
@@ -344,6 +342,7 @@ public class IndexController {
 
         jsonObject.put("totalNum",5464);
         jsonObject.put("totalFlow",15465465452l);
+        jsonObject.put("totalFile",34652l);
 
         return JSONMessage.createSuccess().addData(jsonObject).toString();
     }

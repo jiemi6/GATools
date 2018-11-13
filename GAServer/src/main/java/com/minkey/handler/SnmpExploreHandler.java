@@ -1,53 +1,96 @@
 package com.minkey.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.cache.DeviceCache;
+import com.minkey.cache.DeviceConnectCache;
+import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.command.SnmpUtil;
+import com.minkey.contants.CommonContants;
 import com.minkey.contants.DeviceType;
-import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.RateObj;
 import com.minkey.dto.SnmpConfigData;
 import com.minkey.util.DetectorUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.snmp4j.smi.OID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * 通过snmp获取硬件资源情况
  */
+@Slf4j
 @Component
 public class SnmpExploreHandler {
 
     @Autowired
-    DeviceServiceHandler deviceServiceHandler;
+    DeviceCache deviceCache;
+    /**
+     * 设备联通性情况
+     */
+    @Autowired
+    DeviceConnectCache deviceConnectCache;
+
+    @Autowired
+    DeviceExplorerCache deviceExplorerCache;
 
     /**
-     * 设备对应的snmp服务缓存
-     * key：设备id
-     * value ： 该设备的snmp服务
+     * 每5秒刷新硬件资源
      */
-    private Map<Long,DeviceService> deviceSNMPServiceMap = new HashMap<>();
+    @Scheduled(cron = "0/5 * * * * ?")
+    public void reflashExplorer() {
+        deviceCache.getAllLinkMap().forEach((aLong, link) ->  {
+            DeviceService deviceService = deviceCache.getDetectorService8linkId(aLong);
+            Set<Long> allDeviceId = link.getDeviceIds();
+            for (Long deviceId:allDeviceId){
+                try {
+                    //如果连接正常，则获取
+                    if(deviceConnectCache.isOk(deviceId)){
+                        getDeviceExplorer(deviceCache.getDevice(deviceId), deviceService);
+                    }else{
+                        //如果断开了，则删掉所有的硬件资源信息
+                        deviceExplorerCache.remove(deviceId);
+                    }
+                }catch (Exception e){
+                    log.error(e.getMessage(),e);
+                }
+            }
+        });
+    }
 
 
-    public void init(){
-        List<DeviceService> deviceServiceList = deviceServiceHandler.query8Type(DeviceService.SERVICETYPE_SNMP);
-        if(CollectionUtils.isEmpty(deviceServiceList)){
-            //清空探针缓存
-            deviceSNMPServiceMap = new HashMap<>();
-        }else{
-            //重新赋值
-            deviceSNMPServiceMap = deviceServiceList.stream().collect(Collectors.toMap(DeviceService::getDeviceId, DeviceService-> DeviceService));
+    /**
+     * 通过snmp获取硬件的资源信息
+     *
+     */
+    @Async
+    public void getDeviceExplorer(Device device,DeviceService detectorService){
+        if(device == null){
+            return;
         }
+        //文件夹直接返回空
+        if (device.getDeviceType() == DeviceType.floder) {
+            return ;
+        }
+
+        DeviceExplorer deviceExplorer = null;
+        //通过snmp命令获取 设备硬件信息
+        // 如果是内网，就直接探测
+        if(device.getNetArea() == CommonContants.NETAREA_IN ){
+            deviceExplorer = get(device);
+        }else{
+            //通过探针获取硬件信息
+            deviceExplorer = get(device,detectorService);
+        }
+
+       deviceExplorerCache.putDeviceExplorer(device.getDeviceId(),deviceExplorer);
     }
 
 
@@ -62,7 +105,7 @@ public class SnmpExploreHandler {
             return null;
         }
 
-        DeviceService snmpService = deviceSNMPServiceMap.get(device.getDeviceId());
+        DeviceService snmpService = deviceCache.getSNMPService8deviceId(device.getDeviceId());
         if(snmpService == null){
             return null;
         }
@@ -99,7 +142,7 @@ public class SnmpExploreHandler {
             return null;
         }
 
-        DeviceService deviceService = deviceSNMPServiceMap.get(device.getDeviceId());
+        DeviceService deviceService = deviceCache.getSNMPService8deviceId(device.getDeviceId());
         if(deviceService == null){
             return null;
         }

@@ -1,5 +1,6 @@
 package com.minkey.db.third.task;
 
+import com.minkey.contants.CommonContants;
 import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.SourceHandler;
@@ -12,6 +13,7 @@ import com.minkey.db.dao.TaskSource;
 import com.minkey.dto.DBConfigData;
 import com.minkey.util.DynamicDB;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -131,6 +133,15 @@ public class TaskCollector {
             Task task = new Task();
             task.setTargetId((String)stringObjectMap.get("taskId"));
             task.setTaskName((String) stringObjectMap.get("name"));
+            //在tbtask表中的tbtasktypeid字段 01说明是数据库同步，05是FTP文件同步
+            String tasktypeid = (String)stringObjectMap.get("status");
+            if(StringUtils.equals(tasktypeid,"01")){
+                task.setTaskType(Task.taskType_db);
+            }else if(StringUtils.equals(tasktypeid,"05")){
+                task.setTaskType(Task.taskType_ftp);
+            }else{
+                task.setTaskType(Task.taskType_unknow);
+            }
             task.setLinkId(link.getLinkId());
             task.setStatus(Integer.valueOf((String)stringObjectMap.get("status")));
             tasks.add(task);
@@ -167,14 +178,14 @@ public class TaskCollector {
         List<TaskSource> tasks = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
-            TaskSource task = new TaskSource();
-            task.setTaskId((String)stringObjectMap.get("taskid"));
-            task.setTargetId((String) stringObjectMap.get("taskdbsourceid"));
-            task.setCreateTime((Date)stringObjectMap.get("createdatetime"));
-            task.setFromResourceId((String) stringObjectMap.get("sresourcesid"));
-            task.setToResourceId((String)stringObjectMap.get("tresourcesid"));
-            task.setLinkId(link.getLinkId());
-            tasks.add(task);
+            TaskSource taskSource = new TaskSource();
+            taskSource.setTaskId((String)stringObjectMap.get("taskid"));
+            taskSource.setTargetId((String) stringObjectMap.get("taskdbsourceid"));
+            taskSource.setCreateTime((Date)stringObjectMap.get("createdatetime"));
+            taskSource.setFromResourceId((String) stringObjectMap.get("sresourcesid"));
+            taskSource.setToResourceId((String)stringObjectMap.get("tresourcesid"));
+            taskSource.setLinkId(link.getLinkId());
+            tasks.add(taskSource);
         });
 
         taskSourceHandler.del(link.getLinkId());
@@ -210,19 +221,21 @@ public class TaskCollector {
         List<Source> sources = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
-            Source task = new Source();
-            task.setTargetId((String) stringObjectMap.get("resourcesid"));
-            task.setSname((String)stringObjectMap.get("name"));
-            task.setIp((String) stringObjectMap.get("ip"));
-            task.setPort((Integer)stringObjectMap.get("port"));
-            task.setDbName((String) stringObjectMap.get("dbname"));
-            task.setName((String) stringObjectMap.get("username"));
-            task.setPwd((String) stringObjectMap.get("password"));
-            task.setSourceType(sourceTypeMap.get((String)stringObjectMap.get("tbresourcetypeid")));
-            task.setDbVersion(driverMap.get((String)stringObjectMap.get("db_driver_id")));
-            task.setCreateTime((Date)stringObjectMap.get("createdate"));
-            task.setLinkId(link.getLinkId());
-            sources.add(task);
+            Source source = new Source();
+            source.setTargetId((String) stringObjectMap.get("resourcesid"));
+            source.setSname((String)stringObjectMap.get("name"));
+            source.setIp((String) stringObjectMap.get("ip"));
+            source.setPort((Integer)stringObjectMap.get("port"));
+            //field方向，0内1外
+            source.setNetArea((Integer)stringObjectMap.get("field") == 0 ? CommonContants.NETAREA_IN : CommonContants.NETAREA_OUT);
+            source.setDbName((String) stringObjectMap.get("dbname"));
+            source.setName((String) stringObjectMap.get("username"));
+            source.setPwd((String) stringObjectMap.get("password"));
+            source.setSourceType(sourceTypeMap.get((String)stringObjectMap.get("tbresourcetypeid")));
+            source.setDbVersion(driverMap.get((String)stringObjectMap.get("db_driver_id")));
+            source.setCreateTime((Date)stringObjectMap.get("createdate"));
+            source.setLinkId(link.getLinkId());
+            sources.add(source);
         });
 
         sourceHandler.del(link.getLinkId());

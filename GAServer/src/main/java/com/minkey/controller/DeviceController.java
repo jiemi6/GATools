@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.contants.DeviceType;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
@@ -40,6 +41,9 @@ public class DeviceController {
 
     @Autowired
     DeviceStatusHandler deviceStatusHandler;
+
+    @Autowired
+    DeviceExplorerCache deviceExplorerCache;
 
     @Autowired
     UserLogHandler userLogHandler;
@@ -269,7 +273,7 @@ public class DeviceController {
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
         try{
-            DeviceExplorer deviceExplorer = deviceStatusHandler.getDeviceExplorer(deviceId);
+            DeviceExplorer deviceExplorer = deviceExplorerCache.getDeviceExplorer(deviceId);
             return JSONMessage.createSuccess().addData("deviceExplorer" ,deviceExplorer).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

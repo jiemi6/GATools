@@ -1,6 +1,7 @@
 package com.minkey.command;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.dto.SnmpConfigData;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.snmp4j.CommunityTarget;
@@ -25,8 +26,8 @@ public class SnmpUtil {
     public final static int DEFAULT_VERSION = SnmpConstants.version2c;
     public final static String DEFAULT_COMMUNITY = "public";
     public final static int DEFAULT_PORT = 161;
-    public final static long DEFAULT_TIMEOUT = 3 * 1000L;
-    public final static int DEFAULT_RETRY = 2;
+    public final static long DEFAULT_TIMEOUT = 1000L;
+    public final static int DEFAULT_RETRY = 0;
 
     private CommunityTarget communityTarget;
 
@@ -56,6 +57,10 @@ public class SnmpUtil {
         communityTarget.setTimeout(timeout);
         communityTarget.setRetries(retry);
 
+    }
+
+    public SnmpUtil(SnmpConfigData snmpConfigData) {
+        this(snmpConfigData.getIp(),snmpConfigData.getPort(),snmpConfigData.getCommunity(),snmpConfigData.getVersion(),DEFAULT_RETRY,DEFAULT_TIMEOUT);
     }
 
     /**
@@ -401,6 +406,14 @@ public class SnmpUtil {
     }
 
     public boolean testConnect() {
-        return true;
+        //发送一条简单的测试命令
+        try {
+            //获取系统名称
+            this.snmpGet("1.3.6.1.2.1.1.5.0");
+            return true;
+        } catch (Exception e) {
+            log.error("测试SNMP服务器基本命令异常",e);
+            return false;
+        }
     }
 }

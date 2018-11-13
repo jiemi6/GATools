@@ -14,7 +14,7 @@ public class FTPTest {
         baseConfigData.setPort(88);
         baseConfigData.setName("root");
         baseConfigData.setPwd("root");
-        FTPUtil.testFTPConnect(baseConfigData);
+        new FTPUtil().testFTPConnect(baseConfigData,1000);
     }
 
 }

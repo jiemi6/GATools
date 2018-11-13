@@ -2,23 +2,16 @@ package com.minkey;
 
 
 import com.jcraft.jsch.JSchException;
+import com.minkey.contants.CommonContants;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.executer.SSHExecuter;
-
-import java.io.IOException;
+import org.junit.Test;
 
 public class MainTest {
 
-
-    public static void main(String[] args) throws IOException, JSchException {
-//        Telnet.doTelnet("192.168.1.11",122);
-        testLocalSH();
-//        testLocalSH2();
-    }
-
-
-    public static void testLocalSH() {
+    @Test
+    public void testLocalSH() {
         try {
             ResultInfo resInfo = LocalExecuter.exec("ping 192.168.1.1 -t");
             System.out.println(resInfo.toString());
@@ -27,7 +20,8 @@ public class MainTest {
         }
     }
 
-    public static void testSSH2() {
+    @Test
+    public void testSSH2() {
         String host = "192.168.101.162";
         int port = 22;
         String user = "root";
@@ -37,7 +31,7 @@ public class MainTest {
         String command = "ls -l ";
         try {
             //使用目标服务器机上的用户名和密码登陆
-            SSHExecuter helper = new SSHExecuter(host, port, user, password);
+            SSHExecuter helper = new SSHExecuter(host, port, user, password, CommonContants.DEFAULT_TIMEOUT);
             try {
                 ResultInfo resInfo = helper.sendCmd(command);
                 System.out.println(resInfo.toString());

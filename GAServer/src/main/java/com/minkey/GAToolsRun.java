@@ -1,7 +1,7 @@
 package com.minkey;
 
+import com.minkey.cache.DeviceCache;
 import com.minkey.controller.LicenseController;
-import com.minkey.handler.DeviceStatusHandler;
 import com.minkey.syslog.SysLogUtil;
 import com.minkey.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class GAToolsRun {
         SpringUtils.getBean(SysLogUtil.class).startServer(SysLogUtil.SYSLOG_PORT);
 
         //设备状态扫描器
-        SpringUtils.getBean(DeviceStatusHandler.class).init();
+        SpringUtils.getBean(DeviceCache.class).init();
 
         try {
             SpringUtils.getBean(LicenseController.class).init();

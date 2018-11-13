@@ -2,7 +2,8 @@ package com.minkey.executer;
 
 
 import com.jcraft.jsch.*;
-import com.minkey.entity.ConnectInfo;
+import com.minkey.contants.CommonContants;
+import com.minkey.dto.BaseConfigData;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -22,45 +23,58 @@ public class SSHExecuter {
     private String charset = Charset.defaultCharset().toString();
     private Session session;
 
-    public SSHExecuter(String host, Integer port, String user, String password) throws JSchException {
-        connect(host, port, user, password,3000);
+    public SSHExecuter(String host, Integer port, String user, String password,int timeout) throws JSchException {
+        connect(host, port, user, password,timeout);
     }
 
-    public SSHExecuter(ConnectInfo ConnectInfo) throws SystemException {
+    public SSHExecuter(BaseConfigData baseConfigData) throws JSchException {
+        this(baseConfigData, CommonContants.DEFAULT_TIMEOUT);
+    }
+
+    public SSHExecuter(BaseConfigData baseConfigData,int timeout) throws JSchException {
+        this(baseConfigData.getIp(),baseConfigData.getPort(), baseConfigData.getName(), baseConfigData.getPwd(), timeout);
+    }
+
+    /**
+     * 测试是否能连上ssh
+     * @param baseConfigData
+     * @return
+     */
+    public static boolean testConnect(BaseConfigData baseConfigData){
         try {
-            connect(ConnectInfo.getHost(), ConnectInfo.getPort(), ConnectInfo.getUser(), ConnectInfo.getPwd(), ConnectInfo.getTimeout());
+            SSHExecuter sshExecuter = new SSHExecuter(baseConfigData);
+
+            return true;
         } catch (JSchException e) {
-            throw new SystemException("构造ssh执行工具异常",e);
+            return false;
         }
     }
 
     /**
      * 连接sftp服务器
      *
-     * @param host     远程主机ip地址
+     * @param ip     远程主机ip地址
      * @param port     sftp连接端口，null 时为默认端口
      * @param user     用户名
-     * @param password 密码
+     * @param pwd 密码
      * @return
      * @throws JSchException
      */
-    private Session connect(String host, Integer port, String user, String password,int timeout) throws JSchException {
+    private Session connect(String ip, Integer port, String user, String pwd,int timeout) throws JSchException {
         try {
             JSch jsch = new JSch();
             if (port != null) {
-                session = jsch.getSession(user, host, port.intValue());
+                session = jsch.getSession(user, ip, port.intValue());
             } else {
-                session = jsch.getSession(user, host);
+                session = jsch.getSession(user, ip);
             }
-            session.setPassword(password);
+            session.setPassword(pwd);
             //设置第一次登陆的时候提示，可选值:(ask | yes | no)
             session.setConfig("StrictHostKeyChecking", "no");
             //连接超时设置
             session.connect(timeout);
         } catch (JSchException e) {
-            e.printStackTrace();
-            System.out.println("SFTPUitl 获取连接发生错误");
-            throw e;
+            throw new SystemException(String.format("SSH 异常，ip=%s,port=%s,user=%s,pwd=%s",ip,port,user,pwd),e);
         }
         return session;
     }

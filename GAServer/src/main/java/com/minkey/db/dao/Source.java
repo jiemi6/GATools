@@ -28,6 +28,12 @@ public class Source extends  DBConfigData{
     private long linkId;
 
     /**
+     * 内外网
+     * @see com.minkey.contants.CommonContants
+     */
+    private int netArea;
+
+    /**
      * 资源名称，来自数据源方
      */
     private String sname;
@@ -38,9 +44,10 @@ public class Source extends  DBConfigData{
     private String dbVersion;
 
     /**
-     * 	无格式文件  ftp
-     * 	数据库
-     * 	格式文件 视频
+     * 共三种情况
+     * 	1 "无格式文件"  ftp
+     * 	2 "数据库"
+     * 	3 "格式文件" 视频
      */
     private String sourceType;
     public static final String sourceType_db = "数据库";
@@ -109,6 +116,14 @@ public class Source extends  DBConfigData{
         this.createTime = createTime;
     }
 
+    public int getNetArea() {
+        return netArea;
+    }
+
+    public void setNetArea(int netArea) {
+        this.netArea = netArea;
+    }
+
     @Override
     public DatabaseDriver getDatabaseDriver() {
         //重写父类的获取数据库类型方法，根据拿过来的dbVersion字符串判断
@@ -129,6 +144,7 @@ public class Source extends  DBConfigData{
                 "id=" + id +
                 ", targetId='" + targetId + '\'' +
                 ", linkId=" + linkId +
+                ", netArea=" + netArea +
                 ", sname='" + sname + '\'' +
                 ", dbVersion='" + dbVersion + '\'' +
                 ", sourceType='" + sourceType + '\'' +

@@ -1,4 +1,4 @@
-package com.minkey.db.third.task;
+package com.minkey.db.third.log;
 
 import com.minkey.contants.LinkType;
 import com.minkey.db.LinkHandler;

@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.Ping;
 import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
-import com.minkey.dto.DBConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
@@ -225,28 +224,4 @@ public class BaseController {
         }
     }
 
-    @RequestMapping("/testDB")
-    public String testDB(DBConfigData dbConfigData){
-        log.info("start: 执行测试数据库连接 dbConfigData={}",dbConfigData);
-
-        if(StringUtils.isEmpty(dbConfigData.getIp())
-                || StringUtils.isEmpty(dbConfigData.getPwd())
-                || StringUtils.isEmpty(dbConfigData.getName())
-                || StringUtils.isEmpty(dbConfigData.getDbName())
-                || dbConfigData.getPort() <= 0){
-
-            return JSONMessage.createFalied("参数错误").toString();
-        }
-
-        try{
-            boolean isConnect = dynamicDB.testDB(dbConfigData);
-
-            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.getMessage()).toString();
-        }finally {
-            log.info("end: 执行测试数据库连接 ");
-        }
-    }
 }

@@ -41,7 +41,7 @@ public class SourceHandler {
             return;
         }
 
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId,linkId,sname,dbVersion,sourceType,ip,port,dbName,name,pwd,createTime) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId,linkId,sname,dbVersion,sourceType,ip,port,dbName,name,pwd,createTime,netArea) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
                 taskSourceList,taskSourceList.size(),
                 new ParameterizedPreparedStatementSetter<Source>() {
                     @Override
@@ -57,6 +57,7 @@ public class SourceHandler {
                         ps.setString(9,argument.getName());
                         ps.setString(10,argument.getPwd());
                         ps.setTimestamp(11,new Timestamp(argument.getCreateTime().getTime()));
+                        ps.setInt(12,argument.getNetArea());
                     }
                 });
     }

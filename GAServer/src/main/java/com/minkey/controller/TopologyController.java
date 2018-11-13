@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceConnectCache;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.dao.Link;
 import com.minkey.dto.JSONMessage;
@@ -27,6 +28,9 @@ public class TopologyController {
 
     @Autowired
     DeviceStatusHandler linkCheckHandler;
+
+    @Autowired
+    DeviceConnectCache deviceConnectCache;
 
 
     @RequestMapping("/queryAll")
@@ -88,7 +92,7 @@ public class TopologyController {
     public String queryAllConnect() {
         log.info("start: 查询所有可连接的设备");
         try{
-            Set<Long> deviceId = linkCheckHandler.queryAllConnect();
+            Set<Long> deviceId = deviceConnectCache.getOkSet();
             return JSONMessage.createSuccess().addData("connectIds",deviceId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

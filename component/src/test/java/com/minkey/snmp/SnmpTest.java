@@ -1,8 +1,7 @@
-package com.minkey;
+package com.minkey.snmp;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
-import com.minkey.snmp.SnmpData;
 import lombok.extern.slf4j.Slf4j;
 
 

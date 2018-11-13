@@ -21,6 +21,15 @@ public class Task {
     private long linkId;
 
     /**
+     * 任务类型
+     */
+    private int taskType;
+
+    public static final int taskType_unknow = -1;
+    public static final int taskType_db = 2;
+    public static final int taskType_ftp = 2;
+
+    /**
      * 任务名称
      */
     private String taskName;
@@ -68,6 +77,14 @@ public class Task {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(int taskType) {
+        this.taskType = taskType;
     }
 
     @Override

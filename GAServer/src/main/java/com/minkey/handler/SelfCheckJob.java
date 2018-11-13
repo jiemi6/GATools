@@ -1,5 +1,6 @@
 package com.minkey.handler;
 
+import com.minkey.cache.DeviceCache;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckHandler;
 import com.minkey.db.CheckItemHandler;
@@ -35,7 +36,7 @@ public class SelfCheckJob {
     CheckItemHandler checkItemHandler;
 
     @Autowired
-    DeviceStatusHandler deviceStatusHandler;
+    DeviceCache deviceCache;
 
     public void check(long checkId) {
         //异步执行check
@@ -51,7 +52,7 @@ public class SelfCheckJob {
         checkItem = new CheckItem(checkId,totalStep);
         checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
         checkItem.setResultMsg("ping 网关成功");
-        addCheckItem(checkItem);
+        checkItemHandler.insert(checkItem);
 
 
         if(checkId != -1) {
@@ -61,12 +62,12 @@ public class SelfCheckJob {
                 checkItem = new CheckItem(checkId,totalStep);
                 checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
                 checkItem.setResultMsg("连接本地数据库成功");
-                addCheckItem(checkItem);
+                checkItemHandler.insert(checkItem);
             } catch (Exception e) {
                 checkItem = new CheckItem(checkId,totalStep);
                 checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
                 checkItem.setResultMsg("连接本地数据库失败" + e.getMessage());
-                addCheckItem(checkItem);
+                checkItemHandler.insert(checkItem);
             }
         }
 
@@ -75,28 +76,19 @@ public class SelfCheckJob {
         checkItem = new CheckItem(checkId,totalStep);
         checkItem.setResultLevel(rateObj.judgeLevel());
         checkItem.setResultMsg("磁盘已经使用"+rateObj.getUseRateStr()+",剩余"+DiskUtils.FormetFileSize(Double.valueOf(rateObj.getFree()).longValue()));
-        addCheckItem(checkItem);
+        checkItemHandler.insert(checkItem);
 
         try {
-            deviceStatusHandler.init();
+            deviceCache.init();
             checkItem = new CheckItem(checkId,totalStep);
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
             checkItem.setResultMsg("初始化内存数据成功");
-            addCheckItem(checkItem);
+            checkItemHandler.insert(checkItem);
         }catch (Exception e){
             checkItem = new CheckItem(checkId,totalStep);
             checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
             checkItem.setResultMsg("初始化内存数据失败" + e.getMessage());
-            addCheckItem(checkItem);
-        }
-    }
-
-
-    private void addCheckItem(CheckItem checkItem){
-        try {
             checkItemHandler.insert(checkItem);
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
         }
     }
 

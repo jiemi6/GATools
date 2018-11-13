@@ -16,6 +16,11 @@ import java.nio.charset.Charset;
 public class FTPUtil {
     public static final int default_timeout = 1000;
 
+    public boolean testFTPConnect(BaseConfigData baseConfigData){
+        return testFTPConnect(baseConfigData.getIp(),baseConfigData.getPort(),
+                baseConfigData.getName(),baseConfigData.getPwd(),default_timeout);
+    }
+
     public boolean testFTPConnect(BaseConfigData baseConfigData,int timeout){
         return testFTPConnect(baseConfigData.getIp(),baseConfigData.getPort(),
                 baseConfigData.getName(),baseConfigData.getPwd(),timeout);

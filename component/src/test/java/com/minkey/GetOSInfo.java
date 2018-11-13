@@ -1,20 +1,21 @@
 package com.minkey;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.ArrayList;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 public class GetOSInfo {
-    //通过截取cmd流方式得到计算机的配置信息(不好)
-    public static List<String> getIpAddress() {
+
+    /**
+     * 通过截取cmd流方式得到计算机的配置信息(不好)
+     */
+    @Test
+    public List<String> getIpAddress() {
         Process p = null;
         List<String> address = new ArrayList<String>();
         try {
@@ -44,6 +45,7 @@ public class GetOSInfo {
         return address;
     }
 
+    @Test
     public static void getIpconfig() {
         Map<String, String> map = System.getenv();
         System.out.println(map.get("USERNAME"));//获取username
@@ -51,7 +53,10 @@ public class GetOSInfo {
         System.out.println(map.get("USERDOMAIN"));//获取计算机域名
     }
 
-    //得到计算机的ip地址和mac地址
+    /**
+     * 得到计算机的ip地址和mac地址
+     */
+    @Test
     public static void getConfig() {
         try {
             InetAddress address = InetAddress.getLocalHost();
@@ -72,7 +77,10 @@ public class GetOSInfo {
         }
     }
 
-    //得到计算机的ip,名称,操作系统名称,操作系统版本号
+    /**
+     *得到计算机的ip,名称,操作系统名称,操作系统版本号
+     */
+    @Test
     public static void Config() {
         try {
             InetAddress addr = InetAddress.getLocalHost();
@@ -87,8 +95,12 @@ public class GetOSInfo {
         }
     }
 
-    //其他的一些东西,会实用到的时候的
-    public static void all() {
+
+    /**
+     * 其他的一些东西,会实用到的时候的
+     */
+    @Test
+    public  void all() {
         Properties props = System.getProperties();
         System.out.println("Java的执行环境版本号：" + props.getProperty("java.version"));
         System.out.println("Java的执行环境供应商：" + props.getProperty("java.vendor"));
@@ -122,10 +134,4 @@ public class GetOSInfo {
         System.out.println("用户的当前工作文件夹：" + props.getProperty("user.dir"));
     }
 
-    public static void main(String[] args) {
-//        getConfig();
-//        Config();
-        all();
-//        getIpAddress();
-    }
 }

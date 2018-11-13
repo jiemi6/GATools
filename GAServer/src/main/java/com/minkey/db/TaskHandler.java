@@ -45,7 +45,7 @@ public class TaskHandler {
             return;
         }
 
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId, taskName,linkId,status) VALUES (?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId, taskName,linkId,status,taskType) VALUES (?,?,?,?,?)",
                 tasks,tasks.size(),
                 new ParameterizedPreparedStatementSetter<Task>() {
                     @Override
@@ -54,6 +54,7 @@ public class TaskHandler {
                         ps.setString(2,argument.getTaskName());
                         ps.setLong(3,argument.getLinkId());
                         ps.setInt(4,argument.getStatus());
+                        ps.setInt(5,argument.getTaskType());
                     }
                 });
 

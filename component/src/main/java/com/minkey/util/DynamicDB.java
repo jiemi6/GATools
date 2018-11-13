@@ -58,10 +58,10 @@ public class DynamicDB {
 
     public boolean testDB(DBConfigData dbConfigData){
         try{
-            //先检查数据库是否正确
-            JdbcTemplate jdbcTemplate = getJdbcTemplate(dbConfigData.getDatabaseDriver(),dbConfigData.getIp(),dbConfigData.getPort()
-                    ,dbConfigData.getDbName(),dbConfigData.getName(),dbConfigData.getPwd());
+            //获取jdbc操作模板
+            JdbcTemplate jdbcTemplate = get8dbConfig(dbConfigData);
 
+            jdbcTemplate.execute(dbConfigData.getDatabaseDriver().getValidationQuery());
             return true;
         }catch (Exception e){
             log.error("测试连接数据库失败:"+dbConfigData.toString(),e);
@@ -69,12 +69,12 @@ public class DynamicDB {
         }
     }
 
-    public void putIn(String ip,int port ,String dbName, JdbcTemplate jdbcTemplate){
+    private void putIn(String ip,int port ,String dbName, JdbcTemplate jdbcTemplate){
         String key = createKey(ip,port,dbName);
         jdbcTemplateMap.put(key,jdbcTemplate);
     }
 
-    public JdbcTemplate get(String ip,int port,String dbName){
+    private JdbcTemplate get(String ip,int port,String dbName){
         String key = createKey(ip,port,dbName);
         if(StringUtils.isEmpty(key)){
             return null;

@@ -3,9 +3,9 @@ package com.minkey.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
+import com.minkey.contants.CommonContants;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
-import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
@@ -48,10 +48,10 @@ public class ToolsController {
         log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,deviceId);
 
         if(netArea == null){
-            netArea = Device.NETAREA_IN;
+            netArea = CommonContants.NETAREA_IN;
         }
 
-        if(netArea == Device.NETAREA_OUT && deviceId == null){
+        if(netArea == CommonContants.NETAREA_OUT && deviceId == null){
             return JSONMessage.createFalied("请选择一个探针").toString();
         }
 
@@ -70,7 +70,7 @@ public class ToolsController {
             }
 
             ResultInfo resultInfo = null;
-            if(netArea == Device.NETAREA_IN){
+            if(netArea == CommonContants.NETAREA_IN){
                 //内网 直接执行
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
@@ -112,7 +112,7 @@ public class ToolsController {
         log.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,deviceId);
 
         if(netArea == null){
-            netArea = Device.NETAREA_IN;
+            netArea = CommonContants.NETAREA_IN;
         }
 
         try{
@@ -125,7 +125,7 @@ public class ToolsController {
             }
 
             boolean isConnect ;
-            if(netArea == Device.NETAREA_IN){
+            if(netArea == CommonContants.NETAREA_IN){
                 //内网 直接执行
                 isConnect = Telnet.doTelnet(ip,port);
             }else{
@@ -173,7 +173,7 @@ public class ToolsController {
 
         try{
             boolean isConnect;
-            if(netArea == Device.NETAREA_IN){
+            if(netArea == CommonContants.NETAREA_IN){
                 //内网直接测试
                 isConnect = dynamicDB.testDB(dbConfigData);
             }else{
@@ -217,7 +217,7 @@ public class ToolsController {
 
         try{
             JSONObject jo;
-            if(netArea == Device.NETAREA_IN){
+            if(netArea == CommonContants.NETAREA_IN){
                 //内网直接测试
                 jo = new SnmpUtil(ip).snmpWalk(oid);
             }else{

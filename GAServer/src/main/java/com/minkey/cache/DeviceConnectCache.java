@@ -90,4 +90,5 @@ public class DeviceConnectCache {
         checkSet = new HashSet<>();
         disabledSet = new HashSet<>();
     }
+
 }

@@ -1,5 +1,9 @@
 package com.minkey.db.dao;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.minkey.contants.CommonContants;
+import com.minkey.contants.DeviceType;
+
 import java.util.List;
 
 /**
@@ -47,11 +51,9 @@ public class Device {
      * 网络区域：
      * 1 内网
      * 2外网
+     * @see com.minkey.contants.CommonContants
      */
     private int netArea;
-
-    public static final int NETAREA_IN = 1;
-    public static final int NETAREA_OUT = 2;
 
     /**
      * 图标id
@@ -131,8 +133,18 @@ public class Device {
      * s是否在内网
      * @return
      */
+    @JSONField(serialize=false)
     public boolean isNetAreaIn(){
-        return netArea == NETAREA_IN;
+        return netArea == CommonContants.NETAREA_IN;
+    }
+
+    /**
+     * 是否是探针
+     * @return
+     */
+    @JSONField(serialize=false)
+    public boolean isDetector(){
+        return deviceType == DeviceType.detector;
     }
 
 
