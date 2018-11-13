@@ -292,6 +292,4 @@ public class ExamineHandler {
         }
     }
 
-    public void doTask(long checkId, Long taskId) {
-    }
 }

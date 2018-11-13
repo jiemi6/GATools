@@ -7,6 +7,7 @@ import com.minkey.db.dao.CheckItem;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.handler.ExamineHandler;
+import com.minkey.handler.TaskExamineHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +31,9 @@ public class ExamineController {
 
     @Autowired
     ExamineHandler examineHandler;
+
+    @Autowired
+    TaskExamineHandler taskExamineHandler;
 
     @Autowired
     CheckItemHandler checkItemHandler;
@@ -149,7 +153,7 @@ public class ExamineController {
 
         try{
             //开始检查
-            examineHandler.doTask(checkId,taskId);
+            taskExamineHandler.doTask(checkId,taskId);
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

@@ -1,5 +1,6 @@
 package com.minkey.db.dao;
 
+import com.minkey.contants.CommonContants;
 import com.minkey.dto.DBConfigData;
 import org.springframework.boot.jdbc.DatabaseDriver;
 
@@ -122,6 +123,10 @@ public class Source extends  DBConfigData{
 
     public void setNetArea(int netArea) {
         this.netArea = netArea;
+    }
+
+    public boolean isNetAreaIn(){
+        return netArea == CommonContants.NETAREA_IN;
     }
 
     @Override
