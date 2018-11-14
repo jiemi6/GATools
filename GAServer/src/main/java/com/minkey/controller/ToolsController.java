@@ -1,6 +1,7 @@
 package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.cache.DeviceConnectCache;
 import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
 import com.minkey.contants.CommonContants;
@@ -38,6 +39,9 @@ public class ToolsController {
     @Autowired
     DynamicDB dynamicDB;
 
+    @Autowired
+    DeviceConnectCache deviceConnectCache;
+
 
     /**
      * ping工具
@@ -62,6 +66,10 @@ public class ToolsController {
         if(!StringUtil.isIp(ip)){
             return JSONMessage.createFalied("ip格式不正确").toString();
         }
+        //探针不在线，无法执行命令
+        if(!deviceConnectCache.isOk(deviceId)){
+            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+        }
         try{
 
             String cmd = "ping "+ip+ " -c 4";
@@ -85,6 +93,10 @@ public class ToolsController {
 
                 //执行命令
                 resultInfo = DetectorUtil.executeSh(configData.getIp(),configData.getPort(),cmd);
+            }
+
+            if(resultInfo == null){
+                return JSONMessage.createSuccess().addData("msg",String.format("ping目标设备%s失败",ip)).toString();
             }
 
             if(resultInfo.isExitStutsOK()){
@@ -115,14 +127,19 @@ public class ToolsController {
             netArea = CommonContants.NETAREA_IN;
         }
 
-        try{
-            if(StringUtils.isEmpty(ip)){
-                return JSONMessage.createFalied("ip不能为空").toString();
-            }
+        if(StringUtils.isEmpty(ip)){
+            return JSONMessage.createFalied("ip不能为空").toString();
+        }
 
-            if(!StringUtil.isIp(ip)){
-                return JSONMessage.createFalied("ip格式不正确").toString();
-            }
+        if(!StringUtil.isIp(ip)){
+            return JSONMessage.createFalied("ip格式不正确").toString();
+        }
+        //探针不在线，无法执行命令
+        if(!deviceConnectCache.isOk(deviceId)){
+            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+        }
+        try{
+
 
             boolean isConnect ;
             if(netArea == CommonContants.NETAREA_IN){
@@ -171,6 +188,11 @@ public class ToolsController {
             return JSONMessage.createFalied("参数错误").toString();
         }
 
+        //探针不在线，无法执行命令
+        if(!deviceConnectCache.isOk(deviceId)){
+            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+        }
+
         try{
             boolean isConnect;
             if(netArea == CommonContants.NETAREA_IN){
@@ -213,6 +235,11 @@ public class ToolsController {
 
         if(!StringUtil.isIp(ip)){
             return JSONMessage.createFalied("ip格式不正确").toString();
+        }
+
+        //探针不在线，无法执行命令
+        if(!deviceConnectCache.isOk(deviceId)){
+            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
         }
 
         try{

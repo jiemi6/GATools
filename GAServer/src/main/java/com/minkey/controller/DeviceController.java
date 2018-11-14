@@ -3,6 +3,7 @@ package com.minkey.controller;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.contants.DeviceType;
+import com.minkey.contants.Modules;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.UserLogHandler;
@@ -32,7 +33,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/device")
 public class DeviceController {
-    private final String moduleName = "设备管理模块";
 
     @Autowired
     DeviceHandler deviceHandler;
@@ -115,7 +115,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 新增设备，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+            userLogHandler.log(sessionUser,Modules.device,String.format("%s 新增设备，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
 
             //刷新缓存
             deviceCache.refresh();
@@ -124,13 +124,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行insert设备 device={} ",device);
+            log.info("end: 执行insert设备 ");
         }
     }
 
     @RequestMapping("/update")
     public String update( Device device) {
-        log.info("start: 执行insert设备 device={} ",device);
+        log.info("start: 执行update设备 device={} ",device);
 
         if(device.getDeviceId() < 0){
             return JSONMessage.createFalied("deviceId错误").toString();
@@ -156,7 +156,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 修改设备信息，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+            userLogHandler.log(sessionUser,Modules.device,String.format("%s 修改设备信息，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
 
             //刷新缓存
             deviceCache.refresh();
@@ -166,7 +166,7 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行insert设备 device={} ",device);
+            log.info("end: 执行update设备");
         }
     }
 
@@ -241,7 +241,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除设备信息，设备id=%s。",sessionUser.getuName(),deviceId));
+            userLogHandler.log(sessionUser,Modules.device,String.format("%s 删除设备信息，设备id=%s。",sessionUser.getuName(),deviceId));
 
             //刷新缓存
             deviceCache.refresh();

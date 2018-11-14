@@ -5,6 +5,7 @@ import com.minkey.cache.DeviceConnectCache;
 import com.minkey.command.Ping;
 import com.minkey.contants.CommonContants;
 import com.minkey.contants.DeviceType;
+import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.util.DetectorUtil;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,6 +27,8 @@ import java.util.Set;
 public class DeviceStatusHandler {
     @Autowired
     DeviceCache deviceCache;
+    @Autowired
+    DeviceServiceHandler deviceServiceHandler;
     /**
      * 设备联通性情况
      */
@@ -36,19 +40,15 @@ public class DeviceStatusHandler {
      */
     @Scheduled(cron = "0/5 * * * * ?")
     public void reflashConnect() {
-        //Minkey 不应该只刷新link，应该刷一次所有设备？
-        deviceCache.getAllLinkMap().forEach((aLong, link) ->  {
-            //有可能为空，链路没有配探针
-            DeviceService deviceService = deviceCache.getDetectorService8linkId(aLong);
-            Set<Long> allDeviceId = link.getDeviceIds();
-            for (Long deviceId:allDeviceId){
-                try {
-                    testDeviceConnect(deviceCache.getDevice(deviceId), deviceService);
-                }catch (Exception e){
-                    log.error(e.getMessage(),e);
-                }
+        Map<Long, Device> allDevices = deviceCache.allDevice();
+
+        for (Device device:allDevices.values()){
+            try {
+                testDeviceConnect(device);
+            }catch (Exception e){
+                log.error(e.getMessage(),e);
             }
-        });
+        }
     }
 
 
@@ -58,17 +58,17 @@ public class DeviceStatusHandler {
      * @param device
      */
     @Async
-    public void testDeviceConnect(Device device,DeviceService detectorService){
+    public void testDeviceConnect(Device device){
         if(device == null){
             return;
         }
 
+        boolean isConnect = pingTest(device);
         long deviceId = device.getDeviceId();
-        boolean isConnect = pingTest(device,detectorService);
         deviceConnectCache.putConnect(deviceId,isConnect);
     }
 
-    public boolean pingTest(Device device,DeviceService detectorService) {
+    public boolean pingTest(Device device) {
         if (device.getDeviceType() == DeviceType.floder) {
             //设备如果是文件夹，默认就是联通的
             return true;
@@ -80,8 +80,11 @@ public class DeviceStatusHandler {
         }
 
         boolean isConnect = false;
+        //如果自己是探针
         if(device.getDeviceType() == DeviceType.detector) {
-            //如果自己是探针，而且没有配置探针服务
+            //查询自己的探针服务
+            DeviceService detectorService = deviceServiceHandler.query8Device(device.getDeviceId(),DeviceType.detector);
+            //没有配置探针服务
             if(detectorService == null){
                 return false;
             }
@@ -94,6 +97,8 @@ public class DeviceStatusHandler {
             isConnect = Ping.javaPing(device.getIp(),1000);
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
+            DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
+            //找不到探针
             if(detectorService == null){
                 return false;
             }

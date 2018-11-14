@@ -89,14 +89,12 @@ public class ExamineHandler {
             return;
         }
 
-        //找到探针服务
-        DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(deviceId);
         //该设备所有的服务
         List<DeviceService> deviceServiceList;
         //默认就只有一步 就是检查连接
         int totalStep = 1;
-        //Minkey 检查网络联通性,暂时只支持内网
-        boolean isConnect = deviceStatusHandler.pingTest(device,detectorService);
+        // 检查网络联通性
+        boolean isConnect = deviceStatusHandler.pingTest(device);
 
         if(isConnect){
             deviceServiceList = deviceServiceHandler.query8Device(deviceId);
@@ -131,6 +129,9 @@ public class ExamineHandler {
         }
         checkItemHandler.insert(checkItem);
 
+
+        //找到探针服务
+        DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(deviceId);
         //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
         if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
@@ -260,7 +261,7 @@ public class ExamineHandler {
         for(Long deviceId : deviceMap.keySet()){
             Device device = deviceMap.get(deviceId);
 
-            boolean isConnect = deviceStatusHandler.pingTest(device,null);
+            boolean isConnect = deviceStatusHandler.pingTest(device);
 
             if(isConnect){
                 //创建检查步数 缓存

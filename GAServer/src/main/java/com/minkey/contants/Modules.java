@@ -13,5 +13,8 @@ public interface Modules {
 
     public static final String link ="链路管理";
 
+    public static  final String device = "设备管理模块";
+
+
 
 }

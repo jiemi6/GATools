@@ -5,6 +5,8 @@ import com.minkey.cache.DeviceCache;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.*;
 import com.minkey.db.dao.*;
+import com.minkey.dto.FTPConfigData;
+import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -65,7 +67,6 @@ public class TaskExamineHandler {
 
         int totalStep = 2+1+1;
         checkStepCache.create(checkId,totalStep);
-        checkItem = checkStepCache.createNextItem(checkId);
 
         DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
 
@@ -73,51 +74,87 @@ public class TaskExamineHandler {
         String toSourceId = taskSource.getToResourceId();
 
         Source fromSource = sourceHandler.query(task.getLinkId(),fromSourceId);
-        testSource(fromSource,detectorService);
+        checkItem = testSource(checkId, task, fromSource,detectorService);
+        checkItemHandler.insert(checkItem);
 
         Source toSource = sourceHandler.query(task.getLinkId(),toSourceId);
-        testSource(toSource,detectorService);
+        checkItem = testSource(checkId, task, toSource,detectorService);
+        checkItemHandler.insert(checkItem);
 
-        //检查任务进程是否存在
-
+        //Minkey 检查任务进程是否存在
+        checkItem = checkStepCache.createNextItem(checkId);
+        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg("任务进程正常运行");
+        checkItemHandler.insert(checkItem);
     }
 
-    private boolean testSource(Source source, DeviceService detectorService){
+    private CheckItem testSource(long checkId, Task task, Source source, DeviceService detectorService){
         if(StringUtils.equals(source.getSourceType(),Source.sourceType_db)){
-            testSource_db(source,detectorService);
+            return testSource_db(checkId,task,source,detectorService);
         }else if(StringUtils.equals(source.getSourceType(),Source.sourceType_ftp)){
-            testSource_ftp(source,detectorService);
+            return testSource_ftp(checkId,task,source,detectorService);
         }else if(StringUtils.equals(source.getSourceType(),Source.sourceType_video)){
-            testSource_video(source,detectorService);
+            return testSource_video(checkId,task,source,detectorService);
         }else{
             //未知数据格式
-            log.error("未知数据源类型="+source.getSourceType());
+            String logstr = String.format("未知数据源类型[%]",source.getSourceType());
+            log.error(logstr);
+            CheckItem checkItem = checkStepCache.createNextItem(checkId);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(logstr);
+            return checkItem;
         }
-
-        return false;
     }
 
-    private void testSource_ftp(Source source, DeviceService detectorService) {
-        boolean isConnect = ftpUtil.testFTPConnect(source,FTPUtil.default_timeout);
-        if(isConnect){
-
-        }else {
-
-        }
-
-    }
-
-    private void testSource_db(Source source, DeviceService detectorService) {
-        boolean isConnect = dynamicDB.testDB(source);
-        if(isConnect){
-
+    private CheckItem testSource_ftp(long checkId, Task task, Source source, DeviceService detectorService) {
+        boolean isConnect;
+        if(source.isNetAreaIn()){
+            isConnect = ftpUtil.testFTPConnect(source,FTPUtil.default_timeout);
         }else{
-
+            //将source转换为ftpconfigdata
+            FTPConfigData ftpConfigData = new FTPConfigData();
+            ftpConfigData.setIp(source.getIp());
+            ftpConfigData.setPort(source.getPort());
+            ftpConfigData.setName(source.getName());
+            ftpConfigData.setPwd(source.getPwd());
+            ftpConfigData.setRootPath(source.getDbName());
+            isConnect = DetectorUtil.testFTP(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
         }
+        CheckItem checkItem = checkStepCache.createNextItem(checkId);
+
+        if(isConnect){
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL)
+                    .setResultMsg(String.format("探测任务[%s]%sFTP数据源%s连接正常",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+        }else {
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR)
+                    .setResultMsg(String.format("探测任务[%s]%sFTP数据源%s连接失败",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+        }
+
+        return checkItem;
     }
 
-    private void testSource_video(Source source, DeviceService detectorService) {
+    private CheckItem testSource_db(long checkId, Task task, Source source, DeviceService detectorService) {
+        boolean isConnect;
+        if(source.isNetAreaIn()){
+            isConnect = dynamicDB.testDB(source);
+        }else{
+            isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+        }
+        CheckItem checkItem = checkStepCache.createNextItem(checkId);
 
+        if(isConnect){
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL)
+                    .setResultMsg(String.format("探测任务[%s]%sDB数据源[%s]连接正常",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+        }else {
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR)
+                    .setResultMsg(String.format("探测任务[%s]%sDB数据源[%s]连接失败",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+        }
+        return checkItem;
+    }
+
+    private CheckItem testSource_video(long checkId, Task task, Source source, DeviceService detectorService) {
+        log.error("暂时不支持video数据源探测");
+        CheckItem checkItem = checkStepCache.createNextItem(checkId);
+        checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg("暂时不支持video数据源探测");
+        return checkItem;
     }
 
 }
