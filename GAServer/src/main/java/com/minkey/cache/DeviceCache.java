@@ -123,6 +123,7 @@ public class DeviceCache {
      * 初始化方法，内置监听器，当链路+设备发生任何数据发生变化时候，就重载缓存
      */
     public void init(){
+        initDB2Cache();
         taskExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -130,7 +131,6 @@ public class DeviceCache {
             }
         });
 
-        initDB2Cache();
     }
 
 

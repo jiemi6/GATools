@@ -88,6 +88,9 @@ public class AlarmHandler {
             //能连上的获取性能指标
             for (Long deviceId : okSet) {
                 device = allDevice.get(deviceId);
+                if(device == null){
+                    continue;
+                }
                 if(device.getDeviceType() == DeviceType.floder) {
                     continue;
                 }
@@ -164,7 +167,11 @@ public class AlarmHandler {
             allDeviceName = new HashSet<>(deviceIds.size());
             //拼装名称
             for (Long deviceId : deviceIds) {
-                allDeviceName.add(allDevice.get(deviceId).getDeviceName());
+                Device device = allDevice.get(deviceId);
+                if(device == null){
+                    continue;
+                }
+                allDeviceName.add(device.getDeviceName());
             }
             alarmLog.setMsg(String.format("链路%s中有%s个设备掉线，设备名称为%s",link.getLinkName(),deviceIds.size(), StringUtils.join(allDeviceName),","));
 
