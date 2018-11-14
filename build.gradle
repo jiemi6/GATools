@@ -30,12 +30,13 @@ subprojects {
 //		archives file("build/libs/${project.name}-${version}.jar")
 //	}
 
-	applicationDistribution.from("build/resources/main/application.properties") {
+	applicationDistribution.from("src/main/conf") {
 		into "conf"
 	}
 
 	jar{
 		exclude("application.properties")
+		exclude("logback.xml")
 		exclude("static")
 		exclude("templates")
     }

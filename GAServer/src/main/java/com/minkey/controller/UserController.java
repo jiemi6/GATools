@@ -106,7 +106,7 @@ public class UserController {
     public String login( HttpServletRequest request, String uName, String pwd, String vcode) {
         log.info("start: 执行用户登陆");
         try{
-            if(StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
+            if(!StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
                 return JSONMessage.createFalied("验证码错误").toString();
             }
 
@@ -281,9 +281,12 @@ public class UserController {
             userHandler.del(uid);
 
             User sessionUser = (User)session.getAttribute("user");
-
+            User user = userHandler.query(uid);
+            if(user == null){
+                return JSONMessage.createFalied("用户不存在").toString();
+            }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除用户uid = %s成功",sessionUser.getuName(),uid));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除用户%s成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -335,8 +338,13 @@ public class UserController {
             userHandler.resetPwd(uid,defaultPwd);
 
             User sessionUser = (User)session.getAttribute("user");
+
+            User user = userHandler.query(uid);
+            if(user == null){
+                return JSONMessage.createFalied("用户不存在").toString();
+            }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 重置用户密码 uid = %s 成功",sessionUser.getuName(),uid));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s 重置用户%s密码为123456成功.",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
@@ -395,8 +403,12 @@ public class UserController {
             userHandler.cleanWrongPwdTime(uid);
 
             User sessionUser = (User)session.getAttribute("user");
+            User user = userHandler.query(uid);
+            if(user == null){
+                return JSONMessage.createFalied("用户不存在").toString();
+            }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s解锁用户 uid = %s 成功",sessionUser.getuName(),uid));
+            userLogHandler.log(sessionUser,moduleName,String.format("%s解锁用户%s成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

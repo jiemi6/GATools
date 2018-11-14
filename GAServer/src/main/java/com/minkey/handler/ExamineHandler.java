@@ -127,11 +127,7 @@ public class ExamineHandler {
         }else{
             checkItem.setCheckId(checkId);
             checkItem.setResultLevel(deviceExplorer.judgeLevel());
-            checkItem.setResultMsg(String.format("设备[%s]硬件资源 cpu:%s,mem:%s,disk:%s",
-                    device.getDeviceName(),
-                    deviceExplorer.getCpu().getUseRateStr(),
-                    deviceExplorer.getDisk().getUseRateStr(),
-                    deviceExplorer.getMem().getUseRateStr()));
+            checkItem.setResultMsg(String.format("设备[%s]硬件资源 %s",device.getDeviceName(),deviceExplorer.showString()));
         }
         checkItemHandler.insert(checkItem);
 
@@ -261,7 +257,7 @@ public class ExamineHandler {
         checkItemHandler.insert(checkItem);
 
         boolean allisConnect = true;
-        for(Long deviceId : deviceIds){
+        for(Long deviceId : deviceMap.keySet()){
             Device device = deviceMap.get(deviceId);
 
             boolean isConnect = deviceStatusHandler.pingTest(device,null);

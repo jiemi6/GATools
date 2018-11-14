@@ -7,11 +7,9 @@ import com.minkey.command.Telnet;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
-import com.minkey.util.DynamicDB;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Scope("prototype")
 public class BaseController {
-    @Autowired
-    DynamicDB dynamicDB;
-
     @RequestMapping("/check")
     public String check() {
         return JSONMessage.createSuccess().toString();

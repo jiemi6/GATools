@@ -28,6 +28,7 @@ public class SessionFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         patterns.add(Pattern.compile(no_login));
+        patterns.add(Pattern.compile("/lg2.html"));
 
         patterns.add(Pattern.compile(LicenseFilter.no_license));
 
@@ -35,7 +36,8 @@ public class SessionFilter implements Filter {
         patterns.add(Pattern.compile("/user/checkVCode"));
         patterns.add(Pattern.compile("/user/login"));
 
-        patterns.add(Pattern.compile(".*[(\\.js)||(\\.css)||(\\.png)||(\\.tff)]"));
+        patterns.add(Pattern.compile(".*[(\\.css )(\\.json )(\\.png )(\\.gif )(\\.js )(\\.eot )(\\.svg )(\\.ttf )(\\.woff )(\\.mp4)]"));
+
     }
 
 

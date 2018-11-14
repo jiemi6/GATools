@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceCache;
 import com.minkey.contants.Modules;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.UserLogHandler;
@@ -32,6 +33,8 @@ public class LinkController {
 
     @Autowired
     HttpSession session;
+    @Autowired
+    DeviceCache deviceCache;
 
     @RequestMapping("/insert")
     public String insert(Link link) {
@@ -59,6 +62,9 @@ public class LinkController {
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser, Modules.link,String.format("%s 新建链路，链路名称=%s ",sessionUser.getuName(),link.getLinkName()));
+
+            //刷新缓存
+            deviceCache.refresh();
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -98,6 +104,9 @@ public class LinkController {
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser, Modules.link,String.format("%s 修改链路，链路名称=%s ",sessionUser.getuName(),link.getLinkName()));
+
+            //刷新缓存
+            deviceCache.refresh();
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -184,6 +193,9 @@ public class LinkController {
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser, Modules.link,String.format("%s 删除链路，链路id=%s ",sessionUser.getuName(),linkId));
+
+            //刷新缓存
+            deviceCache.refresh();
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

@@ -51,7 +51,7 @@ public class TaskExamineHandler {
             return;
         }
 
-        String taskTargetId = task.getTargetId();
+        String taskTargetId = task.getTargetTaskId();
 
         TaskSource taskSource = taskSourceHandler.query(task.getLinkId(),taskTargetId);
 

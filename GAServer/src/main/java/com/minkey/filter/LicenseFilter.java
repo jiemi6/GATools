@@ -27,12 +27,15 @@ public class LicenseFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         patterns.add(Pattern.compile(no_license));
+        //Minkey  临时登陆页
+        patterns.add(Pattern.compile("/lg2.html"));
 
         patterns.add(Pattern.compile("/license/up"));
         patterns.add(Pattern.compile("/license/keyExport"));
         patterns.add(Pattern.compile("/license/key"));
 
-        patterns.add(Pattern.compile(".*[(\\.js)||(\\.css)||(\\.png)||(\\.tff)]"));
+        patterns.add(Pattern.compile(".*[(\\.css )(\\.json )(\\.png )(\\.gif )(\\.js )(\\.eot )(\\.svg )(\\.ttf )(\\.woff )(\\.mp4)]"));
+
     }
 
     @Value("${system.debug:false}")

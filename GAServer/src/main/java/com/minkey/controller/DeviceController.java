@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.contants.DeviceType;
 import com.minkey.db.DeviceHandler;
@@ -49,6 +50,9 @@ public class DeviceController {
     UserLogHandler userLogHandler;
 
     @Autowired
+    DeviceCache deviceCache;
+
+    @Autowired
     HttpSession session;
 
     private JSONMessage checkParam(Device device){
@@ -64,8 +68,6 @@ public class DeviceController {
                 return JSONMessage.createFalied("ip格式错误");
             }
         }
-
-
 
         List<DeviceService> paramList = device.getDeviceServiceList();
         if(!CollectionUtils.isEmpty(paramList)){
@@ -115,6 +117,8 @@ public class DeviceController {
             //记录用户日志
             userLogHandler.log(sessionUser,moduleName,String.format("%s 新增设备，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
 
+            //刷新缓存
+            deviceCache.refresh();
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -153,6 +157,9 @@ public class DeviceController {
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser,moduleName,String.format("%s 修改设备信息，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+
+            //刷新缓存
+            deviceCache.refresh();
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -235,6 +242,9 @@ public class DeviceController {
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser,moduleName,String.format("%s 删除设备信息，设备id=%s。",sessionUser.getuName(),deviceId));
+
+            //刷新缓存
+            deviceCache.refresh();
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){

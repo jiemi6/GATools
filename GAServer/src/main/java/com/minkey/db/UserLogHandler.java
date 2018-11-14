@@ -66,7 +66,7 @@ public class UserLogHandler {
         }
 
         if(StringUtils.isNotEmpty(seachParam.getKeyword())){
-            whereStr.append(" AND msg LIKE %"+ seachParam.getKeyword()+"%");
+            whereStr.append(" AND msg LIKE '%"+ seachParam.getKeyword()+"%'");
         }
 
         List<UserLog> userLogs = jdbcTemplate.query("select * from "+tableName + whereStr +" ORDER BY userLogId desc limit ?,?",

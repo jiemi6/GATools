@@ -13,7 +13,7 @@ public class Task {
      *
      * 任务id，来自不同数据库，可能重复，不能做主键
      */
-    private String targetId;
+    private String targetTaskId;
 
     /**
      * 链路id
@@ -39,12 +39,12 @@ public class Task {
      */
     private int status;
 
-    public String getTargetId() {
-        return targetId;
+    public String getTargetTaskId() {
+        return targetTaskId;
     }
 
-    public void setTargetId(String targetId) {
-        this.targetId = targetId;
+    public void setTargetTaskId(String targetTaskId) {
+        this.targetTaskId = targetTaskId;
     }
 
     public long getLinkId() {
@@ -91,7 +91,7 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", targetId='" + targetId + '\'' +
+                ", targetTaskId='" + targetTaskId + '\'' +
                 ", linkId=" + linkId +
                 ", taskName='" + taskName + '\'' +
                 ", status=" + status +

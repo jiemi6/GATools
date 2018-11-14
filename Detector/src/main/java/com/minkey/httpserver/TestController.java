@@ -104,7 +104,6 @@ public class TestController {
         log.info("start: 测试SNMP服务器连接情况 snmpConfigData={}",snmpConfigData);
 
         if(StringUtils.isEmpty(snmpConfigData.getIp())
-                || StringUtils.isEmpty(snmpConfigData.getPwd())
                 || StringUtils.isEmpty(snmpConfigData.getCommunity())
                 || snmpConfigData.getVersion() == 0
                 || snmpConfigData.getPort() <= 0){

@@ -131,7 +131,7 @@ public class TaskCollector {
 
         mapList.forEach(stringObjectMap -> {
             Task task = new Task();
-            task.setTargetId((String)stringObjectMap.get("taskId"));
+            task.setTargetTaskId((String)stringObjectMap.get("taskId"));
             task.setTaskName((String) stringObjectMap.get("name"));
             //在tbtask表中的tbtasktypeid字段 01说明是数据库同步，05是FTP文件同步
             String tasktypeid = (String)stringObjectMap.get("status");
@@ -227,7 +227,14 @@ public class TaskCollector {
             source.setIp((String) stringObjectMap.get("ip"));
             source.setPort((Integer)stringObjectMap.get("port"));
             //field方向，0内1外
-            source.setNetArea((Integer)stringObjectMap.get("field") == 0 ? CommonContants.NETAREA_IN : CommonContants.NETAREA_OUT);
+            String field = (String)stringObjectMap.get("field");
+            if(StringUtils.equals(field,"1")){
+                source.setNetArea(CommonContants.NETAREA_OUT);
+            }else if(StringUtils.equals(field,"0")){
+                source.setNetArea(CommonContants.NETAREA_IN);
+            }else{
+                source.setNetArea(CommonContants.NETAREA_IN);
+            }
             source.setDbName((String) stringObjectMap.get("dbname"));
             source.setName((String) stringObjectMap.get("username"));
             source.setPwd((String) stringObjectMap.get("password"));

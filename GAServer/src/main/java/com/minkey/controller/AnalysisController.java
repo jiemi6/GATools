@@ -3,9 +3,8 @@ package com.minkey.controller;
 import com.minkey.db.DeviceLogHandler;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskDayLogHandler;
-import com.minkey.db.dao.DeviceLog;
-import com.minkey.db.dao.Link;
-import com.minkey.db.dao.TaskDayLog;
+import com.minkey.db.TaskHandler;
+import com.minkey.db.dao.*;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
@@ -14,6 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 统计分析
@@ -27,6 +30,9 @@ public class AnalysisController {
 
     @Autowired
     DeviceLogHandler deviceLogHandler;
+
+    @Autowired
+    TaskHandler taskHandler;
 
     @Autowired
     LinkHandler linkHandler;
@@ -46,8 +52,15 @@ public class AnalysisController {
         try{
             Page<TaskDayLog> page = new Page(currentPage,pageSize);
 
+
             Page<TaskDayLog> logs = taskDayLogHandler.query8page(linkId,page,seachParam);
-            return JSONMessage.createSuccess().addData(logs).toString();
+            Map<String, String> nameMap = null;
+            if(!CollectionUtils.isEmpty(page.getList())) {
+                Set<String> targetTaskIds = page.getList().stream().map(taskDayLog -> taskDayLog.getTargetTaskId()).collect(Collectors.toSet());
+                nameMap = taskHandler.query8LinkAndIds(linkId,targetTaskIds).stream().collect(Collectors.toMap(Task::getTargetTaskId, Task :: getTaskName));
+            }
+
+            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

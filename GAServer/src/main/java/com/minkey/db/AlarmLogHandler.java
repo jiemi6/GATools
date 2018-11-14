@@ -7,9 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ParameterizedPreparedStatementSetter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class AlarmLogHandler {
@@ -61,8 +66,24 @@ public class AlarmLogHandler {
         int num = jdbcTemplate.update("insert into "+tableName+" (bid,bType,type, level,msg,createTime) VALUES (?,?,?,?,?,?)"
                 ,new Object[]{alarmLog.getBid(),alarmLog.getbType(),alarmLog.getType(),alarmLog.getLevel(),alarmLog.getMsg(),alarmLog.getCreateTime()});
 
-
     }
 
 
+    public void insertAll(Set<AlarmLog> alarmLogs) {
+        if(CollectionUtils.isEmpty(alarmLogs)){
+            return;
+        }
+
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (bid,bType,type,level,msg) VALUES (?,?,?,?,?)",
+                alarmLogs,alarmLogs.size(), new ParameterizedPreparedStatementSetter<AlarmLog>() {
+                    @Override
+                    public void setValues(PreparedStatement ps, AlarmLog argument) throws SQLException {
+                        ps.setLong(1,argument.getBid());
+                        ps.setInt(2,argument.getbType());
+                        ps.setInt(3, argument.getType());
+                        ps.setInt(4,argument.getLevel());
+                        ps.setString(5,argument.getMsg());
+                    }
+                });
+    }
 }

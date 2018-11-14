@@ -88,4 +88,15 @@ public class TopologyNode {
     public void setDeviceIds(List<Long> deviceIds) {
         this.deviceIds = deviceIds;
     }
+
+    @Override
+    public String toString() {
+        return "TopologyNode{" +
+                "fromDeviceId=" + fromDeviceId +
+                ", toDeviceId=" + toDeviceId +
+                ", direction=" + direction +
+                ", child=" + child +
+                ", deviceIds=" + deviceIds +
+                '}';
+    }
 }

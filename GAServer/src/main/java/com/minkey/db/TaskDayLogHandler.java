@@ -60,13 +60,13 @@ public class TaskDayLogHandler {
         if(CollectionUtils.isEmpty(taskDayLogs)){
             return;
         }
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetLogId,taskId,linkId,successNum,successFlow,errorNum,errorFlow,createTime) VALUES (?,?,?,?,?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetLogId,targetTaskId,linkId,successNum,successFlow,errorNum,errorFlow,createTime) VALUES (?,?,?,?,?,?,?,?)",
                 taskDayLogs, taskDayLogs.size(),
                 new ParameterizedPreparedStatementSetter<TaskDayLog>() {
                     @Override
                     public void setValues(PreparedStatement ps, TaskDayLog argument) throws SQLException {
                         ps.setLong(1,argument.getTargetLogId());
-                        ps.setString(2,argument.getTaskId());
+                        ps.setString(2,argument.getTargetTaskId());
                         ps.setLong(3,argument.getLinkId());
                         ps.setLong(4,argument.getSuccessNum());
                         ps.setLong(5,argument.getSuccessFlow());

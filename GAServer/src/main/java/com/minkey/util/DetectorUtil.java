@@ -17,7 +17,7 @@ import java.util.Map;
 public class DetectorUtil {
 
     public static boolean check(String detectorIp,int detectorPort){
-        String url = String.format("http://%s:%s",detectorIp,detectorPort);
+        String url = String.format("http://%s:%s/check",detectorIp,detectorPort);
         String returnStr = HttpClient.postRequest(url,null);
         if(StringUtils.isEmpty(returnStr)){
             return false;

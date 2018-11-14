@@ -50,7 +50,7 @@ public class TaskHandler {
                 new ParameterizedPreparedStatementSetter<Task>() {
                     @Override
                     public void setValues(PreparedStatement ps, Task argument) throws SQLException {
-                        ps.setString(1,argument.getTargetId());
+                        ps.setString(1,argument.getTargetTaskId());
                         ps.setString(2,argument.getTaskName());
                         ps.setLong(3,argument.getLinkId());
                         ps.setInt(4,argument.getStatus());
@@ -73,10 +73,26 @@ public class TaskHandler {
 
         StringBuffer sqlIds = new StringBuffer(" 1=2 ");
         taskIds.forEach(taskId -> {
-            sqlIds.append(" or taskId=" + taskId);
+            sqlIds.append(" or id=" + taskId);
         });
         List<Task> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
                 new BeanPropertyRowMapper<>(Task.class));
+
+        return devices;
+    }
+
+    public List<Task> query8LinkAndIds(Long linkId, Set<String> targetTaskIds) {
+        if(CollectionUtils.isEmpty(targetTaskIds)){
+            return null;
+        }
+
+        StringBuffer sqlIds = new StringBuffer(" AND ( 1=2 ");
+        targetTaskIds.forEach(taskId -> {
+            sqlIds.append(" or targetTaskId=" + taskId);
+        });
+        sqlIds.append(")");
+        List<Task> devices = jdbcTemplate.query("select * from "+tableName +" where linkId=? "+ sqlIds.toString(),
+                new Object[]{linkId},new BeanPropertyRowMapper<>(Task.class));
 
         return devices;
     }

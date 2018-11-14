@@ -23,7 +23,7 @@ public class UserHandler {
 
 
     public long queryCount() {
-        Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Long.class);
+        Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" WHERE status > -1 ",Long.class);
         return count;
     }
 
@@ -85,7 +85,7 @@ public class UserHandler {
      * @param uid
      */
     public void resetPwd(Long uid,String pwd) {
-        int num = jdbcTemplate.update("update "+tableName+" set pwd = ? where uid= ?",new Object[]{pwd,uid});
+        int num = jdbcTemplate.update("update "+tableName+" set pwd = ? where status > -1 AND uid= ?",new Object[]{pwd,uid});
 
         if(num == 0){
             throw new DataException("更新用户密码失败");
@@ -98,11 +98,8 @@ public class UserHandler {
      */
     public void wrongPwd(Long uid) {
 
-        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where status > -1 AND uid= ?",new Object[]{uid});
 
-        if(num == 0){
-            throw new DataException("更新用户密码输入次数失败");
-        }
     }
 
     /**
@@ -110,15 +107,13 @@ public class UserHandler {
      * @param uid
      */
     public void cleanWrongPwdTime(Long uid) {
-        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 where uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 where status > -1 AND uid= ?",new Object[]{uid});
 
-        if(num == 0){
-            throw new DataException("清除用户密码输入次数失败");
-        }
+
     }
 
     public User query(Long uid) {
-        List<User>  userList = jdbcTemplate.query("select * from "+tableName+" where uid= ?",new Object[]{uid}, new BeanPropertyRowMapper<>(User.class));
+        List<User>  userList = jdbcTemplate.query("select * from "+tableName+" where status > -1 AND uid= ?",new Object[]{uid}, new BeanPropertyRowMapper<>(User.class));
         if(CollectionUtils.isEmpty(userList)){
             return null;
         }
@@ -126,36 +121,40 @@ public class UserHandler {
     }
 
     public User query8Name(String uName) {
-        List<User> userList =  jdbcTemplate.query("select * from "+tableName+" where uName= ?",new Object[]{uName}, new BeanPropertyRowMapper<>(User.class));
+        List<User> userList =  jdbcTemplate.query("select * from "+tableName+" where status > -1 AND  uName= ?",new Object[]{uName}, new BeanPropertyRowMapper<>(User.class));
         if(CollectionUtils.isEmpty(userList)){
             return null;
         }
         return userList.get(0);
     }
 
+    /**
+     * 查询所有用户，不包括已经删除的
+     * @return
+     */
     public List<User> queryAll() {
-        List<User> userList = jdbcTemplate.query("select * from "+tableName , new Object[]{}, new BeanPropertyRowMapper<>(User.class));
+        List<User> userList = jdbcTemplate.query("select * from "+tableName + " where uid > 0 AND status > -1", new Object[]{}, new BeanPropertyRowMapper<>(User.class));
         return userList;
     }
 
 
     public void del(Long uid) {
-        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set status = -1 where uid= ?",new Object[]{uid});
 
     }
 
     /**
-     * 根据ids批量获取用户
-     * @param deviceIds
+     * 根据ids批量获取用户,包含已经删除的用户
+     * @param uids
      * @return
      */
-    public List<User> query8Ids(Set<Long> deviceIds) {
-        if(CollectionUtils.isEmpty(deviceIds)){
+    public List<User> query8Ids(Set<Long> uids) {
+        if(CollectionUtils.isEmpty(uids)){
             return null;
         }
 
         StringBuffer sqlIds = new StringBuffer(" 1=2 ");
-        deviceIds.forEach(uid -> {
+        uids.forEach(uid -> {
             sqlIds.append(" or uid=" +uid);
         });
         List<User> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),

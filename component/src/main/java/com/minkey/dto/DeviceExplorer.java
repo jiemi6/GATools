@@ -107,4 +107,11 @@ public class DeviceExplorer {
             return MyLevel.LEVEL_NORMAL;
         }
     }
+
+    public String showString(){
+        return String.format("cpu:%s,mem:%s,disk:%s",
+                getCpu().getUseRateStr(),
+                getDisk().getUseRateStr(),
+                getMem().getUseRateStr());
+    }
 }

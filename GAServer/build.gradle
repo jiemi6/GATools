@@ -4,6 +4,9 @@ sourceSets {
         java {
 
         }
+        resources{
+            srcDir "src/main/conf"
+        }
     }
     test {
         java {

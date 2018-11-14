@@ -9,6 +9,8 @@ import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.Link;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -73,29 +75,72 @@ public class DeviceCache {
     private Map<Long,DeviceService> deviceSNMPServiceMap = new HashMap<>();
 
     /**
-     * 是否重载，标志位
+     * 是否重载，标志位、锁
      */
-    private boolean reload = false;
+    private Boolean reload = false;
 
-    private void cleanAllCache(){
-        //清空链路缓存
-        allLinkMap = new HashMap<>();
-        //清空设备缓存
-        allDeviceMap = new HashMap<>();
-        //清空探针缓存
-        allDetectorServiceMap = new HashMap<>();
-        //清空链路探针缓存
-        allLinkDetectorServiceMap = new HashMap<>();
-        deviceMapLink= new HashMap<>();
-        deviceSNMPServiceMap = new HashMap<>();
+    @Autowired
+    TaskExecutor taskExecutor;
+
+    @Async
+    public void refresh(){
+        synchronized(reload){
+            //如果本来就是true，证明正在执行中
+            if(reload){
+                return;
+            }
+            reload.notify();
+            reload = true;
+        }
     }
+
+    private void startLinsten() {
+        while (true) {
+            synchronized (reload) {
+                //如果不需要reload则wait
+                if(!reload){
+                    try {
+                        reload.wait();
+                    } catch (InterruptedException e) {
+                        log.error(e.getMessage());
+                    }
+                }
+
+                try{
+                    initDB2Cache();
+                    log.info("刷新链路和设备数据到缓存中");
+                }catch (Exception e){
+                    log.error("刷新数据库数据到缓存中异常",e);
+                }
+
+                reload = false;
+            }
+        }
+    }
+
+
+    /**
+     * 初始化方法，内置监听器，当链路+设备发生任何数据发生变化时候，就重载缓存
+     */
+    public void init(){
+        taskExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                startLinsten();
+            }
+        });
+
+        initDB2Cache();
+    }
+
+
 
     /**
      * 初始化每天晚上自动执行一次
      * 每天凌晨 1：00执行
      */
     @Scheduled(cron = "0 0 1 * * ?")
-    public void init(){
+    public void initDB2Cache(){
         //所有链路
         List<Link> links = linkHandler.queryAll();
 
@@ -160,7 +205,6 @@ public class DeviceCache {
             }
         }
 
-
     }
 
 
@@ -213,5 +257,9 @@ public class DeviceCache {
             }
         }
         return null;
+    }
+
+    public Map<Long, Device> allDevice() {
+        return allDeviceMap;
     }
 }

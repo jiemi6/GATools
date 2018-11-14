@@ -18,9 +18,9 @@ public class TaskDayLog implements Serializable{
     private long targetLogId;
 
     /**
-     * 任务id
+     * 任务id,来源方id
      */
-    private String taskId;
+    private String targetTaskId;
 
     /**
      * 冗余链路id，区分链路
@@ -105,12 +105,12 @@ public class TaskDayLog implements Serializable{
         this.createTime = createTime;
     }
 
-    public String getTaskId() {
-        return taskId;
+    public String getTargetTaskId() {
+        return targetTaskId;
     }
 
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
+    public void setTargetTaskId(String targetTaskId) {
+        this.targetTaskId = targetTaskId;
     }
 
     public long getLinkId() {
@@ -126,7 +126,7 @@ public class TaskDayLog implements Serializable{
         return "TaskDayLog{" +
                 "logId='" + logId + '\'' +
                 ", targetLogId=" + targetLogId +
-                ", taskId='" + taskId + '\'' +
+                ", targetTaskId='" + targetTaskId + '\'' +
                 ", linkId=" + linkId +
                 ", successNum=" + successNum +
                 ", successFlow=" + successFlow +

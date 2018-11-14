@@ -13,4 +13,9 @@ public interface AlarmType {
          */
         public static int shebeixingneng = 2;
 
+        /**
+         * 链路丢失设备
+         */
+        public static int shebeidiushi = 3;
+
     }

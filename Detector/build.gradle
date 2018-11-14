@@ -1,4 +1,20 @@
 
+sourceSets {
+    main {
+        java {
+
+        }
+        resources{
+            srcDir "src/main/conf"
+        }
+    }
+    test {
+        java {
+
+        }
+    }
+}
+
 dependencies {
     compile project(':component')
 

@@ -1,6 +1,7 @@
 package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.cache.DeviceCache;
 import com.minkey.contants.ConfigEnum;
 import com.minkey.contants.Modules;
 import com.minkey.db.CheckHandler;
@@ -12,6 +13,7 @@ import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.handler.SelfCheckJob;
+import com.minkey.util.SpringUtils;
 import com.minkey.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -315,7 +317,7 @@ public class SystemController {
     @RequestMapping("/test")
     public String ttt(){
 
-        int i = 1/0;
+        SpringUtils.getBean(DeviceCache.class).refresh();
 
         return JSONMessage.createSuccess().toString();
     }

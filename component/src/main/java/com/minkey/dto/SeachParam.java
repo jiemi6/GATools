@@ -95,4 +95,15 @@ public class SeachParam {
 
         return " between '"+this.startDate + "' and '" + this.endDate +"'";
     }
+
+    @Override
+    public String toString() {
+        return "SeachParam{" +
+                "keyword='" + keyword + '\'' +
+                ", startDate='" + startDate + '\'' +
+                ", endDate='" + endDate + '\'' +
+                ", level=" + level +
+                ", type=" + type +
+                '}';
+    }
 }

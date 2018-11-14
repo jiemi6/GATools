@@ -8,12 +8,13 @@ import java.util.Random;
  * 验证码生成
  */
 public class VCodeUtil {
-    private static int width = 90;// 定义图片的width
-    private static int height = 30;// 定义图片的height
+    private static int width = 70;// 定义图片的width
+    private static int height = 45;// 定义图片的height
     public static final int VCODE_NUM = 4;// 定义图片上显示验证码的个数
-    private static int xx = 17;
-    private static int fontHeight = 22;
-    private static  int codeY = 20;
+    private static int startX = 6;//验证码开始的横向x值
+    private static int codeX = 14;//每个验证码本身所占的x值
+    private static  int codeY = 27;//验证码所在的y值
+    private static int fontHeight = 20;
     private static char[] codeSequence = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
             'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
@@ -58,7 +59,7 @@ public class VCodeUtil {
 
         // 随机产生40条干扰线，使图象中的认证码不易被其它程序探测到。
         gd.setColor(Color.BLACK);
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             int x = random.nextInt(width);
             int y = random.nextInt(height);
             int xl = random.nextInt(12);
@@ -81,7 +82,7 @@ public class VCodeUtil {
 
             // 用随机产生的颜色将验证码绘制到图像中。
             gd.setColor(new Color(red, green, blue));
-            gd.drawString(code, (i + 1) * xx, codeY);
+            gd.drawString(code, startX + i * codeX , codeY);
 
             // 将产生的四个随机数组合在一起。
             randomCode.append(code);

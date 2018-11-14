@@ -120,7 +120,7 @@ public class TaskDayLogCollector {
         mapList.forEach(stringObjectMap -> {
             TaskDayLog taskDayLog = new TaskDayLog();
             taskDayLog.setTargetLogId(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
-            taskDayLog.setTaskId( stringObjectMap.get("taskid").toString());
+            taskDayLog.setTargetTaskId( stringObjectMap.get("taskid").toString());
             taskDayLog.setLinkId(link.getLinkId());
             taskDayLog.setSuccessNum(Long.valueOf(stringObjectMap.get("dayloggerid").toString()));
             taskDayLog.setSuccessNum(Long.valueOf(stringObjectMap.get("totalSuccessNum").toString()));
