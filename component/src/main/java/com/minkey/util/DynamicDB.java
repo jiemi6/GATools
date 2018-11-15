@@ -1,5 +1,6 @@
 package com.minkey.util;
 
+import com.minkey.contants.CommonContants;
 import com.minkey.dto.DBConfigData;
 import com.minkey.exception.DataException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Slf4j
 @Component
 public class DynamicDB {
-    public static final int default_timeout = 1000;
+    public static final int default_timeout = CommonContants.DEFAULT_TIMEOUT;
 
 
     /**
@@ -45,10 +46,11 @@ public class DynamicDB {
                     .driverClassName(databaseDriver.getDriverClassName())
                     .username(userName)
                     .password(password);
+
             DataSource dataSource = dataSourceBuilder.build();
+            dataSource.setLoginTimeout(1);
             jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.setQueryTimeout(default_timeout);
-            jdbcTemplate.execute(databaseDriver.getValidationQuery());
         }catch (Exception e ){
             throw new DataException("构造数据库连接异常",e);
         }
