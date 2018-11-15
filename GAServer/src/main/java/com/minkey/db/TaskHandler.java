@@ -102,9 +102,9 @@ public class TaskHandler {
             return;
         }
 
-        StringBuffer whereStr = new StringBuffer(" where ( 1=1 ");
+        StringBuffer whereStr = new StringBuffer(" where ( 1=2 ");
         taskIds.forEach(taskId -> {
-            whereStr.append(" and targetTaskId=" + taskId);
+            whereStr.append(" or targetTaskId=" + taskId);
         });
         whereStr.append(")");
         int num = jdbcTemplate.update("update "+tableName+" set level=? "+whereStr,new Object[]{taskLevel});

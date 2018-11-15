@@ -233,17 +233,18 @@ public class AlarmHandler {
     private int checkTask(Task task){
         String taskTargetId = task.getTargetTaskId();
 
-        Set<AlarmLog> taskAlarm = new HashSet<>();
+        Set<AlarmLog> taskAlarms = new HashSet<>();
         TaskSource taskSource = taskSourceHandler.query(task.getLinkId(),taskTargetId);
         AlarmLog alarmLog;
         if(taskSource == null){
             alarmLog = new AlarmLog();
-            alarmLog.setBid(task.getTaskId());
-            alarmLog.setbType(AlarmLog.BTYPE_TASK);
-            alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-            alarmLog.setType(AlarmType.no_source);
-            taskAlarm.add(alarmLog);
-            return MyLevel.LEVEL_ERROR;
+            alarmLog.setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmType.no_source)
+                    .setMsg(String.format("任务[%s]数据源不存在",task.getTaskName()));
+            taskAlarms.add(alarmLog);
+
         }else{
             DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
 
@@ -253,20 +254,20 @@ public class AlarmHandler {
             Source fromSource = sourceHandler.query(task.getLinkId(),fromSourceId);
             boolean isConnect = sourceCheckHandler.testSource(fromSource,detectorService);
             alarmLog = build(task,fromSource,isConnect);
-            taskAlarm.add(alarmLog);
+            taskAlarms.add(alarmLog);
 
             Source toSource = sourceHandler.query(task.getLinkId(),toSourceId);
             isConnect = sourceCheckHandler.testSource(toSource,detectorService);
             alarmLog = build(task,toSource,isConnect);
-            taskAlarm.add(alarmLog);
+            taskAlarms.add(alarmLog);
 
             //Minkey 检查任务进程是否存在
-
-
         }
 
+        alarmLogHandler.insertAll(taskAlarms);
+
         int level = MyLevel.LEVEL_NORMAL;
-        for (AlarmLog log : taskAlarm) {
+        for (AlarmLog log : taskAlarms) {
             if(log.getLevel() > level){
                 level = log.getLevel();
             }
