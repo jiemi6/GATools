@@ -3,15 +3,17 @@ package com.minkey.handler;
 import com.minkey.cache.CheckStepCache;
 import com.minkey.cache.DeviceCache;
 import com.minkey.contants.MyLevel;
-import com.minkey.db.*;
+import com.minkey.db.CheckItemHandler;
+import com.minkey.db.SourceHandler;
+import com.minkey.db.TaskHandler;
+import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
-import com.minkey.dto.FTPConfigData;
-import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,14 +46,17 @@ public class TaskExamineHandler {
     @Autowired
     FTPUtil ftpUtil;
 
-    public void doTask(long checkId, Long taskId) {
+    @Autowired
+    SourceCheckHandler sourceCheckHandler;
+
+    @Async
+    public void doTaskAsync(long checkId, Task task) {
+        doTask(checkId,task);
+    }
+
+    public void doTask(long checkId, Task task) {
         //需要检查任务数据源 和 数据存放地 两边的情况
         CheckItem checkItem;
-
-        Task task = taskHandler.query(taskId);
-        if(task == null){
-            return;
-        }
 
         String taskTargetId = task.getTargetTaskId();
 
@@ -105,19 +110,8 @@ public class TaskExamineHandler {
     }
 
     private CheckItem testSource_ftp(long checkId, Task task, Source source, DeviceService detectorService) {
-        boolean isConnect;
-        if(source.isNetAreaIn()){
-            isConnect = ftpUtil.testFTPConnect(source,FTPUtil.default_timeout);
-        }else{
-            //将source转换为ftpconfigdata
-            FTPConfigData ftpConfigData = new FTPConfigData();
-            ftpConfigData.setIp(source.getIp());
-            ftpConfigData.setPort(source.getPort());
-            ftpConfigData.setName(source.getName());
-            ftpConfigData.setPwd(source.getPwd());
-            ftpConfigData.setRootPath(source.getDbName());
-            isConnect = DetectorUtil.testFTP(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
-        }
+        boolean isConnect =sourceCheckHandler.testSource_ftp(source,detectorService);
+
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
 
         if(isConnect){
@@ -132,12 +126,8 @@ public class TaskExamineHandler {
     }
 
     private CheckItem testSource_db(long checkId, Task task, Source source, DeviceService detectorService) {
-        boolean isConnect;
-        if(source.isNetAreaIn()){
-            isConnect = dynamicDB.testDB(source);
-        }else{
-            isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
-        }
+        boolean isConnect = sourceCheckHandler.testSource_db(source,detectorService);
+
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
 
         if(isConnect){

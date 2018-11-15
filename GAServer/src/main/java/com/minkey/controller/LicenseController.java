@@ -84,7 +84,7 @@ public class LicenseController {
             //校验证书与key的关系，用key解密
             byte[] licenseData = SymmetricEncoder.AESDncode(licenseKey.getBytes(), file.getBytes());
 
-            if(StringUtils.isEmpty(licenseData)){
+            if(licenseData == null){
                 //解密失败，返回错误
                 return JSONMessage.createFalied("无效证书文件").toString();
             }
@@ -225,13 +225,21 @@ public class LicenseController {
 
     private JSONObject licenseData;
 
-    public JSONObject getLicenseData() {
-        return licenseData;
+    /**
+     * 检查证书的有效性
+     * @return
+     */
+    public boolean checkValid() {
+
+
+        return true;
     }
+
 
     public void init(){
         String licenseKey = getKey();
-        log.info("生成系统证书key："+licenseKey);
+
+        log.warn("系统证书key："+licenseKey);
 
         Map<String, Object> dbData = configHandler.query(configKey);
 
@@ -239,7 +247,7 @@ public class LicenseController {
             return;
         }
 
-        licenseData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+        this.licenseData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
     }
 
 }

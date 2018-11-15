@@ -66,14 +66,14 @@ public class TaskHandler {
 
     }
 
-    public List<Task> query8Ids(Set<Long> taskIds) {
+    public List<Task> query8TaskIds(Set<Long> taskIds) {
         if(CollectionUtils.isEmpty(taskIds)){
             return null;
         }
 
         StringBuffer sqlIds = new StringBuffer(" 1=2 ");
         taskIds.forEach(taskId -> {
-            sqlIds.append(" or id=" + taskId);
+            sqlIds.append(" or taskId=" + taskId);
         });
         List<Task> devices = jdbcTemplate.query("select * from "+tableName +" where "+ sqlIds.toString(),
                 new BeanPropertyRowMapper<>(Task.class));
@@ -81,7 +81,7 @@ public class TaskHandler {
         return devices;
     }
 
-    public List<Task> query8LinkAndIds(Long linkId, Set<String> targetTaskIds) {
+    public List<Task> query8LinkAndTargetIds(Long linkId, Set<String> targetTaskIds) {
         if(CollectionUtils.isEmpty(targetTaskIds)){
             return null;
         }
@@ -95,5 +95,19 @@ public class TaskHandler {
                 new Object[]{linkId},new BeanPropertyRowMapper<>(Task.class));
 
         return devices;
+    }
+
+    public void updateLevel(Set<Long> taskIds, int taskLevel) {
+        if(CollectionUtils.isEmpty(taskIds)){
+            return;
+        }
+
+        StringBuffer whereStr = new StringBuffer(" where ( 1=1 ");
+        taskIds.forEach(taskId -> {
+            whereStr.append(" and targetTaskId=" + taskId);
+        });
+        whereStr.append(")");
+        int num = jdbcTemplate.update("update "+tableName+" set level=? "+whereStr,new Object[]{taskLevel});
+
     }
 }

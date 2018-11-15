@@ -55,10 +55,8 @@ public class TaskCollector {
      */
     @Scheduled(cron="0 30 1 * * ?")
     public void getTaskFromOtherDB(){
-        if(isDebug){
-            log.error("测试抓取任务列表调度.");
-//            return;
-        }
+        log.warn("开始抓取其他链路数据库信息...");
+
         List<Link> linkList = null;
         try {
             //查询所有链路
@@ -89,6 +87,8 @@ public class TaskCollector {
             }
 
         }
+
+        log.warn("抓取其他链路数据库信息结束...");
     }
 
     private void shujujiaohuan(Link link, JdbcTemplate jdbcTemplate) {
@@ -96,19 +96,19 @@ public class TaskCollector {
             //获取task
             collectorTask(jdbcTemplate, link);
         } catch (Exception e) {
-            log.error("从数据交换系统抓取任务保存到数据库中异常", e);
+            log.error("从数据交换系统抓取[任务信息]保存到数据库中异常", e);
         }
         try {
             //获取taskSource
             collectorTaskSource(jdbcTemplate, link);
         } catch (Exception e) {
-            log.error("从数据交换系统抓取任务与数据源对应关系保存到数据库中异常", e);
+            log.error("从数据交换系统抓取[任务与数据源对应关系]保存到数据库中异常", e);
         }
         try {
             //获取Source
             collectorSource(jdbcTemplate, link);
         } catch (Exception e) {
-            log.error("从数据交换系统抓取数据源保存到数据库中异常", e);
+            log.error("从数据交换系统抓取[数据源信息]保存到数据库中异常", e);
         }
     }
 
@@ -134,7 +134,7 @@ public class TaskCollector {
             task.setTargetTaskId((String)stringObjectMap.get("taskId"));
             task.setTaskName((String) stringObjectMap.get("name"));
             //在tbtask表中的tbtasktypeid字段 01说明是数据库同步，05是FTP文件同步
-            String tasktypeid = (String)stringObjectMap.get("status");
+            String tasktypeid = (String)stringObjectMap.get("tbtasktypeid");
             if(StringUtils.equals(tasktypeid,"01")){
                 task.setTaskType(Task.taskType_db);
             }else if(StringUtils.equals(tasktypeid,"05")){

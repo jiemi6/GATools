@@ -69,18 +69,26 @@ public class SysLogUtil {
      */
     public void startServer(int port) throws SystemException{
         try{
-            serverIF = SyslogServer.getThreadedInstance("udp");
-            SyslogServerConfigIF config = serverIF.getConfig();
-    //        config.setHost("192.168.1.114");
-            config.setPort(port);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    serverIF = SyslogServer.getThreadedInstance("udp");
+                    SyslogServerConfigIF config = serverIF.getConfig();
+                    //        config.setHost("192.168.1.114");
+                    config.setPort(port);
 
-            config.addEventHandler(new PrintStreamSyslogServerEventHandler(System.out));
-            config.addEventHandler(new DBSyslogServerEventHandler());
+                    config.addEventHandler(new PrintStreamSyslogServerEventHandler(System.out));
+                    config.addEventHandler(new DBSyslogServerEventHandler());
 
-            serverIF.initialize("udp",config);
-            serverIF.run();
+                    serverIF.initialize("udp",config);
+                    serverIF.run();
+                    log.warn("启动syslog接收服务成功");
+                }
+            },"Syslog-Receive").start();
+
         } catch (Exception e) {
-            throw new SystemException("启动 syslog 服务器异常",e);
+            log.warn("启动syslog接收服务异常",e);
+            throw new SystemException("启动 syslog 服务器异常"+e.getMessage());
         }
     }
 

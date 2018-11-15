@@ -9,7 +9,6 @@ import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.Link;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -79,9 +78,6 @@ public class DeviceCache {
      */
     private Boolean reload = false;
 
-    @Autowired
-    TaskExecutor taskExecutor;
-
     @Async
     public void refresh(){
         synchronized(reload){
@@ -123,13 +119,19 @@ public class DeviceCache {
      * 初始化方法，内置监听器，当链路+设备发生任何数据发生变化时候，就重载缓存
      */
     public void init(){
-        initDB2Cache();
-        taskExecutor.execute(new Runnable() {
+        try{
+            initDB2Cache();
+            log.info("初始化数据到缓存.");
+        }catch (Exception e){
+            log.info("初始化数据到缓存异常",e);
+        }
+
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 startLinsten();
             }
-        });
+        },"CacheLinstener").start();
 
     }
 
@@ -261,5 +263,27 @@ public class DeviceCache {
 
     public Map<Long, Device> allDevice() {
         return allDeviceMap;
+    }
+
+    /**
+     * 根据链路id获取链路名称
+     * @param allLinkId
+     */
+    public Map<Long, String> getName8LinkIds(Set<Long> allLinkId) {
+        Map<Long,String> allName = new HashMap<>(allLinkId.size());
+        for(Long linkId :allLinkId){
+            Link link = allLinkMap.get(linkId);
+            if(link == null){
+                allName.put(linkId,null);
+            }else{
+                allName.put(linkId,link.getLinkName());
+            }
+        }
+        return allName;
+
+    }
+
+    public Link getLink8Id(Long linkId) {
+        return allLinkMap.get(linkId);
     }
 }

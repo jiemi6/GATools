@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 设备接口
@@ -234,6 +236,13 @@ public class DeviceController {
         }
 
         try{
+            //是否属于某个链路
+            Set<Long> allLinkId = deviceCache.getLink8DeviceId(deviceId);
+            if(!CollectionUtils.isEmpty(allLinkId)){
+                Map<Long,String> allName = deviceCache.getName8LinkIds(allLinkId);
+                return JSONMessage.createFalied(String.format("设备属于链路[%s],请先从链路中移除设备。",StringUtils.join(allName.values(),","))).toString();
+            }
+
             //先删除
             deviceServiceHandler.delete8DeviceId(deviceId);
 

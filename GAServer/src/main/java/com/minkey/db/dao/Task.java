@@ -1,5 +1,7 @@
 package com.minkey.db.dao;
 
+import com.minkey.contants.MyLevel;
+
 /**
  * 任务对象，数据来自别的数据库
  */
@@ -7,7 +9,7 @@ public class Task {
     /**
      * 自增主键
      */
-    private long id;
+    private long taskId;
 
     /**
      *
@@ -39,6 +41,11 @@ public class Task {
      */
     private int status;
 
+    /**
+     * 任务当前级别
+     */
+    private int level = MyLevel.LEVEL_NORMAL;
+
     public String getTargetTaskId() {
         return targetTaskId;
     }
@@ -63,12 +70,12 @@ public class Task {
         this.taskName = taskName;
     }
 
-    public long getId() {
-        return id;
+    public long getTaskId() {
+        return taskId;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setTaskId(long taskId) {
+        this.taskId = taskId;
     }
 
     public int getStatus() {
@@ -87,14 +94,25 @@ public class Task {
         this.taskType = taskType;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
         return "Task{" +
-                "id=" + id +
+                "taskId=" + taskId +
                 ", targetTaskId='" + targetTaskId + '\'' +
                 ", linkId=" + linkId +
+                ", taskType=" + taskType +
                 ", taskName='" + taskName + '\'' +
                 ", status=" + status +
+                ", level=" + level +
                 '}';
     }
+
 }

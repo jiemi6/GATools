@@ -1,7 +1,9 @@
 package com.minkey.filter;
 
 import com.minkey.contants.ErrorCodeEnum;
+import com.minkey.controller.LicenseController;
 import com.minkey.dto.JSONMessage;
+import com.minkey.util.SpringUtils;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.*;
@@ -34,7 +36,7 @@ public class LicenseFilter implements Filter {
         patterns.add(Pattern.compile("/license/keyExport"));
         patterns.add(Pattern.compile("/license/key"));
 
-        patterns.add(Pattern.compile(".*[(\\.css )(\\.json )(\\.png )(\\.gif )(\\.js )(\\.eot )(\\.svg )(\\.ttf )(\\.woff )(\\.mp4)]"));
+        patterns.add(Pattern.compile(".*[(\\.css)||(\\.json)||(\\.png)||(\\.gif)||(\\.js)||(\\.eot)||(\\.svg)||(\\.ttf)||(\\.woff)||(\\.mp4)]"));
 
     }
 
@@ -93,10 +95,7 @@ public class LicenseFilter implements Filter {
     }
 
     private boolean checkLicense() {
-//        JSONObject license = SpringUtils.getBean(LicenseController.class).getLicenseData();
-
-
-        return true;
+        return SpringUtils.getBean(LicenseController.class).checkValid();
     }
 
 

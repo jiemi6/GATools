@@ -11,47 +11,27 @@ import java.util.Map;
 @Component
 public class CheckStepCache {
 
-    private Map<Long,Integer> stepCache = new HashMap<>();
     private Map<Long,Integer> totalStepCache = new HashMap<>();
 
     private final Object lock= new Object();
 
-    public Integer now(Long checkId){
-        synchronized (lock){
-            if(stepCache.containsKey(checkId)){
-                return stepCache.get(checkId);
-            }else{
-                return null;
-            }
-        }
-    }
-
-
-    public Integer next(Long checkId){
-        synchronized (lock){
-            if(stepCache.containsKey(checkId)){
-                Integer step = stepCache.get(checkId);
-                step ++;
-                stepCache.put(checkId,step);
-                return step;
-            }else{
-                return null;
-            }
-        }
-    }
-
-    public void create(Long checkId,Integer totalStep){
+    public void create(long checkId,int totalStep){
         synchronized (lock) {
-            stepCache.put(checkId,0);
-            totalStepCache.put(checkId,totalStep);
+            Integer step = totalStepCache.get(checkId);
+            if(step == null){
+                step =0;
+            }else{
+                step = step +totalStep;
+            }
+            totalStepCache.put(checkId,step);
         }
     }
 
-    public Integer total(Long checkId){
+    public Integer total(long checkId){
         return totalStepCache.get(checkId);
     }
 
-    public CheckItem createNextItem(Long checkId){
+    public CheckItem createNextItem(long checkId){
         return new CheckItem(checkId,totalStepCache.get(checkId));
     }
 }

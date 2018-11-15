@@ -57,7 +57,7 @@ public class AnalysisController {
             Map<String, String> nameMap = null;
             if(!CollectionUtils.isEmpty(page.getList())) {
                 Set<String> targetTaskIds = page.getList().stream().map(taskDayLog -> taskDayLog.getTargetTaskId()).collect(Collectors.toSet());
-                nameMap = taskHandler.query8LinkAndIds(linkId,targetTaskIds).stream().collect(Collectors.toMap(Task::getTargetTaskId, Task :: getTaskName));
+                nameMap = taskHandler.query8LinkAndTargetIds(linkId,targetTaskIds).stream().collect(Collectors.toMap(Task::getTargetTaskId, Task :: getTaskName));
             }
 
             return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();

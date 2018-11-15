@@ -1,10 +1,11 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceCache;
+import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckHandler;
 import com.minkey.db.CheckItemHandler;
-import com.minkey.db.dao.Check;
-import com.minkey.db.dao.CheckItem;
-import com.minkey.db.dao.User;
+import com.minkey.db.TaskHandler;
+import com.minkey.db.dao.*;
 import com.minkey.dto.JSONMessage;
 import com.minkey.handler.ExamineHandler;
 import com.minkey.handler.TaskExamineHandler;
@@ -37,6 +38,10 @@ public class ExamineController {
 
     @Autowired
     CheckItemHandler checkItemHandler;
+    @Autowired
+    DeviceCache deviceCache;
+    @Autowired
+    TaskHandler taskHandler;
 
     /**
      * 一键体检
@@ -88,8 +93,19 @@ public class ExamineController {
         try{
             //存入数据库，获取id
             long checkId = checkHandler.insert(check);
-            //开始检查
-            examineHandler.doLink(checkId,linkId);
+
+            Link link = deviceCache.getLink8Id(linkId);
+            if(link == null){
+                log.error("发起单个链路体检，链路不存在 linkId = {}" ,linkId);
+                //不存在就只有一步
+                CheckItem checkItem = new CheckItem(checkId,1);
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
+                checkItem.setResultMsg(String.format("链路不存在，链路id=%s",linkId));
+                checkItemHandler.insert(checkItem);
+            }else {
+                //开始检查
+                examineHandler.doLinkAynsc(checkId,link);
+            }
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -120,8 +136,19 @@ public class ExamineController {
         try{
             //存入数据库，获取id
             long checkId = checkHandler.insert(check);
-            //开始检查
-            examineHandler.doDevice(checkId,deviceId);
+
+            Device device = deviceCache.getDevice(deviceId);
+            if(device == null){
+                log.error("发起单个设备体检，体检设备不存在 deviceId = {}" ,deviceId);
+                //不存在就只有一步
+                CheckItem checkItem = new CheckItem(checkId,1);
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
+                checkItem.setResultMsg(String.format("设备不存在，设备id=%s",deviceId));
+                checkItemHandler.insert(checkItem);
+            }else{
+                //开始检查
+                examineHandler.doDeviceAsync(checkId,device);
+            }
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -148,12 +175,26 @@ public class ExamineController {
         check.setCheckName(user.getuName()+"发起链路体检");
         check.setCheckType(Check.CHECKTYPE_ALLINONE);
         check.setUid(user.getUid());
-        //存入数据库，获取id
-        long checkId = checkHandler.insert(check);
 
         try{
-            //开始检查
-            taskExamineHandler.doTask(checkId,taskId);
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
+
+
+            Task task = taskHandler.query(taskId);
+            if(task == null){
+                log.error("发起单个任务体检，体检任务不存在 deviceId = {}" ,taskId);
+                //不存在就只有一步
+                CheckItem checkItem = new CheckItem(checkId,1);
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
+                checkItem.setResultMsg(String.format("任务不存在，任务id=%s",taskId));
+                checkItemHandler.insert(checkItem);
+            }else{
+                //开始检查
+                taskExamineHandler.doTaskAsync(checkId,task);
+            }
+
+
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

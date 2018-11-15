@@ -58,7 +58,7 @@ public class AlarmController {
             Object nameJson = null;
             if(!CollectionUtils.isEmpty(logs.getList())){
                 Set<Long>  taskIds = logs.getList().stream().map(alarmLog -> alarmLog.getBid()).collect(Collectors.toSet());
-                Map<Long,String> nameMap = taskHandler.query8Ids(taskIds).stream().collect(Collectors.toMap(Task::getId, Task::getTaskName ));
+                Map<Long,String> nameMap = taskHandler.query8TaskIds(taskIds).stream().collect(Collectors.toMap(Task::getTaskId, Task::getTaskName ));
 
                 nameJson = JSONObject.toJSON(nameMap);
             }

@@ -60,40 +60,45 @@ public class AlarmLog {
         return bid;
     }
 
-    public void setBid(long bid) {
+    public AlarmLog setBid(long bid) {
         this.bid = bid;
+        return this;
     }
 
     public int getbType() {
         return bType;
     }
 
-    public void setbType(int bType) {
+    public AlarmLog setbType(int bType) {
         this.bType = bType;
+        return this;
     }
 
     public int getType() {
         return type;
     }
 
-    public void setType(int type) {
+    public AlarmLog setType(int type) {
         this.type = type;
+        return this;
     }
 
     public String getMsg() {
         return msg;
     }
 
-    public void setMsg(String msg) {
+    public AlarmLog setMsg(String msg) {
         this.msg = msg;
+        return this;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public AlarmLog setLevel(int level) {
         this.level = level;
+        return this;
     }
 
     public Date getCreateTime() {

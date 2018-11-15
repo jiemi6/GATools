@@ -1,8 +1,5 @@
 package com.minkey;
 
-import com.minkey.cache.DeviceCache;
-import com.minkey.controller.LicenseController;
-import com.minkey.syslog.SysLogUtil;
 import com.minkey.util.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -24,21 +21,8 @@ public class GAToolsRun {
         SpringUtils.setCtx(ctx);
 
 
-        initSystem();
+        log.warn("系统启动完成。");
     }
 
-    public static void initSystem(){
-        //初始化syslog接受服务器
-        SpringUtils.getBean(SysLogUtil.class).startServer(SysLogUtil.SYSLOG_PORT);
-
-        //设备状态扫描器
-        SpringUtils.getBean(DeviceCache.class).init();
-
-        try {
-            SpringUtils.getBean(LicenseController.class).init();
-        }catch (Exception e){
-            log.error("获取注册license异常",e);
-        }
-    }
 
 }

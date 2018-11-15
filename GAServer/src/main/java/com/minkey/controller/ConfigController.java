@@ -367,6 +367,7 @@ public class ConfigController {
             configHandler.insert(configKey,configData.toJSONString());
 
             User user = (User) httpSession.getAttribute("user");
+
             userLogHandler.log(user, Modules.config, String.format("%s %s Ssh组件",user.getuName(),open?"开启":"关闭"));
 
             return JSONMessage.createSuccess().toString();

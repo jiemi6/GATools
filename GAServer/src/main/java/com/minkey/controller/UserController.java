@@ -69,7 +69,8 @@ public class UserController {
             ImageIO.write(VCodeUtil.generateCodeAndPic(vcode), "jpeg", sos);
             sos.close();
 
-            request.getSession().setAttribute(vCodeKey,String.valueOf(vcode));
+            //存小写
+            request.getSession().setAttribute(vCodeKey,String.valueOf(vcode).toLowerCase());
         } catch (IOException e) {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -85,7 +86,7 @@ public class UserController {
     public String checkVCode(String vcode) {
         log.info("start: 执行验证码检查");
         try{
-            if(StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
+            if(StringUtils.equals(vcode.toLowerCase(),(String)session.getAttribute(vCodeKey))){
                 return JSONMessage.createSuccess().toString();
             }else{
                 return JSONMessage.createFalied("验证码错误").toString();
@@ -106,7 +107,7 @@ public class UserController {
     public String login( HttpServletRequest request, String uName, String pwd, String vcode) {
         log.info("start: 执行用户登陆");
         try{
-            if(!StringUtils.equals(vcode,(String)session.getAttribute(vCodeKey))){
+            if(!StringUtils.equals(vcode.toLowerCase(),(String)session.getAttribute(vCodeKey))){
                 return JSONMessage.createFalied("验证码错误").toString();
             }
 

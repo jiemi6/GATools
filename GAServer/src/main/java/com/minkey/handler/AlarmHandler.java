@@ -7,23 +7,24 @@ import com.minkey.contants.AlarmType;
 import com.minkey.contants.DeviceType;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.AlarmLogHandler;
-import com.minkey.db.dao.AlarmLog;
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.Link;
+import com.minkey.db.SourceHandler;
+import com.minkey.db.TaskHandler;
+import com.minkey.db.TaskSourceHandler;
+import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 告警处理，告警数据来源
  */
+@Slf4j
 @Component
 public class AlarmHandler {
     @Autowired
@@ -37,6 +38,17 @@ public class AlarmHandler {
 
     @Autowired
     DeviceExplorerCache deviceExplorerCache;
+
+    @Autowired
+    TaskHandler taskHandler;
+
+    @Autowired
+    TaskSourceHandler taskSourceHandler;
+    @Autowired
+    SourceHandler sourceHandler;
+
+    @Autowired
+    SourceCheckHandler sourceCheckHandler;
 
     /**
      * 扫描所有设备状态
@@ -189,9 +201,97 @@ public class AlarmHandler {
     @Scheduled(cron = "0 */1 * * * ?")
     public void task(){
 
-        
+        //获取所有任务
+        List<Task> allTask = taskHandler.queryAll();
+
+        if(CollectionUtils.isEmpty(allTask)){
+            return;
+        }
+
+        //所有task当前的状态
+        Map<Integer,Set<Long>> taskLevel = new HashMap<>();
+        int level;
+        for (Task task : allTask) {
+            //检查task
+            level = checkTask(task);
+
+            if(taskLevel.get(level) == null){
+                Set<Long> set =new HashSet<>();
+                set.add(task.getTaskId());
+                taskLevel.put(level,set);
+            }else{
+                taskLevel.get(level).add(task.getTaskId());
+            }
+        }
+
+        for(Integer lev : taskLevel.keySet()){
+            taskHandler.updateLevel(taskLevel.get(lev),lev);
+        }
+
+    }
+
+    private int checkTask(Task task){
+        String taskTargetId = task.getTargetTaskId();
+
+        Set<AlarmLog> taskAlarm = new HashSet<>();
+        TaskSource taskSource = taskSourceHandler.query(task.getLinkId(),taskTargetId);
+        AlarmLog alarmLog;
+        if(taskSource == null){
+            alarmLog = new AlarmLog();
+            alarmLog.setBid(task.getTaskId());
+            alarmLog.setbType(AlarmLog.BTYPE_TASK);
+            alarmLog.setLevel(MyLevel.LEVEL_ERROR);
+            alarmLog.setType(AlarmType.no_source);
+            taskAlarm.add(alarmLog);
+            return MyLevel.LEVEL_ERROR;
+        }else{
+            DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
+
+            String fromSourceId = taskSource.getFromResourceId();
+            String toSourceId = taskSource.getToResourceId();
+
+            Source fromSource = sourceHandler.query(task.getLinkId(),fromSourceId);
+            boolean isConnect = sourceCheckHandler.testSource(fromSource,detectorService);
+            alarmLog = build(task,fromSource,isConnect);
+            taskAlarm.add(alarmLog);
+
+            Source toSource = sourceHandler.query(task.getLinkId(),toSourceId);
+            isConnect = sourceCheckHandler.testSource(toSource,detectorService);
+            alarmLog = build(task,toSource,isConnect);
+            taskAlarm.add(alarmLog);
+
+            //Minkey 检查任务进程是否存在
 
 
+        }
+
+        int level = MyLevel.LEVEL_NORMAL;
+        for (AlarmLog log : taskAlarm) {
+            if(log.getLevel() > level){
+                level = log.getLevel();
+            }
+        }
+        return level;
+    }
+
+    private AlarmLog build(Task task, Source fromSource, boolean isConnect){
+        if(isConnect) {
+            return null;
+        }
+        String msg = String.format("任务[%s]%s%s数据源[%s]连接失败",
+                task.getTaskName(),
+                fromSource.getSourceType(),
+                fromSource.isNetAreaIn()?"内网":"外网",
+                fromSource.getSname());
+
+        AlarmLog alarmLog = new AlarmLog();
+        alarmLog.setBid(task.getTaskId())
+                .setbType(AlarmLog.BTYPE_TASK)
+                .setLevel(MyLevel.LEVEL_ERROR)
+                .setType(AlarmType.wangluobutong)
+                .setMsg(msg);
+
+        return alarmLog;
     }
 
 

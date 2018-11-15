@@ -5,14 +5,8 @@ import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.command.SnmpUtil;
 import com.minkey.contants.MyLevel;
-import com.minkey.db.CheckItemHandler;
-import com.minkey.db.DeviceHandler;
-import com.minkey.db.DeviceServiceHandler;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.dao.CheckItem;
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.DeviceService;
-import com.minkey.db.dao.Link;
+import com.minkey.db.*;
+import com.minkey.db.dao.*;
 import com.minkey.dto.*;
 import com.minkey.executer.SSHExecuter;
 import com.minkey.util.DetectorUtil;
@@ -65,29 +59,59 @@ public class ExamineHandler {
     @Autowired
     FTPUtil ftpUtil;
 
+    @Autowired
+    TaskExamineHandler taskExamineHandler;
 
+    @Autowired
+    TaskHandler taskHandler;
+
+
+    @Async
     public void doAllInOne(long checkId) {
+        Map<Long,Link> allLink = deviceCache.getAllLinkMap();
+        for(Link link : allLink.values()){
+            doLink(checkId,link);
+        }
+
+        for(Link link : allLink.values()){
+            Set<Long> deviceIds = link.getDeviceIds();
+            if(CollectionUtils.isEmpty(deviceIds)){
+                continue;
+            }
+            for(Long deviceId: deviceIds){
+                Device device = deviceCache.getDevice(deviceId);
+                if(device == null){
+                    continue;
+                }
+                doDevice(checkId,device);
+            }
+        }
+
+        List<Task> allTask = taskHandler.queryAll();
+        if(!CollectionUtils.isEmpty(allTask)){
+            for(Task task : allTask){
+                taskExamineHandler.doTask(checkId,task);
+            }
+        }
     }
 
 
     /**
-     * 单个设备体检
+     * 异步执行
      * @param checkId
-     * @param deviceId
+     * @param device
      */
     @Async
-    public void doDevice(long checkId, Long deviceId) {
+    public void doDeviceAsync(long checkId, Device device) {
+        doDevice(checkId,device);
+    }
+    /**
+     * 单个设备体检
+     * @param checkId
+     * @param device
+     */
+    public void doDevice(long checkId, Device device) {
         CheckItem checkItem;
-        Device device = deviceHandler.query(deviceId);
-        if(device == null){
-            log.error("发起单个设备体检，体检设备不存在 deviceId = {}" ,deviceId);
-            //不存在就只有一步
-            checkItem = new CheckItem(checkId,1);
-            checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-            checkItem.setResultMsg(String.format("设备不存在，设备id=%s",deviceId));
-            checkItemHandler.insert(checkItem);
-            return;
-        }
 
         //该设备所有的服务
         List<DeviceService> deviceServiceList;
@@ -97,7 +121,7 @@ public class ExamineHandler {
         boolean isConnect = deviceStatusHandler.pingTest(device);
 
         if(isConnect){
-            deviceServiceList = deviceServiceHandler.query8Device(deviceId);
+            deviceServiceList = deviceServiceHandler.query8Device(device.getDeviceId());
             //网络联通性 + 硬件情况 + 所有服务个数(没有也加一个)
             totalStep = 1 + 1 + (CollectionUtils.isEmpty(deviceServiceList) ? 1 : deviceServiceList.size());
             //创建检查步数 缓存
@@ -117,7 +141,7 @@ public class ExamineHandler {
         }
 
         //从缓存中直接获取硬件情况
-        DeviceExplorer deviceExplorer = deviceExplorerCache.getDeviceExplorer(deviceId);
+        DeviceExplorer deviceExplorer = deviceExplorerCache.getDeviceExplorer(device.getDeviceId());
         checkItem = checkStepCache.createNextItem(checkId);
         if(deviceExplorer == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
@@ -131,7 +155,7 @@ public class ExamineHandler {
 
 
         //找到探针服务
-        DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(deviceId);
+        DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
         //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
         if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
@@ -234,12 +258,19 @@ public class ExamineHandler {
         checkItemHandler.insert(checkItem);
     }
 
-    public void doLink(long checkId, Long linkId) {
+    /**
+     * 异步执行
+     * @param checkId
+     * @param link
+     */
+    @Async
+    public void doLinkAynsc(long checkId, Link link) {
+        doLink(checkId,link);
+    }
+
+
+    public void doLink(long checkId, Link link) {
         //链路报警主要是设备连通性的报警
-        Link link = linkHandler.query(linkId);
-        if(link == null){
-            return ;
-        }
         Set<Long> deviceIds = link.getDeviceIds();
         if(CollectionUtils.isEmpty(deviceIds)){
             return;

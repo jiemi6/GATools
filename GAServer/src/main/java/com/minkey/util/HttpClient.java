@@ -1,7 +1,7 @@
 package com.minkey.util;
 
 import com.alibaba.fastjson.util.IOUtils;
-import com.minkey.exception.SystemException;
+import com.minkey.exception.NetException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 @Slf4j
 public class HttpClient {
 
-	public static String postRequest(String url,Map<String,String> param) throws SystemException {
+	public static String postRequest(String url,Map<String,String> param) throws NetException {
 		CloseableHttpClient client = HttpClients.createDefault(); 
 		
 		RequestConfig requestConfig = RequestConfig.custom()  
@@ -75,7 +75,8 @@ public class HttpClient {
 			}
 			return buffer.toString();
 		} catch (Exception e) {
-			log.error("httpClient请求异常,"+e.getMessage());
+			log.debug("httpClient请求异常,"+e.getMessage());
+//			throw new NetException("httpClient请求异常,"+e.getMessage());
 			return null;
 		}finally{
 			IOUtils.close(reader);
