@@ -20,9 +20,11 @@ public class Telnet {
             server.connect(address, CommonContants.DEFAULT_TIMEOUT);
             return server.isConnected();
         } catch (UnknownHostException e) {
-            log.error("telnet异常，未知对方host",e);
+            log.error(String.format("telnet异常,未知对方host.[%s:%s] Msg=%s",ipAddress,port,e));
+            return false;
         } catch (IOException e) {
-            log.error("telnet失败",e);
+            log.error(String.format("telnet-IO异常[%s:%s] Msg=%s",ipAddress,port,e));
+            return false;
         } finally {
             if (server != null) {
                 try {
@@ -30,7 +32,6 @@ public class Telnet {
                 } catch (IOException e) {
                 }
             }
-            return false;
         }
     }
 

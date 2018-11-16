@@ -8,7 +8,7 @@ import com.minkey.executer.LocalExecuter;
 import com.minkey.executer.SSHExecuter;
 import org.junit.Test;
 
-public class MainTest {
+public class TestSSH {
 
     @Test
     public void testLocalSH() {

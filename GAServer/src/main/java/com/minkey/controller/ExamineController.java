@@ -59,7 +59,7 @@ public class ExamineController {
         User user = (User) session.getAttribute("user");
 
         Check check = new Check();
-        check.setCheckName(user.getuName()+"发起一键体检");
+        check.setCheckName(String.format("[%s]发起一键体检",user.getuName()));
         check.setCheckType(Check.CHECKTYPE_ALLINONE);
         check.setUid(user.getUid());
 
@@ -89,28 +89,22 @@ public class ExamineController {
         }
 
         User user = (User) session.getAttribute("user");
-
-        Check check = new Check();
-        check.setCheckName(user.getuName()+"发起链路体检");
-        check.setCheckType(Check.CHECKTYPE_ALLINONE);
-        check.setUid(user.getUid());
-
         try{
-            //存入数据库，获取id
-            long checkId = checkHandler.insert(check);
 
             Link link = deviceCache.getLink8Id(linkId);
             if(link == null){
-                log.error("发起单个链路体检，链路不存在 linkId = {}" ,linkId);
-                //不存在就只有一步
-                CheckItem checkItem = new CheckItem(checkId,1);
-                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-                checkItem.setResultMsg(String.format("链路不存在，链路id=%s",linkId));
-                checkItemHandler.insert(checkItem);
-            }else {
-                //开始检查
-                examineHandler.doLinkAynsc(checkId,link);
+                return JSONMessage.createFalied("体检的链路不存在").toString();
             }
+
+            Check check = new Check();
+            check.setCheckName(String.format("[%s]发起链路体检，链路名称[%s]",user.getuName(),link.getLinkName()));
+            check.setCheckType(Check.CHECKTYPE_LINK);
+            check.setUid(user.getUid());
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
+            //开始检查
+            examineHandler.doLinkAynsc(checkId,link);
+
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -133,27 +127,21 @@ public class ExamineController {
 
         User user = (User) session.getAttribute("user");
 
-        Check check = new Check();
-        check.setCheckName(user.getuName()+"发起设备体检");
-        check.setCheckType(Check.CHECKTYPE_DEVICE);
-        check.setUid(user.getUid());
-
         try{
-            //存入数据库，获取id
-            long checkId = checkHandler.insert(check);
-
             Device device = deviceCache.getDevice(deviceId);
             if(device == null){
-                log.error("发起单个设备体检，体检设备不存在 deviceId = {}" ,deviceId);
-                //不存在就只有一步
-                CheckItem checkItem = new CheckItem(checkId,1);
-                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-                checkItem.setResultMsg(String.format("设备不存在，设备id=%s",deviceId));
-                checkItemHandler.insert(checkItem);
-            }else{
-                //开始检查
-                examineHandler.doDeviceAsync(checkId,device);
+                return JSONMessage.createFalied("体检的设备不存在").toString();
             }
+
+            Check check = new Check();
+            check.setCheckName(String.format("[%s]发起设备体检，设备名称[%s]",user.getuName(),device.getDeviceName()));
+            check.setCheckType(Check.CHECKTYPE_DEVICE);
+            check.setUid(user.getUid());
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
+            //开始检查
+            examineHandler.doDeviceAsync(checkId,device);
+
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -176,29 +164,20 @@ public class ExamineController {
 
         User user = (User) session.getAttribute("user");
 
-        Check check = new Check();
-        check.setCheckName(user.getuName()+"发起链路体检");
-        check.setCheckType(Check.CHECKTYPE_ALLINONE);
-        check.setUid(user.getUid());
-
         try{
-            //存入数据库，获取id
-            long checkId = checkHandler.insert(check);
-
-
             Task task = taskHandler.query(taskId);
             if(task == null){
-                log.error("发起单个任务体检，体检任务不存在 deviceId = {}" ,taskId);
-                //不存在就只有一步
-                CheckItem checkItem = new CheckItem(checkId,1);
-                checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-                checkItem.setResultMsg(String.format("任务不存在，任务id=%s",taskId));
-                checkItemHandler.insert(checkItem);
-            }else{
-                //开始检查
-                taskExamineHandler.doTaskAsync(checkId,task);
+                return JSONMessage.createFalied("体检的任务不存在").toString();
             }
 
+            Check check = new Check();
+            check.setCheckName(String.format("[%s]发起任务体检，任务名称[%s]",user.getuName(),task.getTaskName()));
+            check.setCheckType(Check.CHECKTYPE_TASK);
+            check.setUid(user.getUid());
+            //存入数据库，获取id
+            long checkId = checkHandler.insert(check);
+            //开始检查
+            taskExamineHandler.doTaskAsync(checkId,task);
 
             return JSONMessage.createSuccess().addData("checkId",checkId).toString();
         }catch (Exception e){
@@ -231,7 +210,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行体检信息");
+            log.info("end:  获取体检信息");
         }
     }
 
@@ -261,7 +240,6 @@ public class ExamineController {
             //创建HSSFWorkbook
             HSSFWorkbook wb = getHSSFWorkbook(sheetName, checkItems);
 
-            //Minkey 下载体检结果文件
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             response.setHeader("Content-Disposition", "attachment;fileName="+fileName);

@@ -1,6 +1,7 @@
 package com.minkey.dto;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.minkey.contants.ErrorCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -122,6 +123,7 @@ public class JSONMessage {
 		this.msg = msg;
 	}
 
+    @JSONField(serialize=false)
 	public boolean isSuccess(){
         return code == JSONMessage.JSON_RESULT_SUCCESS;
     }

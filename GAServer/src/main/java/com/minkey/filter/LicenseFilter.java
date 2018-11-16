@@ -36,7 +36,7 @@ public class LicenseFilter implements Filter {
         patterns.add(Pattern.compile("/license/keyExport"));
         patterns.add(Pattern.compile("/license/key"));
 
-        patterns.add(Pattern.compile(".*(\\.css| \\.json | \\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)"));
+        patterns.add(Pattern.compile(".*(\\.css|\\.json|\\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)"));
 
     }
 

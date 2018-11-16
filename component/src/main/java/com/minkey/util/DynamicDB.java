@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class DynamicDB {
     private JdbcTemplate getJdbcTemplate(DatabaseDriver databaseDriver, String ip,int port,String dbName, String userName , String password){
         //先测网络
         if(!Telnet.doTelnet(ip,port)){
-            throw new DataException("数据库网络不同");
+            throw new DataException(String.format("Telnet数据库网络不通[%s:%s]",ip,port));
         }
         JdbcTemplate jdbcTemplate ;
         String jdbcUrl ;
@@ -44,21 +45,33 @@ public class DynamicDB {
             throw new DataException("暂不支持数据库类型="+databaseDriver);
         }
 
+        DataSource dataSource = null;
         try{
             DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create()
                     .url(jdbcUrl)
                     .driverClassName(databaseDriver.getDriverClassName())
                     .username(userName)
                     .password(password);
-            DataSource dataSource = dataSourceBuilder.build();
+            dataSource = dataSourceBuilder.build();
             jdbcTemplate = new JdbcTemplate(dataSource);
             jdbcTemplate.setQueryTimeout(default_timeout);
+
+            //测试语句执行
             jdbcTemplate.execute(databaseDriver.getValidationQuery());
+
+            return jdbcTemplate;
         }catch (Exception e ){
             throw new DataException("构造数据库连接异常",e);
+        }finally {
+            if(dataSource != null){
+                try {
+                    dataSource.getConnection().close();
+                } catch (SQLException e) {
+                    log.warn("关闭数据库连接异常"+e);
+                }
+            }
         }
 
-        return jdbcTemplate;
     }
 
     public boolean testDB(DBConfigData dbConfigData){
@@ -69,7 +82,7 @@ public class DynamicDB {
             jdbcTemplate.execute(dbConfigData.getDatabaseDriver().getValidationQuery());
             return true;
         }catch (Exception e){
-            log.error("测试连接数据库失败:"+dbConfigData.toString(),e);
+            log.error("测试连接数据库失败:"+dbConfigData.toString()+e);
             return false;
         }
     }
