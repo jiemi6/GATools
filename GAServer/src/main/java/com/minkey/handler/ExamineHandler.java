@@ -36,7 +36,7 @@ public class ExamineHandler {
     DeviceCache deviceCache;
 
     @Autowired
-    DeviceStatusHandler deviceStatusHandler;
+    DeviceConnectHandler deviceConnectHandler;
 
     @Autowired
     DeviceServiceHandler deviceServiceHandler;
@@ -118,7 +118,7 @@ public class ExamineHandler {
         //默认就只有一步 就是检查连接
         int totalStep = 1;
         // 检查网络联通性
-        boolean isConnect = deviceStatusHandler.pingTest(device);
+        boolean isConnect = deviceConnectHandler.pingTest(device);
 
         if(isConnect){
             deviceServiceList = deviceServiceHandler.query8Device(device.getDeviceId());
@@ -292,7 +292,7 @@ public class ExamineHandler {
         for(Long deviceId : deviceMap.keySet()){
             Device device = deviceMap.get(deviceId);
 
-            boolean isConnect = deviceStatusHandler.pingTest(device);
+            boolean isConnect = deviceConnectHandler.pingTest(device);
 
             if(isConnect){
                 //创建检查步数 缓存

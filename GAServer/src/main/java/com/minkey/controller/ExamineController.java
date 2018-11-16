@@ -9,12 +9,17 @@ import com.minkey.db.dao.*;
 import com.minkey.dto.JSONMessage;
 import com.minkey.handler.ExamineHandler;
 import com.minkey.handler.TaskExamineHandler;
+import com.minkey.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -235,18 +240,39 @@ public class ExamineController {
      * @return
      */
     @RequestMapping("/download")
-    public String download(Long checkId) {
+    public String download(Long checkId,HttpServletResponse response) {
         log.info("start: 下载体检结果文件报告 checkId={}",checkId);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
 
         try{
+
+            Check  check = checkHandler.query(checkId);
+            if(check == null){
+                log.error("获取检查项为空checkId="+checkId);
+            }
+
+            String fileName = check.getCheckName()+".xls";
+            //excel 里面的sheet名称
+            String sheetName = DateUtil.dateFormatStr(check.getCreateTime(),DateUtil.format_all);
+
             List<CheckItem> checkItems = checkItemHandler.queryAll(checkId);
+            //创建HSSFWorkbook
+            HSSFWorkbook wb = getHSSFWorkbook(sheetName, checkItems);
 
             //Minkey 下载体检结果文件
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition", "attachment;fileName="+fileName);
 
-            return JSONMessage.createSuccess().toString();
+            try {
+                response.getOutputStream().write(wb.getBytes());
+            } catch (IOException e) {
+                log.error(String.format("生成体检报告[%s]异常",check.getCheckName())+e);
+            }finally {
+                return null;
+            }
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -255,5 +281,65 @@ public class ExamineController {
         }
     }
 
+    /**
+     * 导出Excel
+     * @return
+     */
+    public HSSFWorkbook getHSSFWorkbook(String sheetName, List<CheckItem> checkItems){
+
+        // 第一步，创建一个HSSFWorkbook，对应一个Excel文件
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        // 第二步，在workbook中添加一个sheet,对应Excel文件中的sheet
+        HSSFSheet sheet = wb.createSheet(sheetName);
+
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制
+        HSSFRow row = sheet.createRow(0);
+
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+
+        //声明列对象
+        HSSFCell cell = null;
+
+        //创建标题1
+        cell = row.createCell(0);
+        cell.setCellValue("序号");
+        cell.setCellStyle(style);
+        //创建标题2
+        cell = row.createCell(1);
+        cell.setCellValue("级别");
+        cell.setCellStyle(style);
+        //创建标题3
+        cell = row.createCell(2);
+        cell.setCellValue("项目");
+        cell.setCellStyle(style);
+        //创建标题4
+        cell = row.createCell(3);
+        cell.setCellValue("错误类型");
+        cell.setCellStyle(style);
+        //创建标题5
+        cell = row.createCell(4);
+        cell.setCellValue("报警内容");
+        cell.setCellStyle(style);
+
+
+        if(!CollectionUtils.isEmpty(checkItems)){
+            int rowNum = 1;
+            //创建内容
+            for(CheckItem checkItem : checkItems){
+                //将内容按顺序赋给对应的列对象
+                row.createCell(0).setCellValue(rowNum);
+                row.createCell(1).setCellValue(MyLevel.getString8level(checkItem.getResultLevel()));
+                row.createCell(2).setCellValue(checkItem.getItemType());
+                row.createCell(3).setCellValue(checkItem.getErrorType());
+                row.createCell(4).setCellValue(checkItem.getResultMsg());
+
+                rowNum++;
+            }
+        }
+        return wb;
+    }
 
 }

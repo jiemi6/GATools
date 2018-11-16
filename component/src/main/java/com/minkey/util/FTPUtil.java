@@ -39,11 +39,11 @@ public class FTPUtil {
 
             return ftp.isConnected();
         } catch (SocketTimeoutException e) {
-            log.error("ftp连接超时",e);
+            log.error(String.format("ftp连接超时%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         } catch (SocketException e) {
-            log.error("ftp连接异常",e);
+            log.error(String.format("ftp连接异常%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         } catch (IOException e) {
-            log.error("ftp-io异常",e);
+            log.error(String.format("ftp-IO异常%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         }finally {
             if(ftp.isConnected()){
                 try {

@@ -1,5 +1,6 @@
 package com.minkey.util;
 
+import com.minkey.command.Telnet;
 import com.minkey.dto.DBConfigData;
 import com.minkey.exception.DataException;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,10 @@ public class DynamicDB {
 
 
     private JdbcTemplate getJdbcTemplate(DatabaseDriver databaseDriver, String ip,int port,String dbName, String userName , String password){
+        //先测网络
+        if(!Telnet.doTelnet(ip,port)){
+            throw new DataException("数据库网络不同");
+        }
         JdbcTemplate jdbcTemplate ;
         String jdbcUrl ;
         if(databaseDriver == DatabaseDriver.MYSQL){

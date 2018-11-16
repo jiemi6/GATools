@@ -75,9 +75,11 @@ public class TaskController {
     public String monitor(Long linkId, Integer currentPage, Integer pageSize  ) {
         log.info("start: 任务监控查询 ");
         try{
-            Page page = new Page(currentPage,pageSize);
+            Page<Task> page = new Page(currentPage,pageSize);
 
-            //Minkey 任务监控还没做
+            //任务监控就查任务表，根据任务level告警
+            page = taskHandler.query8LinkId(linkId,page);
+
             return JSONMessage.createSuccess().addData(page).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);

@@ -46,23 +46,22 @@ public class SnmpExploreHandler {
      */
     @Scheduled(cron = "0/5 * * * * ?")
     public void reflashExplorer() {
-        deviceCache.getAllLinkMap().forEach((aLong, link) ->  {
-            DeviceService deviceService = deviceCache.getDetectorService8linkId(aLong);
-            Set<Long> allDeviceId = link.getDeviceIds();
-            for (Long deviceId:allDeviceId){
-                try {
-                    //如果连接正常，则获取
-                    if(deviceConnectCache.isOk(deviceId)){
-                        getDeviceExplorer(deviceCache.getDevice(deviceId), deviceService);
-                    }else{
-                        //如果断开了，则删掉所有的硬件资源信息
-                        deviceExplorerCache.remove(deviceId);
-                    }
-                }catch (Exception e){
-                    log.error(e.getMessage(),e);
+        Map<Long, Device> allDevices = deviceCache.allDevice();
+
+        for (Device device:allDevices.values()){
+            Long deviceId = device.getDeviceId();
+            try {
+                //如果连接正常，则获取
+                if(deviceConnectCache.isOk(deviceId)){
+                    getDeviceExplorer(device);
+                }else{
+                    //如果断开了，则删掉所有的硬件资源信息
+                    deviceExplorerCache.remove(deviceId);
                 }
+            }catch (Exception e){
+                log.error(e.getMessage(),e);
             }
-        });
+        }
     }
 
 
@@ -71,7 +70,7 @@ public class SnmpExploreHandler {
      *
      */
     @Async
-    public void getDeviceExplorer(Device device,DeviceService detectorService){
+    public void getDeviceExplorer(Device device){
         if(device == null){
             return;
         }
@@ -86,6 +85,8 @@ public class SnmpExploreHandler {
         if(device.getNetArea() == CommonContants.NETAREA_IN ){
             deviceExplorer = get(device);
         }else{
+            //如果是外网，需要通过探针访问,获取探针信息
+            DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
             //通过探针获取硬件信息
             deviceExplorer = get(device,detectorService);
         }
@@ -194,6 +195,7 @@ public class SnmpExploreHandler {
             //总区块数
             long totalArea = diskJson.getLong(diskOid+".5."+lastOid);
             //已经使用的区块数
+            //Minkey 会空指针
             long useArea = diskJson.getLong(diskOid+".6."+lastOid);
             //总大小
             long total = totalArea * danweiByte;

@@ -74,6 +74,11 @@ public class DeviceCache {
     private Map<Long,DeviceService> deviceSNMPServiceMap = new HashMap<>();
 
     /**
+     * 所有设备的级别状态，断开为错误，性能超标为警告
+     */
+    private Map<Long,Integer> deviceLevel = new HashMap<>();
+
+    /**
      * 是否重载，标志位、锁
      */
     private Boolean reload = false;
@@ -285,5 +290,13 @@ public class DeviceCache {
 
     public Link getLink8Id(Long linkId) {
         return allLinkMap.get(linkId);
+    }
+
+    public void updateDeviceLevel(long deviceId, int levelIn) {
+        deviceLevel.put(deviceId,levelIn);
+    }
+
+    public Map<Long, Integer> getAllDeviceLevel() {
+        return deviceLevel;
     }
 }

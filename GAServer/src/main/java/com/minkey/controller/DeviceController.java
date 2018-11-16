@@ -14,7 +14,7 @@ import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
-import com.minkey.handler.DeviceStatusHandler;
+import com.minkey.handler.DeviceConnectHandler;
 import com.minkey.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +43,7 @@ public class DeviceController {
     DeviceServiceHandler deviceServiceHandler;
 
     @Autowired
-    DeviceStatusHandler deviceStatusHandler;
+    DeviceConnectHandler deviceConnectHandler;
 
     @Autowired
     DeviceExplorerCache deviceExplorerCache;

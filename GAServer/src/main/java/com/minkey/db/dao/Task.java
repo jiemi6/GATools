@@ -28,7 +28,7 @@ public class Task {
     private int taskType;
 
     public static final int taskType_unknow = -1;
-    public static final int taskType_db = 2;
+    public static final int taskType_db = 1;
     public static final int taskType_ftp = 2;
 
     /**

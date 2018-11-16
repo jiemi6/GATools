@@ -78,7 +78,7 @@ public class AlarmHandler {
             Set<AlarmLog> notOKLogs = new HashSet<>(notOk.size());
             for (Long deviceId : notOk) {
                 device = allDevice.get(deviceId);
-                if(device.getDeviceType() == DeviceType.floder) {
+                if(device == null || device.getDeviceType() == DeviceType.floder) {
                     continue;
                 }
                 alarmLog = new AlarmLog();
@@ -87,6 +87,9 @@ public class AlarmHandler {
                 alarmLog.setLevel(MyLevel.LEVEL_ERROR);
                 alarmLog.setType(AlarmType.wangluobutong);
                 alarmLog.setMsg(String.format("设备%s[%s]网络无法连接!",device.getDeviceName(),device.getIp()));
+
+                //网络不同，更新设备级别为错误
+                deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_ERROR);
 
                 notOKLogs.add(alarmLog);
             }
@@ -104,6 +107,8 @@ public class AlarmHandler {
                     continue;
                 }
                 if(device.getDeviceType() == DeviceType.floder) {
+                    //文件夹，永远为正常
+                    deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     continue;
                 }
                 deviceExplorer = allDeviceExplorer.get(deviceId);
@@ -115,6 +120,8 @@ public class AlarmHandler {
                     alarmLog.setType(AlarmType.shebeixingneng);
                     alarmLog.setMsg(String.format("设备%s[%s]硬件性能指标无法获取，请检查snmp设置!",device.getDeviceName(),device.getIp()));
 
+                    //没有性能指标，更新设备级别为正常
+                    deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     explorerLogs.add(alarmLog);
                 }else{
                     //如果是警告,性能只有警告没有错误
@@ -126,7 +133,12 @@ public class AlarmHandler {
                         alarmLog.setType(AlarmType.shebeixingneng);
                         alarmLog.setMsg(String.format("设备%s[%s]硬件性能指标告警! %s",device.getDeviceName(),device.getIp(),deviceExplorer.showString()));
 
+                        //更新设备级别为警告
+                        deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_WARN);
                         explorerLogs.add(alarmLog);
+                    }else{
+                        //更新设备级别为正常
+                        deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     }
                 }
             }
@@ -243,7 +255,6 @@ public class AlarmHandler {
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
             alarmLog.setType(AlarmType.no_source);
             taskAlarm.add(alarmLog);
-            return MyLevel.LEVEL_ERROR;
         }else{
             DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
 
@@ -261,14 +272,15 @@ public class AlarmHandler {
             taskAlarm.add(alarmLog);
 
             //Minkey 检查任务进程是否存在
-
-
         }
 
         int level = MyLevel.LEVEL_NORMAL;
-        for (AlarmLog log : taskAlarm) {
-            if(log.getLevel() > level){
-                level = log.getLevel();
+        for (AlarmLog tempLog : taskAlarm) {
+            if(tempLog == null){
+                continue;
+            }
+            if(tempLog.getLevel() > level){
+                level = tempLog.getLevel();
             }
         }
         return level;

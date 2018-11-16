@@ -55,6 +55,7 @@ public class IndexController {
                         JSONObject deviceJson = new JSONObject();
                         deviceJson.put("ip",device.getIp());
                         deviceJson.put("deviceName",device.getDeviceName());
+                        deviceJson.put("icon",device.getIcon());
 
                         allDeviceJson.put(device.getDeviceId(),deviceJson);
                     });

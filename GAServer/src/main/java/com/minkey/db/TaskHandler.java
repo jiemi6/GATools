@@ -1,6 +1,7 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.Task;
+import com.minkey.dto.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,7 +46,7 @@ public class TaskHandler {
             return;
         }
 
-        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetId, taskName,linkId,status,taskType) VALUES (?,?,?,?,?)",
+        int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (targetTaskId, taskName,linkId,status,taskType) VALUES (?,?,?,?,?)",
                 tasks,tasks.size(),
                 new ParameterizedPreparedStatementSetter<Task>() {
                     @Override
@@ -109,5 +110,17 @@ public class TaskHandler {
         whereStr.append(")");
         int num = jdbcTemplate.update("update "+tableName+" set level=? "+whereStr,new Object[]{taskLevel});
 
+    }
+
+    public Page<Task> query8LinkId(Long linkId, Page<Task> page) {
+        List<Task> tasks = jdbcTemplate.query("select * from "+tableName + " where linkId=? ORDER BY level desc limit ?,?",
+                new Object[]{linkId,page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Task.class));
+
+        page.setData(tasks);
+
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName + " where linkId=?",new Object[]{linkId},Integer.class);
+        page.setTotal(total);
+
+        return page;
     }
 }

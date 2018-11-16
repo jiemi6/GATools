@@ -188,10 +188,6 @@ public class ToolsController {
             return JSONMessage.createFalied("参数错误").toString();
         }
 
-        //探针不在线，无法执行命令
-        if(!deviceConnectCache.isOk(deviceId)){
-            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
-        }
 
         try{
             boolean isConnect;
@@ -199,6 +195,13 @@ public class ToolsController {
                 //内网直接测试
                 isConnect = dynamicDB.testDB(dbConfigData);
             }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
                 //获取该探针服务
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
