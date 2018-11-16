@@ -117,7 +117,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,Modules.device,String.format("%s 新增设备，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+            userLogHandler.log(sessionUser,Modules.device,String.format("[%s]新增设备[%s]",sessionUser.getuName(),device.getDeviceName()));
 
             //刷新缓存
             deviceCache.refresh();
@@ -158,7 +158,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,Modules.device,String.format("%s 修改设备信息，设备名称=%s。",sessionUser.getuName(),device.getDeviceName()));
+            userLogHandler.log(sessionUser,Modules.device,String.format("[%s]修改设备信息，设备名称[%s]。",sessionUser.getuName(),device.getDeviceName()));
 
             //刷新缓存
             deviceCache.refresh();
@@ -243,6 +243,7 @@ public class DeviceController {
                 return JSONMessage.createFalied(String.format("设备属于链路[%s],请先从链路中移除设备。",StringUtils.join(allName.values(),","))).toString();
             }
 
+            Device device = deviceCache.getDevice(deviceId);
             //先删除
             deviceServiceHandler.delete8DeviceId(deviceId);
 
@@ -250,7 +251,7 @@ public class DeviceController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,Modules.device,String.format("%s 删除设备信息，设备id=%s。",sessionUser.getuName(),deviceId));
+            userLogHandler.log(sessionUser,Modules.device,String.format("[%s]删除设备[%s]。",sessionUser.getuName(),device.getDeviceName()));
 
             //刷新缓存
             deviceCache.refresh();

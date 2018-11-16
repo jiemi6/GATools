@@ -168,7 +168,7 @@ public class UserController {
             //清除错误次数
             userHandler.cleanWrongPwdTime(user.getUid());
             //记录登陆日志
-            userLogHandler.log(user,moduleName,String.format("用户%s登陆成功",uName));
+            userLogHandler.log(user,moduleName,String.format("[%s]登陆成功",uName));
 
             return JSONMessage.createSuccess().addData("sessionId",session.getId()).toString();
         }catch (Exception e){
@@ -204,7 +204,7 @@ public class UserController {
             session.removeAttribute("user");
             if(user != null){
                 //记录登陆日志
-                userLogHandler.log(user,moduleName,"用户登出成功");
+                userLogHandler.log(user,moduleName,String.format("[%s]用户登出成功",user.getuName()));
             }
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -251,7 +251,7 @@ public class UserController {
             userHandler.insert(user);
 
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 新增用户%s成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("[%s]新增用户[%s]成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -287,7 +287,7 @@ public class UserController {
                 return JSONMessage.createFalied("用户不存在").toString();
             }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 删除用户%s成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("[%s]删除用户[%s]成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -345,7 +345,7 @@ public class UserController {
                 return JSONMessage.createFalied("用户不存在").toString();
             }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 重置用户%s密码为123456成功.",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("[%s]重置用户[%s]密码为123456成功.",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess("密码重置为：123456").toString();
         }catch (Exception e){
@@ -409,7 +409,7 @@ public class UserController {
                 return JSONMessage.createFalied("用户不存在").toString();
             }
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s解锁用户%s成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("[%s]解锁用户[%s]成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -441,7 +441,7 @@ public class UserController {
 
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser,moduleName,String.format("%s 修改用户%s信息成功",sessionUser.getuName(),user.getuName()));
+            userLogHandler.log(sessionUser,moduleName,String.format("[%s]修改用户[%s]信息成功",sessionUser.getuName(),user.getuName()));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
