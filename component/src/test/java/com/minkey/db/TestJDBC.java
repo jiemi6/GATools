@@ -11,8 +11,8 @@ public class TestJDBC {
 
     @Test
     public void testMysql() {
-        String ip = "222.125.67.251";
-        int port =8806;
+        String ip = "127.0.0.1";
+        int port =3306;
         String dbName = "smzdm";
 
         DBConfigData baseConfigData = new DBConfigData();

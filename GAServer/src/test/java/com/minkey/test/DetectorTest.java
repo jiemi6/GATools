@@ -5,6 +5,8 @@ import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.regex.Pattern;
+
 @Slf4j
 public class DetectorTest {
 
@@ -13,7 +15,8 @@ public class DetectorTest {
 //        log.info(""+DetectorUtil.check("127.0.0.1",1234));
 //        log.info(""+DetectorUtil.ping("127.0.0.1",1234,"127.0.0.1"));
 //        log.info(""+DetectorUtil.executeSh("127.0.0.1",1234,"ping 127.0.0.1"));
-
+        boolean b = Pattern.compile(".*(\\.css| \\.json | \\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)").matcher("/sshd/get").matches();
+       log.error(b+"");
 
     }
 

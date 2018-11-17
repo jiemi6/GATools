@@ -138,8 +138,11 @@ public class AnalysisController {
         }
         try{
             Link link = linkHandler.query(linkId);
-            if(link == null || CollectionUtils.isEmpty(link.getDeviceIds())){
-                return JSONMessage.createSuccess().toString();
+            if(link == null){
+                return JSONMessage.createFalied("链路不存在").toString();
+            }
+            if(CollectionUtils.isEmpty(link.getDeviceIds())){
+                return JSONMessage.createFalied("链路没有设备").toString();
             }
             //Minkey 设备运行统计
             deviceLogHandler.querySum(linkId,seachParam);

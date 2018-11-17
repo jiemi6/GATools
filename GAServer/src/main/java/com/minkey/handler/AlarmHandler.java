@@ -78,7 +78,7 @@ public class AlarmHandler {
             Set<AlarmLog> notOKLogs = new HashSet<>(notOk.size());
             for (Long deviceId : notOk) {
                 device = allDevice.get(deviceId);
-                if(device.getDeviceType() == DeviceType.floder) {
+                if(device == null || device.getDeviceType() == DeviceType.floder) {
                     continue;
                 }
                 alarmLog = new AlarmLog();
@@ -87,6 +87,9 @@ public class AlarmHandler {
                 alarmLog.setLevel(MyLevel.LEVEL_ERROR);
                 alarmLog.setType(AlarmType.wangluobutong);
                 alarmLog.setMsg(String.format("设备%s[%s]网络无法连接!",device.getDeviceName(),device.getIp()));
+
+                //网络不同，更新设备级别为错误
+                deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_ERROR);
 
                 notOKLogs.add(alarmLog);
             }
@@ -104,6 +107,8 @@ public class AlarmHandler {
                     continue;
                 }
                 if(device.getDeviceType() == DeviceType.floder) {
+                    //文件夹，永远为正常
+                    deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     continue;
                 }
                 deviceExplorer = allDeviceExplorer.get(deviceId);
@@ -115,6 +120,8 @@ public class AlarmHandler {
                     alarmLog.setType(AlarmType.shebeixingneng);
                     alarmLog.setMsg(String.format("设备%s[%s]硬件性能指标无法获取，请检查snmp设置!",device.getDeviceName(),device.getIp()));
 
+                    //没有性能指标，更新设备级别为正常
+                    deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     explorerLogs.add(alarmLog);
                 }else{
                     //如果是警告,性能只有警告没有错误
@@ -126,7 +133,12 @@ public class AlarmHandler {
                         alarmLog.setType(AlarmType.shebeixingneng);
                         alarmLog.setMsg(String.format("设备%s[%s]硬件性能指标告警! %s",device.getDeviceName(),device.getIp(),deviceExplorer.showString()));
 
+                        //更新设备级别为警告
+                        deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_WARN);
                         explorerLogs.add(alarmLog);
+                    }else{
+                        //更新设备级别为正常
+                        deviceCache.updateDeviceLevel(deviceId,MyLevel.LEVEL_NORMAL);
                     }
                 }
             }
@@ -233,18 +245,16 @@ public class AlarmHandler {
     private int checkTask(Task task){
         String taskTargetId = task.getTargetTaskId();
 
-        Set<AlarmLog> taskAlarms = new HashSet<>();
+        Set<AlarmLog> taskAlarm = new HashSet<>();
         TaskSource taskSource = taskSourceHandler.query(task.getLinkId(),taskTargetId);
         AlarmLog alarmLog;
         if(taskSource == null){
             alarmLog = new AlarmLog();
-            alarmLog.setBid(task.getTaskId())
-                    .setbType(AlarmLog.BTYPE_TASK)
-                    .setLevel(MyLevel.LEVEL_ERROR)
-                    .setType(AlarmType.no_source)
-                    .setMsg(String.format("任务[%s]数据源不存在",task.getTaskName()));
-            taskAlarms.add(alarmLog);
-
+            alarmLog.setBid(task.getTaskId());
+            alarmLog.setbType(AlarmLog.BTYPE_TASK);
+            alarmLog.setLevel(MyLevel.LEVEL_ERROR);
+            alarmLog.setType(AlarmType.no_source);
+            taskAlarm.add(alarmLog);
         }else{
             DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
 
@@ -254,22 +264,23 @@ public class AlarmHandler {
             Source fromSource = sourceHandler.query(task.getLinkId(),fromSourceId);
             boolean isConnect = sourceCheckHandler.testSource(fromSource,detectorService);
             alarmLog = build(task,fromSource,isConnect);
-            taskAlarms.add(alarmLog);
+            taskAlarm.add(alarmLog);
 
             Source toSource = sourceHandler.query(task.getLinkId(),toSourceId);
             isConnect = sourceCheckHandler.testSource(toSource,detectorService);
             alarmLog = build(task,toSource,isConnect);
-            taskAlarms.add(alarmLog);
+            taskAlarm.add(alarmLog);
 
             //Minkey 检查任务进程是否存在
         }
 
-        alarmLogHandler.insertAll(taskAlarms);
-
         int level = MyLevel.LEVEL_NORMAL;
-        for (AlarmLog log : taskAlarms) {
-            if(log.getLevel() > level){
-                level = log.getLevel();
+        for (AlarmLog tempLog : taskAlarm) {
+            if(tempLog == null){
+                continue;
+            }
+            if(tempLog.getLevel() > level){
+                level = tempLog.getLevel();
             }
         }
         return level;

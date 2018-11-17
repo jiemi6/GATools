@@ -36,7 +36,7 @@ public class SessionFilter implements Filter {
         patterns.add(Pattern.compile("/user/checkVCode"));
         patterns.add(Pattern.compile("/user/login"));
 
-        patterns.add(Pattern.compile(".*[(\\.css)||(\\.json)||(\\.png)||(\\.gif)||(\\.js)||(\\.eot)||(\\.svg)||(\\.ttf)||(\\.woff)||(\\.mp4)]"));
+        patterns.add(Pattern.compile(".*(\\.css|\\.json|\\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)"));
 
     }
 

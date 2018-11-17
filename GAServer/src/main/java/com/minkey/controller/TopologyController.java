@@ -1,11 +1,12 @@
 package com.minkey.controller;
 
+import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceConnectCache;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.dao.Link;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.TopologyNode;
-import com.minkey.handler.DeviceStatusHandler;
+import com.minkey.handler.DeviceConnectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -27,13 +29,17 @@ public class TopologyController {
     LinkHandler linkHandler;
 
     @Autowired
-    DeviceStatusHandler linkCheckHandler;
+    DeviceConnectHandler linkCheckHandler;
 
     @Autowired
     DeviceConnectCache deviceConnectCache;
 
+    @Autowired
+    DeviceCache deviceCache;
 
-    @RequestMapping("/queryAll")
+
+    @Deprecated
+//    @RequestMapping("/queryAll")
     public String queryAll() {
         log.info("start: 执行查询所有拓扑节点");
 
@@ -90,7 +96,7 @@ public class TopologyController {
      */
     @RequestMapping("/queryAllConnect")
     public String queryAllConnect() {
-        log.info("start: 查询所有可连接的设备");
+        log.info("start: 查询所有可连接的设备集合");
         try{
             Set<Long> deviceId = deviceConnectCache.getOkSet();
             return JSONMessage.createSuccess().addData("connectIds",deviceId).toString();
@@ -98,7 +104,25 @@ public class TopologyController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询所有可连接的设备");
+            log.info("end: 查询所有可连接的设备集合");
+        }
+    }
+
+    /**
+     * 查询所有设备允许时的级别状态
+     * @return
+     */
+    @RequestMapping("/queryAllLevel")
+    public String queryAllLevel() {
+        log.info("start: 查询所有设备状态级别");
+        try{
+            Map<Long, Integer> deviceId = deviceCache.getAllDeviceLevel();
+            return JSONMessage.createSuccess().addData(deviceId).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end: 查询所有设备状态级别");
         }
     }
 

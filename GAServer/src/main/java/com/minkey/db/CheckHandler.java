@@ -4,6 +4,7 @@ import com.minkey.db.dao.Check;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import com.minkey.exception.SystemException;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -88,4 +89,13 @@ public class CheckHandler {
     }
 
 
+    public Check query(Long checkId) {
+        List<Check> devices = jdbcTemplate.query("select * from "+tableName+" where checkId = ?",
+                new Object[]{checkId},new BeanPropertyRowMapper<>(Check.class));
+        if(CollectionUtils.isEmpty(devices)){
+            return null;
+        }
+        return devices.get(0);
+
+    }
 }

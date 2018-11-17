@@ -17,14 +17,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 检查链路中的设备的连接状态
  */
 @Slf4j
 @Component
-public class DeviceStatusHandler {
+public class DeviceConnectHandler {
     @Autowired
     DeviceCache deviceCache;
     @Autowired

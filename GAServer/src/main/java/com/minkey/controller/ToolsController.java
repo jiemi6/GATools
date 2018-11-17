@@ -15,7 +15,6 @@ import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
-import com.minkey.util.OSUtil;
 import com.minkey.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -66,22 +65,26 @@ public class ToolsController {
         if(!StringUtil.isIp(ip)){
             return JSONMessage.createFalied("ip格式不正确").toString();
         }
-        //探针不在线，无法执行命令
-        if(!deviceConnectCache.isOk(deviceId)){
-            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
-        }
+
         try{
 
             String cmd = "ping "+ip+ " -c 4";
-            if(OSUtil.isWindowsOS()){
-                cmd = "ping "+ip;
-            }
+//            if(OSUtil.isWindowsOS()){
+//                cmd = "ping "+ip;
+//            }
 
             ResultInfo resultInfo = null;
             if(netArea == CommonContants.NETAREA_IN){
                 //内网 直接执行
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
                 //获取该探针服务
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
@@ -134,10 +137,7 @@ public class ToolsController {
         if(!StringUtil.isIp(ip)){
             return JSONMessage.createFalied("ip格式不正确").toString();
         }
-        //探针不在线，无法执行命令
-        if(!deviceConnectCache.isOk(deviceId)){
-            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
-        }
+
         try{
 
 
@@ -146,6 +146,13 @@ public class ToolsController {
                 //内网 直接执行
                 isConnect = Telnet.doTelnet(ip,port);
             }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
                 //获取该探针服务
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
@@ -188,10 +195,6 @@ public class ToolsController {
             return JSONMessage.createFalied("参数错误").toString();
         }
 
-        //探针不在线，无法执行命令
-        if(!deviceConnectCache.isOk(deviceId)){
-            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
-        }
 
         try{
             boolean isConnect;
@@ -199,6 +202,13 @@ public class ToolsController {
                 //内网直接测试
                 isConnect = dynamicDB.testDB(dbConfigData);
             }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
                 //获取该探针服务
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
@@ -237,17 +247,21 @@ public class ToolsController {
             return JSONMessage.createFalied("ip格式不正确").toString();
         }
 
-        //探针不在线，无法执行命令
-        if(!deviceConnectCache.isOk(deviceId)){
-            return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
-        }
-
         try{
             JSONObject jo;
             if(netArea == CommonContants.NETAREA_IN){
                 //内网直接测试
                 jo = new SnmpUtil(ip).snmpWalk(oid);
             }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
+
                 //获取该探针服务
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
@@ -269,4 +283,5 @@ public class ToolsController {
             log.info("end: 执行snmp工具 ");
         }
     }
+
 }
