@@ -63,14 +63,13 @@ public class AlarmHandler {
         if(CollectionUtils.isEmpty(allDevice)){
             return;
         }
-        Set<Long> allIds = allDevice.keySet();
-
         //得到所有连接上的设备
         Set<Long> okSet = deviceConnectCache.getOkSet();
-        allIds.removeAll(okSet);
 
+        //拷贝一份所有设备id,不能修改原来set中的值
+        Set<Long> notOk = new HashSet<>(allDevice.keySet());
         //得到所有不ok的设备进行告警
-        Set<Long> notOk = allIds;
+        notOk.remove(okSet);
 
         Device device;
         AlarmLog alarmLog;
@@ -166,19 +165,22 @@ public class AlarmHandler {
 
         Set<AlarmLog> linkLogs = new HashSet<>(allLink.size());
         AlarmLog alarmLog;
-        Set<Long>  deviceIds;
+        Set<Long>  notOkDeviceIds;
+        Set<Long>  okDeviceIds;
         Set<String> allDeviceName;
         for(Link link:allLink.values()){
-            deviceIds = link.getDeviceIds();
-            if(CollectionUtils.isEmpty(deviceIds)){
+            okDeviceIds = link.getDeviceIds();
+            if(CollectionUtils.isEmpty(okDeviceIds)){
                 continue;
             }
 
+            //拷贝一份id，不能操作原来的set
+            notOkDeviceIds = new HashSet<>(okDeviceIds);
             //移除掉所有能连上的设备,剩下的就是连不上的设备
-            deviceIds.removeAll(okSet);
+            notOkDeviceIds.removeAll(okSet);
 
             //如果为空，证明全部连上了
-            if(CollectionUtils.isEmpty(deviceIds)) {
+            if(CollectionUtils.isEmpty(notOkDeviceIds)) {
                 continue;
             }
 
@@ -188,16 +190,16 @@ public class AlarmHandler {
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
             alarmLog.setType(AlarmType.shebeidiushi);
 
-            allDeviceName = new HashSet<>(deviceIds.size());
+            allDeviceName = new HashSet<>(notOkDeviceIds.size());
             //拼装名称
-            for (Long deviceId : deviceIds) {
+            for (Long deviceId : notOkDeviceIds) {
                 Device device = allDevice.get(deviceId);
                 if(device == null){
                     continue;
                 }
                 allDeviceName.add(device.getDeviceName());
             }
-            alarmLog.setMsg(String.format("链路%s中有%s个设备掉线，设备名称为%s",link.getLinkName(),deviceIds.size(), StringUtils.join(allDeviceName),","));
+            alarmLog.setMsg(String.format("链路%s中有%s个设备掉线，设备名称为%s",link.getLinkName(),notOkDeviceIds.size(), StringUtils.join(allDeviceName),","));
 
             linkLogs.add(alarmLog);
 
