@@ -21,7 +21,7 @@ public class JSONMessage {
     private static final int JSON_RESULT_FAILED = ErrorCodeEnum.UNKNOWN.getCode();
 
     /** 状态 */
-    private int code = JSONMessage.JSON_RESULT_FAILED;
+    private int code = JSON_RESULT_FAILED;
 
     /** 错误信息描述 */
     private String msg;
@@ -32,13 +32,11 @@ public class JSONMessage {
     private JSONObject data;
     
     private long time = System.currentTimeMillis();
-    
-	protected JSONMessage() {
-		super();
+
+	public JSONMessage() {
 	}
 
 	private JSONMessage(final int code, final String msg) {
-    	super();
     	this.code = code;
     	this.msg = msg;
     }
@@ -123,6 +121,14 @@ public class JSONMessage {
 		this.msg = msg;
 	}
 
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
     @JSONField(serialize=false)
 	public boolean isSuccess(){
         return code == JSONMessage.JSON_RESULT_SUCCESS;
@@ -175,6 +181,7 @@ public class JSONMessage {
 	        return null;
         }
 
+        //属性必须为public或者有set方法为public
         return JSONObject.parseObject(jsonStr,JSONMessage.class);
 
 
