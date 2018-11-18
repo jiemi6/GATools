@@ -39,9 +39,6 @@ public class ExamineHandler {
     DeviceConnectHandler deviceConnectHandler;
 
     @Autowired
-    DeviceServiceHandler deviceServiceHandler;
-
-    @Autowired
     DeviceExplorerCache deviceExplorerCache;
 
     @Autowired
@@ -64,6 +61,9 @@ public class ExamineHandler {
 
     @Autowired
     TaskHandler taskHandler;
+
+    @Autowired
+    DeviceServiceCheckManager deviceServiceCheckManager;
 
 
     @Async
@@ -114,14 +114,14 @@ public class ExamineHandler {
         CheckItem checkItem;
 
         //该设备所有的服务
-        List<DeviceService> deviceServiceList;
+        Set<DeviceService> deviceServiceList;
         //默认就只有一步 就是检查连接
         int totalStep = 1;
         // 检查网络联通性
         boolean isConnect = deviceConnectHandler.pingTest(device);
 
         if(isConnect){
-            deviceServiceList = deviceServiceHandler.query8Device(device.getDeviceId());
+            deviceServiceList = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
             //网络联通性 + 硬件情况 + 所有服务个数(没有也加一个)
             totalStep = 1 + 1 + (CollectionUtils.isEmpty(deviceServiceList) ? 1 : deviceServiceList.size());
             //创建检查步数 缓存
@@ -159,7 +159,7 @@ public class ExamineHandler {
         //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
         if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("设备[%s]属于外网设备，并且没有找到可用的探针服务，无法得知设备信息。",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("设备[%s]属于外网设备，并且没有配置可用的探针服务，无法探测该设备。",device.getDeviceName()));
             checkItemHandler.insert(checkItem);
             return;
         }
@@ -171,92 +171,19 @@ public class ExamineHandler {
             checkItem.setResultMsg(String.format("设备[%s]没有配置服务!",device.getDeviceName()));
             checkItemHandler.insert(checkItem);
         }else{
-            deviceServiceList.forEach(deviceService -> {
-                checkDeviceService(checkId,device,deviceService,detectorService);
-            });
-        }
+            for(DeviceService deviceService :deviceServiceList){
+                boolean isOk = deviceServiceCheckManager.checkDeviceService(device,deviceService,detectorService);
+                int level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
+                String msg = String.format("设备[%s]%s服务%s",device.getDeviceName(),deviceService.typeNameStr(),isOk ? "正常" : "异常");
+                checkItem = checkStepCache.createNextItem(checkId);
 
+                checkItem.setResultLevel(level);
+                checkItem.setResultMsg(msg);
+                checkItemHandler.insert(checkItem);
+            }
+        }
     }
 
-    void checkDeviceService(long checkId, Device device, DeviceService deviceService,DeviceService detectorService) {
-        CheckItem checkItem = checkStepCache.createNextItem(checkId);
-        int level = MyLevel.LEVEL_NORMAL;
-        BaseConfigData baseConfigData;
-        boolean isOk;
-        String msg = "";
-        switch (deviceService.getServiceType()){
-            //如果是探针，调用探针的check接口
-            case DeviceService.SERVICETYPE_DETECTOR :
-                isOk = DetectorUtil.check(deviceService.getIp(),deviceService.getConfigData().getPort());
-                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                msg = String.format("设备[%s]探针服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
-                break;
-            case DeviceService.SERVICETYPE_DB:
-                DBConfigData dbConfigData = (DBConfigData) deviceService.getConfigData();
-                if(device.isNetAreaIn()){
-                    isOk = dynamicDB.testDB(dbConfigData);
-                }else{
-                    if(detectorService == null){
-                        isOk = false;
-                    }else{
-                        isOk = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),dbConfigData);
-                    }
-                }
-                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                msg = String.format("设备[%s]数据库服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
-                break;
-            case DeviceService.SERVICETYPE_SNMP:
-                SnmpConfigData snmpConfigData = (SnmpConfigData) deviceService.getConfigData();
-                SnmpUtil snmpUtil =new SnmpUtil(snmpConfigData);
-                if(device.isNetAreaIn()){
-                    isOk = snmpUtil.testConnect();
-                }else{
-                    if(detectorService == null){
-                        isOk = false;
-                    }else{
-                        isOk = DetectorUtil.testSNMP(detectorService.getIp(),detectorService.getConfigData().getPort(),snmpConfigData);
-                    }
-                }
-
-                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                msg = String.format("设备[%s]SNMP服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
-                break;
-            case DeviceService.SERVICETYPE_FTP:
-                FTPConfigData ftpConfigData = (FTPConfigData) deviceService.getConfigData();
-                if(device.isNetAreaIn()){
-                    isOk = ftpUtil.testFTPConnect(ftpConfigData);
-                }else{
-                    if(detectorService == null){
-                        isOk = false;
-                    }else{
-                        isOk = DetectorUtil.testFTP(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
-                    }
-                }
-
-                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                msg = String.format("设备[%s]FTP服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
-                break;
-            case DeviceService.SERVICETYPE_SSH:
-                baseConfigData = deviceService.getConfigData();
-                if(device.isNetAreaIn()){
-                    isOk = SSHExecuter.testConnect(baseConfigData);
-                }else{
-                    if(detectorService == null){
-                        isOk = false;
-                    }else{
-                        isOk = DetectorUtil.testSSH(detectorService.getIp(),detectorService.getConfigData().getPort(), baseConfigData);
-                    }
-                }
-
-                level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                msg = String.format("设备%s的SSH服务%s",device.getDeviceName(),isOk ? "正常" : "异常，连接失败");
-                break;
-        }
-
-        checkItem.setResultLevel(level);
-        checkItem.setResultMsg(msg);
-        checkItemHandler.insert(checkItem);
-    }
 
     /**
      * 异步执行

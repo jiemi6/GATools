@@ -1,5 +1,7 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.gson.JsonObject;
 import com.minkey.db.DeviceLogHandler;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskDayLogHandler;
@@ -8,6 +10,7 @@ import com.minkey.db.dao.*;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
+import com.minkey.handler.AlarmHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
@@ -36,6 +39,9 @@ public class AnalysisController {
 
     @Autowired
     LinkHandler linkHandler;
+
+    @Autowired
+    AlarmHandler alarmHandler;
 
     /**
      * 任务统计分析 分页数据
@@ -144,10 +150,22 @@ public class AnalysisController {
             if(CollectionUtils.isEmpty(link.getDeviceIds())){
                 return JSONMessage.createFalied("链路没有设备").toString();
             }
-            //Minkey 设备运行统计
-            deviceLogHandler.querySum(linkId,seachParam);
+            JSONObject totalData = new JSONObject();
+            //设备总数
+            totalData.put("deviceNum",link.getDeviceIds().size());
+            //报警的设备数量
+            totalData.put("alarmDeviceNum",alarmHandler.queryDeviceCount(link.getDeviceIds(),seachParam));
+            //所有设备总共报警的次数
+            totalData.put("alarmNum",link.getDeviceIds().size());
+            //设备连通性报警次数
+            totalData.put("alarmNum_connect",link.getDeviceIds().size());
+            //设备服务性报警次数
+            totalData.put("alarmNum_service",link.getDeviceIds().size());
+            //设备性能报警次数
+            totalData.put("alarmNum_explore",link.getDeviceIds().size());
 
-            return JSONMessage.createSuccess().addData("sum",null).toString();
+
+            return JSONMessage.createSuccess().addData(totalData).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

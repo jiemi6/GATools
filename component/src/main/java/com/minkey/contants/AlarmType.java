@@ -12,11 +12,11 @@ public interface AlarmType {
          * 设备性能
          */
         public static int shebeixingneng = 2;
-
         /**
-         * 丢失设备
+         * 设备性能
          */
-        public static int shebeidiushi = 3;
+        public static int shebeifuwu = 2;
+
 
         /**
          * 数据源不存在

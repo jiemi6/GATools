@@ -38,7 +38,7 @@ public class TaskHandler {
     }
 
     public List<Task> queryAll() {
-        return jdbcTemplate.query("select * from "+tableName, new BeanPropertyRowMapper<>(Task.class));
+        return jdbcTemplate.query("select * from "+tableName +" t,t_link tl where t.linkId=tl.linkId", new BeanPropertyRowMapper<>(Task.class));
     }
 
     public void insertAll(List<Task> tasks) {
@@ -105,7 +105,7 @@ public class TaskHandler {
 
         StringBuffer whereStr = new StringBuffer(" where ( 1=2 ");
         taskIds.forEach(taskId -> {
-            whereStr.append(" or targetTaskId=" + taskId);
+            whereStr.append(" or taskId=" + taskId);
         });
         whereStr.append(")");
         int num = jdbcTemplate.update("update "+tableName+" set level=? "+whereStr,new Object[]{taskLevel});

@@ -63,7 +63,7 @@ public class SourceHandler {
     }
 
 
-    public void del(Long linkId) {
+    public void del8LinkId(Long linkId) {
         int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
 
     }

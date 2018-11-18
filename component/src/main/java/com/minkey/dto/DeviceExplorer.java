@@ -124,9 +124,9 @@ public class DeviceExplorer {
 
     public String showString(){
         return String.format("cpu:%s,mem:%s,disk:%s",
-                getCpu().getUseRateStr(),
-                getDisk().getUseRateStr(),
-                getMem().getUseRateStr());
+                this.getCpu() ==null ? "-": this.getCpu().getUseRateStr(),
+                this.getDisk() == null ? "-":this.getDisk().getUseRateStr(),
+                this.getMem() == null ? "-" : this.getMem().getUseRateStr());
     }
 
     @Override

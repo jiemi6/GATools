@@ -51,6 +51,13 @@ public class DeviceCache {
     private Map<Long,DeviceService> allDetectorServiceMap = new HashMap<>();
 
     /**
+     * 所有设备对应的所有服务
+     * key：设备id
+     * value：设备下的服务
+     */
+    private Map<Long,Set<DeviceService>> allDeviceServiceMap = new HashMap<>();
+
+    /**
      *链接对应的探针服务缓存
      * key ：链路id，
      * value ：探针服务
@@ -172,7 +179,7 @@ public class DeviceCache {
 
         List<DeviceService> deviceServiceList = deviceServiceHandler.query8Type(DeviceService.SERVICETYPE_DETECTOR);
         if(CollectionUtils.isEmpty(deviceServiceList)){
-            //清空探针缓存
+            //清空缓存
             allDetectorServiceMap = new HashMap<>();
         }else{
             //重新赋值
@@ -181,11 +188,27 @@ public class DeviceCache {
 
         List<DeviceService> snmpServiceList = deviceServiceHandler.query8Type(DeviceService.SERVICETYPE_SNMP);
         if(CollectionUtils.isEmpty(snmpServiceList)){
-            //清空探针缓存
+            //清空缓存
             deviceSNMPServiceMap = new HashMap<>();
         }else{
             //重新赋值
             deviceSNMPServiceMap = snmpServiceList.stream().collect(Collectors.toMap(DeviceService::getDeviceId, DeviceService-> DeviceService));
+        }
+
+        List<DeviceService> allDeviceService = deviceServiceHandler.queryAll();
+        //清空缓存
+        allDeviceServiceMap = new HashMap<>();
+        if(!CollectionUtils.isEmpty(snmpServiceList)){
+
+            for(DeviceService deviceService : allDeviceService){
+                if(allDeviceServiceMap.get(deviceService.getDeviceId()) == null){
+                    Set<DeviceService> deviceServicesSet = new HashSet<>();
+                    deviceServicesSet.add(deviceService);
+                    allDeviceServiceMap.put(deviceService.getDeviceId(),deviceServicesSet);
+                }else{
+                    allDeviceServiceMap.get(deviceService.getDeviceId()).add(deviceService);
+                }
+            }
         }
 
         for(Link link: links){
@@ -307,5 +330,9 @@ public class DeviceCache {
      */
     public DeviceService getDetectorService8DetectorSelf(long deviceId) {
         return allDetectorServiceMap.get(deviceId);
+    }
+
+    public Set<DeviceService> getDeviceService8DeviceId(long deviceId) {
+        return allDeviceServiceMap.get(deviceId);
     }
 }

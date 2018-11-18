@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -89,6 +90,11 @@ public class SnmpExploreHandler {
             DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
             //通过探针获取硬件信息
             deviceExplorer = get(device,detectorService);
+        }
+
+        if(deviceExplorer.getMem() == null && CollectionUtils.isEmpty(deviceExplorer.getDisks()) && CollectionUtils.isEmpty(deviceExplorer.getCpus())){
+            log.error("从SNMP获取到的硬件资源信息全部为空，检查snmp协议。");
+            return;
         }
 
        deviceExplorerCache.putDeviceExplorer(device.getDeviceId(),deviceExplorer);

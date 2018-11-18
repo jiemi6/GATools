@@ -2,8 +2,7 @@ package com.minkey.controller;
 
 import com.minkey.cache.DeviceCache;
 import com.minkey.contants.Modules;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.UserLogHandler;
+import com.minkey.db.*;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
@@ -181,6 +180,13 @@ public class LinkController {
         }
     }
 
+    @Autowired
+    TaskHandler taskHandler;
+    @Autowired
+    TaskSourceHandler taskSourceHandler;
+    @Autowired
+    SourceHandler sourceHandler;
+
     @RequestMapping("/delete")
     public String delete(Long linkId) {
         log.info("start: 执行删除link, linkId={} ",linkId);
@@ -189,6 +195,13 @@ public class LinkController {
         }
         try{
             linkHandler.del(linkId);
+
+            //删除链路的任务
+            taskHandler.del8LinkId(linkId);
+            //删除链路与数据源的对应关系
+            taskSourceHandler.del8LinkId(linkId);
+            //删除链路对应的数据源
+            sourceHandler.del8LinkId(linkId);
 
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志

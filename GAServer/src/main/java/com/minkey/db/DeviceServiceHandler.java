@@ -78,6 +78,11 @@ public class DeviceServiceHandler {
         int num = jdbcTemplate.update("delete from "+tableName +" where deviceId=?",new Object[]{deviceId});
     }
 
+    public List<DeviceService> queryAll() {
+        List<DeviceService> deviceServices = jdbcTemplate.query("select * from "+tableName ,new DeviceServiceRowMapper());
+        return deviceServices;
+    }
+
     class DeviceServiceRowMapper implements RowMapper {
         @Override
         public DeviceService mapRow(ResultSet rs, int rowNum) throws SQLException {

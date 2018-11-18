@@ -102,6 +102,24 @@ public class DeviceService {
         this.configData = configData;
     }
 
+    @JSONField(serialize=false)
+    public String typeNameStr(){
+        switch (serviceType){
+            case SERVICETYPE_DB:
+                return "数据库";
+            case SERVICETYPE_FTP:
+                return "FTP";
+            case SERVICETYPE_SSH:
+                return "SSH";
+            case SERVICETYPE_DETECTOR:
+                return "探针";
+            case SERVICETYPE_SNMP:
+                return "SNMP";
+            default:
+                return "未知";
+        }
+
+    }
     /**
      * 获取str时候，从data转换
      * @return
