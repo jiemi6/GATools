@@ -11,6 +11,7 @@ import java.util.Map;
  * 包括cpu，内存，磁盘
  */
 public class DeviceExplorer {
+    private long deviceId;
     /**
      * cpu占用率，list长度为cpu个数，Integer值为单个cpu的占用率
      */
@@ -50,6 +51,14 @@ public class DeviceExplorer {
 
     public void setMem(RateObj mem) {
         this.mem = mem;
+    }
+
+    public long getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(long deviceId) {
+        this.deviceId = deviceId;
     }
 
     public RateObj getCpu(){
@@ -94,18 +103,23 @@ public class DeviceExplorer {
     public int judgeLevel(){
         RateObj cpu = this.getCpu();
         RateObj disk = this.getDisk();
-
-        if(cpu.judgeLevel() == MyLevel.LEVEL_ERROR
-                || disk.judgeLevel() == MyLevel.LEVEL_ERROR
-                || mem.judgeLevel() == MyLevel.LEVEL_ERROR){
-            return MyLevel.LEVEL_ERROR;
-        }else if(cpu.judgeLevel() == MyLevel.LEVEL_WARN
-                || disk.judgeLevel() == MyLevel.LEVEL_WARN
-                || mem.judgeLevel() == MyLevel.LEVEL_WARN){
-            return MyLevel.LEVEL_WARN;
-        }else{
-            return MyLevel.LEVEL_NORMAL;
+        int level = MyLevel.LEVEL_NORMAL;
+        if(cpu != null){
+            if(cpu.judgeLevel() > level){
+                level = cpu.judgeLevel();
+            }
         }
+        if(disk != null){
+            if(disk.judgeLevel() > level){
+                level = disk.judgeLevel();
+            }
+        }
+        if(mem != null){
+            if(mem.judgeLevel() > level){
+                level = mem.judgeLevel();
+            }
+        }
+        return level;
     }
 
     public String showString(){
@@ -113,5 +127,15 @@ public class DeviceExplorer {
                 getCpu().getUseRateStr(),
                 getDisk().getUseRateStr(),
                 getMem().getUseRateStr());
+    }
+
+    @Override
+    public String toString() {
+        return "DeviceExplorer{" +
+                "deviceId=" + deviceId +
+                ", cpus=" + cpus +
+                ", disks=" + disks +
+                ", mem=" + mem +
+                '}';
     }
 }

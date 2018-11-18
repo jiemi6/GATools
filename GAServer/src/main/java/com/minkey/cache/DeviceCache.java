@@ -299,4 +299,13 @@ public class DeviceCache {
     public Map<Long, Integer> getAllDeviceLevel() {
         return deviceLevel;
     }
+
+    /**
+     * 根据探针自己获取探针服务，只获取设备自己下的探针服务
+     * @param deviceId
+     * @return
+     */
+    public DeviceService getDetectorService8DetectorSelf(long deviceId) {
+        return allDetectorServiceMap.get(deviceId);
+    }
 }
