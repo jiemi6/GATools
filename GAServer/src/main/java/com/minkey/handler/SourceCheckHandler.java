@@ -40,6 +40,10 @@ public class SourceCheckHandler {
         if(source.isNetAreaIn()){
             isConnect = ftpUtil.testFTPConnect(source, FTPUtil.default_timeout);
         }else{
+            if(detectorService == null){
+                log.error(String.format("没有部署探针，无法探测外网FTP资源%s",source));
+                return false;
+            }
             //将source转换为ftpconfigdata
             FTPConfigData ftpConfigData = new FTPConfigData();
             ftpConfigData.setIp(source.getIp());
@@ -58,6 +62,10 @@ public class SourceCheckHandler {
         if(source.isNetAreaIn()){
             isConnect = dynamicDB.testDB(source);
         }else{
+            if(detectorService == null){
+                log.error(String.format("没有部署探针，无法探测外网DB资源%s",source));
+                return false;
+            }
             isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
         }
         return isConnect;

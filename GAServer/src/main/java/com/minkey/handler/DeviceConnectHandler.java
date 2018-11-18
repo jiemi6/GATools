@@ -26,8 +26,6 @@ import java.util.Map;
 public class DeviceConnectHandler {
     @Autowired
     DeviceCache deviceCache;
-    @Autowired
-    DeviceServiceHandler deviceServiceHandler;
     /**
      * 设备联通性情况
      */
@@ -82,9 +80,10 @@ public class DeviceConnectHandler {
         //如果自己是探针
         if(device.getDeviceType() == DeviceType.detector) {
             //查询自己的探针服务
-            DeviceService detectorService = deviceServiceHandler.query8Device(device.getDeviceId(),DeviceType.detector);
+            DeviceService detectorService = deviceCache.getDetectorService8DetectorSelf(device.getDeviceId());
             //没有配置探针服务
             if(detectorService == null){
+                log.error(String.format("探针[%s]没有配置探针服务，无法探测自己和外网服务器",device.getDeviceName()));
                 return false;
             }
             //如果是探针自己，发送探针check
@@ -97,7 +96,7 @@ public class DeviceConnectHandler {
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
-            //找不到探针
+            //
             if(detectorService == null){
                 return false;
             }
