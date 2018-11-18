@@ -120,7 +120,7 @@ public class TaskCollector {
      */
     private void collectorTask(JdbcTemplate jdbcTemplate, Link link){
             //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,status from tbtask WHERE status <> '-100'");
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,tbtasktypeid,status from tbtask WHERE status <> '-100'");
 
         if(CollectionUtils.isEmpty(mapList)){
             taskHandler.del8LinkId(link.getLinkId());
@@ -188,7 +188,7 @@ public class TaskCollector {
             tasks.add(taskSource);
         });
 
-        taskSourceHandler.del(link.getLinkId());
+        taskSourceHandler.del8LinkId(link.getLinkId());
         if(!CollectionUtils.isEmpty(tasks)){
             //把链路存到数据库中。
             taskSourceHandler.insertAll(tasks);
@@ -245,7 +245,7 @@ public class TaskCollector {
             sources.add(source);
         });
 
-        sourceHandler.del(link.getLinkId());
+        sourceHandler.del8LinkId(link.getLinkId());
         if(!CollectionUtils.isEmpty(sources)){
             //把链路存到数据库中。
             sourceHandler.insertAll(sources);
