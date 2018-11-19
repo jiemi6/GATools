@@ -19,7 +19,7 @@ public class CheckStepCache {
         synchronized (lock) {
             Integer step = totalStepCache.get(checkId);
             if(step == null){
-                step =0;
+                step = totalStep;
             }else{
                 step = step +totalStep;
             }

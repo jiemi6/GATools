@@ -45,7 +45,8 @@ public class SSHExecuter {
             SSHExecuter sshExecuter = new SSHExecuter(baseConfigData);
 
             return true;
-        } catch (JSchException e) {
+        } catch (Exception e) {
+            log.error("Test "+e.getMessage());
             return false;
         }
     }
@@ -60,7 +61,7 @@ public class SSHExecuter {
      * @return
      * @throws JSchException
      */
-    private Session connect(String ip, Integer port, String user, String pwd,int timeout) throws JSchException {
+    private Session connect(String ip, Integer port, String user, String pwd,int timeout) throws SystemException {
         try {
             JSch jsch = new JSch();
             if (port != null) {
@@ -74,7 +75,7 @@ public class SSHExecuter {
             //连接超时设置
             session.connect(timeout);
         } catch (JSchException e) {
-            throw new SystemException(String.format("SSH 异常，ip=%s,port=%s,user=%s,pwd=%s",ip,port,user,pwd),e);
+            throw new SystemException(String.format("SSH 异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
         }
         return session;
     }

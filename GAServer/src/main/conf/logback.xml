@@ -30,6 +30,13 @@
         </encoder>
     </appender>
 
+    <logger name="org" level="info"/>
+    <logger name="java.sql" level="info"/>
+    <logger name="com.mchange" level="info"/>
+    <logger name="io.netty" level="info"/>
+    <logger name="org.apache.commons.beanutils" level="info" />
+    <logger name="org.dna.moquette.messaging.subscriptions" level="info" />
+
     <!--指定最基础的日志输出级别-->
     <root level="info">
         <!--appender将会添加到这个loger-->

@@ -2,7 +2,6 @@ package com.minkey.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.dto.SnmpConfigData;
-import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -79,22 +78,26 @@ public class SnmpUtil {
             log.debug("-------> snmpGet 发送PDU <-------");
             pdu.setType(PDU.GET);
             ResponseEvent respEvent = snmp.send(pdu, communityTarget);
-            log.debug("snmpGet PeerAddress:" + respEvent.getPeerAddress());
+//            log.debug("snmpGet PeerAddress:" + respEvent.getPeerAddress());
             PDU response = respEvent.getResponse();
 
             if (response == null) {
-                throw new SystemException("snmpGet response is null,maybe request time out");
+                log.warn("snmp返回为空，服务未开启或者超时，responsePDU == null");
+                return null;
             } else {
                 JSONObject data = new JSONObject(response.size());
                 log.debug("response pdu size is " + response.size());
                 for (int i = 0; i < response.size(); i++) {
                     VariableBinding vb = response.get(i);
-                    log.debug(vb.getOid().toString() +"="+ vb.getVariable().toString());
+                    log.debug(vb.getOid().toString() + "=" + vb.getVariable().toString());
                     data.put(vb.getOid().toString(), vb.getVariable().toString());
                 }
                 log.debug("SNMP GET one OID value finished !");
                 return data;
             }
+        }catch (Exception e){
+            log.error("snmp Get Exception:" , e);
+            return null;
         } finally {
             if (snmp != null) {
                 try {
@@ -130,7 +133,8 @@ public class SnmpUtil {
             PDU response = respEvent.getResponse();
 
             if (response == null) {
-                throw new SystemException("snmpGetList response is null,maybe request time out");
+                log.warn("snmp返回为空，服务未开启或者超时，responsePDU == null");
+                return null;
             } else {
                 JSONObject data = new JSONObject(response.size());
                 log.debug("response pdu size is " + response.size());
@@ -252,7 +256,7 @@ public class SnmpUtil {
 
                 PDU response = respEvent.getResponse();
                 if (null == response) {
-                    log.debug("snmpWalk responsePDU == null");
+                    log.warn("snmp返回为空，服务未开启或者超时，responsePDU == null");
                     finished = true;
                     return null;
                 } else {
@@ -409,8 +413,8 @@ public class SnmpUtil {
         //发送一条简单的测试命令
         try {
             //获取系统名称
-            this.snmpGet("1.3.6.1.2.1.1.5.0");
-            return true;
+            JSONObject jsonObject = this.snmpGet("1.3.6.1.2.1.1.5.0");
+            return jsonObject != null;
         } catch (Exception e) {
             log.error("测试SNMP服务器基本命令异常",e);
             return false;

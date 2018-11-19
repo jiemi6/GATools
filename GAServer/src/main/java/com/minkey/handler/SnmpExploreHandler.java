@@ -95,7 +95,7 @@ public class SnmpExploreHandler {
 
         if(deviceExplorer != null){
             if(deviceExplorer.getMem() == null && CollectionUtils.isEmpty(deviceExplorer.getDisks()) && CollectionUtils.isEmpty(deviceExplorer.getCpus())){
-                log.error("从SNMP获取到的硬件资源信息全部为空，检查snmp协议。");
+                log.error(String.format("从%s获取硬件资源信息(snmp)全部为空.",device));
                 return;
             }
         }
@@ -168,12 +168,19 @@ public class SnmpExploreHandler {
 
         DeviceExplorer deviceExplorer = new DeviceExplorer();
 
-        JSONObject cpuJson = snmpUtil.snmpWalk(cpuOid);
-        deviceExplorer.setCpus(getCpu(cpuJson));
+        try {
+            JSONObject cpuJson = snmpUtil.snmpWalk(cpuOid);
+            deviceExplorer.setCpus(getCpu(cpuJson));
+        }catch (Exception e){
+            log.error(String.format("获取设备[%s]的snmp-cpuk信息异常",device.getDeviceName()));
+        }
 
-        JSONObject diskJson = snmpUtil.snmpWalk(diskOid);
-        deviceExplorer.setDisks(getDisk(deviceExplorer,diskJson));
-
+        try {
+            JSONObject diskJson = snmpUtil.snmpWalk(diskOid);
+            deviceExplorer.setDisks(getDisk(deviceExplorer, diskJson));
+        }catch (Exception e){
+            log.error(String.format("获取设备[%s]的snmp-disk信息异常",device.getDeviceName()));
+        }
         return deviceExplorer;
     }
 
@@ -204,8 +211,13 @@ public class SnmpExploreHandler {
             //总区块数
             long totalArea = diskJson.getLong(diskOid+".5."+lastOid);
             //已经使用的区块数
-            //Minkey 会空指针
-            long useArea = diskJson.getLong(diskOid+".6."+lastOid);
+            //Minkey 会空指针,使用大写Long
+            Long useArea = diskJson.getLong(diskOid+".6."+lastOid);
+            if(useArea == null){
+//                log.debug("diskJson的值为空"+diskOid+".6."+lastOid);
+                //为空直接赋值为0
+                useArea = 0l;
+            }
             //总大小
             long total = totalArea * danweiByte;
 

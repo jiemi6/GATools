@@ -40,11 +40,12 @@ public class TaskController {
         }
     }
 
+
     /**
-     * 废弃
+     *
      * @return
      */
-//    @RequestMapping("/queryAll")
+    @RequestMapping("/queryAll")
     public String queryAll() {
         log.info("start: 执行query所有任务 ");
 
@@ -63,7 +64,7 @@ public class TaskController {
      * 废弃
      * @return
      */
-//    @RequestMapping("/queryCount")
+    @RequestMapping("/queryCount")
     public String queryCount() {
         log.info("start: 执行count所有任务 ");
         try{

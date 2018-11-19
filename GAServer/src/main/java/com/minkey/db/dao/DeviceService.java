@@ -79,7 +79,8 @@ public class DeviceService {
     }
 
     public String getServiceName() {
-        return serviceName;
+        return typeNameStr();
+//        return serviceName;
     }
 
     public void setServiceName(String serviceName) {
@@ -128,6 +129,8 @@ public class DeviceService {
         if(configData == null){
             return null;
         }
+        //使用service-ip作为data的ip
+        configData.setIp(this.getIp());
         return JSONObject.toJSONString(configData);
     }
 

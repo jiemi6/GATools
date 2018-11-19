@@ -79,7 +79,7 @@ public class SelfCheckJob {
         checkItemHandler.insert(checkItem);
 
         try {
-            deviceCache.init();
+            deviceCache.initDB2Cache();
             checkItem = new CheckItem(checkId,totalStep);
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
             checkItem.setResultMsg("初始化内存数据成功");

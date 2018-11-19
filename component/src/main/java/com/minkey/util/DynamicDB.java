@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,15 +63,7 @@ public class DynamicDB {
 
             return jdbcTemplate;
         }catch (Exception e ){
-            throw new DataException("构造数据库连接异常",e);
-        }finally {
-            if(dataSource != null){
-                try {
-                    dataSource.getConnection().close();
-                } catch (SQLException e) {
-                    log.warn("关闭数据库连接异常"+e);
-                }
-            }
+            throw new DataException("构造数据库连接异常,"+e.getMessage());
         }
 
     }
@@ -85,7 +76,7 @@ public class DynamicDB {
             jdbcTemplate.execute(dbConfigData.getDatabaseDriver().getValidationQuery());
             return true;
         }catch (Exception e){
-            log.error("测试连接数据库失败:"+dbConfigData.toString()+e);
+            log.error(String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
             return false;
         }
     }

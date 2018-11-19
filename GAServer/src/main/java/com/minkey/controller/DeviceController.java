@@ -79,7 +79,7 @@ public class DeviceController {
                     return JSONMessage.createFalied("服务配置不能为空");
                 }
 
-                BaseConfigData baseConfigData = DeviceService.conventConfigData8str(deviceService.getServiceType(),deviceService.getConfigDataStr());
+                BaseConfigData baseConfigData = DeviceService.conventConfigData8str(deviceService.getServiceType(),configDataStr);
                 deviceService.setConfigData(baseConfigData);
 
                 if (deviceService.getServiceType() == DeviceService.SERVICETYPE_DETECTOR && StringUtils.isEmpty(deviceService.getIp())) {
@@ -112,6 +112,11 @@ public class DeviceController {
             device.setDeviceId(deviceId);
 
             if(!CollectionUtils.isEmpty(paramList)){
+                paramList.forEach(deviceService -> {
+                    if(StringUtils.isEmpty(deviceService.getIp())){
+                        deviceService.setIp(device.getIp());
+                    }
+                });
                 deviceServiceHandler.insertAll(device,paramList);
             }
 
