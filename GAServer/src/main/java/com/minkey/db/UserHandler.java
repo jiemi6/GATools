@@ -109,11 +109,11 @@ public class UserHandler {
     }
 
     /**
-     * 清除次数
+     * 清除次数,请修改用户状态
      * @param uid
      */
     public void cleanWrongPwdTime(Long uid) {
-        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 where status > -1 AND uid= ?",new Object[]{uid});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 ,status=? where status > -1 AND uid= ?",new Object[]{uid,User.STATUS_NORMAL});
 
 
     }
