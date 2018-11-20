@@ -255,113 +255,6 @@ public class IndexController {
         return JSONMessage.createSuccess().addData("list",alarmDayLogs).toString();
     }
 
-    /**
-     * 报警统计
-     * @return
-     */
-//    @RequestMapping("/alarmStatistics")
-    public String alarmStatistics2(){
-        JSONObject jsonObject = new JSONObject();
-
-        jsonObject.put("link",alarmStatistics_link());
-        jsonObject.put("device",alarmStatistics_device());
-        jsonObject.put("task",alarmStatistics_task());
-
-        return JSONMessage.createSuccess().addData(jsonObject).toString();
-    }
-
-    private JSONArray alarmStatistics_link(){
-        JSONArray jsonArray = new JSONArray();
-        JSONObject node = new JSONObject();
-        node.put("date","2018-01-01");
-        node.put("number",12);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-02");
-        node.put("number",8);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-03");
-        node.put("number",10);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-04");
-        node.put("number",6);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-05");
-        node.put("number",2);
-        jsonArray.add(node);
-
-        return jsonArray;
-    }
-
-    private JSONArray alarmStatistics_device(){
-        JSONArray jsonArray = new JSONArray();
-        JSONObject node = new JSONObject();
-        node.put("date","2018-01-01");
-        node.put("number",2);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-02");
-        node.put("number",3);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-03");
-        node.put("number",0);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-04");
-        node.put("number",10);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-05");
-        node.put("number",2);
-        jsonArray.add(node);
-
-        return jsonArray;
-
-    }
-
-    private JSONArray alarmStatistics_task(){
-        JSONArray jsonArray = new JSONArray();
-        JSONObject node = new JSONObject();
-        node.put("date","2018-01-01");
-        node.put("number",5);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-02");
-        node.put("number",7);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-03");
-        node.put("number",2);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-04");
-        node.put("number",1);
-        jsonArray.add(node);
-
-        node = new JSONObject();
-        node.put("date","2018-01-05");
-        node.put("number",6);
-        jsonArray.add(node);
-
-        return jsonArray;
-
-    }
-
 
     /**
      * 数据流量/文件统计 （月）
@@ -397,7 +290,7 @@ public class IndexController {
 
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("totalDataNum",totalDataNum);
+        jsonObject.put("totalData",totalDataNum);
         jsonObject.put("totalFile",totalFile);
         jsonObject.put("totalFlow",totalFlow);
 
