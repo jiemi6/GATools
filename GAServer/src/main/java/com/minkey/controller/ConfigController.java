@@ -7,6 +7,8 @@ import com.minkey.db.ConfigHandler;
 import com.minkey.db.UserLogHandler;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
+import com.minkey.entity.ResultInfo;
+import com.minkey.executer.LocalExecuter;
 import com.minkey.syslog.SysLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -353,10 +355,16 @@ public class ConfigController {
             open = false;
         }
 
+        ResultInfo resultInfo;
         if(open){
-            //开启snmp服务
+            //1.开启，service sshd start
+            resultInfo = LocalExecuter.exec("service sshd start");
         }else{
-            //停止snmp服务
+            //2.停止，service sshd stop
+            resultInfo = LocalExecuter.exec("service sshd stop");
+        }
+        if(!resultInfo.isExitStutsOK()){
+            return JSONMessage.createFalied("执行ssh命令错误，msg="+resultInfo.getErrRes()).toString();
         }
 
         try{
@@ -403,10 +411,11 @@ public class ConfigController {
             open = false;
         }
 
+        ResultInfo resultInfo;
         if(open){
-            //开启snmp服务
+
         }else{
-            //停止snmp服务
+
         }
 
         try{

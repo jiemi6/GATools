@@ -21,8 +21,8 @@ public class TaskHandler {
     JdbcTemplate jdbcTemplate;
 
 
-    public long queryCount() {
-        Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" ",Long.class);
+    public int queryCount() {
+        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+"  t,t_link tl where t.linkId=tl.linkId",Integer.class);
         return count;
     }
 

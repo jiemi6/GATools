@@ -4,12 +4,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.LinkHandler;
+import com.minkey.db.TaskDayLogHandler;
+import com.minkey.db.analysis.AlarmDayLog;
+import com.minkey.db.analysis.AlarmDayLogHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.Link;
+import com.minkey.db.dao.Task;
+import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.JSONMessage;
+import com.minkey.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +34,12 @@ public class IndexController {
 
     @Autowired
     DeviceHandler deviceHandler;
+
+    @Autowired
+    AlarmDayLogHandler alarmDayLogHandler;
+
+    @Autowired
+    TaskDayLogHandler taskDayLogHandler;
 
     /**
      * 总拓扑图
@@ -80,24 +93,24 @@ public class IndexController {
      */
     @RequestMapping("/alarmOverview")
     public String AlarmOverview(String selectDate){
+        log.info("start: 根据时间获取报警总览异常，selectDate={} ",selectDate);
+        if(StringUtils.isEmpty(selectDate)){
+            return JSONMessage.createFalied("selectDate不能为空").toString();
+        }
 
-        JSONObject jsonObject = new JSONObject();
+        Date date = DateUtil.strFormatDate(selectDate,DateUtil.format_day);
+        if(date == null){
+            return JSONMessage.createFalied("selectDate格式不正确，必须为yyyy-MM-dd").toString();
+        }
 
-        jsonObject.put("totalLink",6);
-        jsonObject.put("alarmLink",2);
-
-        jsonObject.put("totalDevice",15);
-        jsonObject.put("alarmDevice",5);
+        AlarmDayLog alarmDayLog = alarmDayLogHandler.query8day(date);
 
 
-        jsonObject.put("totalTask",52);
-        jsonObject.put("alarmTask",7);
-
-        return JSONMessage.createSuccess().addData(jsonObject).toString();
+        return JSONMessage.createSuccess().addData(alarmDayLog).toString();
     }
 
     /**
-     * 报警排行榜(周)
+     * 报警排行榜(最近一周)
      * @param  type 1：链路 ；2 ：设备 ； 3：任务
      * @return
      */
@@ -223,14 +236,31 @@ public class IndexController {
         return jsonArray;
     }
 
+    /**
+     * 报警统计曲线图，最近一个月
+     * @return
+     */
+    @RequestMapping("/alarmStatistics")
+    public String alarmStatistics(){
+        //算出上个月时间
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int day = c.get(Calendar.MONTH);
+        c.set(Calendar.MONTH, day - 1);
+        Date lastMonthDay = c.getTime();
 
+        List<AlarmDayLog> alarmDayLogs = alarmDayLogHandler.query8days(lastMonthDay,today);
+
+        return JSONMessage.createSuccess().addData("list",alarmDayLogs).toString();
+    }
 
     /**
      * 报警统计
      * @return
      */
-    @RequestMapping("/alarmStatistics")
-    public String alarmStatistics(){
+//    @RequestMapping("/alarmStatistics")
+    public String alarmStatistics2(){
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("link",alarmStatistics_link());
@@ -334,17 +364,42 @@ public class IndexController {
 
 
     /**
-     * 统计 （月）
+     * 数据流量/文件统计 （月）
      * @return
      */
     @RequestMapping("/statistics")
     public String statistics(){
+        //算出上个月时间
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int day = c.get(Calendar.MONTH);
+        c.set(Calendar.MONTH, day - 1);
+        Date lastMonthDay = c.getTime();
+
+        int taskTypeDB = Task.taskType_db;
+        TaskDayLog dbTaskDayLog = taskDayLogHandler.query8days(taskTypeDB,lastMonthDay,today);
+        if(dbTaskDayLog == null){
+            dbTaskDayLog = new TaskDayLog();
+        }
+        //总db同步条数
+        long totalDataNum = dbTaskDayLog.getSuccessNum();
+
+        int taskTypeFTP = Task.taskType_ftp;
+        TaskDayLog ftpTaskDayLog = taskDayLogHandler.query8days(taskTypeFTP,lastMonthDay,today);
+        if(ftpTaskDayLog == null){
+            ftpTaskDayLog = new TaskDayLog();
+        }
+        //总文件数
+        long totalFile = ftpTaskDayLog.getSuccessNum();
+        //总流量
+        long totalFlow = ftpTaskDayLog.getSuccessFlow() + dbTaskDayLog.getSuccessFlow();
 
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("totalNum",5464);
-        jsonObject.put("totalFlow",15465465452l);
-        jsonObject.put("totalFile",34652l);
+        jsonObject.put("totalDataNum",totalDataNum);
+        jsonObject.put("totalFile",totalFile);
+        jsonObject.put("totalFlow",totalFlow);
 
         return JSONMessage.createSuccess().addData(jsonObject).toString();
     }

@@ -3,6 +3,7 @@ package com.minkey.db;
 import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
+import com.minkey.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -101,5 +103,27 @@ public class TaskDayLogHandler {
             return 0;
         }
         return bigDecimal.longValue();
+    }
+
+    /**
+     * 根据时间和任务类型查询总和
+     * @param taskType
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    public TaskDayLog query8days(int taskType, Date startDate, Date endDate) {
+        String startDateStr = DateUtil.dateFormatStr(startDate,DateUtil.format_all);
+        String endDateStr = DateUtil.dateFormatStr(endDate,DateUtil.format_all);
+
+
+        List<TaskDayLog> taskList= jdbcTemplate.query("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+ " where createTime BETWEEN ? AND ? ",
+                new Object[]{startDateStr,endDateStr}, new BeanPropertyRowMapper<>(TaskDayLog.class));
+        if(CollectionUtils.isEmpty(taskList)){
+            return null;
+        }
+
+        return taskList.get(0);
+
     }
 }

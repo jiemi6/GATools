@@ -10,11 +10,13 @@ import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.DBConfigData;
+import com.minkey.dto.FTPConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
+import com.minkey.util.FTPUtil;
 import com.minkey.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -47,14 +49,14 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping(Integer netArea,String ip,Long deviceId) {
-        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,deviceId);
+    public String ping(Integer netArea,String ip,Long detectorId) {
+        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
 
         if(netArea == null){
             netArea = CommonContants.NETAREA_IN;
         }
 
-        if(netArea == CommonContants.NETAREA_OUT && deviceId == null){
+        if(netArea == CommonContants.NETAREA_OUT && detectorId == null){
             return JSONMessage.createFalied("请选择一个探针").toString();
         }
 
@@ -78,21 +80,21 @@ public class ToolsController {
                 //内网 直接执行
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
-                if (deviceId == null){
+                if (detectorId == null){
                     return JSONMessage.createFalied("请选择一个在线的探针").toString();
                 }
                 //探针不在线，无法执行命令
-                if(!deviceConnectCache.isOk(deviceId)){
+                if(!deviceConnectCache.isOk(detectorId)){
                     return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
                 }
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService detectorService = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
 
-                if(ssh == null){
-                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                if(detectorService == null){
+                    return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();
                 }
 
-                BaseConfigData configData = ssh.getConfigData();
+                BaseConfigData configData = detectorService.getConfigData();
 
                 //执行命令
                 resultInfo = DetectorUtil.executeSh(configData.getIp(),configData.getPort(),cmd);
@@ -157,7 +159,7 @@ public class ToolsController {
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
-                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                    return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();
                 }
 
                 BaseConfigData configData = ssh.getConfigData();
@@ -184,7 +186,7 @@ public class ToolsController {
      */
     @RequestMapping("/testDB")
     public String testDB(Integer netArea,DBConfigData dbConfigData,Long deviceId){
-        log.info("start: 执行测试数据库连接 netArea={},decetorId={}, dbConfigData={}",netArea,deviceId,dbConfigData);
+        log.info("start: 执行测试数据库连接 netArea={},deviceId={}, dbConfigData={}",netArea,deviceId,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -213,7 +215,7 @@ public class ToolsController {
                 DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(ssh == null){
-                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                    return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();
                 }
 
                 BaseConfigData configData = ssh.getConfigData();
@@ -237,7 +239,7 @@ public class ToolsController {
      */
     @RequestMapping("/snmp")
     public String snmp(Integer netArea,String ip,Integer port,String oid,Long deviceId) {
-        log.info("start: 执行snmp工具 netArea={},decetorId={}, ip={},port={},oid={}",netArea,deviceId,ip,port,oid);
+        log.info("start: 执行snmp工具 netArea={},deviceId={}, ip={},port={},oid={}",netArea,deviceId,ip,port,oid);
 
         if(StringUtils.isEmpty(ip)){
             return JSONMessage.createFalied("ip不能为空").toString();
@@ -263,13 +265,13 @@ public class ToolsController {
                 }
 
                 //获取该探针服务
-                DeviceService ssh = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService detectorService = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
-                if(ssh == null){
-                    return JSONMessage.createFalied("该设备没有探针配置服务，无法执行命令").toString();
+                if(detectorService == null){
+                    return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();
                 }
 
-                BaseConfigData configData = ssh.getConfigData();
+                BaseConfigData configData = detectorService.getConfigData();
 
                 //执行命令
                 jo = DetectorUtil.snmpWalk(configData.getIp(),configData.getPort(),ip,oid);
@@ -283,5 +285,63 @@ public class ToolsController {
             log.info("end: 执行snmp工具 ");
         }
     }
+
+    @Autowired
+    FTPUtil ftpUtil;
+    /**
+     * 协助访问其他服务器ftp工具
+     * @return
+     */
+    @RequestMapping("/ftp")
+    public String ftp(Integer netArea, Long deviceId, FTPConfigData ftpConfigData) {
+        log.info("start: 执行ftp工具 netArea={},deviceId={}, ftpConfigData={}",netArea,deviceId,ftpConfigData);
+
+        if(StringUtils.isEmpty(ftpConfigData.getIp())){
+            return JSONMessage.createFalied("ip不能为空").toString();
+        }
+
+        if(!StringUtil.isIp(ftpConfigData.getIp())){
+            return JSONMessage.createFalied("ip格式不正确").toString();
+        }
+
+        try{
+            boolean isConnect;
+            if(netArea == CommonContants.NETAREA_IN){
+                //内网直接测试
+                isConnect = ftpUtil.testFTPConnect(ftpConfigData);
+            }else{
+                if (deviceId == null){
+                    return JSONMessage.createFalied("请选择一个在线的探针").toString();
+                }
+
+                //探针不在线，无法执行命令
+                if(!deviceConnectCache.isOk(deviceId)){
+                    return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
+                }
+
+                //获取该探针服务
+                DeviceService detectorService = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
+
+                if(detectorService == null){
+                    return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();
+                }
+
+                BaseConfigData configData = detectorService.getConfigData();
+
+                //执行命令
+                isConnect = DetectorUtil.testFTP(configData.getIp(),configData.getPort(),ftpConfigData);
+            }
+
+            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end: 执行ftp工具 ");
+        }
+    }
+
+
 
 }

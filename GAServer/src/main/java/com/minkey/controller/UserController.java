@@ -124,8 +124,9 @@ public class UserController {
             if(!StringUtils.equals(StringUtil.md5(pwd),user.getPwd())){
                 //admin用户
                 if(user.getUid() != User.ADMIN_UID){
+
                     //增加锁定次数
-                    userHandler.wrongPwd(user.getUid());
+                    userHandler.wrongPwd(user);
                 }
                 return JSONMessage.createFalied("用户名密码错误").toString();
             }

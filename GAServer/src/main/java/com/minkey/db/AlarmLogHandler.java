@@ -3,6 +3,7 @@ package com.minkey.db;
 import com.minkey.db.dao.AlarmLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
+import com.minkey.util.DateUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -13,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +26,11 @@ public class AlarmLogHandler {
 
 
 
-    public long queryCount(int bType) {
-        Long count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" WHERE bType = ?" ,new Object[]{bType},Long.class);
+    public int queryCount(int bType) {
+        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+" WHERE bType = ?" ,new Object[]{bType},Integer.class);
+        if(count == null){
+            return 0;
+        }
         return count;
     }
 
@@ -85,5 +90,13 @@ public class AlarmLogHandler {
                         ps.setString(5,argument.getMsg());
                     }
                 });
+    }
+
+    public List queryAllBid8btype(int btype, Date startDate,Date endDate) {
+        String startDateStr = DateUtil.dateFormatStr(startDate,DateUtil.format_all);
+        String endDateStr = DateUtil.dateFormatStr(endDate,DateUtil.format_all);
+        List allBid = jdbcTemplate.queryForList("select bid from "+tableName+" where btype="+btype+" AND createTime between ? AND ? GROUP BY bid ",
+                new Object[]{startDateStr,endDateStr},Integer.class);
+        return allBid;
     }
 }

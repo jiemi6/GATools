@@ -93,12 +93,18 @@ public class UserHandler {
     }
 
     /**
-     * 用户输入密码错误，次数加1
-     * @param uid
+     * 用户输入密码错误，次数加1,如果是第五次。 就直接设置为锁定
+     * @param user
      */
-    public void wrongPwd(Long uid) {
+    public void wrongPwd(User user) {
+        //如果此时是第五次错误。则锁定
+        if(user.getWrongPwdNum() == User.MAX_WRONGPWDNUM-1){
+            int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 ,status =? where status > -1 AND uid= ?",new Object[]{User.STATUS_LOCK,user.getUid()});
+        }else{
+            //只增加次数
+            int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where status > -1 AND uid= ?",new Object[]{user.getUid(),});
+        }
 
-        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where status > -1 AND uid= ?",new Object[]{uid});
 
     }
 
