@@ -50,7 +50,7 @@ public class AlarmDayLogHandler {
     public List<AlarmDayLog> query8days(Date startDate, Date endDate) {
         String startDateStr = DateUtil.dateFormatStr(startDate,DateUtil.format_all);
         String endDateStr = DateUtil.dateFormatStr(endDate,DateUtil.format_all);
-        List<AlarmDayLog> alarmDayLogs = jdbcTemplate.query("select * from "+tableName+" where createTime BETWEEN ? AND ?",
+        List<AlarmDayLog> alarmDayLogs = jdbcTemplate.query("select * from "+tableName+" where createTime BETWEEN ? AND ? order by createTime",
                 new Object[]{startDateStr,endDateStr},new BeanPropertyRowMapper<>(AlarmDayLog.class));
 
         return alarmDayLogs;
