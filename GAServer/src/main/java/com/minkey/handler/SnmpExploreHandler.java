@@ -211,7 +211,7 @@ public class SnmpExploreHandler {
             //总区块数
             long totalArea = diskJson.getLong(diskOid+".5."+lastOid);
             //已经使用的区块数
-            //Minkey 会空指针,使用大写Long
+            //会空指针,使用大写Long
             Long useArea = diskJson.getLong(diskOid+".6."+lastOid);
             if(useArea == null){
 //                log.debug("diskJson的值为空"+diskOid+".6."+lastOid);

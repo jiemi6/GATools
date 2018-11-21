@@ -236,7 +236,7 @@ public class ExamineController {
             //excel 里面的sheet名称
             String sheetName = DateUtil.dateFormatStr(check.getCreateTime(),DateUtil.format_all);
 
-            List<CheckItem> checkItems = checkItemHandler.queryAll(checkId);
+            List<CheckItem> checkItems = checkItemHandler.query8CheckId(checkId);
             //创建HSSFWorkbook
             HSSFWorkbook wb = getHSSFWorkbook(sheetName, checkItems);
 

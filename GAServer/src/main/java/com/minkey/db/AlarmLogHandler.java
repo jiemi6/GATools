@@ -111,4 +111,12 @@ public class AlarmLogHandler {
 
 
     }
+
+    public void delete8Id(int btype, long bid) {
+        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where bid= ? AND bType=?",new Object[]{bid,btype});
+    }
+
+    public void deleteTask8LinkId(long linkId) {
+        int num = jdbcTemplate.update("DELETE ta FROM t_alarmlog ta,t_task tt where ta.bid=tt.taskId AND ta.btype=? AND tt.linkId=? ",new Object[]{AlarmLog.BTYPE_TASK,linkId});
+    }
 }

@@ -19,11 +19,7 @@ public class CheckItemHandler {
     @Autowired
     CheckStepCache checkStepCache;
 
-
-    /**
-     * 不直接插入数据库
-     * @param checkItem
-     */
+    
     public void insert(CheckItem checkItem) {
         int num = jdbcTemplate.update("INSERT into "+tableName+" (checkId,resultMsg,step,totalStep,itemType,resultLevel,errorType) VALUES (?,?,?,?,?,?,?)"
                 ,new Object[]{checkItem.getCheckId(),checkItem.getResultMsg(),checkItem.getStep(),checkItem.getTotalStep(),checkItem.getItemType(),checkItem.getResultLevel(),checkItem.getErrorType()});
@@ -37,8 +33,8 @@ public class CheckItemHandler {
         return jdbcTemplate.query("select * from "+tableName+" where checkId= ? AND itemId > ? ORDER BY itemId LIMIT 0,5 ",new Object[]{checkId,indexItemId},new BeanPropertyRowMapper<>(CheckItem.class));
     }
 
-    public List<CheckItem> queryAll(Long checkId) {
-        return jdbcTemplate.query("select * from "+tableName+" where checkId= ? ORDER BY itemId ",new BeanPropertyRowMapper<>(CheckItem.class));
+    public List<CheckItem> query8CheckId(Long checkId) {
+        return jdbcTemplate.query("select * from "+tableName+" where checkId= ? ORDER BY itemId ",new Object[]{checkId},new BeanPropertyRowMapper<>(CheckItem.class));
     }
 
     public List<CheckItem> getLast10() {

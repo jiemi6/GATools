@@ -102,18 +102,18 @@ public class UserHandler {
             int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 ,status =? where status > -1 AND uid= ?",new Object[]{User.STATUS_LOCK,user.getUid()});
         }else{
             //只增加次数
-            int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where status > -1 AND uid= ?",new Object[]{user.getUid(),});
+            int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = wrongPwdNum + 1 where status > -1 AND uid= ?",new Object[]{user.getUid()});
         }
 
 
     }
 
     /**
-     * 清除次数,请修改用户状态
+     * 清除次数,而且修改用户状态为正常
      * @param uid
      */
     public void cleanWrongPwdTime(Long uid) {
-        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 ,status=? where status > -1 AND uid= ?",new Object[]{uid,User.STATUS_NORMAL});
+        int num = jdbcTemplate.update("update "+tableName+" set wrongPwdNum = 0 ,status=? where status > -1 AND uid= ?",new Object[]{User.STATUS_NORMAL,uid});
 
 
     }

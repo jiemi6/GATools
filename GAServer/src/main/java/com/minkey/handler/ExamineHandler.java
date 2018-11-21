@@ -207,9 +207,10 @@ public class ExamineHandler {
         int totalStep = deviceMap.size()+1+1;
         checkStepCache.create(checkId,totalStep);
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
-        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("开始检查链路中所有设备连通情况，该设备个数：%s",deviceMap.size()));
+        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("开始检查链路[%s]中所有设备连通情况，该设备个数：%s",link.getLinkName(),deviceMap.size()));
         checkItemHandler.insert(checkItem);
 
+        int notConnectNum = 0;
         boolean allisConnect = true;
         for(Long deviceId : deviceMap.keySet()){
             Device device = deviceMap.get(deviceId);
@@ -227,17 +228,18 @@ public class ExamineHandler {
                 checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]中设备[%s]无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
                 allisConnect = false;
+                notConnectNum++;
             }
         }
 
 
         if(allisConnect){
             checkItem = checkStepCache.createNextItem(checkId);
-            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]网络状态正常",link.getLinkName()));
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]所有设备网络状态正常",link.getLinkName()));
             checkItemHandler.insert(checkItem);
         }else{
             checkItem = checkStepCache.createNextItem(checkId);
-            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("链路[%s]中有断线设备！",link.getLinkName()));
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("链路[%s]中有[%s]台设备无法连接！",link.getLinkName(),notConnectNum));
             checkItemHandler.insert(checkItem);
         }
     }

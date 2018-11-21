@@ -3,6 +3,7 @@ package com.minkey.controller;
 import com.minkey.cache.DeviceCache;
 import com.minkey.contants.Modules;
 import com.minkey.db.*;
+import com.minkey.db.dao.AlarmLog;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
@@ -34,6 +35,12 @@ public class LinkController {
     HttpSession session;
     @Autowired
     DeviceCache deviceCache;
+
+    @Autowired
+    AlarmLogHandler alarmLogHandler;
+
+    @Autowired
+    TaskDayLogHandler taskDayLogHandler;
 
     @RequestMapping("/insert")
     public String insert(Link link) {
@@ -194,7 +201,13 @@ public class LinkController {
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
         try{
-            linkHandler.del(linkId);
+
+            //删除链路下的所有任务报警
+            alarmLogHandler.deleteTask8LinkId(linkId);
+            //删除任务每日统计
+            taskDayLogHandler.delete8LinkId(linkId);
+            //删除链路报警日志
+            alarmLogHandler.delete8Id(AlarmLog.BTYPE_LINK,linkId);
 
             //删除链路的任务
             taskHandler.del8LinkId(linkId);
@@ -202,6 +215,8 @@ public class LinkController {
             taskSourceHandler.del8LinkId(linkId);
             //删除链路对应的数据源
             sourceHandler.del8LinkId(linkId);
+            //真正删除链路
+            linkHandler.del(linkId);
 
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志

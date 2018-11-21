@@ -130,4 +130,8 @@ public class TaskDayLogHandler {
 
 
     }
+
+    public void delete8LinkId(long linkId) {
+        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId=? ",new Object[]{linkId});
+    }
 }

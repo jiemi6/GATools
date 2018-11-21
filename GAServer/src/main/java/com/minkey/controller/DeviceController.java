@@ -4,9 +4,11 @@ import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
 import com.minkey.contants.DeviceType;
 import com.minkey.contants.Modules;
+import com.minkey.db.AlarmLogHandler;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.UserLogHandler;
+import com.minkey.db.dao.AlarmLog;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.User;
@@ -56,6 +58,9 @@ public class DeviceController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    AlarmLogHandler alarmLogHandler;
 
     private JSONMessage checkParam(Device device){
         if(StringUtils.isEmpty(device.getDeviceName())){
@@ -249,9 +254,11 @@ public class DeviceController {
             }
 
             Device device = deviceCache.getDevice(deviceId);
-            //先删除
+            //删除设备报警数据
+            alarmLogHandler.delete8Id(AlarmLog.BTYPE_DEVICE,deviceId);
+            //先删除设备服务
             deviceServiceHandler.delete8DeviceId(deviceId);
-
+            //删除设备
             deviceHandler.delete(deviceId);
 
             User sessionUser = (User)session.getAttribute("user");

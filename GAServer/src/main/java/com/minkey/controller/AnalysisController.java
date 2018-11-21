@@ -1,12 +1,14 @@
 package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.JsonObject;
 import com.minkey.db.DeviceLogHandler;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskDayLogHandler;
 import com.minkey.db.TaskHandler;
-import com.minkey.db.dao.*;
+import com.minkey.db.dao.DeviceLog;
+import com.minkey.db.dao.Link;
+import com.minkey.db.dao.Task;
+import com.minkey.db.dao.TaskDayLog;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
@@ -121,7 +123,11 @@ public class AnalysisController {
                 return JSONMessage.createSuccess().addData(page).toString();
             }
             //Minkey 设备运行统计实现
+
+            //查询每个设备报警次数
             Page<DeviceLog> logs = deviceLogHandler.query8Page(page, seachParam,link.getDeviceIds());
+
+            alarmHandler.link();
 
             return JSONMessage.createSuccess().addData(logs).toString();
         }catch (Exception e){

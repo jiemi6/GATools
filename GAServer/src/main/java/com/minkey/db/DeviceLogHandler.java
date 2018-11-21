@@ -1,5 +1,6 @@
 package com.minkey.db;
 
+
 import com.minkey.db.dao.DeviceLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
@@ -12,9 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+@Deprecated
 @Component
 public class DeviceLogHandler {
     private final String tableName = "t_deviceLog";
@@ -64,8 +65,4 @@ public class DeviceLogHandler {
         return page;
     }
 
-    public Map<String,Long> querySum(Long linkId, SeachParam seachParam) {
-
-        return  null;
-    }
 }
