@@ -116,14 +116,18 @@ public class TaskDayLogHandler {
         String startDateStr = DateUtil.dateFormatStr(startDate,DateUtil.format_all);
         String endDateStr = DateUtil.dateFormatStr(endDate,DateUtil.format_all);
 
-
-        List<TaskDayLog> taskList= jdbcTemplate.query("select  sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+ " where createTime BETWEEN ? AND ? ",
-                new Object[]{startDateStr,endDateStr}, new BeanPropertyRowMapper<>(TaskDayLog.class));
-        if(CollectionUtils.isEmpty(taskList)){
-            return null;
+        Map<String, Object> taskLogList =  jdbcTemplate.queryForMap("select sum(successFlow) as successFlow,sum(successNum) as successNum,sum(errorFlow) as errorFlow,sum(errorNum) as errorNum  from "+tableName+ " ttdl,t_task tt where tt.targetTaskId=ttdl.targetTaskId AND tt.taskType=? AND createTime BETWEEN ? AND ? ",
+                new Object[]{taskType,startDateStr,endDateStr});
+        TaskDayLog taskDayLog = new TaskDayLog();
+        if(!CollectionUtils.isEmpty(taskLogList)){
+            //使用转换，防止查出来的是null导致转换成long 异常
+            taskDayLog.setSuccessNum(bigDecimal2long((BigDecimal)taskLogList.get("successNum")));
+            taskDayLog.setErrorNum(bigDecimal2long((BigDecimal)taskLogList.get("errorNum")));
+            taskDayLog.setSuccessFlow(bigDecimal2long((BigDecimal)taskLogList.get("successFlow")));
+            taskDayLog.setErrorFlow(bigDecimal2long((BigDecimal)taskLogList.get("errorFlow")));
         }
+        return taskDayLog;
 
-        return taskList.get(0);
 
     }
 }

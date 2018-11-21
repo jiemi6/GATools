@@ -3,13 +3,13 @@ package com.minkey.handler;
 import com.minkey.cache.CheckStepCache;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
-import com.minkey.command.SnmpUtil;
 import com.minkey.contants.MyLevel;
-import com.minkey.db.*;
+import com.minkey.db.CheckItemHandler;
+import com.minkey.db.DeviceHandler;
+import com.minkey.db.LinkHandler;
+import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.*;
-import com.minkey.dto.*;
-import com.minkey.executer.SSHExecuter;
-import com.minkey.util.DetectorUtil;
+import com.minkey.dto.DeviceExplorer;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,6 @@ import org.springframework.util.CollectionUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 体检类，发起体检并保存检查结果
@@ -203,11 +202,7 @@ public class ExamineHandler {
             return;
         }
 
-        List<Device> deviceList = deviceHandler.query8Ids(deviceIds);
-        if(CollectionUtils.isEmpty(deviceList)){
-            return;
-        }
-        Map<Long,Device> deviceMap = deviceList.stream().collect(Collectors.toMap(Device::getDeviceId, Device -> Device ));
+        Map<Long,Device> deviceMap = deviceCache.getDevice8Ids(deviceIds);
 
         int totalStep = deviceMap.size()+1+1;
         checkStepCache.create(checkId,totalStep);

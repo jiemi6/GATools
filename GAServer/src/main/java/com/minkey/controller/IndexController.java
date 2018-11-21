@@ -2,15 +2,11 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.minkey.db.DeviceHandler;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.TaskDayLogHandler;
+import com.minkey.cache.DeviceCache;
+import com.minkey.db.*;
 import com.minkey.db.analysis.AlarmDayLog;
 import com.minkey.db.analysis.AlarmDayLogHandler;
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.Link;
-import com.minkey.db.dao.Task;
-import com.minkey.db.dao.TaskDayLog;
+import com.minkey.db.dao.*;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 报警接口
@@ -41,6 +38,14 @@ public class IndexController {
     @Autowired
     TaskDayLogHandler taskDayLogHandler;
 
+    @Autowired
+    AlarmLogHandler alarmLogHandler;
+
+    @Autowired
+    DeviceCache deviceCache;
+
+    @Autowired
+    TaskHandler taskHandler;
     /**
      * 总拓扑图
      * @return
@@ -62,16 +67,18 @@ public class IndexController {
             Map<Long,JSONObject> allDeviceJson = new HashMap<>();
             if(!CollectionUtils.isEmpty(deviceIds)){
                 //获取该id对应的所有设备名称和ip
-                List<Device> allDevice = deviceHandler.query8Ids(deviceIds);
+                Map<Long, Device> allDevice = deviceCache.getDevice8Ids(deviceIds);
                 if(!CollectionUtils.isEmpty(allDevice)){
-                    allDevice.forEach(device -> {
-                        JSONObject deviceJson = new JSONObject();
-                        deviceJson.put("ip",device.getIp());
-                        deviceJson.put("deviceName",device.getDeviceName());
-                        deviceJson.put("icon",device.getIcon());
-                        deviceJson.put("netArea",device.getNetArea());
+                    allDevice.forEach((deviceid,device) -> {
+                        if(device != null) {
+                            JSONObject deviceJson = new JSONObject();
+                            deviceJson.put("ip", device.getIp());
+                            deviceJson.put("deviceName", device.getDeviceName());
+                            deviceJson.put("icon", device.getIcon());
+                            deviceJson.put("netArea", device.getNetArea());
 
-                        allDeviceJson.put(device.getDeviceId(),deviceJson);
+                            allDeviceJson.put(deviceid, deviceJson);
+                        }
                     });
                 }
             }
@@ -120,121 +127,47 @@ public class IndexController {
             type = 1;
         }
 
+        //算出上个月时间
+        Date today = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+
+        int day = c.get(Calendar.DATE);
+        //前7天
+        c.set(Calendar.DATE, day - 7);
+        Date lastWeekDay = c.getTime();
+
         JSONArray jsonArray = new JSONArray();
 
-        switch (type){
-            case 1:
-                jsonArray = alarmRinking_link();
-                break;
-            case 2:
-                jsonArray = alarmRinking_device();
-                break;
-            case 3:
-                jsonArray = alarmRinking_task();
-                break;
+        List rinkingList = alarmLogHandler.queryRinking(type,lastWeekDay,today);
+        Map<Long,String> nameMap = null;
+        if(!CollectionUtils.isEmpty(rinkingList)){
+            Set<Long>  bidSet  = new HashSet<>(rinkingList.size());
+            jsonArray = (JSONArray) JSONArray.toJSON(rinkingList);
+            for (Object jo : jsonArray) {
+                bidSet.add(((JSONObject)jo).getLong("bid"));
+            }
+
+            switch (type){
+                case AlarmLog.BTYPE_LINK:
+                    nameMap = deviceCache.getName8LinkIds(bidSet);
+                    break;
+                case AlarmLog.BTYPE_DEVICE :
+                    nameMap = deviceCache.getName8DeviceIds(bidSet);
+                    break;
+                case AlarmLog.BTYPE_TASK:
+                    nameMap = taskHandler.query8TaskIds(bidSet).stream().collect(Collectors.toMap(Task::getTaskId, Task::getTaskName ));
+                    break;
+            }
         }
-        return JSONMessage.createSuccess().addData("rinking",jsonArray).toString();
+
+        return JSONMessage.createSuccess().addData("rinking",jsonArray).addData("nameMap",nameMap).toString();
     }
 
-    private JSONArray alarmRinking_device() {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name","设备1");
-        jsonObject.put("number",4);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备2");
-        jsonObject.put("number",2);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备3");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备8");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备5");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备9");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备10");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","设备7");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        return jsonArray;
-    }
-
-    private JSONArray alarmRinking_task() {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name","任务1");
-        jsonObject.put("number",6);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","任务2");
-        jsonObject.put("number",4);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","任务3");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","任务4");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","任务5");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        return jsonArray;
-    }
-
-    private JSONArray alarmRinking_link() {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name","链路1");
-        jsonObject.put("number",2);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","链路2");
-        jsonObject.put("number",1);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","链路3");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        jsonObject = new JSONObject();
-        jsonObject.put("name","链路4");
-        jsonObject.put("number",0);
-        jsonArray.add(jsonObject);
-
-        return jsonArray;
-    }
 
     /**
      * 报警统计曲线图，最近一个月
@@ -246,6 +179,11 @@ public class IndexController {
         Date today = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+
         int day = c.get(Calendar.MONTH);
         c.set(Calendar.MONTH, day - 1);
         Date lastMonthDay = c.getTime();
@@ -266,23 +204,22 @@ public class IndexController {
         Date today = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime(new Date());
+        c.set(Calendar.HOUR_OF_DAY,0);
+        c.set(Calendar.MINUTE,0);
+        c.set(Calendar.SECOND,0);
+        c.set(Calendar.MILLISECOND,0);
+
         int day = c.get(Calendar.MONTH);
         c.set(Calendar.MONTH, day - 1);
         Date lastMonthDay = c.getTime();
 
         int taskTypeDB = Task.taskType_db;
         TaskDayLog dbTaskDayLog = taskDayLogHandler.query8days(taskTypeDB,lastMonthDay,today);
-        if(dbTaskDayLog == null){
-            dbTaskDayLog = new TaskDayLog();
-        }
         //总db同步条数
-        long totalDataNum = dbTaskDayLog.getSuccessNum();
+        long totalData = dbTaskDayLog.getSuccessNum();
 
         int taskTypeFTP = Task.taskType_ftp;
         TaskDayLog ftpTaskDayLog = taskDayLogHandler.query8days(taskTypeFTP,lastMonthDay,today);
-        if(ftpTaskDayLog == null){
-            ftpTaskDayLog = new TaskDayLog();
-        }
         //总文件数
         long totalFile = ftpTaskDayLog.getSuccessNum();
         //总流量
@@ -290,12 +227,30 @@ public class IndexController {
 
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put("totalData",totalDataNum);
+        jsonObject.put("totalData",totalData);
         jsonObject.put("totalFile",totalFile);
         jsonObject.put("totalFlow",totalFlow);
 
         return JSONMessage.createSuccess().addData(jsonObject).toString();
     }
 
+
+    @Autowired
+    CheckItemHandler checkItemHandler;
+    /**
+     * 首页滚动log
+     * @return
+     */
+    @RequestMapping("/rollLog")
+    public String rollLog(){
+        //直接查找最后一次体检记录
+
+        //取最后10个
+        List<CheckItem> checkItems = checkItemHandler.getLast10();
+
+        Set<String> logs = checkItems.stream().map(checkItem -> checkItem.getResultMsg()).collect(Collectors.toSet());
+
+        return JSONMessage.createSuccess().addData("rollLog",logs).toString();
+    }
 
 }

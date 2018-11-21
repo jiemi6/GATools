@@ -41,4 +41,7 @@ public class CheckItemHandler {
         return jdbcTemplate.query("select * from "+tableName+" where checkId= ? ORDER BY itemId ",new BeanPropertyRowMapper<>(CheckItem.class));
     }
 
+    public List<CheckItem> getLast10() {
+        return jdbcTemplate.query("select * from "+tableName+" ORDER BY createTime limit 0,10",new BeanPropertyRowMapper<>(CheckItem.class));
+    }
 }

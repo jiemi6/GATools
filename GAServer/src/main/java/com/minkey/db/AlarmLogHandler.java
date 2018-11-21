@@ -99,4 +99,16 @@ public class AlarmLogHandler {
                 new Object[]{startDateStr,endDateStr},Integer.class);
         return allBid;
     }
+
+
+    public List queryRinking(int btype, Date startDate, Date endDate) {
+        String startDateStr = DateUtil.dateFormatStr(startDate,DateUtil.format_all);
+        String endDateStr = DateUtil.dateFormatStr(endDate,DateUtil.format_all);
+
+        List allBid = jdbcTemplate.queryForList("select bid,COUNT(0) as alarmNum from t_alarmlog where bType=? AND createTime between ? AND ? GROUP BY bid ORDER BY COUNT(0) desc limit 0,5 ",
+                new Object[]{btype,startDateStr,endDateStr});
+        return allBid;
+
+
+    }
 }

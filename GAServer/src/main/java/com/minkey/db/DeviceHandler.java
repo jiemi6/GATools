@@ -110,6 +110,7 @@ public class DeviceHandler {
      * @param deviceIds
      * @return
      */
+    @Deprecated
     public List<Device> query8Ids(Set<Long> deviceIds) {
         if(CollectionUtils.isEmpty(deviceIds)){
             return null;

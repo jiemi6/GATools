@@ -1,13 +1,12 @@
 package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.cache.DeviceCache;
 import com.minkey.db.AlarmLogHandler;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.AlarmLog;
-import com.minkey.db.dao.Device;
-import com.minkey.db.dao.Link;
 import com.minkey.db.dao.Task;
 import com.minkey.dto.JSONMessage;
 import com.minkey.dto.Page;
@@ -37,6 +36,8 @@ public class AlarmController {
     DeviceHandler deviceHandler;
     @Autowired
     TaskHandler taskHandler;
+    @Autowired
+    DeviceCache deviceCache;
 
     /**
      * 任务告警
@@ -88,15 +89,13 @@ public class AlarmController {
 
             Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_DEVICE,page, seachParam, bid);
 
-            Object nameJson = null;
+            Map<Long,String> nameMap = null;
             if(!CollectionUtils.isEmpty(logs.getList())){
                 Set<Long>  deviceIds = logs.getList().stream().map(alarmLog -> alarmLog.getBid()).collect(Collectors.toSet());
-                Map<Long,String> nameMap = deviceHandler.query8Ids(deviceIds).stream().collect(Collectors.toMap(Device::getDeviceId, Device::getDeviceName ));
-
-                nameJson = JSONObject.toJSON(nameMap);
+                nameMap = deviceCache.getName8DeviceIds(deviceIds);
             }
 
-            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameJson).toString();
+            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();
 
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -118,14 +117,13 @@ public class AlarmController {
 
             Page<AlarmLog> logs = alarmLogHandler.query8page(AlarmLog.BTYPE_LINK,page, seachParam, bid);
 
-            Object nameJson = null;
+            Map<Long,String> nameMap = null;
             if(!CollectionUtils.isEmpty(logs.getList())){
                 Set<Long>  linkIds = logs.getList().stream().map(alarmLog -> alarmLog.getBid()).collect(Collectors.toSet());
-                Map<Long,String> nameMap = linkHandler.queryAllIdAndName().stream().filter(a -> linkIds.contains(a.getLinkId())).collect(Collectors.toMap(Link::getLinkId, Link::getLinkName ));
+                nameMap = deviceCache.getName8LinkIds(linkIds);
 
-                nameJson = JSONObject.toJSON(nameMap);
             }
-            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameJson).toString();
+            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

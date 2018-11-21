@@ -308,7 +308,19 @@ public class DeviceCache {
             }
         }
         return allName;
+    }
 
+    public Map<Long,String> getName8DeviceIds(Set<Long> deviceIds) {
+        Map<Long,String> allName = new HashMap<>(deviceIds.size());
+        for(Long deviceId :deviceIds){
+            Device device = allDeviceMap.get(deviceId);
+            if(device == null){
+                allName.put(deviceId,null);
+            }else{
+                allName.put(deviceId,device.getDeviceName());
+            }
+        }
+        return allName;
     }
 
     public Link getLink8Id(Long linkId) {
@@ -334,5 +346,16 @@ public class DeviceCache {
 
     public Set<DeviceService> getDeviceService8DeviceId(long deviceId) {
         return allDeviceServiceMap.get(deviceId);
+    }
+
+
+    public Map<Long, Device> getDevice8Ids(Set<Long> deviceIds) {
+        Map<Long,Device> allDevices = new HashMap<>(deviceIds.size());
+        for(Long deviceId :deviceIds){
+            Device device = allDeviceMap.get(deviceId);
+            allDevices.put(deviceId,device);
+
+        }
+        return allDevices;
     }
 }
