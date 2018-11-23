@@ -305,6 +305,7 @@ public class AlarmHandler {
             alarmLog.setbType(AlarmLog.BTYPE_TASK);
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
             alarmLog.setType(AlarmType.no_source);
+            alarmLog.setMsg(String.format("%s没有配置数据源",task.getTaskName()));
             taskAlarm.add(alarmLog);
         } else {
             DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
