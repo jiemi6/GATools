@@ -167,13 +167,16 @@ public class JSONMessage {
 
 	@Override
 	public String toString() {
+	    String returnStr;
 		try {
-			return JSONObject.toJSONString(this);
+            returnStr = JSONObject.toJSONString(this);
+            log.debug("returnStr="+returnStr);
+            return  returnStr;
 		} catch (Exception e) {
 		    log.error("JSONMessage to String exception",e);
 			return JSONMessage.createFalied("return jsonObject to String exception").toString();
 		}
-	}
+    }
 
 
 	public static JSONMessage string2Obj(String jsonStr){

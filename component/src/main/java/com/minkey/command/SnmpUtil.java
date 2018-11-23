@@ -96,7 +96,7 @@ public class SnmpUtil {
                 return data;
             }
         }catch (Exception e){
-            log.error("snmp Get Exception:" , e);
+            log.error("snmp Get Exception:"+e.getMessage());
             return null;
         } finally {
             if (snmp != null) {
@@ -147,7 +147,7 @@ public class SnmpUtil {
                 return data;
             }
         } catch (Exception e) {
-            log.error("snmpGetList Get Exception:" , e);
+            log.error("snmpGetList Get Exception:" +e.getMessage());
             return null;
         } finally {
             if (snmp != null) {
@@ -279,7 +279,7 @@ public class SnmpUtil {
             }
             return null;
         } catch (Exception e) {
-            log.error("SNMP walk Exception: " , e);
+            log.error("SNMP walk Exception: "+e.getMessage());
             return null;
         } finally {
             if (snmp != null) {

@@ -1,5 +1,7 @@
 package com.minkey.dto;
 
+import org.springframework.util.CollectionUtils;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,11 +75,20 @@ public class TopologyNode {
         Set<Long> all = new HashSet<>(2);
         all.add(fromDeviceId);
         all.add(toDeviceId);
+
+        if(!CollectionUtils.isEmpty(deviceIds)){
+            //文件夹下所有id
+            all.addAll(deviceIds);
+        }
+
         if(child != null && child.size() > 0 ){
             child.forEach(topologyNode -> {
                 all.addAll(topologyNode.allDeviceId());
             });
         }
+
+        //去掉0
+        all.remove(0l);
         return all;
     }
 
