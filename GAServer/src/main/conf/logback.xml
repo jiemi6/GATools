@@ -30,7 +30,7 @@
         </encoder>
     </appender>
 
-    <logger name="org" level="info"/>
+    <logger name="org.springframework" level="info"/>
     <logger name="java.sql" level="info"/>
     <logger name="com.mchange" level="info"/>
     <logger name="io.netty" level="info"/>
