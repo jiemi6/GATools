@@ -190,7 +190,7 @@ public class AlarmHandler {
                     alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                     alarmLog.setLevel(MyLevel.LEVEL_ERROR);
                     alarmLog.setType(AlarmType.shebeifuwu);
-                    alarmLog.setMsg(String.format("设备[%s]%s服务异常", device.getDeviceName(), deviceService.typeNameStr()));
+                    alarmLog.setMsg(String.format("%s[%s]%s服务异常", device.getDeviceName(),device.getIp(), deviceService.typeNameStr()));
                     explorerLogs.add(alarmLog);
                 }
             }
@@ -250,8 +250,19 @@ public class AlarmHandler {
                 allDeviceName.add(device.getDeviceName());
             }
             alarmLog.setMsg(String.format("[%s]中有%s个设备掉线，设备名称为%s", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
-
             linkLogs.add(alarmLog);
+
+            Set<Device>  allDetector = deviceCache.getDetector8linkId(link.getLinkId());
+
+            if(CollectionUtils.isEmpty(allDetector)){
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(link.getLinkId());
+                alarmLog.setbType(AlarmLog.BTYPE_LINK);
+                alarmLog.setLevel(MyLevel.LEVEL_WARN);
+                alarmLog.setType(AlarmType.no_detector);
+                alarmLog.setMsg(String.format("[%s]没有配置探针，无法探测外网设备!", link.getLinkName()));
+                linkLogs.add(alarmLog);
+            }
 
         }
         alarmLogHandler.insertAll(linkLogs);
@@ -357,13 +368,5 @@ public class AlarmHandler {
         return alarmLog;
     }
 
-    /**
-     * 获取该
-     * @param linkId
-     * @param seachParam
-     * @return
-     */
-    public int queryDeviceCount(Set<Long> linkId, SeachParam seachParam) {
-        return 0;
-    }
+
 }

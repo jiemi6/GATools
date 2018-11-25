@@ -1,6 +1,8 @@
 package com.minkey.db;
 
+import com.minkey.contants.AlarmType;
 import com.minkey.db.dao.AlarmLog;
+import com.minkey.db.dao.DeviceLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import com.minkey.util.DateUtil;
@@ -16,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -118,5 +121,106 @@ public class AlarmLogHandler {
 
     public void deleteTask8LinkId(long linkId) {
         int num = jdbcTemplate.update("DELETE ta FROM t_alarmlog ta,t_task tt where ta.bid=tt.taskId AND ta.btype=? AND tt.linkId=? ",new Object[]{AlarmLog.BTYPE_TASK,linkId});
+    }
+
+
+    /**
+     * 报警的设备数量
+     * @param deviceIds
+     * @param seachParam
+     * @return
+     */
+    public int queryDeviceCount(Set<Long> deviceIds, SeachParam seachParam) {
+        StringBuffer whereStr = new StringBuffer(" WHERE btype=? AND ( 1=2 ");
+        deviceIds.forEach(deviceId -> {
+            whereStr.append(" or bid=" + deviceId);
+        });
+        whereStr.append(")");
+
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+
+        List<Map<String, Object>> count = jdbcTemplate.queryForList("select bid from "+tableName + whereStr +" GROUP BY bid ",new Object[]{AlarmLog.BTYPE_DEVICE});
+        if(CollectionUtils.isEmpty(count)){
+            return 0;
+        }
+        return count.size();
+    }
+
+    /**
+     * 所有设备总共报警的次数
+     * @param deviceIds
+     * @param seachParam
+     * @return
+     */
+    public int queryTotalCount(Set<Long> deviceIds, SeachParam seachParam) {
+        StringBuffer whereStr = new StringBuffer(" WHERE btype=? AND ( 1=2 ");
+        deviceIds.forEach(deviceId -> {
+            whereStr.append(" or bid=" + deviceId);
+        });
+        whereStr.append(")");
+
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+
+        Integer count = jdbcTemplate.queryForObject("select count(bid) from "+tableName + whereStr ,new Object[]{AlarmLog.BTYPE_DEVICE},Integer.class);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    /**
+     * 根据报警类型 查询所有设备总共报警的次数
+     * @param deviceIds
+     * @param seachParam
+     * @param alarmType
+     * @return
+     */
+    public int queryTotalCount(Set<Long> deviceIds, SeachParam seachParam, int alarmType) {
+        StringBuffer whereStr = new StringBuffer(" WHERE btype=? AND ( 1=2 ");
+        deviceIds.forEach(deviceId -> {
+            whereStr.append(" or bid=" + deviceId);
+        });
+        whereStr.append(")");
+
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+        whereStr.append(" AND type=" + alarmType);
+
+        Integer count = jdbcTemplate.queryForObject("select count(bid) from "+tableName + whereStr ,new Object[]{AlarmLog.BTYPE_DEVICE},Integer.class);
+        if(count == null){
+            return 0;
+        }
+        return count;
+    }
+
+    public Page<Map<String, Object>> queryDevice8Page(Page page, SeachParam seachParam, Set<Long> deviceIds) {
+        StringBuffer whereStr = new StringBuffer(" WHERE btype=? AND ( 1=2 ");
+        deviceIds.forEach(deviceId -> {
+            whereStr.append(" or bid=" + deviceId);
+        });
+        whereStr.append(")");
+
+        if(seachParam.hasDataParam()){
+            whereStr.append(" AND createTime " + seachParam.buildDateBetweenSql());
+        }
+
+
+        List<Map<String, Object>> pageLogs = jdbcTemplate.queryForList("select bid,count(bid) as countNum from "+tableName + whereStr +" GROUP BY bid limit ?,? ",
+                new Object[]{AlarmLog.BTYPE_DEVICE,page.startNum(),page.getPageSize()});
+        page.setData(pageLogs);
+
+        Integer total = queryDeviceCount(deviceIds,seachParam);
+        page.setTotal(total);
+
+        return page;
+
     }
 }

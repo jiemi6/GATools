@@ -257,7 +257,7 @@ public class DeviceCache {
     }
 
     public DeviceService getDetectorService8linkId(Long linkId) {
-        return allDetectorServiceMap.get(linkId);
+        return allLinkDetectorServiceMap.get(linkId);
     }
 
     public DeviceService getSNMPService8deviceId(long deviceId) {
@@ -357,5 +357,32 @@ public class DeviceCache {
 
         }
         return allDevices;
+    }
+
+    /**
+     * 根据链路id，获取该链路下的所有探针设备
+     * @param linkId
+     */
+    public Set<Device> getDetector8linkId(long linkId) {
+        Link link = allLinkMap.get(linkId);
+        if(link == null){
+            return null;
+        }
+        if(CollectionUtils.isEmpty(link.getDeviceIds())){
+            return null;
+        }
+
+        Set<Device> detector = new HashSet<>(1);
+        for(Long deviceId: link.getDeviceIds()){
+            Device device = allDevice().get(deviceId);
+            if(device == null){
+                continue;
+            }
+            if(device.isDetector()){
+                detector.add(device);
+            }
+        }
+
+        return detector;
     }
 }

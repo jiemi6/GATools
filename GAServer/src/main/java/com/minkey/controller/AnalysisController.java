@@ -1,10 +1,9 @@
 package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.minkey.db.DeviceLogHandler;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.TaskDayLogHandler;
-import com.minkey.db.TaskHandler;
+import com.minkey.cache.DeviceCache;
+import com.minkey.contants.AlarmType;
+import com.minkey.db.*;
 import com.minkey.db.dao.DeviceLog;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.Task;
@@ -19,6 +18,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,6 +44,13 @@ public class AnalysisController {
 
     @Autowired
     AlarmHandler alarmHandler;
+
+    @Autowired
+    AlarmLogHandler alarmLogHandler;
+
+    @Autowired
+    DeviceCache deviceCache;
+
 
     /**
      * 任务统计分析 分页数据
@@ -125,11 +132,18 @@ public class AnalysisController {
             //Minkey 设备运行统计实现
 
             //查询每个设备报警次数
-            Page<DeviceLog> logs = deviceLogHandler.query8Page(page, seachParam,link.getDeviceIds());
+            Page<Map<String, Object>> logs = alarmLogHandler.queryDevice8Page(page, seachParam,link.getDeviceIds());
 
-            alarmHandler.link();
+            Map<Long,String> nameMap = null;
+            if(!CollectionUtils.isEmpty(logs.getList())){
+                Set<Long>  deviceIds =new HashSet<>(logs.getList().size());
+                for(Map map : logs.getList()){
+                    deviceIds.add(Long.valueOf((String)map.get("bid")));
+                }
+                nameMap = deviceCache.getName8DeviceIds(deviceIds);
+            }
 
-            return JSONMessage.createSuccess().addData(logs).toString();
+            return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -160,15 +174,15 @@ public class AnalysisController {
             //设备总数
             totalData.put("deviceNum",link.getDeviceIds().size());
             //报警的设备数量
-            totalData.put("alarmDeviceNum",alarmHandler.queryDeviceCount(link.getDeviceIds(),seachParam));
+            totalData.put("alarmDeviceNum",alarmLogHandler.queryDeviceCount(link.getDeviceIds(),seachParam));
             //所有设备总共报警的次数
-            totalData.put("alarmNum",link.getDeviceIds().size());
+            totalData.put("alarmNum",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam));
             //设备连通性报警次数
-            totalData.put("alarmNum_connect",link.getDeviceIds().size());
-            //设备服务性报警次数
-            totalData.put("alarmNum_service",link.getDeviceIds().size());
+            totalData.put("alarmNum_connect",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.wangluobutong));
+            //设备服务报警次数
+            totalData.put("alarmNum_service",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.shebeifuwu));
             //设备性能报警次数
-            totalData.put("alarmNum_explore",link.getDeviceIds().size());
+            totalData.put("alarmNum_explore",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.shebeixingneng));
 
 
             return JSONMessage.createSuccess().addData(totalData).toString();

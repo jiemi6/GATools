@@ -242,6 +242,8 @@ public class ExamineController {
 
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
+            //中文转码
+            fileName = new String(fileName.getBytes(),"ISO8859-1");
             response.setHeader("Content-Disposition", "attachment;fileName="+fileName);
 
             try {
