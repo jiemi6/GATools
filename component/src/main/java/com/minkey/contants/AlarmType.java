@@ -13,14 +13,18 @@ public interface AlarmType {
          */
         public static int shebeixingneng = 2;
         /**
-         * 设备性能
+         * 设备服务
          */
-        public static int shebeifuwu = 2;
-
+        public static int shebeifuwu = 3;
 
         /**
          * 数据源不存在
          */
         public static int no_source = 4;
+
+        /**
+         * 没有配置探针
+         */
+        public static int no_detector =5;
 
     }
