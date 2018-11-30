@@ -17,8 +17,6 @@ public class VCodeUtil {
     private static int fontHeight = 20;
     private static char[] codeSequence = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
             'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-            'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-            's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 
@@ -60,9 +58,9 @@ public class VCodeUtil {
         gd.setColor(Color.BLACK);
         gd.drawRect(0, 0, width - 1, height - 1);
 
-        // 随机产生40条干扰线，使图象中的认证码不易被其它程序探测到。
+        // 随机产生N条干扰线，使图象中的认证码不易被其它程序探测到。
         gd.setColor(Color.BLACK);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 2; i++) {
             int x = random.nextInt(width);
             int y = random.nextInt(height);
             int xl = random.nextInt(12);
@@ -79,9 +77,9 @@ public class VCodeUtil {
             // 得到随机产生的验证码数字。
             String code = String.valueOf(vcode[i]);
             // 产生随机的颜色分量来构造颜色值，这样输出的每位数字的颜色值都将不同。
-            red = random.nextInt(255);
-            green = random.nextInt(255);
-            blue = random.nextInt(255);
+            red = random.nextInt(100);
+            green = random.nextInt(100);
+            blue = random.nextInt(100);
 
             // 用随机产生的颜色将验证码绘制到图像中。
             gd.setColor(new Color(red, green, blue));
