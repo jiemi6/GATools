@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 @Slf4j
 public class SSHExecuter {
     private String charset = Charset.defaultCharset().toString();
+
     private Session session;
 
     public SSHExecuter(String host, Integer port, String user, String password,int timeout) throws JSchException {
@@ -41,13 +42,17 @@ public class SSHExecuter {
      * @return
      */
     public static boolean testConnect(BaseConfigData baseConfigData){
+        SSHExecuter sshExecuter = null;
         try {
-            SSHExecuter sshExecuter = new SSHExecuter(baseConfigData);
-
+            sshExecuter = new SSHExecuter(baseConfigData);
             return true;
         } catch (Exception e) {
-            log.error("Test "+e.getMessage());
+            log.error("Test SSH "+e.getMessage());
             return false;
+        }finally {
+            if(sshExecuter != null){
+                sshExecuter.close();
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package com.minkey.command;
 
 
+import com.alibaba.fastjson.util.IOUtils;
 import com.minkey.contants.CommonContants;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,12 +27,7 @@ public class Telnet {
             log.error(String.format("telnet-IO异常[%s:%s] Msg=%s",ipAddress,port,e));
             return false;
         } finally {
-            if (server != null) {
-                try {
-                    server.close();
-                } catch (IOException e) {
-                }
-            }
+            IOUtils.close(server);
         }
     }
 

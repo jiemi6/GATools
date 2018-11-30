@@ -73,12 +73,14 @@ public class HttpClient {
 				}
 				buffer.append(temp);
 			}
+
 			return buffer.toString();
 		} catch (Exception e) {
 			log.debug("httpClient请求异常,"+e.getMessage());
 //			throw new NetException("httpClient请求异常,"+e.getMessage());
 			return null;
 		}finally{
+			IOUtils.close(client);
 			IOUtils.close(reader);
 			IOUtils.close(in);
 		}
