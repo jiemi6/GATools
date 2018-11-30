@@ -5,6 +5,7 @@ import com.minkey.controller.LicenseController;
 import com.minkey.syslog.SysLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -22,10 +23,14 @@ public class InitSystem {
     @Autowired
     LicenseController licenseController;
 
+    @Value("${system.debug:false}")
+    private boolean isDebug;
+
     @PostConstruct
     public void initAll(){
-        initCom();
-
+        if(!isDebug) {
+            initCom();
+        }
 
     }
 

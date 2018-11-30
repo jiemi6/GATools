@@ -1,8 +1,6 @@
 package com.minkey.db;
 
-import com.minkey.contants.AlarmType;
 import com.minkey.db.dao.AlarmLog;
-import com.minkey.db.dao.DeviceLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import com.minkey.util.DateUtil;

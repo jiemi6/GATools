@@ -230,6 +230,7 @@ public class ExamineController {
             Check  check = checkHandler.query(checkId);
             if(check == null){
                 log.error("获取检查项为空checkId="+checkId);
+                return JSONMessage.createFalied("检查项不存在").toString();
             }
 
             String fileName = check.getCheckName()+".xls";

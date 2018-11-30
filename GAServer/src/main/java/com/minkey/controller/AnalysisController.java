@@ -2,7 +2,7 @@ package com.minkey.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.DeviceCache;
-import com.minkey.contants.AlarmType;
+import com.minkey.contants.AlarmEnum;
 import com.minkey.db.*;
 import com.minkey.db.dao.DeviceLog;
 import com.minkey.db.dao.Link;
@@ -178,11 +178,11 @@ public class AnalysisController {
             //所有设备总共报警的次数
             totalData.put("alarmNum",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam));
             //设备连通性报警次数
-            totalData.put("alarmNum_connect",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.wangluobutong));
+            totalData.put("alarmNum_connect",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.wangluobutong.getAlarmType()));
             //设备服务报警次数
-            totalData.put("alarmNum_service",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.shebeifuwu));
+            totalData.put("alarmNum_service",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.shebeifuwu.getAlarmType()));
             //设备性能报警次数
-            totalData.put("alarmNum_explore",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmType.shebeixingneng));
+            totalData.put("alarmNum_explore",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.shebeixingneng.getAlarmType()));
 
 
             return JSONMessage.createSuccess().addData(totalData).toString();

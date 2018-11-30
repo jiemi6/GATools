@@ -1,6 +1,7 @@
 package com.minkey.db.dao;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.minkey.contants.AlarmEnum;
 
 import java.util.Date;
 
@@ -31,8 +32,8 @@ public class AlarmLog {
 
 
     /**
-     * 报警类型
-     * @see com.minkey.contants.AlarmType
+     * 报警类型，用来对应报警的知识库检索对应关系
+     * @see com.minkey.contants.AlarmEnum
      */
     private int type;
 
@@ -80,6 +81,10 @@ public class AlarmLog {
 
     public AlarmLog setType(int type) {
         this.type = type;
+        return this;
+    }
+    public AlarmLog setType(AlarmEnum alarmEnum) {
+        this.type = alarmEnum.getAlarmType();
         return this;
     }
 
