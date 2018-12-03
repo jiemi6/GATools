@@ -3,7 +3,7 @@ package com.minkey.handler;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceConnectCache;
 import com.minkey.cache.DeviceExplorerCache;
-import com.minkey.contants.AlarmType;
+import com.minkey.contants.AlarmEnum;
 import com.minkey.contants.DeviceType;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.AlarmLogHandler;
@@ -88,7 +88,7 @@ public class AlarmHandler {
                 alarmLog.setBid(deviceId);
                 alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                 alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-                alarmLog.setType(AlarmType.wangluobutong);
+                alarmLog.setType(AlarmEnum.wangluobutong);
                 alarmLog.setMsg(String.format("%s[%s]网络无法连接!", device.getDeviceName(), device.getIp()));
 
                 //网络不同，更新设备级别为错误
@@ -135,7 +135,7 @@ public class AlarmHandler {
             alarmLog.setBid(deviceId);
             alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
             alarmLog.setLevel(MyLevel.LEVEL_WARN);
-            alarmLog.setType(AlarmType.shebeifuwu);
+            alarmLog.setType(AlarmEnum.shebeifuwu);
             alarmLog.setMsg(String.format("%s[%s]硬件性能指标无法获取，请检查snmp设置!", device.getDeviceName(), device.getIp()));
 
             //没有性能指标，更新设备级别为正常
@@ -148,7 +148,7 @@ public class AlarmHandler {
                 alarmLog.setBid(deviceId);
                 alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                 alarmLog.setLevel(MyLevel.LEVEL_WARN);
-                alarmLog.setType(AlarmType.shebeixingneng);
+                alarmLog.setType(AlarmEnum.shebeixingneng);
                 alarmLog.setMsg(String.format("%s[%s]硬件性能指标告警! %s", device.getDeviceName(), device.getIp(), deviceExplorer.showString()));
 
                 //更新设备级别为警告
@@ -189,8 +189,8 @@ public class AlarmHandler {
                     alarmLog.setBid(deviceId);
                     alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                     alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-                    alarmLog.setType(AlarmType.shebeifuwu);
-                    alarmLog.setMsg(String.format("设备[%s]%s服务异常", device.getDeviceName(), deviceService.typeNameStr()));
+                    alarmLog.setType(AlarmEnum.shebeifuwu);
+                    alarmLog.setMsg(String.format("%s[%s]%s服务异常", device.getDeviceName(),device.getIp(), deviceService.typeNameStr()));
                     explorerLogs.add(alarmLog);
                 }
             }
@@ -238,7 +238,7 @@ public class AlarmHandler {
             alarmLog.setBid(link.getLinkId());
             alarmLog.setbType(AlarmLog.BTYPE_LINK);
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-            alarmLog.setType(AlarmType.wangluobutong);
+            alarmLog.setType(AlarmEnum.wangluobutong);
 
             allDeviceName = new HashSet<>(notOkDeviceIds.size());
             //拼装名称
@@ -250,8 +250,19 @@ public class AlarmHandler {
                 allDeviceName.add(device.getDeviceName());
             }
             alarmLog.setMsg(String.format("[%s]中有%s个设备掉线，设备名称为%s", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
-
             linkLogs.add(alarmLog);
+
+            Set<Device>  allDetector = deviceCache.getDetector8linkId(link.getLinkId());
+
+            if(CollectionUtils.isEmpty(allDetector)){
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(link.getLinkId());
+                alarmLog.setbType(AlarmLog.BTYPE_LINK);
+                alarmLog.setLevel(MyLevel.LEVEL_WARN);
+                alarmLog.setType(AlarmEnum.no_detector);
+                alarmLog.setMsg(String.format("[%s]没有配置探针，无法探测外网设备!", link.getLinkName()));
+                linkLogs.add(alarmLog);
+            }
 
         }
         alarmLogHandler.insertAll(linkLogs);
@@ -304,7 +315,7 @@ public class AlarmHandler {
             alarmLog.setBid(task.getTaskId());
             alarmLog.setbType(AlarmLog.BTYPE_TASK);
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-            alarmLog.setType(AlarmType.no_source);
+            alarmLog.setType(AlarmEnum.no_source);
             alarmLog.setMsg(String.format("%s没有配置数据源",task.getTaskName()));
             taskAlarm.add(alarmLog);
         } else {
@@ -352,18 +363,10 @@ public class AlarmHandler {
         alarmLog.setBid(task.getTaskId())
                 .setbType(AlarmLog.BTYPE_TASK)
                 .setLevel(MyLevel.LEVEL_ERROR)
-                .setType(AlarmType.wangluobutong)
+                .setType(AlarmEnum.wangluobutong)
                 .setMsg(msg);
         return alarmLog;
     }
 
-    /**
-     * 获取该
-     * @param linkId
-     * @param seachParam
-     * @return
-     */
-    public int queryDeviceCount(Set<Long> linkId, SeachParam seachParam) {
-        return 0;
-    }
+
 }

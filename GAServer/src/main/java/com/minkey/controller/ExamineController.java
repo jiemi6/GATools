@@ -230,6 +230,7 @@ public class ExamineController {
             Check  check = checkHandler.query(checkId);
             if(check == null){
                 log.error("获取检查项为空checkId="+checkId);
+                return JSONMessage.createFalied("检查项不存在").toString();
             }
 
             String fileName = check.getCheckName()+".xls";
@@ -242,6 +243,8 @@ public class ExamineController {
 
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
+            //中文转码
+            fileName = new String(fileName.getBytes(),"ISO8859-1");
             response.setHeader("Content-Disposition", "attachment;fileName="+fileName);
 
             try {
