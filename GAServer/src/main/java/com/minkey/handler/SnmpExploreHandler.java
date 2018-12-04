@@ -218,10 +218,8 @@ public class SnmpExploreHandler {
                 //为空直接赋值为0
                 useArea = 0l;
             }
-            //总大小
-            long total = totalArea * danweiByte;
 
-            rateObj = RateObj.create8Use(totalArea * danweiByte , useArea *danweiByte);
+            rateObj = RateObj.create8Use(totalArea * danweiByte , useArea * danweiByte);
             //如果是物理内存
             if(StringUtils.equalsIgnoreCase(name , "Physical Memory")){
                 deviceExplorer.setMem(rateObj);
@@ -258,5 +256,52 @@ public class SnmpExploreHandler {
 
         //Minkey 网络实时流量不知道这么获取
         return null;
+    }
+
+
+    //所有进程参数
+    final String processParamOid = ".1.3.6.1.2.1.25.4.2.1.5";
+    //所有进程名称/id
+    final String processNnameOid = ".1.3.6.1.2.1.25.4.2.1.2";
+    /**
+     * 检查外网进程是否存在
+     * @param targetTaskId
+     * @return
+     */
+    public boolean checkProcess(String targetTaskId, SnmpConfigData snmpConfigData,DeviceService detectorService) {
+        JSONObject jsonObject = null;
+        //内网时参数为空
+        if(detectorService == null){
+            //获取该设备的 snmp服务
+            SnmpUtil snmpUtil = new SnmpUtil(snmpConfigData.getIp(),
+                    snmpConfigData.getPort(),
+                    snmpConfigData.getCommunity(),
+                    snmpConfigData.getVersion(),
+                    0,
+                    1000);
+
+            jsonObject = snmpUtil.snmpWalk(processParamOid);
+        }else{
+            jsonObject = DetectorUtil.snmpWalk(detectorService.getIp(),detectorService.getConfigData().getPort()
+                    ,snmpConfigData.getIp(),snmpConfigData.getPort(),snmpConfigData.getVersion(),snmpConfigData.getCommunity(),0,1000l
+                    , processParamOid);
+
+        }
+
+        return checkExist(targetTaskId,jsonObject);
+    }
+
+    private boolean checkExist(String targetTaskId,JSONObject jsonObject){
+        if(jsonObject == null){
+            return false;
+        }
+
+        for(String jsonKey :jsonObject.keySet()){
+            //如果参数中含有taskId证明进程存在
+            if(jsonObject.getString(jsonKey).contains(targetTaskId)){
+                return true;
+            }
+        }
+        return false;
     }
 }

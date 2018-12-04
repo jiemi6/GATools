@@ -8,9 +8,12 @@ import org.junit.Test;
 public class TestNetwork {
 
     @Test
-    public void testTelnet(){
+    public void testTelnet() throws InterruptedException {
 
-        log.error(String.valueOf(Telnet.doTelnet("127.0.0.1",3306)));
+        while (true){
+            log.error(String.valueOf(Telnet.doTelnet("127.0.0.1",8080)));
+            Thread.sleep(3000l);
+        }
 
     }
 }

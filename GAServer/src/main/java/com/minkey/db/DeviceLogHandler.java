@@ -4,7 +4,7 @@ package com.minkey.db;
 import com.minkey.db.dao.DeviceLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -27,7 +27,7 @@ public class DeviceLogHandler {
                 new Object[]{deviceLog.getDeviceId(),deviceLog.getIp(),deviceLog.getLevel(),deviceLog.getMsg(),deviceLog.getType()});
 
         if(num == 0){
-            throw new DataException("新增失败");
+            throw new SystemException("新增失败");
         }
     }
 

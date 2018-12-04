@@ -2,7 +2,7 @@ package com.minkey.db;
 
 import com.minkey.db.dao.Knowledge;
 import com.minkey.dto.Page;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -29,7 +29,7 @@ public class KnowledgeHandler {
                 new Object[]{knowledge.getAlarmType(),knowledge.getKnowledgeDesc(),knowledge.getUid()});
 
         if(num == 0){
-            throw new DataException("新增失败");
+            throw new SystemException("新增失败");
         }
     }
 

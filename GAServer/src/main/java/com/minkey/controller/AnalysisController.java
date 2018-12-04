@@ -129,7 +129,6 @@ public class AnalysisController {
                 page.setTotal(0);
                 return JSONMessage.createSuccess().addData(page).toString();
             }
-            //Minkey 设备运行统计实现
 
             //查询每个设备报警次数
             Page<Map<String, Object>> logs = alarmLogHandler.queryDevice8Page(page, seachParam,link.getDeviceIds());
@@ -178,7 +177,7 @@ public class AnalysisController {
             //所有设备总共报警的次数
             totalData.put("alarmNum",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam));
             //设备连通性报警次数
-            totalData.put("alarmNum_connect",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.wangluobutong.getAlarmType()));
+            totalData.put("alarmNum_connect",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.ip_notConnect.getAlarmType()));
             //设备服务报警次数
             totalData.put("alarmNum_service",alarmLogHandler.queryTotalCount(link.getDeviceIds(),seachParam,AlarmEnum.shebeifuwu.getAlarmType()));
             //设备性能报警次数

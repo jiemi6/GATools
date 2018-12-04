@@ -5,9 +5,9 @@ import com.minkey.cache.DeviceConnectCache;
 import com.minkey.command.Ping;
 import com.minkey.contants.CommonContants;
 import com.minkey.contants.DeviceType;
-import com.minkey.db.DeviceServiceHandler;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
+import com.minkey.exception.SystemException;
 import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,12 @@ public class DeviceConnectHandler {
             return;
         }
 
-        boolean isConnect = pingTest(device);
+        boolean isConnect = false;
+        try {
+            isConnect = pingTest(device);
+        } catch (SystemException e) {
+            log.error("ping设备异常",e);
+        }
         long deviceId = device.getDeviceId();
         deviceConnectCache.putConnect(deviceId,isConnect);
     }

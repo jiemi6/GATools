@@ -3,6 +3,7 @@ package com.minkey.handler;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.db.dao.Source;
 import com.minkey.dto.FTPConfigData;
+import com.minkey.exception.SystemException;
 import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
@@ -20,7 +21,7 @@ public class SourceCheckHandler {
     @Autowired
     private DynamicDB dynamicDB;
 
-    public boolean testSource(Source source, DeviceService detectorService){
+    public boolean testSource(Source source, DeviceService detectorService) throws SystemException{
         if(StringUtils.equals(source.getSourceType(),Source.sourceType_db)){
             return testSource_db(source,detectorService);
         }else if(StringUtils.equals(source.getSourceType(),Source.sourceType_ftp)){
@@ -35,7 +36,7 @@ public class SourceCheckHandler {
         }
     }
 
-    public boolean testSource_ftp(Source source, DeviceService detectorService) {
+    public boolean testSource_ftp(Source source, DeviceService detectorService)throws SystemException {
         boolean isConnect;
         if(source.isNetAreaIn()){
             isConnect = ftpUtil.testFTPConnect(source, FTPUtil.default_timeout);
@@ -57,7 +58,7 @@ public class SourceCheckHandler {
         return isConnect;
     }
 
-    public boolean testSource_db(Source source, DeviceService detectorService) {
+    public boolean testSource_db(Source source, DeviceService detectorService)throws SystemException {
         boolean isConnect;
         if(source.isNetAreaIn()){
             isConnect = dynamicDB.testDB(source);
@@ -72,7 +73,7 @@ public class SourceCheckHandler {
 
     }
 
-    public boolean testSource_video(Source source, DeviceService detectorService) {
+    public boolean testSource_video(Source source, DeviceService detectorService)throws SystemException {
         log.error("暂时不支持video数据源探测");
         return false;
     }

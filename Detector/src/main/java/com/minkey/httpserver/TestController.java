@@ -4,6 +4,7 @@ package com.minkey.httpserver;
 import com.minkey.command.SnmpUtil;
 import com.minkey.contants.CommonContants;
 import com.minkey.dto.*;
+import com.minkey.exception.SystemException;
 import com.minkey.executer.SSHExecuter;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
@@ -42,6 +43,8 @@ public class TestController {
             boolean isConnect = dynamicDB.testDB(dbConfigData);
 
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -64,6 +67,8 @@ public class TestController {
         try{
             boolean isConnect = ftpUtil.testFTPConnect(ftpConfigData);
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -90,6 +95,8 @@ public class TestController {
         try{
             boolean isConnect =  SSHExecuter.testConnect(baseConfigData);
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -115,6 +122,8 @@ public class TestController {
             SnmpUtil snmpUtil = new SnmpUtil(snmpConfigData.getIp(),snmpConfigData.getPort(),snmpConfigData.getCommunity(),snmpConfigData.getVersion(),0, CommonContants.DEFAULT_TIMEOUT);
             boolean isConnect =  snmpUtil.testConnect();
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

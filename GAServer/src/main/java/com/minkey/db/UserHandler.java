@@ -1,7 +1,7 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.User;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public class UserHandler {
                 ,new Object[]{user.getName(),user.getuName(),user.getPwd(),user.getCreateUid(),user.getStatus(),user.getPhone(),user.getEmail(),user.getWrongPwdNum(),user.getAuth(),user.getLoginIpStart(),user.getLoginIpEnd(),user.getLoginTimeStart(),user.getLoginTimeEnd()});
 
         if(num == 0){
-            throw new DataException("添加新用户失败");
+            throw new SystemException("添加新用户失败");
         }
     }
 
@@ -76,7 +76,7 @@ public class UserHandler {
         int num = jdbcTemplate.update(sb.toString());
 
         if(num == 0){
-            throw new DataException("修改用户不存在");
+            throw new SystemException("修改用户不存在");
         }
     }
 
@@ -88,7 +88,7 @@ public class UserHandler {
         int num = jdbcTemplate.update("update "+tableName+" set pwd = ? where status > -1 AND uid= ?",new Object[]{pwd,uid});
 
         if(num == 0){
-            throw new DataException("更新用户密码失败");
+            throw new SystemException("更新用户密码失败");
         }
     }
 

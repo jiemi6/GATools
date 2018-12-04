@@ -119,7 +119,6 @@ public class SysLogUtil {
      */
     public void closeSyslog2other() {
 
-        shutdown();
 
 
     }

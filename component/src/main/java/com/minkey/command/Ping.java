@@ -1,5 +1,8 @@
 package com.minkey.command;
 
+import com.minkey.exception.SystemException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,6 +10,7 @@ import java.net.InetAddress;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class Ping {
 
     /**
@@ -14,7 +18,7 @@ public class Ping {
      */
     public static final int DEFALUT_TIMEOUT = 1000;
 
-    public static boolean javaPing(String ipAddress,int timeout){
+    public static boolean javaPing(String ipAddress,int timeout) throws SystemException{
         if(timeout <= 0){
             timeout = DEFALUT_TIMEOUT;
         }
@@ -23,7 +27,8 @@ public class Ping {
         try {
             status = InetAddress.getByName(ipAddress).isReachable(timeout);
         } catch (IOException e) {
-            return false;
+            log.debug(e.getMessage(),e);
+            throw new SystemException(e.getMessage());
         }
         return status;
     }
@@ -33,7 +38,7 @@ public class Ping {
      * @return
      * @throws Exception
      */
-    public static boolean javaPing(String ipAddress){
+    public static boolean javaPing(String ipAddress) throws SystemException{
        return javaPing(ipAddress,DEFALUT_TIMEOUT);
     }
 

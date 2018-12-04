@@ -3,22 +3,11 @@ package com.minkey.snmp;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.SnmpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Test;
 
 
 @Slf4j
 public class SnmpTest {
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-
-        SnmpTest snmpTest = new SnmpTest();
-
-        snmpTest.testGetList();
-//        snmpTest.testWalk();
-
-    }
-
         String ip = "127.0.0.1";
 //        String ip = "topwalkhndq.tpddns.cn";
         String community = "public";
@@ -37,6 +26,14 @@ public class SnmpTest {
 
         SnmpData.snmpWalk(ip,community,oidval);
 
+    }
+
+    @Test
+    public void testProcess(){
+
+        //进程 参数
+        String oid = ".1.3.6.1.2.1.25.4.2.1.5";
+        SnmpData.snmpWalk(ip,community,oid);
     }
 
 

@@ -2,7 +2,7 @@ package com.minkey.db;
 
 import com.minkey.db.dao.Device;
 import com.minkey.dto.Page;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -64,7 +64,7 @@ public class DeviceHandler {
                 new Object[]{device.getDeviceId(),device.getDeviceName(),device.getIp(),device.getDeviceType(),device.getArea(),device.getNetArea(),device.getIcon()});
 
         if(num == 0){
-            throw new DataException("插入失败");
+            throw new SystemException("插入失败");
         }
     }
 

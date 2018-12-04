@@ -38,9 +38,9 @@ public interface DeviceType {
     public static int ftpkufuwuqi = 16;
     /**数据库服务器*/
     public static int shujukufuwuqi = 17;
-    /**信任端数据交换系统*/
+    /**信任端数据交换系统 - TAS*/
     public static int xinrenduanshujujiaohuanxitong = 18;
-    /**非信任端数据交换系统*/
+    /**非信任端数据交换系统-UAS*/
     public static int feixinrenduanshujujiaohuanxitong = 19;
     /**视频接入认证服务器*/
     public static int shipinjierurenzhengfuwuqi = 20;

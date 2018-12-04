@@ -69,6 +69,10 @@ public class AlarmLogHandler {
 
 
     public void insert(AlarmLog alarmLog) {
+        if(alarmLog == null){
+            return;
+        }
+
         int num = jdbcTemplate.update("insert into "+tableName+" (bid,bType,type, level,msg,createTime) VALUES (?,?,?,?,?,?)"
                 ,new Object[]{alarmLog.getBid(),alarmLog.getbType(),alarmLog.getType(),alarmLog.getLevel(),alarmLog.getMsg(),alarmLog.getCreateTime()});
 

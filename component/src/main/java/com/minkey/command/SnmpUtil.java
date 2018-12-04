@@ -2,6 +2,7 @@ package com.minkey.command;
 
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.dto.SnmpConfigData;
+import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -113,7 +114,7 @@ public class SnmpUtil {
     /**
      * 根据OID列表，一次获取多条OID数据，并且以List形式返回
      */
-    public JSONObject snmpGetList(String[] oidList) {
+    public JSONObject snmpGetList(String[] oidList)throws SystemException {
 
         Snmp snmp = null;
         try {
@@ -147,8 +148,7 @@ public class SnmpUtil {
                 return data;
             }
         } catch (Exception e) {
-            log.error("snmpGetList Get Exception:" +e.getMessage());
-            return null;
+            throw new SystemException("snmpGetList Get Exception:" +e.getMessage());
         } finally {
             if (snmp != null) {
                 try {
@@ -235,7 +235,7 @@ public class SnmpUtil {
     /**
      * 根据communityTargetOID，获取树形数据
      */
-    public JSONObject snmpWalk(String communityTargetOid) {
+    public JSONObject snmpWalk(String communityTargetOid) throws SystemException{
         TransportMapping transport = null;
         Snmp snmp = null;
         try {
@@ -266,7 +266,7 @@ public class SnmpUtil {
                 finished = checkWalkFinished(communityTargetOID, pdu, vb);
 
                 if (!finished) {
-                    log.debug(vb.getOid().toString() +"="+ vb.getVariable().toString());
+//                    log.debug(vb.getOid().toString() +"="+ vb.getVariable().toString());
                     data.put(vb.getOid().toString(), vb.getVariable().toString());
 
                     // Set up the variable binding for the next entry.
@@ -279,8 +279,7 @@ public class SnmpUtil {
             }
             return null;
         } catch (Exception e) {
-            log.error("SNMP walk Exception: "+e.getMessage());
-            return null;
+            throw new SystemException("SNMP walk Exception: "+e.getMessage());
         } finally {
             if (snmp != null) {
                 try {

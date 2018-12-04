@@ -16,7 +16,7 @@ public class LocalExecuter {
         try {
             pro = Runtime.getRuntime().exec(command);
         } catch (IOException e) {
-            throw new SystemException("sh执行异常："+command, e);
+            throw new SystemException("本地执行sh命令异常："+command, e);
         }
 
         //返回的结果可能是标准信息,也可能是错误信息,所以两种输出都要获取
@@ -60,7 +60,7 @@ public class LocalExecuter {
                 }
             }
         } catch (IOException e) {
-            throw new SystemException("读取本地sh执行结果异常", e);
+            throw new SystemException("读取本地sh执行结果异常"+e.getMessage());
         } finally {
             pro.destroy();
         }

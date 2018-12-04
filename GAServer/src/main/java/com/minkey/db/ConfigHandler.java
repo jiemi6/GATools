@@ -1,9 +1,7 @@
 package com.minkey.db;
 
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.collections4.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -27,7 +25,7 @@ public class ConfigHandler {
         int num = jdbcTemplate.update("replace into "+tableName+" (configKey, configData) VALUES (?,?)",new Object[]{configKey,configData});
 
         if(num == 0){
-            throw new DataException("插入配置失败");
+            throw new SystemException("插入配置失败");
         }
     }
 

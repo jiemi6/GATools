@@ -7,8 +7,8 @@ management:
 server:
   port: ${port}
   session:
-    #会话超时（秒）,10分钟。
-    timeout: 600
+    #会话超时（秒）,10秒。
+    timeout: 10
 
 logging:
   file: log/console.log

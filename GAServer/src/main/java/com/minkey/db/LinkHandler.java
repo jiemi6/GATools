@@ -1,7 +1,7 @@
 package com.minkey.db;
 
 import com.minkey.db.dao.Link;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -30,7 +30,7 @@ public class LinkHandler {
                 new Object[]{link.getLinkName(),link.getLinkType(),link.dbConfigDataStr(),link.topologyNodesStr()});
 
         if(num == 0){
-            throw new DataException("新增失败");
+            throw new SystemException("新增失败");
         }
     }
 
@@ -39,7 +39,7 @@ public class LinkHandler {
                 new Object[]{link.getLinkId(),link.getLinkName(),link.getLinkType(),link.dbConfigDataStr(),link.topologyNodesStr()});
 
         if(num == 0){
-            throw new DataException("更新失败");
+            throw new SystemException("更新失败");
         }
     }
 

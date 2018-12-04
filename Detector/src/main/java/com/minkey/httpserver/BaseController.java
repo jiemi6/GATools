@@ -6,6 +6,7 @@ import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
+import com.minkey.exception.SystemException;
 import com.minkey.executer.LocalExecuter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
@@ -41,6 +42,8 @@ public class BaseController {
             boolean isConnect = Ping.javaPing(ip);
             data.put("isConnect",isConnect);
             return JSONMessage.createSuccess().addData(data).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
@@ -66,6 +69,8 @@ public class BaseController {
         try{
             ResultInfo resultInfo = LocalExecuter.exec(cmdStr);
             return JSONMessage.createSuccess().addData(resultInfo).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
@@ -98,6 +103,8 @@ public class BaseController {
             boolean isConnect = Telnet.doTelnet(ip, port);
             data.put("isConnect",isConnect);
             return JSONMessage.createSuccess().addData(data).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
@@ -154,6 +161,8 @@ public class BaseController {
             JSONObject reData = snmpUtil.snmpGetList(oids);
 
             return JSONMessage.createSuccess().addData(reData).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
@@ -211,6 +220,8 @@ public class BaseController {
             JSONObject reData = snmpUtil.snmpWalk(oid);
 
             return JSONMessage.createSuccess().addData(reData).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();

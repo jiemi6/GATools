@@ -4,7 +4,7 @@ import com.minkey.db.dao.User;
 import com.minkey.db.dao.UserLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
-import com.minkey.exception.DataException;
+import com.minkey.exception.SystemException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -51,7 +51,7 @@ public class UserLogHandler {
                 new Object[]{userLog.getUid(),userLog.getuName(),userLog.getLoginIp(),userLog.getModuleName(),userLog.getMsg()});
 
         if(num == 0){
-            throw new DataException("新增失败");
+            throw new SystemException("新增失败");
         }
     }
 

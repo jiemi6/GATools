@@ -45,6 +45,7 @@ public class SSHExecuter {
         SSHExecuter sshExecuter = null;
         try {
             sshExecuter = new SSHExecuter(baseConfigData);
+
             return true;
         } catch (Exception e) {
             log.error("Test SSH "+e.getMessage());
@@ -79,6 +80,7 @@ public class SSHExecuter {
             session.setConfig("StrictHostKeyChecking", "no");
             //连接超时设置
             session.connect(timeout);
+            session.isConnected();
         } catch (JSchException e) {
             throw new SystemException(String.format("SSH 异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
         }
@@ -259,9 +261,7 @@ public class SSHExecuter {
      * 用完记得关闭，否则连接一直存在，程序不会退出
      */
     public void close() {
-        if (session.isConnected()) {
-            session.disconnect();
-        }
+        session.disconnect();
     }
 
 

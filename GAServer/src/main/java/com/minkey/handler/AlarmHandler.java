@@ -12,7 +12,8 @@ import com.minkey.db.TaskHandler;
 import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
-import com.minkey.dto.SeachParam;
+import com.minkey.dto.SnmpConfigData;
+import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class AlarmHandler {
     @Autowired
     DeviceServiceCheckManager deviceServiceCheckManager;
 
+    @Autowired
+    SnmpExploreHandler snmpExploreHandler;
+
 
     /**
      * 扫描所有设备状态
@@ -88,7 +92,7 @@ public class AlarmHandler {
                 alarmLog.setBid(deviceId);
                 alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                 alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-                alarmLog.setType(AlarmEnum.wangluobutong);
+                alarmLog.setType(AlarmEnum.ip_notConnect);
                 alarmLog.setMsg(String.format("%s[%s]网络无法连接!", device.getDeviceName(), device.getIp()));
 
                 //网络不同，更新设备级别为错误
@@ -135,7 +139,7 @@ public class AlarmHandler {
             alarmLog.setBid(deviceId);
             alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
             alarmLog.setLevel(MyLevel.LEVEL_WARN);
-            alarmLog.setType(AlarmEnum.shebeifuwu);
+            alarmLog.setType(AlarmEnum.no_snmpservice);
             alarmLog.setMsg(String.format("%s[%s]硬件性能指标无法获取，请检查snmp设置!", device.getDeviceName(), device.getIp()));
 
             //没有性能指标，更新设备级别为正常
@@ -213,12 +217,12 @@ public class AlarmHandler {
         //得到所有连接上的设备
         Set<Long> okSet = deviceConnectCache.getOkSet();
 
-        Set<AlarmLog> linkLogs = new HashSet<>(allLink.size());
         AlarmLog alarmLog;
         Set<Long> notOkDeviceIds;
         Set<Long> okDeviceIds;
         Set<String> allDeviceName;
         for (Link link : allLink.values()) {
+            Set<AlarmLog> linkLogs = new HashSet<>(allLink.size());
             okDeviceIds = link.getDeviceIds();
             if (CollectionUtils.isEmpty(okDeviceIds)) {
                 continue;
@@ -238,7 +242,7 @@ public class AlarmHandler {
             alarmLog.setBid(link.getLinkId());
             alarmLog.setbType(AlarmLog.BTYPE_LINK);
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
-            alarmLog.setType(AlarmEnum.wangluobutong);
+            alarmLog.setType(AlarmEnum.ip_notConnect);
 
             allDeviceName = new HashSet<>(notOkDeviceIds.size());
             //拼装名称
@@ -249,7 +253,7 @@ public class AlarmHandler {
                 }
                 allDeviceName.add(device.getDeviceName());
             }
-            alarmLog.setMsg(String.format("[%s]中有%s个设备掉线，设备名称为%s", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
+            alarmLog.setMsg(String.format("[%s]中有%s个设备掉线，分别为%s", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
             linkLogs.add(alarmLog);
 
             Set<Device>  allDetector = deviceCache.getDetector8linkId(link.getLinkId());
@@ -264,8 +268,40 @@ public class AlarmHandler {
                 linkLogs.add(alarmLog);
             }
 
+            Map<Long, Device> deviceMap= deviceCache.getDevice8Ids(link.getDeviceIds());
+            Device tas = null;
+            Device uas = null;
+            for(Device device: deviceMap.values()){
+                //找到TAS
+                if(device.getDeviceType() == DeviceType.xinrenduanshujujiaohuanxitong){
+                    tas = device;
+                }else if(device.getDeviceType() == DeviceType.feixinrenduanshujujiaohuanxitong){
+                    uas = device;
+                }
+            }
+
+            //没有tas设备
+            if(tas == null) {
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(link.getLinkId())
+                        .setbType(AlarmLog.BTYPE_LINK)
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setType(AlarmEnum.no_TAS)
+                        .setMsg(String.format("链路[%s]没有配置TAS设备！", link.getLinkName()));
+                linkLogs.add(alarmLog);
+            }
+            //没有tas设备
+            if(uas == null) {
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(link.getLinkId())
+                        .setbType(AlarmLog.BTYPE_LINK)
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setType(AlarmEnum.no_UAS)
+                        .setMsg(String.format("链路[%s]没有配置UAS设备！", link.getLinkName()));
+                linkLogs.add(alarmLog);
+            }
+            alarmLogHandler.insertAll(linkLogs);
         }
-        alarmLogHandler.insertAll(linkLogs);
     }
 
     /**
@@ -325,16 +361,36 @@ public class AlarmHandler {
             String toSourceId = taskSource.getToResourceId();
 
             Source fromSource = sourceHandler.query(task.getLinkId(), fromSourceId);
-            boolean isConnect = sourceCheckHandler.testSource(fromSource, detectorService);
-            alarmLog = build(task, fromSource, isConnect);
+            boolean isConnect = false;
+            try {
+                isConnect = sourceCheckHandler.testSource(fromSource, detectorService);
+                alarmLog = build(task, fromSource, isConnect);
+            } catch (SystemException e) {
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(task.getTaskId())
+                        .setbType(AlarmLog.BTYPE_TASK)
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setType(e.getErrorCode())
+                        .setMsg(e.getMessage());
+            }
             taskAlarm.add(alarmLog);
 
             Source toSource = sourceHandler.query(task.getLinkId(), toSourceId);
-            isConnect = sourceCheckHandler.testSource(toSource, detectorService);
-            alarmLog = build(task, toSource, isConnect);
+            try {
+                isConnect = sourceCheckHandler.testSource(toSource, detectorService);
+                alarmLog = build(task, toSource, isConnect);
+            } catch (SystemException e) {
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(task.getTaskId())
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setbType(AlarmLog.BTYPE_TASK)
+                        .setType(e.getErrorCode())
+                        .setMsg(e.getMessage());
+            }
             taskAlarm.add(alarmLog);
 
-            //Minkey 检查任务进程是否存在
+            //检查任务进程是否存在
+            checkTaskProcess(task,detectorService);
         }
 
         int level = MyLevel.LEVEL_NORMAL;
@@ -363,10 +419,77 @@ public class AlarmHandler {
         alarmLog.setBid(task.getTaskId())
                 .setbType(AlarmLog.BTYPE_TASK)
                 .setLevel(MyLevel.LEVEL_ERROR)
-                .setType(AlarmEnum.wangluobutong)
+                .setType(AlarmEnum.ip_notConnect)
                 .setMsg(msg);
         return alarmLog;
     }
 
 
+    /**
+     * 检查UAS 和 TAS上任务进程是否都存在
+     */
+    private void checkTaskProcess(Task task,DeviceService detectorService){
+        Link link = deviceCache.getLink8Id(task.getLinkId());
+        Map<Long, Device> deviceMap= deviceCache.getDevice8Ids(link.getDeviceIds());
+        Device tas = null;
+        Device uas = null;
+        for(Device device: deviceMap.values()){
+            //找到TAS
+            if(device.getDeviceType() == DeviceType.xinrenduanshujujiaohuanxitong){
+                tas = device;
+            }else if(device.getDeviceType() == DeviceType.feixinrenduanshujujiaohuanxitong){
+                uas = device;
+            }
+        }
+
+        //tas在内网
+        checkTaskProcess(task,tas,null,"TAS");
+        //检查uas，uas在外网
+        checkTaskProcess(task,uas,detectorService,"UAS");
+
+    }
+
+    private void checkTaskProcess(Task task,Device device,DeviceService detectorService,String deviceType){
+        AlarmLog alarmLog = null;
+        DeviceService snmpDeviceService = null;
+
+        //如果设备不存在
+        if(device == null){
+            //不检查进程，链路会报警
+            return;
+        }else {
+            Set<DeviceService> tasService = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
+            for (DeviceService deviceService : tasService) {
+                //找snmp服务
+                if(deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP){
+                    snmpDeviceService = deviceService;
+                    break;
+                }
+            }
+
+            //没有配置snmp服务
+            if(snmpDeviceService == null){
+                alarmLog = new AlarmLog();
+                alarmLog.setBid(task.getTaskId())
+                        .setbType(AlarmLog.BTYPE_TASK)
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setType(AlarmEnum.no_snmpservice)
+                        .setMsg(String.format("%s设备[%s]没有配置SNMP服务！",deviceType,device.getDeviceName()));
+            }else{
+                SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
+
+                boolean isProcessExist = snmpExploreHandler.checkProcess(task.getTargetTaskId(),snmpConfigData,detectorService);
+
+                if(!isProcessExist){
+                    alarmLog = new AlarmLog();
+                    alarmLog.setBid(task.getTaskId())
+                            .setbType(AlarmLog.BTYPE_TASK)
+                            .setLevel(MyLevel.LEVEL_ERROR)
+                            .setType(AlarmEnum.no_taskProcess)
+                            .setMsg(String.format("%s设备[%s]上任务进程[%s]不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
+                }
+            }
+        }
+        alarmLogHandler.insert(alarmLog);
+    }
 }

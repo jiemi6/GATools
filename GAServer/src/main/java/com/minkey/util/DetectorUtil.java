@@ -5,6 +5,7 @@ import com.minkey.command.SnmpUtil;
 import com.minkey.contants.CommonContants;
 import com.minkey.dto.*;
 import com.minkey.entity.ResultInfo;
+import com.minkey.exception.SystemException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -26,7 +27,6 @@ public class DetectorUtil {
         if(jsonMessage == null){
             return false;
         }
-
         return jsonMessage.isSuccess();
     }
 
@@ -35,17 +35,8 @@ public class DetectorUtil {
         Map<String,String> param = new HashMap<>(1);
         param.put("ip",ip);
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return false;
-        }
-        if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
-        }
-        return false;
+
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
 
@@ -54,15 +45,8 @@ public class DetectorUtil {
         Map<String,String> param = new HashMap<>(1);
         param.put("cmdStr",cmdStr);
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return null;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return null;
-        }
 
-        return JSONObject.toJavaObject(jsonMessage.getData(),ResultInfo.class);
+        return JSONObject.toJavaObject(getReturnJson(returnStr),ResultInfo.class);
     }
 
     public static boolean telnetCmd(String detectorIp,int detectorPort, String ip,int port) {
@@ -71,18 +55,8 @@ public class DetectorUtil {
         param.put("ip",ip);
         param.put("port",""+port);
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return false;
-        }
-        if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
-        }
-        return false;
 
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
     public static JSONObject snmpGet(String detectorIp,int detectorPort,SnmpConfigData snmpConfigData,String oid){
@@ -101,15 +75,8 @@ public class DetectorUtil {
         param.put("timeout", String.valueOf(CommonContants.DEFAULT_TIMEOUT));
         param.put("oid",oid);
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return null;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return null;
-        }
 
-        return jsonMessage.getData();
+        return getReturnJson(returnStr);
     }
 
     public static JSONObject snmpWalk(String detectorIp,int detectorPort,
@@ -136,15 +103,8 @@ public class DetectorUtil {
         param.put("timeout",timeout.toString());
         param.put("oid",oid);
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return null;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return null;
-        }
 
-        return jsonMessage.getData();
+        return getReturnJson(returnStr);
     }
 
     public static boolean testDB(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
@@ -157,18 +117,8 @@ public class DetectorUtil {
         param.put("pwd",dbConfigData.getPwd());
         param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return false;
-        }
 
-        if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
-        }
-        return false;
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
     public static boolean testSNMP(String detectorIp, int detectorPort, SnmpConfigData snmpConfigData) {
@@ -179,18 +129,8 @@ public class DetectorUtil {
         param.put("community",snmpConfigData.getCommunity());
         param.put("version",String.valueOf(snmpConfigData.getVersion()));
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return false;
-        }
 
-        if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
-        }
-        return false;
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
     public static boolean testFTP(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
@@ -202,18 +142,8 @@ public class DetectorUtil {
         param.put("name",ftpConfigData.getName());
         param.put("pwd",ftpConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
-        JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
-        if(jsonMessage == null){
-            return false;
-        }
 
-        if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
-        }
-        return false;
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
     public static boolean testSSH(String detectorIp, int detectorPort, BaseConfigData baseConfigData) {
@@ -224,17 +154,19 @@ public class DetectorUtil {
         param.put("name",baseConfigData.getName());
         param.put("pwd",baseConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
-        if(StringUtils.isEmpty(returnStr)){
-            return false;
-        }
+        return getReturnJson(returnStr).getBoolean("isConnect");
+    }
+
+    private static JSONObject getReturnJson(String returnStr){
         JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
         if(jsonMessage == null){
-            return false;
+            throw new SystemException("探针返回的数据为空。");
         }
 
         if(jsonMessage.isSuccess()){
-            return jsonMessage.getData().getBoolean("isConnect");
+            return jsonMessage.getData();
+        }else{
+            throw new SystemException(jsonMessage.getCode(),jsonMessage.getMsg());
         }
-        return false;
     }
 }

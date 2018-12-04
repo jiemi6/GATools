@@ -109,8 +109,6 @@ public class ToolsController {
             }else{
                 return JSONMessage.createSuccess().addData("msg",resultInfo.getErrRes()).toString();
             }
-
-
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
@@ -140,10 +138,8 @@ public class ToolsController {
             return JSONMessage.createFalied("ip格式不正确").toString();
         }
 
+        boolean isConnect = false;
         try{
-
-
-            boolean isConnect ;
             if(netArea == CommonContants.NETAREA_IN){
                 //内网 直接执行
                 isConnect = Telnet.doTelnet(ip,port);
@@ -167,14 +163,12 @@ public class ToolsController {
                 //执行命令
                 isConnect = DetectorUtil.telnetCmd(configData.getIp(),configData.getPort(),ip,port);
             }
-
-            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
-
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
             log.info("end: 执行telnet");
+            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
         }
     }
 

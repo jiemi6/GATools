@@ -1,13 +1,13 @@
 package com.minkey.util;
 
 import com.alibaba.fastjson.util.IOUtils;
-import com.minkey.exception.NetException;
+import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -30,9 +30,9 @@ import java.util.Map.Entry;
 @Slf4j
 public class HttpClient {
 
-	public static String postRequest(String url,Map<String,String> param) throws NetException {
-		CloseableHttpClient client = HttpClients.createDefault(); 
-		
+	public static String postRequest(String url,Map<String,String> param) throws SystemException {
+		CloseableHttpClient client = HttpClients.createDefault();
+
 		RequestConfig requestConfig = RequestConfig.custom()  
 				//读取3秒超时
 		        .setSocketTimeout(30000)
@@ -51,20 +51,21 @@ public class HttpClient {
 		
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.addHeader("ContentType","application/x-www-form-urlencoded;charset=UTF-8");
+		httpPost.addHeader("Connection", "close");
 		httpPost.setConfig(requestConfig);
 
-		UrlEncodedFormEntity uefEntity = null;  
 		InputStream in = null;
 		BufferedReader reader = null;
+		CloseableHttpResponse response = null;
 		try {
-			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");  
-            httpPost.setEntity(uefEntity);  
-            HttpResponse response = client.execute(httpPost);
+			UrlEncodedFormEntity uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
+            httpPost.setEntity(uefEntity);
+			response = client.execute(httpPost);
 
-            HttpEntity entity = response.getEntity();
+			HttpEntity entity = response.getEntity();
             in = entity.getContent();  
             reader = new BufferedReader(new InputStreamReader(in));
-			
+
 			StringBuffer buffer = new StringBuffer();
 			while(true){
 				String temp = reader.readLine();
@@ -76,13 +77,13 @@ public class HttpClient {
 
 			return buffer.toString();
 		} catch (Exception e) {
-			log.debug("httpClient请求异常,"+e.getMessage());
-//			throw new NetException("httpClient请求异常,"+e.getMessage());
+			log.debug(String.format("HTTPClient请求异常,url=%s,",url),e);
 			return null;
 		}finally{
-			IOUtils.close(client);
 			IOUtils.close(reader);
 			IOUtils.close(in);
+			IOUtils.close(response);
+			IOUtils.close(client);
 		}
 	}
 
