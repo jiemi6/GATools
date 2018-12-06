@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.ConfigEnum;
 import com.minkey.contants.Modules;
@@ -214,81 +215,48 @@ public class ConfigController {
     }
 
     /**
-     * 报警短信配置
+     * 报警配置
      * @return
      */
-    @RequestMapping("/smsAlarm/set")
-    public String smsAlarmSet(String smsUrl) {
-        log.info("start: 执行报警短信配置");
+    @RequestMapping("/alarm/set")
+    public String alarmSet(String baseConfig,String smsConfig,String emailConfig) {
+        log.info("start: 执行报警配置");
         try{
             //直接存入config
-            String configKey = ConfigEnum.SmsAlarmConfig.getConfigKey();
+            String configKey = ConfigEnum.AlarmConfig.getConfigKey();
             JSONObject configData = new JSONObject();
-            configData.put("smsUrl",smsUrl);
+            configData.put("baseConfig",JSONObject.parseObject(baseConfig));
+            configData.put("smsConfig",JSONObject.parseObject(smsConfig));
+            configData.put("emailConfig",JSONObject.parseObject(emailConfig));
             configHandler.insert(configKey,configData.toJSONString());
 
             User user = (User) httpSession.getAttribute("user");
-            userLogHandler.log(user, Modules.config, String.format("%s设置短信告警信息",user.getuName()));
+            userLogHandler.log(user, Modules.config, String.format("%s设置报警信息",user.getuName()));
 
             return JSONMessage.createSuccess().toString();
+        }catch (JSONException e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied("参数必须是json字符串").toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行报警短信配置");
+            log.info("end:  执行报警配置");
         }
     }
 
 
     /**
-     * 获取报警短信设置
+     * 获取报警设置
      * @return
      */
-    @RequestMapping("/smsAlarm/get")
-    public String smsAlarmGet() {
-        String configKey = ConfigEnum.SmsAlarmConfig.getConfigKey();
+    @RequestMapping("/alarm/get")
+    public String alarmGet() {
+        String configKey = ConfigEnum.AlarmConfig.getConfigKey();
         return query(configKey);
     }
 
 
-
-    /**
-     * 报警邮箱配置
-     * @return
-     */
-    @RequestMapping("/emailAlarm/set")
-    public String emailAlarmSet(String emailUser,String emailPwd,String emailServer) {
-        log.info("start: 执行报警邮箱配置");
-        try{
-            //直接存入config
-            String configKey = ConfigEnum.EmailAlarmConfig.getConfigKey();
-            JSONObject configData = new JSONObject();
-            configData.put("emailUser",emailUser);
-            configData.put("emailPwd",emailPwd);
-            configData.put("emailServer",emailServer);
-            configHandler.insert(configKey,configData.toJSONString());
-
-            User user = (User) httpSession.getAttribute("user");
-            userLogHandler.log(user, Modules.config, String.format("%s设置邮箱告警信息",user.getuName()));
-
-            return JSONMessage.createSuccess().toString();
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-            return JSONMessage.createFalied(e.getMessage()).toString();
-        }finally {
-            log.info("end:  报警邮箱配置");
-        }
-    }
-
-    /**
-     * 获取报警邮箱配置
-     * @return
-     */
-    @RequestMapping("/emailAlarm/get")
-    public String emailAlarmGet() {
-        String configKey = ConfigEnum.EmailAlarmConfig.getConfigKey();
-        return query(configKey);
-    }
 
 
     @Autowired

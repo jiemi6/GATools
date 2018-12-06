@@ -4,9 +4,7 @@ public enum  ConfigEnum {
 
     SystemRegister("SystemInfo","系统注册信息"),
 
-    SmsAlarmConfig("SmsAlarm","短信报警设置"),
-
-    EmailAlarmConfig("EmailAlarm","email报警设置"),
+    AlarmConfig("AlarmSet","报警设置"),
 
     Syslog2other("Syslog2other","syslog转发给其他服务器配置"),
 

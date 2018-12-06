@@ -30,13 +30,13 @@ public class DynamicDB {
 
     private JdbcTemplate getJdbcTemplate(DatabaseDriver databaseDriver, String ip,int port,String dbName, String userName , String password){
         //先测网络
+        boolean isConnect;
         try {
-            boolean isConnect = Telnet.doTelnet(ip,port);
-            if(!isConnect){
-                throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("Telnet数据库网络不通[%s:%s]",ip,port));
-            }
+            isConnect = Telnet.doTelnet(ip,port);
         } catch (SystemException e) {
-            log.debug(e.getMessage(),e);
+            throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("数据库%s",e.getMessage()));
+        }
+        if(!isConnect){
             throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("Telnet数据库网络不通[%s:%s]",ip,port));
         }
 
@@ -71,8 +71,31 @@ public class DynamicDB {
 
             return jdbcTemplate;
         }catch (Exception e ){
-            throw new SystemException("构造数据库连接异常,"+e.getMessage());
+            throw build(e,databaseDriver);
         }
+
+    }
+
+    /**
+     * 根据错误类型构造返回的异常
+     * @param e
+     * @param databaseDriver
+     * @return
+     */
+    private SystemException build(Exception e, DatabaseDriver databaseDriver){
+
+        if(databaseDriver == DatabaseDriver.MYSQL){
+            String eStr = e.getCause().getCause().toString();
+
+            // Mysql : Access denied for user 'root1'@'localhost' (using password: YES)
+            if(eStr.contains("using password: YES")){
+                //账号密码错误
+                return new SystemException(AlarmEnum.db_wrongpwd.getAlarmType(),"数据库账号密码错误");
+
+            }
+        }
+
+        return new SystemException(AlarmEnum.db_createError.getAlarmType(),"构造数据库连接异常,"+e.getMessage());
     }
 
     public boolean testDB(DBConfigData dbConfigData) throws SystemException{

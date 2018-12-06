@@ -458,12 +458,14 @@ public class AlarmHandler {
             //不检查进程，链路会报警
             return;
         }else {
-            Set<DeviceService> tasService = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
-            for (DeviceService deviceService : tasService) {
-                //找snmp服务
-                if(deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP){
-                    snmpDeviceService = deviceService;
-                    break;
+            Set<DeviceService> deviceServiceSet = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
+            if(!CollectionUtils.isEmpty(deviceServiceSet)){
+                for (DeviceService deviceService : deviceServiceSet) {
+                    //找snmp服务
+                    if(deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP){
+                        snmpDeviceService = deviceService;
+                        break;
+                    }
                 }
             }
 
