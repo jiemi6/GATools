@@ -54,7 +54,7 @@ public class ExamineController {
      */
     @RequestMapping("/allInOne")
     public String allInOne() {
-        log.info("start: 执行一键体检");
+        log.debug("start: 执行一键体检");
 
         User user = (User) session.getAttribute("user");
 
@@ -73,7 +73,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行系统自检");
+            log.debug("end:  执行系统自检");
         }
     }
 
@@ -83,7 +83,7 @@ public class ExamineController {
      */
     @RequestMapping("/link")
     public String link(Long linkId) {
-        log.info("start: 执行链路体检 linkId={} ",linkId);
+        log.debug("start: 执行链路体检 linkId={} ",linkId);
         if(linkId == null){
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
@@ -110,7 +110,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行链路体检");
+            log.debug("end:  执行链路体检");
         }
     }
 
@@ -120,7 +120,7 @@ public class ExamineController {
      */
     @RequestMapping("/device")
     public String device(Long deviceId) {
-        log.info("start: 执行设备体检 deviceId={} ",deviceId);
+        log.debug("start: 执行设备体检 deviceId={} ",deviceId);
         if(deviceId == null){
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
@@ -147,7 +147,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行设备体检");
+            log.debug("end:  执行设备体检");
         }
     }
 
@@ -157,7 +157,7 @@ public class ExamineController {
      */
     @RequestMapping("/task")
     public String task(Long taskId) {
-        log.info("start: 执行任务体检 taskId={} ",taskId);
+        log.debug("start: 执行任务体检 taskId={} ",taskId);
         if(taskId == null){
             return JSONMessage.createFalied("taskId不能为空").toString();
         }
@@ -184,7 +184,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行任务体检");
+            log.debug("end:  执行任务体检");
         }
     }
 
@@ -194,7 +194,7 @@ public class ExamineController {
      */
     @RequestMapping("/checkResult")
     public String checkResult(Long checkId,Integer index) {
-        log.info("start: 获取体检信息 checkId={}，index={}",checkId,index);
+        log.debug("start: 获取体检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -210,7 +210,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  获取体检信息");
+            log.debug("end:  获取体检信息");
         }
     }
 
@@ -220,7 +220,7 @@ public class ExamineController {
      */
     @RequestMapping("/download")
     public String download(Long checkId,HttpServletResponse response) {
-        log.info("start: 下载体检结果文件报告 checkId={}",checkId);
+        log.debug("start: 下载体检结果文件报告 checkId={}",checkId);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -258,7 +258,7 @@ public class ExamineController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行体检信息");
+            log.debug("end:  执行体检信息");
         }
     }
 

@@ -58,7 +58,7 @@ public class AnalysisController {
      */
     @RequestMapping("/task")
     public String task(Long linkId,Integer currentPage,Integer pageSize, SeachParam seachParam) {
-        log.info("start: 执行分页查询任务统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 执行分页查询任务统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(linkId == null || linkId <=0
                 || currentPage == null || currentPage <=0
                 || pageSize == null || pageSize <=0){
@@ -80,7 +80,7 @@ public class AnalysisController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行分页查询任务统计分析数据列表 ");
+            log.debug("end:  执行分页查询任务统计分析数据列表 ");
         }
     }
 
@@ -90,7 +90,7 @@ public class AnalysisController {
      */
     @RequestMapping("/taskCount")
     public String taskCount(Long linkId, SeachParam seachParam) {
-        log.info("start: 执行查询任务统计分析数据总计");
+        log.debug("start: 执行查询任务统计分析数据总计");
         if(linkId == null || linkId <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -102,7 +102,7 @@ public class AnalysisController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行分页查询任务统计分析数据列表 ");
+            log.debug("end:  执行分页查询任务统计分析数据列表 ");
         }
     }
 
@@ -115,7 +115,7 @@ public class AnalysisController {
      */
     @RequestMapping("/device")
     public String device(Long linkId, Integer currentPage, Integer pageSize , SeachParam seachParam) {
-        log.info("start: 执行分页查询设备运行统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 执行分页查询设备运行统计分析数据列表 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(linkId == null || linkId <=0
                 || currentPage == null || currentPage <=0
                 || pageSize == null || pageSize <=0){
@@ -137,7 +137,7 @@ public class AnalysisController {
             if(!CollectionUtils.isEmpty(logs.getList())){
                 Set<Long>  deviceIds =new HashSet<>(logs.getList().size());
                 for(Map map : logs.getList()){
-                    deviceIds.add(Long.valueOf((String)map.get("bid")));
+                    deviceIds.add((Long)map.get("bid"));
                 }
                 nameMap = deviceCache.getName8DeviceIds(deviceIds);
             }
@@ -147,7 +147,7 @@ public class AnalysisController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行分页查询设备运行统计分析数据列表 ");
+            log.debug("end:  执行分页查询设备运行统计分析数据列表 ");
         }
     }
 
@@ -157,7 +157,7 @@ public class AnalysisController {
      */
     @RequestMapping("/deviceCount")
     public String deviceCount(Long linkId, SeachParam seachParam) {
-        log.info("start: 执行查询设备运行统计分析数据总计");
+        log.debug("start: 执行查询设备运行统计分析数据总计");
         if(linkId == null || linkId <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -189,7 +189,7 @@ public class AnalysisController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行分页查询设备运行统计分析数据列表 ");
+            log.debug("end:  执行分页查询设备运行统计分析数据列表 ");
         }
     }
 }

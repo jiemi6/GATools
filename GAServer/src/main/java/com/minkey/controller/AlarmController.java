@@ -47,7 +47,7 @@ public class AlarmController {
      */
     @RequestMapping("/task")
     public String task(Integer currentPage, Integer pageSize, SeachParam seachParam, Long bid) {
-        log.info("start: 执行分页查询任务告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 执行分页查询任务告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -71,7 +71,7 @@ public class AlarmController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行分页查询任务告警 ");
+            log.debug("end:  执行分页查询任务告警 ");
         }
     }
 
@@ -81,7 +81,7 @@ public class AlarmController {
      */
     @RequestMapping("/device")
     public String device(Integer currentPage,Integer pageSize, SeachParam seachParam, Long bid) {
-        log.info("start: 分页查询设备告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 分页查询设备告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -103,7 +103,7 @@ public class AlarmController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  分页查询设备告警");
+            log.debug("end:  分页查询设备告警");
         }
     }
 
@@ -113,7 +113,7 @@ public class AlarmController {
      */
     @RequestMapping("/link")
     public String link(Integer currentPage,Integer pageSize, SeachParam seachParam, Long bid) {
-        log.info("start: 分页查询链路告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 分页查询链路告警 currentPage={} ,pageSize={}" , currentPage,pageSize);
         try{
             Page<AlarmLog> page = new Page(currentPage,pageSize);
 
@@ -130,7 +130,7 @@ public class AlarmController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 分页查询链路告警");
+            log.debug("end: 分页查询链路告警");
         }
     }
 
@@ -156,7 +156,7 @@ public class AlarmController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 分页查询链路告警");
+            log.debug("end: 分页查询链路告警");
         }
     }
 

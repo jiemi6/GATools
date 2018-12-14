@@ -34,7 +34,7 @@ public class KnowledgeController {
 
     @RequestMapping("/insert")
     public String insert(Knowledge knowledge) {
-        log.info("start: 执行insert知识点 knowledge={} ",knowledge);
+        log.debug("start: 执行insert知识点 knowledge={} ",knowledge);
 
         try{
             User sessionUser = (User)session.getAttribute("user");
@@ -49,7 +49,7 @@ public class KnowledgeController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行insert知识点 knowledge={} ",knowledge);
+            log.debug("end: 执行insert知识点 knowledge={} ",knowledge);
         }
     }
 
@@ -60,7 +60,7 @@ public class KnowledgeController {
      */
     @RequestMapping("/query8AlarmType")
     public String query8AlarmType(Integer currentPage,Integer pageSize, Integer alarmType) {
-        log.info("start: 执行查询知识点 alarmType={} ",alarmType);
+        log.debug("start: 执行查询知识点 alarmType={} ",alarmType);
         if(alarmType == null){
             log.info("knowledgeId不能为空");
             return JSONMessage.createFalied("knowledgeId不能为空").toString();
@@ -75,7 +75,7 @@ public class KnowledgeController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行查询知识点 alarmType={} ",alarmType);
+            log.debug("end: 执行查询知识点 alarmType={} ",alarmType);
         }
     }
 
@@ -86,7 +86,7 @@ public class KnowledgeController {
      */
     @RequestMapping("/up")
     public String up(Long knowledgeId) {
-        log.info("start: 执行up知识点 ");
+        log.debug("start: 执行up知识点 ");
         if(knowledgeId == null){
             log.info("knowledgeId不能为空");
             return JSONMessage.createFalied("knowledgeId不能为空").toString();
@@ -98,7 +98,7 @@ public class KnowledgeController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:执行up知识点  ");
+            log.debug("end:执行up知识点  ");
         }
     }
 }

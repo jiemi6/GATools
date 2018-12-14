@@ -55,7 +55,7 @@ public class LicenseController {
      */
     @RequestMapping("/up")
     public String  upFile(@RequestParam("file") MultipartFile file) throws IOException {
-        log.info("start: 上传证书文件 file: {} ",file.getOriginalFilename());
+        log.debug("start: 上传证书文件 file: {} ",file.getOriginalFilename());
         try{
             String str = IOUtils.toString(file.getInputStream(), "utf-8");
 
@@ -106,7 +106,7 @@ public class LicenseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 上传证书文件");
+            log.debug("end: 上传证书文件");
         }
 
     }
@@ -174,7 +174,7 @@ public class LicenseController {
      */
     @RequestMapping("/licenseExport")
     public String licenseExport(String licenseKey,HttpServletResponse response) {
-        log.info("start: 根据key= {} 获取licenseData ",licenseKey);
+        log.debug("start: 根据key= {} 获取licenseData ",licenseKey);
         if(StringUtils.isEmpty(licenseKey)){
             //返回错误
             return JSONMessage.createFalied("参数错误").toString();

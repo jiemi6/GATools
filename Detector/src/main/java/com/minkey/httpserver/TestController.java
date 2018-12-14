@@ -28,8 +28,8 @@ public class TestController {
     FTPUtil ftpUtil;
 
     @RequestMapping("/testDB")
-    public String testDB(DBConfigData dbConfigData){
-        log.debug("start: 执行测试数据库连接 dbConfigData={}",dbConfigData);
+    public String testDBConnect(DBConfigData dbConfigData){
+        log.debug("start: 执行测试数据库是否能连通 dbConfigData={}",dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -50,7 +50,34 @@ public class TestController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.debug("end: 执行测试数据库连接 ");
+            log.debug("end: 执行测试数据库是否能连通 ");
+        }
+    }
+
+    @RequestMapping("/testDBSource")
+    public String testDBSource(DBConfigData dbConfigData){
+        log.debug("start: 执行测试数据库资源测试 dbConfigData={}",dbConfigData);
+
+        if(StringUtils.isEmpty(dbConfigData.getIp())
+                || StringUtils.isEmpty(dbConfigData.getPwd())
+                || StringUtils.isEmpty(dbConfigData.getName())
+                || StringUtils.isEmpty(dbConfigData.getDbName())
+                || dbConfigData.getPort() <= 0){
+
+            return JSONMessage.createFalied("参数错误").toString();
+        }
+
+        try{
+            JSONObject resultJson = dynamicDB.testDBSource(dbConfigData);
+
+            return JSONMessage.createSuccess().addData(resultJson).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.debug("end: 执行测试数据库资源测试 ");
         }
     }
 

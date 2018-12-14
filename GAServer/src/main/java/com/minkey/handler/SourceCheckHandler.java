@@ -1,5 +1,6 @@
 package com.minkey.handler;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.contants.AlarmEnum;
 import com.minkey.contants.MyLevel;
@@ -39,7 +40,7 @@ public class SourceCheckHandler {
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_detector)
-                    .setMsg(String.format("没有部署探针，无法探测外网FTP资源%s",source));
+                    .setMsg(String.format("没有部署探针，无法探测外网资源%s",source.getSname()));
             alarmLogs.add(alarmLog);
             return alarmLogs;
         }
@@ -73,87 +74,78 @@ public class SourceCheckHandler {
         if(source.isNetAreaIn()){
             jsonResult = ftpUtil.testFTPSource(ftpConfigData, FTPUtil.default_timeout);
         }else{
-            if(detectorService == null){
-                alarmLog = new AlarmLog();
-                alarmLog.setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_ERROR)
-                        .setType(AlarmEnum.no_detector)
-                        .setMsg(String.format("没有部署探针，无法探测外网FTP资源%s",source));
-                alarmLogs.add(alarmLog);
-                return alarmLogs;
-            }
             jsonResult = DetectorUtil.testFTPSource(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
         }
 
         Integer alarmType = jsonResult.getInteger("alarmType");
-        //如果为空,证明没有报错,正常连上
-        if(alarmType == null){
-            boolean isRootLock = jsonResult.getBooleanValue("isRootLock");
-            if(!isRootLock){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_WARN)
-                        .setType(AlarmEnum.ftp_rootUnLock)
-                        .setMsg("FTP根目录未锁定");
-                alarmLogs.add(alarmLog);
-            }
-
-            boolean isPassive = jsonResult.getBooleanValue("isPassive");
-            if(!isPassive){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_WARN)
-                        .setType(AlarmEnum.ftp_notPassive)
-                        .setMsg("FTP服务端不是被动模式");
-                alarmLogs.add(alarmLog);
-            }
-
-            String allAuth = jsonResult.getString("allAuth");
-            if(!allAuth.contains("ADD") || !allAuth.contains("DEL") || !allAuth.contains("READ")){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_ERROR)
-                        .setType(AlarmEnum.ftp_notAllAuth)
-                        .setMsg("FTP操作权限不足,目前权限为"+allAuth);
-                alarmLogs.add(alarmLog);
-            }
-
-            int totalFileNum = jsonResult.getIntValue("totalFileNum");
-            if(totalFileNum > 100000){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_WARN)
-                        .setType(AlarmEnum.ftp_fileNum_tooBig)
-                        .setMsg("FTP根目录下文件总数超过10万");
-                alarmLogs.add(alarmLog);
-            }
-
-            int topDirNum = jsonResult.getIntValue("topDirNum");
-            if(topDirNum > 30 ){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_WARN)
-                        .setType(AlarmEnum.ftp_topDirNum_tooBig)
-                        .setMsg("FTP根目录下目录数超过30个");
-                alarmLogs.add(alarmLog);
-            }
-
-            int floorNum = jsonResult.getIntValue("floorNum");
-            if(floorNum > 5){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_WARN)
-                        .setType(AlarmEnum.ftp_floorNum_tooBig)
-                        .setMsg("FTP根目录下子目录层级超过5层");
-                alarmLogs.add(alarmLog);
-            }
-        }else{
+        //如果不为空,证明报错,没有正常连上
+        if(alarmType != null) {
             alarmLog = new AlarmLog().setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(alarmType)
                     .setMsg(AlarmEnum.find8Type(alarmType).getDesc());
+            alarmLogs.add(alarmLog);
+            return  alarmLogs;
+        }
+
+        boolean isRootLock = jsonResult.getBooleanValue("isRootLock");
+        if(!isRootLock){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_WARN)
+                    .setType(AlarmEnum.ftp_rootUnLock)
+                    .setMsg("FTP根目录未锁定");
+            alarmLogs.add(alarmLog);
+        }
+
+        boolean isPassive = jsonResult.getBooleanValue("isPassive");
+        if(!isPassive){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_WARN)
+                    .setType(AlarmEnum.ftp_notPassive)
+                    .setMsg("FTP服务端不是被动模式");
+            alarmLogs.add(alarmLog);
+        }
+
+        String allAuth = jsonResult.getString("allAuth");
+        if(!allAuth.contains("ADD") || !allAuth.contains("DEL") || !allAuth.contains("READ")){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.ftp_notAllAuth)
+                    .setMsg("FTP操作权限不足,目前权限为"+allAuth);
+            alarmLogs.add(alarmLog);
+        }
+
+        int totalFileNum = jsonResult.getIntValue("totalFileNum");
+        if(totalFileNum > 100000){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_WARN)
+                    .setType(AlarmEnum.ftp_fileNum_tooBig)
+                    .setMsg("FTP根目录下文件总数超过10万");
+            alarmLogs.add(alarmLog);
+        }
+
+        int topDirNum = jsonResult.getIntValue("topDirNum");
+        if(topDirNum > 30 ){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_WARN)
+                    .setType(AlarmEnum.ftp_topDirNum_tooBig)
+                    .setMsg("FTP根目录下目录数超过30个");
+            alarmLogs.add(alarmLog);
+        }
+
+        int floorNum = jsonResult.getIntValue("floorNum");
+        if(floorNum > 5){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_WARN)
+                    .setType(AlarmEnum.ftp_floorNum_tooBig)
+                    .setMsg("FTP根目录下子目录层级超过5层");
             alarmLogs.add(alarmLog);
         }
 
@@ -161,18 +153,71 @@ public class SourceCheckHandler {
     }
 
     public Set<AlarmLog> testSource_db(Task task, Source source, DeviceService detectorService)throws SystemException {
-        boolean isConnect;
+        JSONObject jsonResult;
         AlarmLog alarmLog;
         Set<AlarmLog> alarmLogs = new HashSet<>();
-        JSONObject jsonResult;
         if(source.isNetAreaIn()){
-            isConnect = dynamicDB.testDBConnect(source);
+            jsonResult = dynamicDB.testDBSource(source);
         }else{
-            isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+            jsonResult = DetectorUtil.testDBSource(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+        }
+
+        Integer alarmType = jsonResult.getInteger("alarmType");
+        //如果不为空,证明报错,没有正常连上
+        if(alarmType != null){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(alarmType)
+                    .setMsg(AlarmEnum.find8Type(alarmType).getDesc());
+            alarmLogs.add(alarmLog);
+            return alarmLogs;
+        }
+
+        int maxConnectNum = jsonResult.getIntValue("maxConnectNum");
+        int connectNum = jsonResult.getIntValue("connectNum");
+        if(connectNum >= maxConnectNum-1){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.db_maxConnectNum)
+                    .setMsg("DB连接数达到最大连接数"+maxConnectNum);
+            alarmLogs.add(alarmLog);
         }
 
 
+        JSONArray authSet = jsonResult.getJSONArray("authSet");
+        //如果没有all
+        if(!authSet.contains("ALL")){
+            Set<String> noAuthSet = new HashSet<>();
+            if(!authSet.contains("CREATE")){
+                noAuthSet.add("CREATE");
+            }
+            if(!authSet.contains("SELECT")){
+                noAuthSet.add("SELECT");
+            }
+            if(!authSet.contains("DELETE")){
+                noAuthSet.add("DELETE");
+            }
+            if(!authSet.contains("UPDATE")){
+                noAuthSet.add("UPDATE");
+            }
+            if(!authSet.contains("INSERT")){
+                noAuthSet.add("INSERT");
+            }
+            if(!authSet.contains("TRIGGER")){
+                noAuthSet.add("TRIGGER");
+            }
+            if(noAuthSet.size()>0){
+                alarmLog = new AlarmLog().setBid(task.getTaskId())
+                        .setbType(AlarmLog.BTYPE_TASK)
+                        .setLevel(MyLevel.LEVEL_ERROR)
+                        .setType(AlarmEnum.db_notAllAuth)
+                        .setMsg(String.format("DB权限不足,缺少权限",noAuthSet));
+                alarmLogs.add(alarmLog);
+            }
 
+        }
 
         return alarmLogs;
 

@@ -95,7 +95,7 @@ public class SnmpExploreHandler {
 
         if(deviceExplorer != null){
             if(deviceExplorer.getMem() == null && CollectionUtils.isEmpty(deviceExplorer.getDisks()) && CollectionUtils.isEmpty(deviceExplorer.getCpus())){
-                log.error(String.format("从%s获取硬件资源信息(snmp)全部为空.",device));
+                log.debug(String.format("从%s获取硬件资源信息(snmp)全部为空,snmp协议不标准.",device));
                 return;
             }
         }
@@ -248,7 +248,6 @@ public class SnmpExploreHandler {
         return map;
     }
 
-
     private Map<String,RateObj> getNetwork(SnmpUtil snmpUtil) {
         String net_in = "1.3.6.1.2.1.2.2.1.16";
         String net_out = "1.3.6.1.2.1.2.2.1.10";
@@ -258,11 +257,11 @@ public class SnmpExploreHandler {
         return null;
     }
 
-
     //所有进程参数
     final String processParamOid = ".1.3.6.1.2.1.25.4.2.1.5";
     //所有进程名称/id
     final String processNnameOid = ".1.3.6.1.2.1.25.4.2.1.2";
+
     /**
      * 检查外网进程是否存在
      * @param targetTaskId

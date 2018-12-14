@@ -35,6 +35,6 @@ public class DetectorTest {
         dbConfigData.setPwd("roo2");
         dbConfigData.setDbName("gatools");
 
-        log.info(""+DetectorUtil.testDB("127.0.0.1",8080,dbConfigData));
+        log.info(""+DetectorUtil.testDBConnect("127.0.0.1",8080,dbConfigData));
     }
 }

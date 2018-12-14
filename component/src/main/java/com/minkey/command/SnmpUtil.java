@@ -77,20 +77,21 @@ public class SnmpUtil {
             snmp = new Snmp(transport);
             snmp.listen();
             log.debug("-------> snmpGet 发送PDU <-------");
+            log.debug("snmpGet : oid="+oid);
             pdu.setType(PDU.GET);
             ResponseEvent respEvent = snmp.send(pdu, communityTarget);
 //            log.debug("snmpGet PeerAddress:" + respEvent.getPeerAddress());
             PDU response = respEvent.getResponse();
 
             if (response == null) {
-                log.warn("snmp返回为空，服务未开启或者超时，responsePDU == null");
+                log.debug("snmp返回为空，服务未开启或者超时，responsePDU == null");
                 return null;
             } else {
                 JSONObject data = new JSONObject(response.size());
                 log.debug("response pdu size is " + response.size());
                 for (int i = 0; i < response.size(); i++) {
                     VariableBinding vb = response.get(i);
-                    log.debug(vb.getOid().toString() + "=" + vb.getVariable().toString());
+//                    log.debug(vb.getOid().toString() + "=" + vb.getVariable().toString());
                     data.put(vb.getOid().toString(), vb.getVariable().toString());
                 }
                 log.debug("SNMP GET one OID value finished !");
@@ -107,8 +108,99 @@ public class SnmpUtil {
                     snmp = null;
                 }
             }
+            log.debug("-------> snmpGet 接收完毕 <-------");
 
         }
+    }
+
+    /**
+     * 根据communityTargetOID，获取树形数据
+     */
+    public JSONObject snmpWalk(String oid) throws SystemException{
+        TransportMapping transport = null;
+        Snmp snmp = null;
+        try {
+            transport = new DefaultUdpTransportMapping();
+            snmp = new Snmp(transport);
+            transport.listen();
+
+            PDU pdu = new PDU();
+            OID communityTargetOID = new OID(oid);
+            pdu.add(new VariableBinding(communityTargetOID));
+
+            boolean finished = false;
+            JSONObject data = new JSONObject();
+            log.debug("----> SNMPWalk start <----");
+            log.debug("SNMPWalk:oid="+oid);
+
+            while (!finished) {
+                VariableBinding vb = null;
+                ResponseEvent respEvent = snmp.getNext(pdu, communityTarget);
+
+                PDU response = respEvent.getResponse();
+                if (null == response) {
+                    log.debug("snmp返回为空，服务未开启或者超时，responsePDU == null");
+                    finished = true;
+                    return null;
+                } else {
+                    vb = response.get(0);
+                }
+                // check finish
+                finished = checkWalkFinished(communityTargetOID, pdu, vb);
+
+                if (!finished) {
+//                    log.debug(vb.getOid().toString() +"="+ vb.getVariable().toString());
+                    data.put(vb.getOid().toString(), vb.getVariable().toString());
+
+                    // Set up the variable binding for the next entry.
+                    pdu.setRequestID(new Integer32(0));
+                    pdu.set(0, vb);
+                } else {
+                    log.debug("SNMP walk result size="+data.size());
+                    return data;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            log.error("SNMP walk Exception:"+e.getMessage());
+            return null;
+        } finally {
+            if (snmp != null) {
+                try {
+                    snmp.close();
+                } catch (IOException ex1) {
+                    snmp = null;
+                }
+            }
+            log.debug("----> snmpWalk 接收完成 <----");
+        }
+    }
+
+    private boolean checkWalkFinished(OID communityTargetOID, PDU pdu, VariableBinding vb) {
+        boolean finished = false;
+        if (pdu.getErrorStatus() != 0) {
+            log.debug("[true] responsePDU.getErrorStatus() != 0 ");
+            log.debug(pdu.getErrorStatusText());
+            finished = true;
+        } else if (vb.getOid() == null) {
+            log.debug("[true] vb.getOid() == null");
+            finished = true;
+        } else if (vb.getOid().size() < communityTargetOID.size()) {
+            log.debug("[true] vb.getOid().size() < communityTargetOID.size()");
+            finished = true;
+        } else if (communityTargetOID.leftMostCompare(communityTargetOID.size(), vb.getOid()) != 0) {
+            log.debug("[true] communityTargetOID.leftMostCompare() != 0");
+            finished = true;
+        } else if (Null.isExceptionSyntax(vb.getVariable().getSyntax())) {
+            log.debug("[true] Null.isExceptionSyntax(vb.getVariable().getSyntax())");
+            finished = true;
+        } else if (vb.getOid().compareTo(communityTargetOID) <= 0) {
+            log.debug("[true] Variable received is not "
+                    + "lexicographic successor of requested " + "one:");
+            log.debug(vb.toString() + " <= " + communityTargetOID);
+            finished = true;
+        }
+        return finished;
     }
 
     /**
@@ -230,94 +322,6 @@ public class SnmpUtil {
                 }
             }
         }
-    }
-
-    /**
-     * 根据communityTargetOID，获取树形数据
-     */
-    public JSONObject snmpWalk(String communityTargetOid) throws SystemException{
-        TransportMapping transport = null;
-        Snmp snmp = null;
-        try {
-            transport = new DefaultUdpTransportMapping();
-            snmp = new Snmp(transport);
-            transport.listen();
-
-            PDU pdu = new PDU();
-            OID communityTargetOID = new OID(communityTargetOid);
-            pdu.add(new VariableBinding(communityTargetOID));
-
-            boolean finished = false;
-            JSONObject data = new JSONObject();
-            log.debug("----> snmpWalk start <----");
-            while (!finished) {
-                VariableBinding vb = null;
-                ResponseEvent respEvent = snmp.getNext(pdu, communityTarget);
-
-                PDU response = respEvent.getResponse();
-                if (null == response) {
-                    log.warn("snmp返回为空，服务未开启或者超时，responsePDU == null");
-                    finished = true;
-                    return null;
-                } else {
-                    vb = response.get(0);
-                }
-                // check finish
-                finished = checkWalkFinished(communityTargetOID, pdu, vb);
-
-                if (!finished) {
-//                    log.debug(vb.getOid().toString() +"="+ vb.getVariable().toString());
-                    data.put(vb.getOid().toString(), vb.getVariable().toString());
-
-                    // Set up the variable binding for the next entry.
-                    pdu.setRequestID(new Integer32(0));
-                    pdu.set(0, vb);
-                } else {
-                    log.debug("SNMP walk OID has finished.");
-                    return data;
-                }
-            }
-            return null;
-        } catch (Exception e) {
-            throw new SystemException("SNMP walk Exception: "+e.getMessage());
-        } finally {
-            if (snmp != null) {
-                try {
-                    snmp.close();
-                } catch (IOException ex1) {
-                    snmp = null;
-                }
-            }
-        }
-
-    }
-
-    private boolean checkWalkFinished(OID communityTargetOID, PDU pdu, VariableBinding vb) {
-        boolean finished = false;
-        if (pdu.getErrorStatus() != 0) {
-            log.debug("[true] responsePDU.getErrorStatus() != 0 ");
-            log.debug(pdu.getErrorStatusText());
-            finished = true;
-        } else if (vb.getOid() == null) {
-            log.debug("[true] vb.getOid() == null");
-            finished = true;
-        } else if (vb.getOid().size() < communityTargetOID.size()) {
-            log.debug("[true] vb.getOid().size() < communityTargetOID.size()");
-            finished = true;
-        } else if (communityTargetOID.leftMostCompare(communityTargetOID.size(), vb.getOid()) != 0) {
-            log.debug("[true] communityTargetOID.leftMostCompare() != 0");
-            finished = true;
-        } else if (Null.isExceptionSyntax(vb.getVariable().getSyntax())) {
-            log.debug("[true] Null.isExceptionSyntax(vb.getVariable().getSyntax())");
-            finished = true;
-        } else if (vb.getOid().compareTo(communityTargetOID) <= 0) {
-            log.debug("[true] Variable received is not "
-                    + "lexicographic successor of requested " + "one:");
-            log.debug(vb.toString() + " <= " + communityTargetOID);
-            finished = true;
-        }
-        return finished;
-
     }
 
     /**

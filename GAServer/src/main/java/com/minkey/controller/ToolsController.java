@@ -50,7 +50,7 @@ public class ToolsController {
      */
     @RequestMapping("/ping")
     public String ping(Integer netArea,String ip,Long detectorId) {
-        log.info("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
+        log.debug("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
 
         if(netArea == null){
             netArea = CommonContants.NETAREA_IN;
@@ -113,7 +113,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行ping");
+            log.debug("end: 执行ping");
         }
     }
 
@@ -124,7 +124,7 @@ public class ToolsController {
      */
     @RequestMapping("/telnet")
     public String telnet(Integer netArea,String ip,int port,Long deviceId) {
-        log.info("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,deviceId);
+        log.debug("start: 执行telnet ip={},port={},netArea={},detectorId={}",ip,port,netArea,deviceId);
 
         if(netArea == null){
             netArea = CommonContants.NETAREA_IN;
@@ -167,7 +167,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行telnet");
+            log.debug("end: 执行telnet");
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
         }
     }
@@ -180,7 +180,7 @@ public class ToolsController {
      */
     @RequestMapping("/testDB")
     public String testDB(Integer netArea,DBConfigData dbConfigData,Long deviceId){
-        log.info("start: 执行测试数据库连接 netArea={},deviceId={}, dbConfigData={}",netArea,deviceId,dbConfigData);
+        log.debug("start: 执行测试数据库连接 netArea={},deviceId={}, dbConfigData={}",netArea,deviceId,dbConfigData);
 
         if(StringUtils.isEmpty(dbConfigData.getIp())
                 || StringUtils.isEmpty(dbConfigData.getPwd())
@@ -215,7 +215,7 @@ public class ToolsController {
                 BaseConfigData configData = ssh.getConfigData();
 
                 //执行命令
-                isConnect = DetectorUtil.testDB(configData.getIp(),configData.getPort(),dbConfigData);
+                isConnect = DetectorUtil.testDBConnect(configData.getIp(),configData.getPort(),dbConfigData);
             }
 
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
@@ -223,7 +223,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行测试数据库连接 ");
+            log.debug("end: 执行测试数据库连接 ");
         }
     }
 
@@ -233,7 +233,7 @@ public class ToolsController {
      */
     @RequestMapping("/snmp")
     public String snmp(Integer netArea,String ip,Integer port,String oid,Long deviceId) {
-        log.info("start: 执行snmp工具 netArea={},deviceId={}, ip={},port={},oid={}",netArea,deviceId,ip,port,oid);
+        log.debug("start: 执行snmp工具 netArea={},deviceId={}, ip={},port={},oid={}",netArea,deviceId,ip,port,oid);
 
         if(StringUtils.isEmpty(ip)){
             return JSONMessage.createFalied("ip不能为空").toString();
@@ -276,7 +276,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行snmp工具 ");
+            log.debug("end: 执行snmp工具 ");
         }
     }
 
@@ -288,7 +288,7 @@ public class ToolsController {
      */
     @RequestMapping("/ftp")
     public String ftp(Integer netArea, Long deviceId, FTPConfigData ftpConfigData) {
-        log.info("start: 执行ftp工具 netArea={},deviceId={}, ftpConfigData={}",netArea,deviceId,ftpConfigData);
+        log.debug("start: 执行ftp工具 netArea={},deviceId={}, ftpConfigData={}",netArea,deviceId,ftpConfigData);
 
         if(StringUtils.isEmpty(ftpConfigData.getIp())){
             return JSONMessage.createFalied("ip不能为空").toString();
@@ -332,7 +332,7 @@ public class ToolsController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行ftp工具 ");
+            log.debug("end: 执行ftp工具 ");
         }
     }
 

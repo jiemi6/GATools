@@ -25,7 +25,7 @@ public class TaskController {
 
     @RequestMapping("/query")
     public String query(Long taskId) {
-        log.info("start: 执行query任务 taskId={} ",taskId);
+        log.debug("start: 执行query任务 taskId={} ",taskId);
         if(taskId == null){
             log.info("taskId不能为空");
             return JSONMessage.createFalied("taskId不能为空").toString();
@@ -36,7 +36,7 @@ public class TaskController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query任务 taskId={} ",taskId);
+            log.debug("end: 执行query任务 taskId={} ",taskId);
         }
     }
 
@@ -47,7 +47,7 @@ public class TaskController {
      */
     @RequestMapping("/queryAll")
     public String queryAll() {
-        log.info("start: 执行query所有任务 ");
+        log.debug("start: 执行query所有任务 ");
 
         try{
             List<Task> taskList=taskHandler.queryAll();
@@ -56,7 +56,7 @@ public class TaskController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query所有任务 ");
+            log.debug("end: 执行query所有任务 ");
         }
     }
 
@@ -66,14 +66,14 @@ public class TaskController {
      */
     @RequestMapping("/queryCount")
     public String queryCount() {
-        log.info("start: 执行count所有任务 ");
+        log.debug("start: 执行count所有任务 ");
         try{
             return JSONMessage.createSuccess().addData(taskHandler.queryCount()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行count所有任务 ");
+            log.debug("end: 执行count所有任务 ");
         }
     }
 
@@ -83,7 +83,7 @@ public class TaskController {
      */
     @RequestMapping("/monitor")
     public String monitor(Long linkId, Integer currentPage, Integer pageSize  ) {
-        log.info("start: 任务监控查询 ");
+        log.debug("start: 任务监控查询 ");
         if(linkId == null){
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
@@ -98,7 +98,7 @@ public class TaskController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 任务监控查询 ");
+            log.debug("end: 任务监控查询 ");
         }
     }
 

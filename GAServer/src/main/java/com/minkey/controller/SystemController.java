@@ -63,7 +63,7 @@ public class SystemController {
      */
     @RequestMapping("/check")
     public String check() {
-        log.info("start: 执行系统自检");
+        log.debug("start: 执行系统自检");
 
         User user = (User) session.getAttribute("user");
 
@@ -89,7 +89,7 @@ public class SystemController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行系统自检");
+            log.debug("end:  执行系统自检");
         }
     }
 
@@ -99,7 +99,7 @@ public class SystemController {
      */
     @RequestMapping("/checkInfo")
     public String checkInfo(Long checkId,Integer index) {
-        log.info("start: 获取当前系统自检信息 checkId={}，index={}",checkId,index);
+        log.debug("start: 获取当前系统自检信息 checkId={}，index={}",checkId,index);
         if(checkId == null || checkId <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -114,7 +114,7 @@ public class SystemController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行系统自检");
+            log.debug("end:  执行系统自检");
         }
     }
 
@@ -125,7 +125,7 @@ public class SystemController {
      */
     @RequestMapping("/shutDown")
     public String shutDown(Boolean reboot) {
-        log.info("start: 执行shutDown");
+        log.debug("start: 执行shutDown");
 
         if(isDebug){
             return JSONMessage.createSuccess("暂时不真正执行，真的会关机的").toString();
@@ -151,7 +151,7 @@ public class SystemController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行关机命令");
+            log.debug("end:  执行关机命令");
         }
 
     }
@@ -163,7 +163,7 @@ public class SystemController {
      */
     @RequestMapping("/bakupConfig")
     public String bakupConfig(HttpServletResponse response) {
-        log.info("start: 备份设置");
+        log.debug("start: 备份设置");
 
         response.setCharacterEncoding("utf-8");
         response.setContentType("multipart/form-data");
@@ -183,7 +183,7 @@ public class SystemController {
         } catch (IOException e) {
             return null;
         }finally {
-            log.info("end: 备份设置");
+            log.debug("end: 备份设置");
         }
     }
 
@@ -194,7 +194,7 @@ public class SystemController {
      */
     @RequestMapping("/reloadConfig")
     public String reloadConfig(@RequestParam("file") MultipartFile file) throws IOException {
-        log.info("start: 导入配置文件");
+        log.debug("start: 导入配置文件");
         if(file== null || file.isEmpty()){
             return JSONMessage.createFalied("上传文件为空").toString();
         }
@@ -211,7 +211,7 @@ public class SystemController {
 
         //Minkey 导入配置文件未完成
         log.info("导入的数据"+data);
-        log.info("end: 导入配置文件");
+        log.debug("end: 导入配置文件");
 
         User sessionUser = (User) session.getAttribute("user");
         //记录用户日志
@@ -265,7 +265,7 @@ public class SystemController {
      */
     @RequestMapping("/netWorkSet")
     public String netWorkSet(String localIp,String subnetMask,String gateway,String dns,String dnsBak) {
-        log.info("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
+        log.debug("start: 执行系统网络配置信息 {},{},{},{}",localIp,subnetMask,gateway,dns,dnsBak);
         if(StringUtils.isEmpty(localIp)
                 || StringUtils.isEmpty(subnetMask)
                 || StringUtils.isEmpty(gateway)
@@ -310,7 +310,7 @@ public class SystemController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行系统注册信息 ");
+            log.debug("end: 执行系统注册信息 ");
         }
     }
 

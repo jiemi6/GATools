@@ -52,7 +52,7 @@ public class IndexController {
      */
     @RequestMapping("/topology")
     public String topology() {
-        log.info("start: 查询总拓扑图");
+        log.debug("start: 查询总拓扑图");
         try{
 
             List<Link> linkList = linkHandler.queryAll();
@@ -88,7 +88,7 @@ public class IndexController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  查询总拓扑图 ");
+            log.debug("end:  查询总拓扑图 ");
         }
     }
 
@@ -100,7 +100,7 @@ public class IndexController {
      */
     @RequestMapping("/alarmOverview")
     public String AlarmOverview(String selectDate){
-        log.info("start: 根据时间获取报警总览异常，selectDate={} ",selectDate);
+        log.debug("start: 根据时间获取报警总览异常，selectDate={} ",selectDate);
         if(StringUtils.isEmpty(selectDate)){
             return JSONMessage.createFalied("selectDate不能为空").toString();
         }

@@ -107,7 +107,19 @@ public class DetectorUtil {
         return getReturnJson(returnStr);
     }
 
-    public static boolean testDB(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
+    public static boolean testSNMP(String detectorIp, int detectorPort, SnmpConfigData snmpConfigData) {
+        String url = String.format("http://%s:%s/test/testSNMP",detectorIp,detectorPort);
+        Map<String,String> param = new HashMap<>(10);
+        param.put("ip",snmpConfigData.getIp());
+        param.put("port",""+snmpConfigData.getPort());
+        param.put("community",snmpConfigData.getCommunity());
+        param.put("version",String.valueOf(snmpConfigData.getVersion()));
+        String returnStr = HttpClient.postRequest(url,param);
+
+        return getReturnJson(returnStr).getBoolean("isConnect");
+    }
+
+    public static boolean testDBConnect(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
         String url = String.format("http://%s:%s/test/testDBConnect",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",dbConfigData.getIp());
@@ -116,18 +128,6 @@ public class DetectorUtil {
         param.put("name",dbConfigData.getName());
         param.put("pwd",dbConfigData.getPwd());
         param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
-        String returnStr = HttpClient.postRequest(url,param);
-
-        return getReturnJson(returnStr).getBoolean("isConnect");
-    }
-
-    public static boolean testSNMP(String detectorIp, int detectorPort, SnmpConfigData snmpConfigData) {
-        String url = String.format("http://%s:%s/test/testSNMP",detectorIp,detectorPort);
-        Map<String,String> param = new HashMap<>(10);
-        param.put("ip",snmpConfigData.getIp());
-        param.put("port",""+snmpConfigData.getPort());
-        param.put("community",snmpConfigData.getCommunity());
-        param.put("version",String.valueOf(snmpConfigData.getVersion()));
         String returnStr = HttpClient.postRequest(url,param);
 
         return getReturnJson(returnStr).getBoolean("isConnect");
@@ -144,6 +144,20 @@ public class DetectorUtil {
         String returnStr = HttpClient.postRequest(url,param);
 
         return getReturnJson(returnStr).getBoolean("isConnect");
+    }
+
+    public static JSONObject testDBSource(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
+        String url = String.format("http://%s:%s/test/testDBSource",detectorIp,detectorPort);
+        Map<String,String> param = new HashMap<>(10);
+        param.put("ip",dbConfigData.getIp());
+        param.put("port",""+dbConfigData.getPort());
+        param.put("dbName",dbConfigData.getDbName());
+        param.put("name",dbConfigData.getName());
+        param.put("pwd",dbConfigData.getPwd());
+        param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
+        String returnStr = HttpClient.postRequest(url,param);
+
+        return getReturnJson(returnStr);
     }
 
 

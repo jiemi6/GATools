@@ -40,7 +40,7 @@ public class ConfigController {
 
     @RequestMapping("/insert")
     public String insert(String configKey,String configData) {
-        log.info("start: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+        log.debug("start: 执行insert配置 configKey={} ,configData={}",configKey,configData);
         if(StringUtils.isEmpty(configKey)){
             log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
@@ -56,13 +56,13 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+            log.debug("end: 执行insert配置 configKey={} ,configData={}",configKey,configData);
         }
     }
 
     @RequestMapping("/query")
     public String query(String configKey) {
-        log.info("start: 执行query配置 configKey={} ",configKey);
+        log.debug("start: 执行query配置 configKey={} ",configKey);
         if(StringUtils.isEmpty(configKey)){
             log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
@@ -79,7 +79,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query配置 configKey={} ",configKey);
+            log.debug("end: 执行query配置 configKey={} ",configKey);
         }
     }
 
@@ -101,7 +101,7 @@ public class ConfigController {
      */
     @RequestMapping("/systemInfo/set")
     public String systemInfoSet(String systemName,String managerName,String managerPhone,String managerEmail) {
-        log.info("start: 执行系统注册信息 {},{},{},{}",systemName,managerName,managerPhone,managerEmail);
+        log.debug("start: 执行系统注册信息 {},{},{},{}",systemName,managerName,managerPhone,managerEmail);
         if(StringUtils.isEmpty(systemName)
                 ||StringUtils.isEmpty(managerName)
                 ||StringUtils.isEmpty(managerPhone)
@@ -127,7 +127,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行系统注册信息 ");
+            log.debug("end: 执行系统注册信息 ");
         }
     }
 
@@ -150,7 +150,7 @@ public class ConfigController {
      */
     @RequestMapping("/logOverDay/set")
     public String logOverDaySet(Integer logOverDay) {
-        log.info("start: 执行日志保留天数设置 {}",logOverDay);
+        log.debug("start: 执行日志保留天数设置 {}",logOverDay);
         if(logOverDay == null || logOverDay <= 0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -169,7 +169,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行日志保留天数设置 ");
+            log.debug("end: 执行日志保留天数设置 ");
         }
     }
 
@@ -191,7 +191,7 @@ public class ConfigController {
      */
     @RequestMapping("/autoCheckTimes/set")
     public String autoCheckTimesSet(String[] checkTimes) {
-        log.info("start: 设置自动体检时间 {}",String.valueOf(checkTimes));
+        log.debug("start: 设置自动体检时间 {}",String.valueOf(checkTimes));
         if(ArrayUtils.isEmpty(checkTimes)){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -210,7 +210,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 设置自动体检时间 ");
+            log.debug("end: 设置自动体检时间 ");
         }
     }
 
@@ -220,7 +220,7 @@ public class ConfigController {
      */
     @RequestMapping("/alarm/set")
     public String alarmSet(String baseConfig,String smsConfig,String emailConfig) {
-        log.info("start: 执行报警配置");
+        log.debug("start: 执行报警配置");
         try{
             //直接存入config
             String configKey = ConfigEnum.AlarmConfig.getConfigKey();
@@ -241,7 +241,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  执行报警配置");
+            log.debug("end:  执行报警配置");
         }
     }
 
@@ -268,12 +268,12 @@ public class ConfigController {
     @RequestMapping("/syslog2other/set")
     public String syslog2otherSet(Boolean open ,String ip, String port) {
         if(open == null || open == false){
-            log.info("start: 关闭syslog转发");
+            log.debug("start: 关闭syslog转发");
             //关闭
             sysLogUtil.closeSyslog2other();
 
         }else{
-            log.info("start: 配置syslog转发 ip={},port=" ,ip,port);
+            log.debug("start: 配置syslog转发 ip={},port=" ,ip,port);
             //保存配置
             //启动发送
             sysLogUtil.startSyslog2other(ip,port);
@@ -296,7 +296,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 配置syslog完成");
+            log.debug("end: 配置syslog完成");
         }
 
     }
@@ -317,7 +317,7 @@ public class ConfigController {
      */
     @RequestMapping("/sshd/set")
     public String sshdSet(Boolean open) {
-        log.info("start: ssh工具 状态变更为 {}" ,open);
+        log.debug("start: ssh工具 状态变更为 {}" ,open);
         //调用系统命令进行开关，
         if(open == null ){
             open = false;
@@ -351,7 +351,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  ssh工具 状态变更完成");
+            log.debug("end:  ssh工具 状态变更完成");
         }
 
 
@@ -373,7 +373,7 @@ public class ConfigController {
      */
     @RequestMapping("/snmp/set")
     public String snmpSet(Boolean open) {
-        log.info("start: snmp工具 状态变更为 {}" ,open);
+        log.debug("start: snmp工具 状态变更为 {}" ,open);
         //调用系统命令进行开关，
         if(open == null ){
             open = false;
@@ -401,7 +401,7 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  ssh工具 状态变更完成");
+            log.debug("end:  ssh工具 状态变更完成");
         }
 
 

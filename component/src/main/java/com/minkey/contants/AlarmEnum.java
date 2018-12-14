@@ -28,6 +28,8 @@ public enum AlarmEnum {
     db_createError(8000, "DB访问异常"),
     db_wrongpwd(8001, "DB账号密码错误"),
     db_databaseName_noexist(8002, "DB名不存在"),
+    db_maxConnectNum(8003, "DB达到最大连接数"),
+    db_notAllAuth(8004, "DB权限不足"),
 
 
     //ftp相关

@@ -45,7 +45,7 @@ public class LogController {
      */
     @RequestMapping("/device")
     public String device(Integer currentPage, Integer pageSize, SeachParam seachParam,Long deviceId) {
-        log.info("start: 分页查询设备日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 分页查询设备日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -107,7 +107,7 @@ public class LogController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  分页查询设备日志");
+            log.debug("end:  分页查询设备日志");
         }
     }
 
@@ -118,7 +118,7 @@ public class LogController {
      */
     @RequestMapping("/user")
     public String user(Integer currentPage,Integer pageSize, SeachParam seachParam,Long uid) {
-        log.info("start: 分页查询用户日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 分页查询用户日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -140,7 +140,7 @@ public class LogController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  分页查询用户日志");
+            log.debug("end:  分页查询用户日志");
         }
     }
 
@@ -150,7 +150,7 @@ public class LogController {
      */
     @RequestMapping("/detection")
     public String detection(Integer currentPage,Integer pageSize, SeachParam seachParam,Long uid) {
-        log.info("start: 分页查询体检发起日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 分页查询体检发起日志 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -170,7 +170,7 @@ public class LogController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end:  分页查询体检发起日志");
+            log.debug("end:  分页查询体检发起日志");
         }
     }
 

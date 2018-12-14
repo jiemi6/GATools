@@ -41,7 +41,7 @@ public class TopologyController {
     @Deprecated
 //    @RequestMapping("/queryAll")
     public String queryAll() {
-        log.info("start: 执行查询所有拓扑节点");
+        log.debug("start: 执行查询所有拓扑节点");
 
         try{
             List<TopologyNode> topologyNodes = new ArrayList<>();
@@ -57,7 +57,7 @@ public class TopologyController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行查询所有拓扑节点");
+            log.debug("end: 执行查询所有拓扑节点");
         }
     }
 
@@ -68,7 +68,7 @@ public class TopologyController {
      */
     @RequestMapping("/query8linkId")
     public String query8linkId(Long linkId) {
-        log.info("start: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
+        log.debug("start: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
         if(linkId == null){
             log.info("linkId不能为空");
             return JSONMessage.createFalied("linkId不能为空").toString();
@@ -85,7 +85,7 @@ public class TopologyController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
+            log.debug("end: 执行根据链路id查找该链路拓扑图 linkId={} ",linkId);
         }
     }
 
@@ -96,7 +96,7 @@ public class TopologyController {
      */
     @RequestMapping("/queryAllConnect")
     public String queryAllConnect() {
-        log.info("start: 查询所有可连接的设备集合");
+        log.debug("start: 查询所有可连接的设备集合");
         try{
             Set<Long> deviceId = deviceConnectCache.getOkSet();
             return JSONMessage.createSuccess().addData("connectIds",deviceId).toString();
@@ -104,7 +104,7 @@ public class TopologyController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询所有可连接的设备集合");
+            log.debug("end: 查询所有可连接的设备集合");
         }
     }
 
@@ -114,7 +114,7 @@ public class TopologyController {
      */
     @RequestMapping("/queryAllLevel")
     public String queryAllLevel() {
-        log.info("start: 查询所有设备状态级别");
+        log.debug("start: 查询所有设备状态级别");
         try{
             Map<Long, Integer> deviceId = deviceCache.getAllDeviceLevel();
             return JSONMessage.createSuccess().addData(deviceId).toString();
@@ -122,7 +122,7 @@ public class TopologyController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询所有设备状态级别");
+            log.debug("end: 查询所有设备状态级别");
         }
     }
 

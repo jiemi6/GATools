@@ -192,7 +192,7 @@ public class TaskExamineHandler {
                 log.error(String.format("没有部署探针，无法探测外网DB资源%s",source));
                 return false;
             }
-            isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+            isConnect = DetectorUtil.testDBConnect(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
         }
         return isConnect;
 

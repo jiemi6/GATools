@@ -103,7 +103,7 @@ public class DeviceController {
 
     @RequestMapping("/insert")
     public String insert( Device device) {
-        log.info("start: 执行insert设备 device={} ",device);
+        log.debug("start: 执行insert设备 device={} ",device);
 
         //检查参数
         JSONMessage jsonMessage = checkParam(device);
@@ -136,13 +136,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行insert设备 ");
+            log.debug("end: 执行insert设备 ");
         }
     }
 
     @RequestMapping("/update")
     public String update( Device device) {
-        log.info("start: 执行update设备 device={} ",device);
+        log.debug("start: 执行update设备 device={} ",device);
 
         if(device.getDeviceId() < 0){
             return JSONMessage.createFalied("deviceId错误").toString();
@@ -178,13 +178,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行update设备");
+            log.debug("end: 执行update设备");
         }
     }
 
     @RequestMapping("/query")
     public String query(Long deviceId) {
-        log.info("start: 执行query设备 deviceId={} ",deviceId);
+        log.debug("start: 执行query设备 deviceId={} ",deviceId);
         if(deviceId == null || deviceId <=0){
             log.info("deviceId不能为空");
             return JSONMessage.createFalied("deviceId不能为空").toString();
@@ -198,13 +198,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query设备 deviceId={} ",deviceId);
+            log.debug("end: 执行query设备 deviceId={} ",deviceId);
         }
     }
 
     @RequestMapping("/query8Page")
     public String query8Page(Integer currentPage,Integer pageSize) {
-        log.info("start: 执行分页查询设备 currentPage={} ,pageSize={}" , currentPage,pageSize);
+        log.debug("start: 执行分页查询设备 currentPage={} ,pageSize={}" , currentPage,pageSize);
         if(currentPage == null || pageSize <=0){
             return JSONMessage.createFalied("参数错误").toString();
         }
@@ -219,13 +219,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行分页查询所有设备 ");
+            log.debug("end: 执行分页查询所有设备 ");
         }
     }
 
     @RequestMapping("/queryCount")
     public String queryCount() {
-        log.info("start: 执行count所有设备 ");
+        log.debug("start: 执行count所有设备 ");
 
         try{
             return JSONMessage.createSuccess().addData("count",deviceHandler.queryCount()).toString();
@@ -233,13 +233,13 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行count所有设备 ");
+            log.debug("end: 执行count所有设备 ");
         }
     }
 
     @RequestMapping("/delete")
     public String delete(Long deviceId) {
-        log.info("start: 执行删除设备 deviceId={} ",deviceId);
+        log.debug("start: 执行删除设备 deviceId={} ",deviceId);
         if(deviceId == null || deviceId <=0){
             log.info("deviceId不能为空");
             return JSONMessage.createFalied("deviceId不能为空").toString();
@@ -273,14 +273,14 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行删除设备 ");
+            log.debug("end: 执行删除设备 ");
         }
     }
 
 
     @RequestMapping("/queryAllDetector")
     public String queryAllDetector() {
-        log.info("start: 查询所有探针设备 ");
+        log.debug("start: 查询所有探针设备 ");
 
         try{
             List<Device> all = deviceHandler.query8Type(DeviceType.detector);
@@ -290,7 +290,7 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询所有探针设备 ");
+            log.debug("end: 查询所有探针设备 ");
         }
     }
 
@@ -300,7 +300,7 @@ public class DeviceController {
      */
     @RequestMapping("/queryExplorer")
     public String queryExplorer(Long deviceId) {
-        log.info("start: 查询某一个终端的实时资源消耗 deviceId={}",deviceId);
+        log.debug("start: 查询某一个终端的实时资源消耗 deviceId={}",deviceId);
         if(deviceId == null || deviceId <=0){
             return JSONMessage.createFalied("deviceId不能为空").toString();
         }
@@ -311,7 +311,7 @@ public class DeviceController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询某一个终端的实时资源消耗 ");
+            log.debug("end: 查询某一个终端的实时资源消耗 ");
         }
     }
 }

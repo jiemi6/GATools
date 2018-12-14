@@ -47,7 +47,7 @@ public class DeviceServiceCheckManager {
                     if(detectorService == null){
                         isOk = false;
                     }else{
-                        isOk = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),dbConfigData);
+                        isOk = DetectorUtil.testDBConnect(detectorService.getIp(),detectorService.getConfigData().getPort(),dbConfigData);
                     }
                 }
                 break;

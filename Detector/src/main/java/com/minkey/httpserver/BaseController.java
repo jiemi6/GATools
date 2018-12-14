@@ -31,7 +31,7 @@ public class BaseController {
      */
     @RequestMapping("/ping")
     public String ping(String ip) {
-        log.info("exec ping [{}] start! " , ip);
+        log.debug("exec ping [{}] start! " , ip);
         if(StringUtils.isEmpty(ip)){
             log.error("ip 参数为空！");
             return JSONMessage.createFalied("ip 参数为空！").toString();
@@ -48,7 +48,7 @@ public class BaseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            log.info("exec ping [{}] end! " , ip);
+            log.debug("exec ping [{}] end! " , ip);
         }
     }
 
@@ -60,7 +60,7 @@ public class BaseController {
      */
     @RequestMapping("/executeSh")
     public String executeSh(String cmdStr) {
-        log.info("exec executeSh [{}] start! " , cmdStr);
+        log.debug("exec executeSh [{}] start! " , cmdStr);
         if(StringUtils.isEmpty(cmdStr)){
             log.error("cmdStr 参数为空！");
             return JSONMessage.createFalied("cmdStr 参数为空！").toString();
@@ -75,7 +75,7 @@ public class BaseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            log.info("exec executeSh [{}] end! " , cmdStr);
+            log.debug("exec executeSh [{}] end! " , cmdStr);
         }
     }
 
@@ -88,7 +88,7 @@ public class BaseController {
      */
     @RequestMapping("/telnetCmd")
     public String telnetCmd(String ip,int port) {
-        log.info("exec telnetCmd [{} {}] start .",ip,port);
+        log.debug("exec telnetCmd [{} {}] start .",ip,port);
         if(StringUtils.isEmpty(ip)){
             log.error("ip 参数为空！");
             return JSONMessage.createFalied("ip 参数为空！").toString();
@@ -109,7 +109,7 @@ public class BaseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            log.info("exec telnetCmd  [{} {}] end .",ip,port);
+            log.debug("exec telnetCmd  [{} {}] end .",ip,port);
         }
     }
 
@@ -128,7 +128,7 @@ public class BaseController {
                              Integer retry,
                              Long timeout,
                              String[] oids) {
-        log.info("exec snmpCmdGetList [{}:{}-{}:V{}] start .",ip,port,community,version);
+        log.debug("exec snmpCmdGetList [{}:{}-{}:V{}] start .",ip,port,community,version);
         if(ArrayUtils.isEmpty(oids)){
             log.error("oids 参数为空！");
             return JSONMessage.createFalied("oids 参数不能为空").toString();
@@ -167,7 +167,7 @@ public class BaseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            log.info("exec snmpCmdGetList [{}:{}-{}:V{}]  end .",ip,port,community,version);
+            log.debug("exec snmpCmdGetList [{}:{}-{}:V{}]  end .",ip,port,community,version);
         }
 
 
@@ -187,7 +187,7 @@ public class BaseController {
                               Integer retry,
                               Long timeout,
                               String oid) {
-        log.info("exec snmpCmdWalk [{}:{}-{}:V{}] start .",ip,port,community,version);
+        log.debug("exec snmpCmdWalk [{}:{}-{}:V{}] start .",ip,port,community,version);
         if(StringUtils.isEmpty(oid)){
             log.error("oid 参数为空！");
             return JSONMessage.createFalied("oid 参数不能为空").toString();
@@ -226,7 +226,7 @@ public class BaseController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
-            log.info("exec snmpCmdWalk [{}:{}-{}:V{}] end .",ip,port,community,version);
+            log.debug("exec snmpCmdWalk [{}:{}-{}:V{}] end .",ip,port,community,version);
         }
     }
 

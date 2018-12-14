@@ -44,7 +44,7 @@ public class LinkController {
 
     @RequestMapping("/insert")
     public String insert(Link link) {
-        log.info("start: 执行新增链路 link={} ",link);
+        log.debug("start: 执行新增链路 link={} ",link);
 
         if(StringUtils.isEmpty(link.getLinkName())
                 || StringUtils.isEmpty(link.getDbConfigData().getIp())
@@ -77,13 +77,13 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行新增链路 link={} ",link);
+            log.debug("end: 执行新增链路 link={} ",link);
         }
     }
 
     @RequestMapping("/update")
     public String update(Link link) {
-        log.info("start: 执行新增链路 link={} ",link);
+        log.debug("start: 执行新增链路 link={} ",link);
         if(link.getLinkId() == 0){
             return JSONMessage.createFalied("修改时id不能为空").toString();
         }
@@ -119,7 +119,7 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行新增链路 link={} ",link);
+            log.debug("end: 执行新增链路 link={} ",link);
         }
     }
 
@@ -129,7 +129,7 @@ public class LinkController {
 
     @RequestMapping("/query")
     public String query(Long linkId) {
-        log.info("start: 执行query设备 linkId={} ",linkId);
+        log.debug("start: 执行query设备 linkId={} ",linkId);
         if(linkId == null){
             log.info("linkId不能为空");
             return JSONMessage.createFalied("linkId不能为空").toString();
@@ -141,27 +141,27 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query设备 linkId={} ",linkId);
+            log.debug("end: 执行query设备 linkId={} ",linkId);
         }
     }
 
     @RequestMapping("/queryAll")
     public String queryAll() {
-        log.info("start: 执行query所有链路");
+        log.debug("start: 执行query所有链路");
         try{
             return JSONMessage.createSuccess().addData("list",linkHandler.queryAll()).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行query所有设备 ");
+            log.debug("end: 执行query所有设备 ");
         }
     }
 
 
     @RequestMapping("/queryAllIdAndName")
     public String queryAllIdAndName() {
-        log.info("start: 查询所有链路id和名称");
+        log.debug("start: 查询所有链路id和名称");
 
         try{
             return JSONMessage.createSuccess().addData("list",linkHandler.queryAllIdAndName()).toString();
@@ -169,13 +169,13 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 查询所有链路id和名称");
+            log.debug("end: 查询所有链路id和名称");
         }
     }
 
     @RequestMapping("/queryCount")
     public String queryCount() {
-        log.info("start: 执行count所有设备 ");
+        log.debug("start: 执行count所有设备 ");
 
         try{
             return JSONMessage.createSuccess().addData("total",linkHandler.queryCount()).toString();
@@ -183,7 +183,7 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行count所有设备 ");
+            log.debug("end: 执行count所有设备 ");
         }
     }
 
@@ -196,7 +196,7 @@ public class LinkController {
 
     @RequestMapping("/delete")
     public String delete(Long linkId) {
-        log.info("start: 执行删除link, linkId={} ",linkId);
+        log.debug("start: 执行删除link, linkId={} ",linkId);
         if(linkId == null){
             return JSONMessage.createFalied("linkId不能为空").toString();
         }
@@ -230,7 +230,7 @@ public class LinkController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.info("end: 执行删除link ");
+            log.debug("end: 执行删除link ");
         }
     }
 
