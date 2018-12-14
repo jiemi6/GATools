@@ -1,7 +1,7 @@
 package com.minkey.handler;
 
 import com.minkey.command.SnmpUtil;
-import com.minkey.contants.MyLevel;
+import com.minkey.contants.CommonContants;
 import com.minkey.db.dao.Device;
 import com.minkey.db.dao.DeviceService;
 import com.minkey.dto.BaseConfigData;
@@ -42,7 +42,7 @@ public class DeviceServiceCheckManager {
             case DeviceService.SERVICETYPE_DB:
                 DBConfigData dbConfigData = (DBConfigData) deviceService.getConfigData();
                 if(device.isNetAreaIn()){
-                    isOk = dynamicDB.testDB(dbConfigData);
+                    isOk = dynamicDB.testDBConnect(dbConfigData);
                 }else{
                     if(detectorService == null){
                         isOk = false;
@@ -67,12 +67,12 @@ public class DeviceServiceCheckManager {
             case DeviceService.SERVICETYPE_FTP:
                 FTPConfigData ftpConfigData = (FTPConfigData) deviceService.getConfigData();
                 if(device.isNetAreaIn()){
-                    isOk = ftpUtil.testFTPConnect(ftpConfigData);
+                    isOk = ftpUtil.testFTPConnect(ftpConfigData, CommonContants.DEFAULT_TIMEOUT);
                 }else{
                     if(detectorService == null){
                         isOk = false;
                     }else{
-                        isOk = DetectorUtil.testFTP(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
+                        isOk = DetectorUtil.testFTPConnect(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
                     }
                 }
                 break;

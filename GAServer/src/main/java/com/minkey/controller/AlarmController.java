@@ -1,7 +1,9 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.DeviceCache;
+import com.minkey.contants.AlarmEnum;
 import com.minkey.db.AlarmLogHandler;
 import com.minkey.db.DeviceHandler;
 import com.minkey.db.LinkHandler;
@@ -124,6 +126,32 @@ public class AlarmController {
 
             }
             return JSONMessage.createSuccess().addData(logs).addData("nameMap",nameMap).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.getMessage()).toString();
+        }finally {
+            log.info("end: 分页查询链路告警");
+        }
+    }
+
+
+    /**
+     * 链路告警
+     * @return
+     */
+    @RequestMapping("/getAllAlarmType")
+    public String getAllAlarmType() {
+        try{
+            AlarmEnum[] alarmEnums = AlarmEnum.values();
+
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = null;
+            for (AlarmEnum alarmEnum : alarmEnums) {
+                jsonObject = new JSONObject();
+                jsonObject.put(String.valueOf(alarmEnum.getAlarmType()),alarmEnum.getDesc());
+                jsonArray.add(jsonObject);
+            }
+            return JSONMessage.createSuccess().addData("list",jsonArray).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();

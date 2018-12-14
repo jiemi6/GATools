@@ -108,7 +108,7 @@ public class DetectorUtil {
     }
 
     public static boolean testDB(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
-        String url = String.format("http://%s:%s/test/testDB",detectorIp,detectorPort);
+        String url = String.format("http://%s:%s/test/testDBConnect",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",dbConfigData.getIp());
         param.put("port",""+dbConfigData.getPort());
@@ -133,8 +133,8 @@ public class DetectorUtil {
         return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
-    public static boolean testFTP(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
-        String url = String.format("http://%s:%s/test/testFTP",detectorIp,detectorPort);
+    public static boolean testFTPConnect(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
+        String url = String.format("http://%s:%s/test/testFTPConnect",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",ftpConfigData.getIp());
         param.put("port",""+ftpConfigData.getPort());
@@ -145,6 +145,21 @@ public class DetectorUtil {
 
         return getReturnJson(returnStr).getBoolean("isConnect");
     }
+
+
+    public static JSONObject testFTPSource(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
+        String url = String.format("http://%s:%s/test/testFTPSource",detectorIp,detectorPort);
+        Map<String,String> param = new HashMap<>(10);
+        param.put("ip",ftpConfigData.getIp());
+        param.put("port",""+ftpConfigData.getPort());
+        param.put("rootPath",ftpConfigData.getRootPath());
+        param.put("name",ftpConfigData.getName());
+        param.put("pwd",ftpConfigData.getPwd());
+        String returnStr = HttpClient.postRequest(url,param);
+
+        return getReturnJson(returnStr);
+    }
+
 
     public static boolean testSSH(String detectorIp, int detectorPort, BaseConfigData baseConfigData) {
         String url = String.format("http://%s:%s/test/testSSH",detectorIp,detectorPort);

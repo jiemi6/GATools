@@ -196,7 +196,7 @@ public class ToolsController {
             boolean isConnect;
             if(netArea == CommonContants.NETAREA_IN){
                 //内网直接测试
-                isConnect = dynamicDB.testDB(dbConfigData);
+                isConnect = dynamicDB.testDBConnect(dbConfigData);
             }else{
                 if (deviceId == null){
                     return JSONMessage.createFalied("请选择一个在线的探针").toString();
@@ -302,7 +302,7 @@ public class ToolsController {
             boolean isConnect;
             if(netArea == CommonContants.NETAREA_IN){
                 //内网直接测试
-                isConnect = ftpUtil.testFTPConnect(ftpConfigData);
+                isConnect = ftpUtil.testFTPConnect(ftpConfigData,CommonContants.DEFAULT_TIMEOUT);
             }else{
                 if (deviceId == null){
                     return JSONMessage.createFalied("请选择一个在线的探针").toString();
@@ -323,7 +323,7 @@ public class ToolsController {
                 BaseConfigData configData = detectorService.getConfigData();
 
                 //执行命令
-                isConnect = DetectorUtil.testFTP(configData.getIp(),configData.getPort(),ftpConfigData);
+                isConnect = DetectorUtil.testFTPConnect(configData.getIp(),configData.getPort(),ftpConfigData);
             }
 
             return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();

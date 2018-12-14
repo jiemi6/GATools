@@ -1,6 +1,8 @@
 package com.minkey.exception;
 
 
+import com.minkey.contants.AlarmEnum;
+
 /**
  * 全局系统异常,系统调用使用
  * @author minkey
@@ -24,6 +26,14 @@ public class SystemException extends BaseException{
 	
 	public SystemException(int code ,String msg) {
 		super(code,msg);
+	}
+
+	public SystemException(AlarmEnum alarmEnum) {
+		super(alarmEnum.getAlarmType(),alarmEnum.getDesc());
+	}
+
+	public SystemException(AlarmEnum alarmEnum,String msg) {
+		super(alarmEnum.getAlarmType(),msg);
 	}
 	
 	public SystemException(int code ,String msg, Throwable cause) {

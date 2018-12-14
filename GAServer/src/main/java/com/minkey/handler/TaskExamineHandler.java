@@ -8,6 +8,9 @@ import com.minkey.db.SourceHandler;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
+import com.minkey.dto.FTPConfigData;
+import com.minkey.exception.SystemException;
+import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -93,6 +96,15 @@ public class TaskExamineHandler {
     }
 
     private CheckItem testSource(long checkId, Task task, Source source, DeviceService detectorService){
+        //如果是外网而且没有探针
+        if(!source.isNetAreaIn() && detectorService == null){
+            String logstr = String.format("没有部署探针，无法探测外网资源%s",source);
+            log.error(logstr);
+            CheckItem checkItem = checkStepCache.createNextItem(checkId);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(logstr);
+            return checkItem;
+        }
+
         if(StringUtils.equals(source.getSourceType(),Source.sourceType_db)){
             return testSource_db(checkId,task,source,detectorService);
         }else if(StringUtils.equals(source.getSourceType(),Source.sourceType_ftp)){
@@ -110,7 +122,7 @@ public class TaskExamineHandler {
     }
 
     private CheckItem testSource_ftp(long checkId, Task task, Source source, DeviceService detectorService) {
-        boolean isConnect =sourceCheckHandler.testSource_ftp(source,detectorService);
+        boolean isConnect =testSourceConnect_ftp(source,detectorService);
 
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
 
@@ -126,7 +138,7 @@ public class TaskExamineHandler {
     }
 
     private CheckItem testSource_db(long checkId, Task task, Source source, DeviceService detectorService) {
-        boolean isConnect = sourceCheckHandler.testSource_db(source,detectorService);
+        boolean isConnect = testSourceConnect_db(source,detectorService);
 
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
 
@@ -147,4 +159,42 @@ public class TaskExamineHandler {
         return checkItem;
     }
 
+
+    public boolean testSourceConnect_ftp(Source source, DeviceService detectorService)throws SystemException {
+        //将source转换为ftpconfigdata
+        FTPConfigData ftpConfigData = new FTPConfigData();
+        ftpConfigData.setIp(source.getIp());
+        ftpConfigData.setPort(source.getPort());
+        ftpConfigData.setName(source.getName());
+        ftpConfigData.setPwd(source.getPwd());
+        ftpConfigData.setRootPath(source.getDbName());
+
+        boolean isConnect;
+        if(source.isNetAreaIn()){
+            isConnect = ftpUtil.testFTPConnect(ftpConfigData, FTPUtil.default_timeout);
+        }else{
+            if(detectorService == null){
+                log.error(String.format("没有部署探针，无法探测外网FTP资源%s",source));
+                return false;
+            }
+            isConnect = DetectorUtil.testFTPConnect(detectorService.getIp(),detectorService.getConfigData().getPort(), ftpConfigData);
+        }
+
+        return isConnect;
+    }
+
+    public boolean testSourceConnect_db(Source source, DeviceService detectorService)throws SystemException {
+        boolean isConnect;
+        if(source.isNetAreaIn()){
+            isConnect = dynamicDB.testDBConnect(source);
+        }else{
+            if(detectorService == null){
+                log.error(String.format("没有部署探针，无法探测外网DB资源%s",source));
+                return false;
+            }
+            isConnect = DetectorUtil.testDB(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+        }
+        return isConnect;
+
+    }
 }

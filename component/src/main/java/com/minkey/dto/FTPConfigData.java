@@ -9,7 +9,10 @@ public class FTPConfigData extends BaseConfigData{
     }
 
     public void setRootPath(String rootPath) {
-        this.rootPath = rootPath;
+        if(!rootPath.endsWith("/")){
+            //增加斜杠
+            this.rootPath = rootPath+"/";
+        }
     }
 
     @Override

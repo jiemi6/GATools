@@ -13,7 +13,6 @@ import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.SnmpConfigData;
-import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,7 +307,7 @@ public class AlarmHandler {
      * 任务告警扫描
      * 扫描任务是否存活
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     public void task() {
 
         //获取所有任务
@@ -360,70 +359,32 @@ public class AlarmHandler {
             String fromSourceId = taskSource.getFromResourceId();
             String toSourceId = taskSource.getToResourceId();
 
+            //检查数据来源方
             Source fromSource = sourceHandler.query(task.getLinkId(), fromSourceId);
-            boolean isConnect = false;
-            try {
-                isConnect = sourceCheckHandler.testSource(fromSource, detectorService);
-                alarmLog = build(task, fromSource, isConnect);
-            } catch (SystemException e) {
-                alarmLog = new AlarmLog();
-                alarmLog.setBid(task.getTaskId())
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setLevel(MyLevel.LEVEL_ERROR)
-                        .setType(e.getErrorCode())
-                        .setMsg(e.getMessage());
-            }
-            taskAlarm.add(alarmLog);
+            Set<AlarmLog> alarmLogSet = sourceCheckHandler.testSource(task, fromSource, detectorService);
 
+            taskAlarm.addAll(alarmLogSet);
+
+            //检查数据出口方
             Source toSource = sourceHandler.query(task.getLinkId(), toSourceId);
-            try {
-                isConnect = sourceCheckHandler.testSource(toSource, detectorService);
-                alarmLog = build(task, toSource, isConnect);
-            } catch (SystemException e) {
-                alarmLog = new AlarmLog();
-                alarmLog.setBid(task.getTaskId())
-                        .setLevel(MyLevel.LEVEL_ERROR)
-                        .setbType(AlarmLog.BTYPE_TASK)
-                        .setType(e.getErrorCode())
-                        .setMsg(e.getMessage());
-            }
-            taskAlarm.add(alarmLog);
+            alarmLogSet = sourceCheckHandler.testSource(task, toSource, detectorService);
+            taskAlarm.addAll(alarmLogSet);
 
             //检查任务进程是否存在
             checkTaskProcess(task,detectorService);
         }
 
         int level = MyLevel.LEVEL_NORMAL;
-        for (AlarmLog tempLog : taskAlarm) {
-            if (tempLog == null) {
+        for (AlarmLog alarmLogTemp : taskAlarm) {
+            if (alarmLogTemp == null) {
                 continue;
             }
-            if (tempLog.getLevel() > level) {
-                level = tempLog.getLevel();
+            if (alarmLogTemp.getLevel() > level) {
+                level = alarmLogTemp.getLevel();
             }
         }
         return level;
     }
-
-    private AlarmLog build(Task task, Source fromSource, boolean isConnect) {
-        if (isConnect) {
-            return null;
-        }
-        String msg = String.format("[%s]%s%s数据源[%s]连接失败",
-                task.getTaskName(),
-                fromSource.getSourceType(),
-                fromSource.isNetAreaIn() ? "内网" : "外网",
-                fromSource.getSname());
-
-        AlarmLog alarmLog = new AlarmLog();
-        alarmLog.setBid(task.getTaskId())
-                .setbType(AlarmLog.BTYPE_TASK)
-                .setLevel(MyLevel.LEVEL_ERROR)
-                .setType(AlarmEnum.ip_notConnect)
-                .setMsg(msg);
-        return alarmLog;
-    }
-
 
     /**
      * 检查UAS 和 TAS上任务进程是否都存在

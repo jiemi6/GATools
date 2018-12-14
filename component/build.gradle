@@ -1,5 +1,5 @@
 dependencies {
-    compile 'com.alibaba:fastjson:1.2.29',
+    compile 'com.alibaba:fastjson:1.2.47',
             'org.apache.commons:commons-lang3:3.4',
             'commons-net:commons-net:3.6',
             'org.apache.commons:commons-collections4:4.1',

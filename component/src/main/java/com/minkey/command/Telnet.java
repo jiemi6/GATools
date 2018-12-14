@@ -23,10 +23,10 @@ public class Telnet {
             return server.isConnected();
         } catch (UnknownHostException e) {
             //ip解析错误。ip填写错误
-            throw new SystemException(AlarmEnum.ip_notConnect.getAlarmType(),String.format("telnet异常,未知对方host.[%s:%s] Msg=%s",ipAddress,port,e.getMessage()));
+            throw new SystemException(AlarmEnum.ip_notConnect,String.format("telnet异常,未知对方host.[%s:%s] Msg=%s",ipAddress,port,e.getMessage()));
         } catch (IOException e) {
             //ip和端口连不上都会报这个错
-            throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("telnet-IO异常[%s:%s] Msg=%s",ipAddress,port,e.getMessage()));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("telnet-IO异常[%s:%s] Msg=%s",ipAddress,port,e.getMessage()));
         } finally {
             IOUtils.close(server);
         }

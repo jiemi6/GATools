@@ -27,6 +27,9 @@ public class DynamicDB {
      */
     private Map<String,JdbcTemplate> jdbcTemplateMap = new HashMap();
 
+    private String createKey(String ip, int port,String dbName) {
+        return ip+":"+port+"/"+dbName;
+    }
 
     private JdbcTemplate getJdbcTemplate(DatabaseDriver databaseDriver, String ip,int port,String dbName, String userName , String password){
         //先测网络
@@ -34,10 +37,10 @@ public class DynamicDB {
         try {
             isConnect = Telnet.doTelnet(ip,port);
         } catch (SystemException e) {
-            throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("数据库%s",e.getMessage()));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("数据库%s",e.getMessage()));
         }
         if(!isConnect){
-            throw new SystemException(AlarmEnum.port_notConnect.getAlarmType(),String.format("Telnet数据库网络不通[%s:%s]",ip,port));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("Telnet数据库网络不通[%s:%s]",ip,port));
         }
 
 
@@ -71,34 +74,46 @@ public class DynamicDB {
 
             return jdbcTemplate;
         }catch (Exception e ){
-            throw build(e,databaseDriver);
+            String exceptionStr = e.getCause().getCause().toString();
+            throw build(exceptionStr,databaseDriver);
         }
 
     }
 
     /**
      * 根据错误类型构造返回的异常
-     * @param e
+     * @param exceptionStr
      * @param databaseDriver
      * @return
      */
-    private SystemException build(Exception e, DatabaseDriver databaseDriver){
+    private SystemException build(String exceptionStr, DatabaseDriver databaseDriver){
 
         if(databaseDriver == DatabaseDriver.MYSQL){
-            String eStr = e.getCause().getCause().toString();
-
-            // Mysql : Access denied for user 'root1'@'localhost' (using password: YES)
-            if(eStr.contains("using password: YES")){
+            // Access denied for user 'root'@'localhost' (using password: YES)
+            if(exceptionStr.contains("using password: YES")){
                 //账号密码错误
-                return new SystemException(AlarmEnum.db_wrongpwd.getAlarmType(),"数据库账号密码错误");
-
+                return new SystemException(AlarmEnum.db_wrongpwd);
+            }else if (exceptionStr.contains("Unknown database")){
+                //Unknown database 'smz'  数据库名称错误,不存在
+                return new SystemException(AlarmEnum.db_databaseName_noexist);
+            }else if(exceptionStr.contains("Connection refused")){
+                //java.net.ConnectException: Connection refused: connect
+                return new SystemException(AlarmEnum.port_notConnect);
             }
+
+
         }
 
-        return new SystemException(AlarmEnum.db_createError.getAlarmType(),"构造数据库连接异常,"+e.getMessage());
+        return new SystemException(AlarmEnum.db_createError.getAlarmType(),"数据库连接异常,"+exceptionStr);
     }
 
-    public boolean testDB(DBConfigData dbConfigData) throws SystemException{
+    /**
+     * 测试数据库是否连接正常
+     * @param dbConfigData
+     * @return
+     * @throws SystemException
+     */
+    public boolean testDBConnect(DBConfigData dbConfigData) throws SystemException{
         try{
             //获取jdbc操作模板
             JdbcTemplate jdbcTemplate = get8dbConfig(dbConfigData);
@@ -108,14 +123,15 @@ public class DynamicDB {
         }catch (SystemException  e){
             throw e;
         }catch (Exception e){
-            throw new SystemException(String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
         }
     }
 
-    private String createKey(String ip, int port,String dbName) {
-        return ip+":"+port+"/"+dbName;
-    }
-
+    /**
+     * 获取数据库连接
+     * @param dbConfigData
+     * @return
+     */
     public JdbcTemplate get8dbConfig(DBConfigData dbConfigData) {
         String key = createKey(dbConfigData.getIp(), dbConfigData.getPort(), dbConfigData.getName());
         //先从缓存中获取
@@ -129,6 +145,19 @@ public class DynamicDB {
         }
 
         return jdbcTemplate;
+    }
+
+    public boolean testDB(DBConfigData dbConfigData) throws SystemException{
+        try{
+            //获取jdbc操作模板
+            JdbcTemplate jdbcTemplate = get8dbConfig(dbConfigData);
+
+            return true;
+        }catch (SystemException  e){
+            throw e;
+        }catch (Exception e){
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
+        }
     }
 
 }

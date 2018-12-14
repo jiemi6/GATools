@@ -86,7 +86,7 @@ public class RateObj {
      */
     public int judgeLevel(){
         double rate = this.getRate();
-        if(rate >=  0.75 && rate < 0.9){
+        if(rate >=  0.7 && rate < 0.9){
             return MyLevel.LEVEL_WARN;
         }else if (rate > 0.9){
             return MyLevel.LEVEL_ERROR;

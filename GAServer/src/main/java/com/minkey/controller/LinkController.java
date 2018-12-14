@@ -58,7 +58,7 @@ public class LinkController {
         }
 
         try{
-            boolean isConnect = dynamicDB.testDB(link.getDbConfigData());
+            boolean isConnect = dynamicDB.testDBConnect(link.getDbConfigData());
             if(!isConnect){
                 return JSONMessage.createFalied("数据库连接失败").toString();
             }
@@ -100,7 +100,7 @@ public class LinkController {
         }
 
         try{
-            boolean isConnect = dynamicDB.testDB(link.getDbConfigData());
+            boolean isConnect = dynamicDB.testDBConnect(link.getDbConfigData());
             if(!isConnect){
                 return JSONMessage.createFalied("数据库连接失败").toString();
             }

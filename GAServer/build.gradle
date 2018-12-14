@@ -25,6 +25,10 @@ dependencies {
     //excel组件
     compile "org.apache.poi:poi:3.6"
 
+    //邮件
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.5.6'
+
+
 }
 
 mainClassName="com.minkey.GAToolsRun"
