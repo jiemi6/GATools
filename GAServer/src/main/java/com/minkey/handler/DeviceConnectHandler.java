@@ -97,7 +97,7 @@ public class DeviceConnectHandler {
         //如果是内网，
         if(device.getNetArea() == CommonContants.NETAREA_IN ){
             //直接访问
-            isConnect = Ping.javaPing(device.getIp(),1000);
+            isConnect = Ping.javaPing(device.getIp());
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());

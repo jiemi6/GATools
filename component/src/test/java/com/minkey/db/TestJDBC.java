@@ -74,4 +74,41 @@ public class TestJDBC {
             log.error(e.getMessage(),e);
         }
     }
+
+    @Test
+    public void testDesc() {
+        DynamicDB dynamicDB = new DynamicDB();
+        String ip = "127.0.1.2";
+        int port = 3306;
+        String dbName = "smzdm";
+        try {
+
+            DBConfigData baseConfigData = new DBConfigData();
+            baseConfigData.setIp(ip);
+            baseConfigData.setPort(port);
+            baseConfigData.setDbName(dbName);
+            baseConfigData.setName("testAuth");
+            baseConfigData.setPwd("testAuth");
+
+            dynamicDB.testDBConnect(baseConfigData);
+
+            while (true) {
+
+                JdbcTemplate jdbcTemplate = dynamicDB.get8dbConfig(baseConfigData);
+
+
+                List<Map<String, Object>> sqlRowSet =jdbcTemplate.queryForList("desc zhi_items");
+
+
+
+                log.error("ok=" +sqlRowSet);
+                Thread.sleep(10000);
+            }
+
+        } catch (SystemException e) {
+            log.error(e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
+        }
+    }
 }

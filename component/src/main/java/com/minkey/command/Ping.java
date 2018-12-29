@@ -18,7 +18,7 @@ public class Ping {
      */
     public static final int DEFALUT_TIMEOUT = 1000;
 
-    public static boolean javaPing(String ipAddress,int timeout) throws SystemException{
+    private static boolean javaPing(String ipAddress,int timeout) throws SystemException{
         if(timeout <= 0){
             timeout = DEFALUT_TIMEOUT;
         }
@@ -27,8 +27,7 @@ public class Ping {
         try {
             status = InetAddress.getByName(ipAddress).isReachable(timeout);
         } catch (IOException e) {
-            log.debug(e.getMessage(),e);
-            throw new SystemException(e.getMessage());
+            throw new SystemException(e.getMessage(),e);
         }
         return status;
     }
@@ -39,7 +38,12 @@ public class Ping {
      * @throws Exception
      */
     public static boolean javaPing(String ipAddress) throws SystemException{
-       return javaPing(ipAddress,DEFALUT_TIMEOUT);
+        try {
+            return javaPing(ipAddress,DEFALUT_TIMEOUT);
+        } catch (SystemException e) {
+            log.debug("ping "+ipAddress +" Exception,"+e.getMessage());
+            return false;
+        }
     }
 
     /**

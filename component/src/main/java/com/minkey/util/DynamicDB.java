@@ -8,6 +8,8 @@ import com.minkey.dto.DBConfigData;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -159,6 +161,45 @@ public class DynamicDB {
             resultJson.put("maxConnectNum",maxConnectNum);
             resultJson.put("connectNum",connectNum);
 
+            //获取所有表名
+            Set<String> allTableName = getAllTableNames(jdbcTemplate);
+            //包含所有含有blob字段的表
+            Set<String> hasBlobTableNames = new HashSet<>();
+            //此针对数据交换系统的动作表格式为（topwalk_dtp_任务编号_tb）topwalk_dtp_825746866_tb，
+            // 每个触发任务会在业务服务器上建立以此触发任务任务编号命名的动作表，
+            // 查询select count（*） from 动作表名；若动作表的数据总数积压超过有1万条数据则报警处理
+            Set<String> tableCountMax1W = new HashSet<>();
+            if(CollectionUtils.isEmpty(allTableName)){
+                for (String tableName : allTableName) {
+                    //是否有blob字段
+                    if(tableHasBlobDesc(jdbcTemplate,tableName)){
+                        hasBlobTableNames.add(tableName);
+                    }
+
+                    //过滤掉 topwalk_dtp_nodepoint_tb 这样的表名,截取第三段,看是不是数字,
+                    if(tableName.startsWith("topwalk_dtp_") && NumberUtils.isNumber(tableName.split("_")[2])){
+                        //判断数据库表大小是否超过1w
+                        int tableCount = getTableCount(jdbcTemplate,tableName);
+                        if(tableCount > 10000){
+                            tableCountMax1W.add(tableName);
+                        }
+                    }
+
+                    //如果有任务触发器这张表, 则查询触发器
+                    if(tableName.equalsIgnoreCase("tbtriggerinfo")){
+                        Set<String> allTriggers =getAllTriggers(jdbcTemplate);
+                        //所有触发器名称集合
+                        resultJson.put("allTriggers",allTriggers);
+                    }
+
+
+                }
+            }
+            resultJson.put("hasBlobTableNames",hasBlobTableNames);
+            resultJson.put("tableCountMax1W",tableCountMax1W);
+
+
+
         }catch (SystemException  e){
             log.debug(String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
             resultJson.put("alarmType",e.getErrorCode());
@@ -169,6 +210,15 @@ public class DynamicDB {
 
         return resultJson;
     }
+
+    private int getTableCount(JdbcTemplate jdbcTemplate, String tableName) {
+        List<Map<String, Object>> result =jdbcTemplate.queryForList("select count(*) FROM "+tableName);
+
+        int tableCount = Integer.parseInt(result.get(0).values().toArray()[1].toString());
+
+        return  tableCount;
+    }
+
 
     /**
      * 根据查到的权限语句结果,分析具有的权限
@@ -240,13 +290,10 @@ public class DynamicDB {
             //修改表数据权限
             authSet.add("UPDATE");
         }
-
-
         if(authStr.contains("TRIGGER")){
             //触发器的权限
             authSet.add("TRIGGER");
         }
-
         return authSet;
     }
 
@@ -274,5 +321,76 @@ public class DynamicDB {
         Integer connectNum = Integer.parseInt(result.get(0).values().toArray()[1].toString());
 
         return connectNum;
+    }
+
+
+    /**
+     * 获取该库的所有表名
+     * @param jdbcTemplate
+     * @return
+     */
+    private Set<String> getAllTableNames(JdbcTemplate jdbcTemplate) {
+        List<Map<String, Object>> result =jdbcTemplate.queryForList("show tables");
+
+        if(CollectionUtils.isEmpty(result)){
+            return null;
+        }
+
+        Set<String> allTableNames = new HashSet<>(result.size());
+        for (Map<String, Object> stringObjectMap : result) {
+            //获取表名
+            String tableName = (String) stringObjectMap.values().iterator().next();
+            allTableNames.add(tableName);
+        }
+
+        return allTableNames;
+    }
+
+    /**
+     * 获取所有触发任务的表的触发器
+     * @param jdbcTemplate
+     * @return
+     */
+    private Set<String> getAllTriggers(JdbcTemplate jdbcTemplate) {
+        //任务对应的 触发器
+        List<Map<String, Object>> result =jdbcTemplate.queryForList("select * from tbtriggerinfo;");
+
+        if(CollectionUtils.isEmpty(result)){
+            return null;
+        }
+
+        Set<String> allTriggers = new HashSet<>(result.size());
+        for (Map<String, Object> stringObjectMap : result) {
+//            String taskId = (String) stringObjectMap.get("taskId");
+            //触发器名称:格式为T_任务编号_0_I(此为触发任务新增数据触发器)、T_任务编号_1_U(此为触发任务更新数据触发器)、T_任务编号_2_D(此为触发任务删除数据触发器)
+            String trigname = (String) stringObjectMap.get("trigname");
+            allTriggers.add(trigname);
+        }
+
+        return allTriggers;
+    }
+
+
+    /**
+     * 获取表的字段描述,判断是否有BLOB /CLOB大字段
+     * @param jdbcTemplate
+     * @return
+     */
+    private boolean tableHasBlobDesc(JdbcTemplate jdbcTemplate, String tableName){
+        //如果没权限, 返回list 可能为空
+        List<Map<String, Object>> result =jdbcTemplate.queryForList("DESC  "+tableName);
+
+        if(CollectionUtils.isEmpty(result)){
+            return false;
+        }
+
+        for (Map<String, Object> stringObjectMap : result) {
+            //获取表字段类型
+            String type = (String) stringObjectMap.get("Type");
+            if(StringUtils.equalsIgnoreCase(type,"BLOB") || StringUtils.equalsIgnoreCase(type,"CLOB")){
+                return true;
+            }
+        }
+        return false;
     }
 }

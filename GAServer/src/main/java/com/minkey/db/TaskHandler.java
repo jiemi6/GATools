@@ -38,7 +38,7 @@ public class TaskHandler {
     }
 
     public List<Task> queryAll() {
-        return jdbcTemplate.query("select * from "+tableName +" t,t_link tl where t.linkId=tl.linkId", new BeanPropertyRowMapper<>(Task.class));
+        return jdbcTemplate.query("select * from "+tableName +" t,t_link tl where t.linkId=tl.linkId ", new BeanPropertyRowMapper<>(Task.class));
     }
 
     public void insertAll(List<Task> tasks) {
@@ -63,7 +63,7 @@ public class TaskHandler {
 
 
     public void del8LinkId(Long linkId) {
-        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where linkId= ?",new Object[]{linkId});
+        int num = jdbcTemplate.update("update "+tableName+" set status=-100 where linkId= ?",new Object[]{linkId});
 
     }
 

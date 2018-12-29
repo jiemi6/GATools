@@ -4,6 +4,7 @@ import com.minkey.cache.DeviceCache;
 import com.minkey.db.AlarmLogHandler;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.AlarmLog;
+import com.minkey.db.dao.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +15,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 天统计，凌晨1点统计上一天的数据
@@ -63,10 +66,27 @@ public class AlarmDayLogAnalysisTask {
             List<Long> allDeviceIds = alarmLogHandler.queryAllBid8btype(AlarmLog.BTYPE_DEVICE, startDate,endDate);
             int alarmDeviceNum = CollectionUtils.isEmpty(allDeviceIds) ? 0 : allDeviceIds.size();
 
+            int totalTaskNum =0;
+            int alarmTaskNum = 0;
             //获取所有任务
-            int totalTaskNum = taskHandler.queryCount();
-            List<Long> allTaskIds = alarmLogHandler.queryAllBid8btype(AlarmLog.BTYPE_TASK, startDate,endDate);
-            int alarmTaskNum = CollectionUtils.isEmpty(allTaskIds) ? 0 : allTaskIds.size();
+            List<Task> tasks = taskHandler.queryAll();
+            if(!CollectionUtils.isEmpty(tasks)){
+                List<Long> alarmTaskIds = alarmLogHandler.queryAllBid8btype(AlarmLog.BTYPE_TASK, startDate,endDate);
+
+                if(!CollectionUtils.isEmpty(alarmTaskIds)){
+                    Set<Long> allTaskIds = tasks.stream().map(Task::getTaskId).collect(Collectors.toSet());
+
+                    //取交集
+                    alarmTaskIds.removeAll(allTaskIds);
+                    allTaskIds.addAll(alarmTaskIds);
+
+                    alarmTaskNum = allTaskIds.size();
+                }
+            }
+            //Minkey 解决报警数有可能大于总数的bug
+            if(alarmTaskNum > totalDeviceNum){
+                alarmDeviceNum = totalDeviceNum;
+            }
 
 
             AlarmDayLog alarmDayLog = new AlarmDayLog();
@@ -85,6 +105,8 @@ public class AlarmDayLogAnalysisTask {
             alarmDayLog.setCreateTime(c.getTime());
 
             alarmDayLogHandler.insert(alarmDayLog);
+
+            log.info("每日["+yesterday+"]统计报警信息:"+alarmDayLog);
         }catch (Exception e){
             log.error("每日["+yesterday+"]统计报警信息异常,"+e.getMessage());
         }

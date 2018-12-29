@@ -53,8 +53,8 @@ public class DeviceServiceCheckManager {
                 break;
             case DeviceService.SERVICETYPE_SNMP:
                 SnmpConfigData snmpConfigData = (SnmpConfigData) deviceService.getConfigData();
-                SnmpUtil snmpUtil =new SnmpUtil(snmpConfigData);
                 if(device.isNetAreaIn()){
+                    SnmpUtil snmpUtil =new SnmpUtil(snmpConfigData);
                     isOk = snmpUtil.testConnect();
                 }else{
                     if(detectorService == null){

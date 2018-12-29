@@ -6,6 +6,7 @@ import com.minkey.contants.CommonContants;
 import com.minkey.dto.*;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SystemException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import java.util.Map;
  * 探针工具类
  * 访问探针http接口
  */
+@Slf4j
 public class DetectorUtil {
 
     public static boolean check(String detectorIp,int detectorPort){
@@ -36,7 +38,12 @@ public class DetectorUtil {
         param.put("ip",ip);
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行ping报错,"+e.getMessage());
+            return false;
+        }
     }
 
 
@@ -56,7 +63,13 @@ public class DetectorUtil {
         param.put("port",""+port);
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行telnetCmd报错,"+e.getMessage());
+            return false;
+        }
+
     }
 
     public static JSONObject snmpGet(String detectorIp,int detectorPort,SnmpConfigData snmpConfigData,String oid){
@@ -116,7 +129,12 @@ public class DetectorUtil {
         param.put("version",String.valueOf(snmpConfigData.getVersion()));
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行testSNMP报错,"+e.getMessage());
+            return false;
+        }
     }
 
     public static boolean testDBConnect(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
@@ -130,7 +148,12 @@ public class DetectorUtil {
         param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行testDBConnect报错,"+e.getMessage());
+            return false;
+        }
     }
 
     public static boolean testFTPConnect(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
@@ -143,7 +166,12 @@ public class DetectorUtil {
         param.put("pwd",ftpConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行testFTPConnect报错,"+e.getMessage());
+            return false;
+        }
     }
 
     public static JSONObject testDBSource(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
@@ -183,10 +211,15 @@ public class DetectorUtil {
         param.put("name",baseConfigData.getName());
         param.put("pwd",baseConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.debug("探针执行testSSH报错,"+e.getMessage());
+            return false;
+        }
     }
 
-    private static JSONObject getReturnJson(String returnStr){
+    private static JSONObject getReturnJson(String returnStr) throws SystemException{
         JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
         if(jsonMessage == null){
             throw new SystemException("探针返回的数据为空。");

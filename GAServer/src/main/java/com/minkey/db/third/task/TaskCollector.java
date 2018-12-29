@@ -2,10 +2,7 @@ package com.minkey.db.third.task;
 
 import com.minkey.contants.CommonContants;
 import com.minkey.contants.LinkType;
-import com.minkey.db.LinkHandler;
-import com.minkey.db.SourceHandler;
-import com.minkey.db.TaskHandler;
-import com.minkey.db.TaskSourceHandler;
+import com.minkey.db.*;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.Source;
 import com.minkey.db.dao.Task;
@@ -36,6 +33,9 @@ public class TaskCollector {
 
     @Autowired
     TaskSourceHandler taskSourceHandler;
+
+    @Autowired
+    TaskTriggerHandler taskTriggerHandler;
 
     @Autowired
     SourceHandler sourceHandler;
@@ -110,6 +110,28 @@ public class TaskCollector {
         } catch (Exception e) {
             log.error("从数据交换系统抓取[数据源信息]保存到数据库中异常", e);
         }
+
+        try {
+            //获取任务与触发器的对应关系
+            collectorTriggerinfo(jdbcTemplate, link);
+        } catch (Exception e) {
+            log.error("从数据交换系统抓取[数据源信息]保存到数据库中异常", e);
+        }
+    }
+
+    private void collectorTriggerinfo(JdbcTemplate jdbcTemplate, Link link) {
+        //查询所有触发器
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select id,taskid,resourcesid,tablename,trigname,trigtype,maxnum from tbtriggerinfo ");
+
+        if(CollectionUtils.isEmpty(mapList)){
+            taskTriggerHandler.del8LinkId(link.getLinkId());
+            return;
+        }
+        List<Task> taskTriggerList = new ArrayList<>(mapList.size());
+
+
+
+
     }
 
 
@@ -119,8 +141,8 @@ public class TaskCollector {
      * @param link
      */
     private void collectorTask(JdbcTemplate jdbcTemplate, Link link){
-            //查询所有task
-        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,tbtasktypeid,status from tbtask WHERE status <> '-100'");
+        //查询所有task
+        List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,tbtasktypeid,status from tbtask ");
 
         if(CollectionUtils.isEmpty(mapList)){
             taskHandler.del8LinkId(link.getLinkId());
@@ -147,6 +169,7 @@ public class TaskCollector {
             tasks.add(task);
         });
 
+
         taskHandler.del8LinkId(link.getLinkId());
         if(!CollectionUtils.isEmpty(tasks)){
             //把链路存到数据库中。
@@ -171,7 +194,7 @@ public class TaskCollector {
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from tbtaskdbsource");
 
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del8LinkId(link.getLinkId());
+            taskSourceHandler.del8LinkId(link.getLinkId());
             return;
         }
 
@@ -201,7 +224,7 @@ public class TaskCollector {
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select * from  tbresources ");
 
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del8LinkId(link.getLinkId());
+            sourceHandler.del8LinkId(link.getLinkId());
             return;
         }
 
