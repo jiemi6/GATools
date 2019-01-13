@@ -23,6 +23,8 @@ public class InitSystem {
     @Autowired
     LicenseController licenseController;
 
+    @Autowired
+
     @Value("${system.debug:false}")
     private boolean isDebug;
 
