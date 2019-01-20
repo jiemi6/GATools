@@ -21,7 +21,7 @@ dependencies {
 //    compile group: 'com.oracle', name: 'ojdbc14', version: '10.2.0.4.0'
     compile  files('lib/ojdbc14-10.2.0.4.0.jar')
     //sql server驱动包
-    compile group:'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.0.0.jre8'
+//    compile group:'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '7.0.0.jre8'
 
     //log4jdbc，数据库日志打印组件
     compile group: 'com.googlecode.log4jdbc', name: 'log4jdbc', version: '1.2'

@@ -2,7 +2,7 @@ group 'com.minkey'
 
 
 subprojects {
-	version '1.0-SNAPSHOT'
+	version '1.0'
 
 	apply plugin: 'java'
 	apply plugin: 'maven'
@@ -37,7 +37,7 @@ subprojects {
 	jar{
 		exclude("application.properties")
 		exclude("logback.xml")
-		exclude("static")
+//		exclude("static")
 		exclude("templates")
     }
 

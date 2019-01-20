@@ -13,6 +13,7 @@ import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
 import com.minkey.dto.SnmpConfigData;
+import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -322,7 +323,12 @@ public class AlarmHandler {
         int level;
         for (Task task : allTask) {
             //检查task
-            level = checkTask(task);
+            try {
+                level = checkTask(task);
+            } catch (SystemException e) {
+                log.error(e.getMessage());
+                continue;
+            }
 
             if (taskLevel.get(level) == null) {
                 Set<Long> set = new HashSet<>();
@@ -339,7 +345,7 @@ public class AlarmHandler {
 
     }
 
-    private int checkTask(Task task) {
+    private int checkTask(Task task)throws SystemException {
         String taskTargetId = task.getTargetTaskId();
 
         Set<AlarmLog> taskAlarm = new HashSet<>();
@@ -455,4 +461,5 @@ public class AlarmHandler {
         }
         alarmLogHandler.insert(alarmLog);
     }
+
 }

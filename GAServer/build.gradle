@@ -1,9 +1,7 @@
 
 sourceSets {
     main {
-        java {
 
-        }
         resources{
             srcDir "src/main/conf"
         }

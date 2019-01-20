@@ -225,4 +225,20 @@ public class AlarmLogHandler {
         return page;
 
     }
+
+    /**
+     * 根据下标查询,用于发送邮件
+     * @param index  下标就是主键
+     */
+    public List<AlarmLog> query4email(long index) {
+
+        List<AlarmLog> alarmLogs = jdbcTemplate.query("select * from "+tableName + "where logId > ? ORDER BY logId desc limit 0,10",
+                new Object[]{index},new BeanPropertyRowMapper<>(AlarmLog.class));
+
+        return alarmLogs;
+    }
+
+    public void clean(String deleteDayStr) {
+        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where createTime <= ?",new Object[]{deleteDayStr});
+    }
 }

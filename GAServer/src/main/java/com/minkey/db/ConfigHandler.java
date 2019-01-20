@@ -11,6 +11,9 @@ import java.util.Map;
 
 @Component
 public class ConfigHandler {
+    public final static String CONFIGDATAKEY = "configData";
+    public final static String CONFIGKEY = "configKey";
+
     private final String tableName = "t_config";
     @Autowired
     JdbcTemplate jdbcTemplate;

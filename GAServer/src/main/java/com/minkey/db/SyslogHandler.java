@@ -91,4 +91,7 @@ public class SyslogHandler {
     }
 
 
+    public void clean(String deleteDayStr) {
+        int num = jdbcTemplate.update("DELETE FROM "+tableName+" where createTime <= ?",new Object[]{deleteDayStr});
+    }
 }

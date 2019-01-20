@@ -42,7 +42,7 @@ public class LicenseController {
     HttpSession session;
 
     final String LICENSEKEY = "licenseKey";
-    final String LICENSEDATAKEY = "configData";
+
 
     final String DATA_DEADLINE = "deadline";
     final String DATA_PUBLISHER = "publisher";
@@ -77,7 +77,7 @@ public class LicenseController {
                 return JSONMessage.createFalied("请先生成licenseKey").toString();
             }
 
-            JSONObject configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+            JSONObject configData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
             //得到数据库中的licenseKey
             String licenseKey = configData.getString(LICENSEKEY);
 
@@ -130,7 +130,7 @@ public class LicenseController {
             configData = new JSONObject();
         }else{
 
-            configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+            configData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
         }
 
 
@@ -214,7 +214,7 @@ public class LicenseController {
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
 
-        JSONObject configData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+        JSONObject configData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
         if(configData == null){
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
@@ -247,7 +247,7 @@ public class LicenseController {
             return;
         }
 
-        this.licenseData = JSONObject.parseObject((String) dbData.get(LICENSEDATAKEY));
+        this.licenseData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
     }
 
 }
