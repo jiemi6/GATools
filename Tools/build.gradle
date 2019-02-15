@@ -1,0 +1,35 @@
+
+sourceSets {
+    main {
+
+        resources{
+            srcDir "src/main/conf"
+        }
+    }
+    test {
+        java {
+
+        }
+    }
+}
+
+
+dependencies {
+    compile 'com.alibaba:fastjson:1.2.47',
+            'org.apache.commons:commons-lang3:3.4',
+            'commons-net:commons-net:3.6',
+            'org.apache.commons:commons-collections4:4.1',
+            'commons-io:commons-io:2.4',
+            'org.slf4j:slf4j-api:1.7.25',
+            'ch.qos.logback:logback-classic:1.2.3',
+            'ch.qos.logback:logback-core:1.2.3'
+
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '1.5.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '1.5.2.RELEASE'
+
+    //log注解包
+    compile 'org.projectlombok:lombok:1.16.18'
+}
+
+mainClassName="com.minkey.GAToolsRun"

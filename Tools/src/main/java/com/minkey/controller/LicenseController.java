@@ -1,0 +1,62 @@
+package com.minkey.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.minkey.util.SymmetricEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+
+/**
+ * 证书管理接口
+ */
+@Slf4j
+@RestController
+@RequestMapping("/license")
+public class LicenseController {
+
+    @Autowired
+    HttpSession session;
+
+    final String DATA_DEADLINE = "deadline";
+    final String DATA_PUBLISHER = "publisher";
+
+    /**
+     * 获取license
+     * @return
+     */
+    @RequestMapping("/licenseExport")
+    public String licenseExport(String licenseKey,HttpServletResponse response) {
+        log.debug("start: 根据key= {} 获取licenseData ",licenseKey);
+        byte[] licenseData = null;
+        if(StringUtils.isEmpty(licenseKey)){
+            //返回错误
+            licenseData = "参数错误".getBytes();
+        }else{
+            JSONObject jo = new JSONObject();
+            jo.put(DATA_DEADLINE, "2020-01-01");
+            jo.put(DATA_PUBLISHER, "XXXX有限公司");
+            if(!StringUtils.isEmpty(licenseKey)){
+                licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
+            }
+
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition", "attachment;fileName=licenseData");
+        }
+
+        try {
+            response.getOutputStream().write(licenseData);
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+
+}

@@ -1,0 +1,29 @@
+#禁用安全机制，可查看自带的接口，发布时禁用
+management:
+  security:
+    enabled: true
+
+#端口号.
+server:
+  port : ${port}
+  session:
+    #会话超时（秒）,10分钟。
+    timeout: 600
+  max-http-header-size: 8192
+  tomcat:
+    uri-encoding: UTF-8
+
+logging:
+  level:
+    root: info
+  file: log/console.log
+
+spring:
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+      force-request: true
+      force-response: true
+
