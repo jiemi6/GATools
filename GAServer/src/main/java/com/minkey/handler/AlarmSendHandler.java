@@ -1,9 +1,13 @@
 package com.minkey.handler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.minkey.cache.DeviceCache;
+import com.minkey.contants.AlarmEnum;
 import com.minkey.contants.ConfigEnum;
+import com.minkey.contants.MyLevel;
 import com.minkey.db.AlarmLogHandler;
 import com.minkey.db.ConfigHandler;
+import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.AlarmLog;
 import com.minkey.util.DateUtil;
 import com.minkey.util.SendMailText;
@@ -33,6 +37,9 @@ public class AlarmSendHandler {
 
     @Autowired
     SendMailText sendMailText;
+
+    @Autowired
+    DeviceCache deviceCache;
 
     /**
      * 报警发送间隔分钟
@@ -112,6 +119,9 @@ public class AlarmSendHandler {
     }
 
 
+    @Autowired
+    TaskHandler taskHandler;
+
     private void sendEmail(JSONObject emailConfig){
         long index = 0;
         Map<String, Object> configIndex = configHandler.query(ConfigEnum.EmailIndex.getConfigKey());
@@ -124,8 +134,28 @@ public class AlarmSendHandler {
             return;
         }
 
-        String context = "emailsccc";
+        //取出来
+        AlarmLog alarmLog = alarmLogs.get(0);
 
-        sendMailText.send(emailConfig,context);
+        StringBuffer sb = new StringBuffer();
+        String alarmObjectName = alarmLog.getBid()+"";
+        switch (alarmLog.getbType()){
+            case 1 :
+                alarmObjectName= deviceCache.getLink8Id(alarmLog.getBid()).getLinkName();
+            case 2 :
+                alarmObjectName = taskHandler.query(alarmLog.getBid()).getTaskName();
+            case 3 :
+                alarmObjectName = deviceCache.getDevice(alarmLog.getBid()).getDeviceName();
+        }
+
+
+        sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append("\r\n");
+        sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType())).append("\r\n");
+        sb.append("告警级别:").append(MyLevel.getString8level(alarmLog.getLevel())).append("\r\n");
+        sb.append("告警对象:").append(alarmObjectName).append("\r\n");
+        sb.append("告警内容:").append(alarmLog.getMsg()).append("\r\n");
+        sb.append("告警时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all)).append("\r\n");
+
+        sendMailText.send(emailConfig,sb.toString());
     }
 }

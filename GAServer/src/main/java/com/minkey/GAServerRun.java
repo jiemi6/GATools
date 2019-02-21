@@ -14,9 +14,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @ServletComponentScan
 @EnableScheduling
-public class GAToolsRun {
+public class GAServerRun {
     public static void main(String[] args) {
-        ConfigurableApplicationContext ctx = SpringApplication.run(GAToolsRun.class, args);
+        ConfigurableApplicationContext ctx = SpringApplication.run(GAServerRun.class, args);
 
         SpringUtils.setCtx(ctx);
 

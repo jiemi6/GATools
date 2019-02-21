@@ -30,6 +30,8 @@ public enum AlarmEnum {
     db_databaseName_noexist(8002, "DB名不存在"),
     db_maxConnectNum(8003, "DB达到最大连接数"),
     db_notAllAuth(8004, "DB权限不足"),
+    db_oracle_noAuth_V(8005, "无权访问v$系统视图"),
+    db_has_bigColumn(8006, "数据库表包含大字段"),
 
 
     //ftp相关

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -172,6 +174,7 @@ public class LicenseController {
      * 获取license
      * @return
      */
+    @Deprecated
     @RequestMapping("/licenseExport")
     public String licenseExport(String licenseKey,HttpServletResponse response) {
         log.debug("start: 根据key= {} 获取licenseData ",licenseKey);
@@ -179,25 +182,27 @@ public class LicenseController {
             //返回错误
             return JSONMessage.createFalied("参数错误").toString();
         }
-        byte[] licenseData = null;
 
-        JSONObject jo = new JSONObject();
-        jo.put(DATA_DEADLINE, "2020-01-01");
-        jo.put(DATA_PUBLISHER, "XXX有限公司");
-        if(!StringUtils.isEmpty(licenseKey)){
-            licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
-        }
-
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("multipart/form-data");
-        response.setHeader("Content-Disposition", "attachment;fileName=licenseData");
-
-        try {
-            response.getOutputStream().write(licenseData);
-            return null;
-        } catch (IOException e) {
-            return null;
-        }
+        return JSONMessage.createFalied("请联系供应商获取License.").toString();
+//        byte[] licenseData = null;
+//
+//        JSONObject jo = new JSONObject();
+//        jo.put(DATA_DEADLINE, "2020-01-01");
+//        jo.put(DATA_PUBLISHER, "XXX有限公司");
+//        if(!StringUtils.isEmpty(licenseKey)){
+//            licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
+//        }
+//
+//        response.setCharacterEncoding("utf-8");
+//        response.setContentType("multipart/form-data");
+//        response.setHeader("Content-Disposition", "attachment;fileName=licenseData");
+//
+//        try {
+//            response.getOutputStream().write(licenseData);
+//            return null;
+//        } catch (IOException e) {
+//            return null;
+//        }
     }
 
 
@@ -223,31 +228,68 @@ public class LicenseController {
     }
 
 
+    /**
+     * 本地缓存的lincense
+     */
     private JSONObject licenseData;
+
+    /**
+     * 证书是否有效
+     */
+    private boolean licenseOK = false;
 
     /**
      * 检查证书的有效性
      * @return
      */
     public boolean checkValid() {
-
-
-        return true;
+        return licenseOK;
     }
 
 
+    /**
+     * 初始化证书到缓存中
+     * 每天凌晨更新一次
+     */
+    @Scheduled(cron="0 0 1 * * ?")
     public void init(){
         String licenseKey = getKey();
 
         log.warn("系统证书key："+licenseKey);
 
-        Map<String, Object> dbData = configHandler.query(configKey);
+        try {
+            Map<String, Object> dbData = configHandler.query(configKey);
 
-        if(MapUtils.isEmpty(dbData)){
+            if (MapUtils.isEmpty(dbData)) {
+                log.warn("数据库中证书为空!");
+                licenseOK = false;
+                return;
+            }
+
+            try {
+                this.licenseData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
+            } catch (Exception e) {
+                log.error("证书配置异常," + e.getMessage());
+                licenseOK = false;
+                return;
+            }
+
+            if (MapUtils.isNotEmpty(licenseData)) {
+                Date dataDeadline = licenseData.getJSONObject("licenseData").getDate(DATA_DEADLINE);
+                if (System.currentTimeMillis() < dataDeadline.getTime()) {
+                    licenseOK = true;
+                    return;
+                }
+            }
+
+            licenseOK = false;
+            return;
+        }catch (Exception e){
+            log.error("刷新证书错误",e);
+            licenseOK = false;
             return;
         }
 
-        this.licenseData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
     }
 
 }

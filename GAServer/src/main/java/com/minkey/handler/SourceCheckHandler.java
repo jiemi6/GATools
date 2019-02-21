@@ -16,6 +16,7 @@ import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DatabaseDriver;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -185,8 +186,78 @@ public class SourceCheckHandler {
             alarmLogs.add(alarmLog);
         }
 
+        JSONArray hasBlobTableNames = jsonResult.getJSONArray("hasBlobTableNames");
+        if(hasBlobTableNames != null && hasBlobTableNames.size() > 0){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.db_has_bigColumn)
+                    .setMsg("数据库表含有大字段,表名:"+hasBlobTableNames);
+            alarmLogs.add(alarmLog);
+        }
 
-        JSONArray authSet = jsonResult.getJSONArray("authSet");
+        JSONArray tableCountMax1W = jsonResult.getJSONArray("tableCountMax1W");
+        if(hasBlobTableNames != null && hasBlobTableNames.size() > 0){
+            alarmLog = new AlarmLog().setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.db_has_bigColumn)
+                    .setMsg("数据库表行数超过1万,表名:"+tableCountMax1W);
+            alarmLogs.add(alarmLog);
+        }
+
+
+
+
+        if(source.getDatabaseDriver() == DatabaseDriver.MYSQL){
+            alarmLog = judgeMysqlAuth(jsonResult.getJSONArray("authSet"),task.getTaskId());
+            if(alarmLog != null){
+                alarmLogs.add(alarmLog);
+            }
+        }else if(source.getDatabaseDriver() == DatabaseDriver.ORACLE){
+            alarmLog = judgeOracleAuth(jsonResult.getJSONArray("authSet"),task.getTaskId());
+            if(alarmLog != null){
+                alarmLogs.add(alarmLog);
+            }
+        }
+
+
+
+
+        return alarmLogs;
+
+    }
+
+    private AlarmLog judgeOracleAuth(JSONArray authSet, long taskId) {
+        AlarmLog alarmLog;
+
+        Set<String> noAuthSet = new HashSet<>();
+        if(!authSet.contains("CREATE TABLE")){
+            noAuthSet.add("CREATE TABLE");
+        }
+
+        if(!authSet.contains("CREATE TRIGGER")){
+            noAuthSet.add("CREATE TRIGGER");
+        }
+
+        if(noAuthSet.size()>0){
+            alarmLog = new AlarmLog().setBid(taskId)
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.db_notAllAuth)
+                    .setMsg(String.format("DB权限不足,缺少权限",noAuthSet));
+            return alarmLog;
+        }
+
+        return null;
+    }
+
+    /**
+     * 判断mysql是否具备权限
+     * @return
+     */
+    private AlarmLog judgeMysqlAuth(JSONArray authSet,long taskId){
+        AlarmLog alarmLog;
         //如果没有all
         if(!authSet.contains("ALL")){
             Set<String> noAuthSet = new HashSet<>();
@@ -209,18 +280,16 @@ public class SourceCheckHandler {
                 noAuthSet.add("TRIGGER");
             }
             if(noAuthSet.size()>0){
-                alarmLog = new AlarmLog().setBid(task.getTaskId())
+                alarmLog = new AlarmLog().setBid(taskId)
                         .setbType(AlarmLog.BTYPE_TASK)
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.db_notAllAuth)
                         .setMsg(String.format("DB权限不足,缺少权限",noAuthSet));
-                alarmLogs.add(alarmLog);
+                return alarmLog;
             }
 
         }
-
-        return alarmLogs;
-
+        return null;
     }
 
     public Set<AlarmLog> testSource_video(Task task, Source source, DeviceService detectorService)throws SystemException {

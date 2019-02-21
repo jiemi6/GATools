@@ -1,5 +1,6 @@
 package com.minkey.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.DeviceCache;
 import com.minkey.contants.ConfigEnum;
@@ -165,19 +166,26 @@ public class SystemController {
     public String bakupConfig(HttpServletResponse response) {
         log.debug("start: 备份设置");
 
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("multipart/form-data");
-        response.setHeader("Content-Disposition", "attachment;fileName=config.data");
-
         try {
-            byte[] data =StringUtil.string2Byte("ceshi一个数据");
+            //查询出config里所有的配置
+            List<Map<String, Object>> allConfig = configHandler.queryAll();
 
-            //Minkey 备份设置 未完成
-            response.getOutputStream().write(data);
+            JSONArray jsonArray = (JSONArray) JSONArray.toJSON(allConfig);
+
+            String jsonStr = jsonArray.toJSONString();
+
+//            byte[] data =StringUtil.string2Byte(jsonStr);
+//            jsonStr = Base64Utils.encodeToString(data);
+
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("multipart/form-data");
+            response.setHeader("Content-Disposition", "attachment;fileName=config");
+
+            response.getWriter().write(jsonStr);
 
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser, Modules.link,String.format("%s 备份系统设置 ",sessionUser.getuName()));
+            userLogHandler.log(sessionUser, Modules.config,String.format("%s 备份系统设置 ",sessionUser.getuName()));
 
             return null;
         } catch (IOException e) {
@@ -206,18 +214,28 @@ public class SystemController {
             return JSONMessage.createFalied("上传文件太大").toString();
         }
 
-        byte[] chars =  file.getBytes();
-        String data = StringUtil.byte2String(chars);
+        try {
+            byte[] chars =  file.getBytes();
+            String data = StringUtil.byte2String(chars);
 
-        //Minkey 导入配置文件未完成
-        log.info("导入的数据"+data);
-        log.debug("end: 导入配置文件");
+            JSONArray jsonArray = JSONArray.parseArray(data);
 
-        User sessionUser = (User) session.getAttribute("user");
-        //记录用户日志
-        userLogHandler.log(sessionUser, Modules.link,String.format("%s 导入配置文件，恢复系统设置 ",sessionUser.getuName()));
+            JSONObject tempObj ;
+            for (int i = 0; i < jsonArray.size(); i++) {
+                tempObj = jsonArray.getJSONObject(i);
+                configHandler.insert(tempObj.getString("configKey"),tempObj.getString("configData"));
+            }
 
-        return JSONMessage.createSuccess("导入成功").toString();
+            User sessionUser = (User) session.getAttribute("user");
+            //记录用户日志
+            userLogHandler.log(sessionUser, Modules.link,String.format("%s 导入配置文件，恢复系统设置 ",sessionUser.getuName()));
+
+            return JSONMessage.createSuccess("导入成功").toString();
+        } catch (IOException e) {
+            return null;
+        }finally {
+            log.debug("end: 导入配置文件");
+        }
     }
 
 

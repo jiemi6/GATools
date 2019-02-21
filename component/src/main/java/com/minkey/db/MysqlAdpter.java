@@ -179,7 +179,9 @@ public class MysqlAdpter {
         for (Map<String, Object> stringObjectMap : result) {
             //获取表字段类型
             String type = (String) stringObjectMap.get("Type");
-            if(StringUtils.equalsIgnoreCase(type,"BLOB") || StringUtils.equalsIgnoreCase(type,"CLOB")){
+            if(StringUtils.equalsIgnoreCase(type,"BLOB")
+                    || StringUtils.equalsIgnoreCase(type,"CLOB")
+                    || StringUtils.equalsIgnoreCase(type,"NCLOB")){
                 return true;
             }
         }

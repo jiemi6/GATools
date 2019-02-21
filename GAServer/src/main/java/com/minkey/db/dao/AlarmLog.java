@@ -114,6 +114,19 @@ public class AlarmLog {
         this.createTime = createTime;
     }
 
+    public static String getString8BType(int bType){
+        switch (bType){
+            case 1 :
+                return "链路";
+            case 2 :
+                return "任务";
+            case 3 :
+                return "设备";
+            default:
+                return "链路";
+        }
+    }
+
     @Override
     public String toString() {
         return "AlarmLog{" +

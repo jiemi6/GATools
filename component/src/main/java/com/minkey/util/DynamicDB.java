@@ -191,7 +191,7 @@ public class DynamicDB {
             // 每个触发任务会在业务服务器上建立以此触发任务任务编号命名的动作表，
             // 查询select count（*） from 动作表名；若动作表的数据总数积压超过有1万条数据则报警处理
             Set<String> tableCountMax1W = new HashSet<>();
-            if(CollectionUtils.isEmpty(allTableName)){
+            if(CollectionUtils.isNotEmpty(allTableName)){
                 for (String tableName : allTableName) {
                     //是否有blob字段
                     if(tableHasBlobDesc(jdbcTemplate,tableName, dbConfigData)){
@@ -221,10 +221,9 @@ public class DynamicDB {
 
 
         }catch (SystemException  e){
-            log.debug(String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
             resultJson.put("alarmType",e.getErrorCode());
         }catch (Exception e){
-            log.debug(String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
+            log.debug(String.format("测试数据库%s失败,msg=%s",dbConfigData.toString(),e.getMessage()));
             resultJson.put("alarmType",AlarmEnum.port_notConnect.getAlarmType());
         }
 
