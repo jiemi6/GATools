@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @WebFilter(filterName = "licenseFilter",urlPatterns = {"/*"})
 public class LicenseFilter implements Filter {
 
-    public static final String no_license = "/license.html";
+    public static final String no_license = "/shouquan.html";
 
     protected List<Pattern> patterns = new ArrayList<Pattern>();
     @Override
@@ -35,6 +35,10 @@ public class LicenseFilter implements Filter {
         patterns.add(Pattern.compile("/license/up"));
         patterns.add(Pattern.compile("/license/keyExport"));
         patterns.add(Pattern.compile("/license/key"));
+
+        patterns.add(Pattern.compile("/user/getVCode"));
+        patterns.add(Pattern.compile("/user/checkVCode"));
+        patterns.add(Pattern.compile("/user/login"));
 
         patterns.add(Pattern.compile(".*(\\.css|\\.json|\\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)"));
 

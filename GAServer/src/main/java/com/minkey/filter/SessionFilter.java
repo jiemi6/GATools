@@ -31,6 +31,9 @@ public class SessionFilter implements Filter {
         patterns.add(Pattern.compile("/lg2.html"));
 
         patterns.add(Pattern.compile(LicenseFilter.no_license));
+        patterns.add(Pattern.compile("/license/up"));
+        patterns.add(Pattern.compile("/license/keyExport"));
+        patterns.add(Pattern.compile("/license/key"));
 
         patterns.add(Pattern.compile("/user/getVCode"));
         patterns.add(Pattern.compile("/user/checkVCode"));

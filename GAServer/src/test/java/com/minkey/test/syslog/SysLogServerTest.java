@@ -16,7 +16,7 @@ public class SysLogServerTest {
     public void startS(){
         try {
             SysLogUtil SysLogUtil = new SysLogUtil();
-            SysLogUtil.startServer(514);
+            SysLogUtil.startAcceptServer(514);
             log.error("start");
         } catch (Throwable throwable) {
             throwable.printStackTrace();

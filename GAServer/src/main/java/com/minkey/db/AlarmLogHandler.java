@@ -230,7 +230,7 @@ public class AlarmLogHandler {
      * 根据下标查询,用于发送邮件
      * @param index  下标就是主键
      */
-    public List<AlarmLog> query4email(long index) {
+    public List<AlarmLog> query4send(long index) {
 
         List<AlarmLog> alarmLogs = jdbcTemplate.query("select * from "+tableName + "where logId > ? ORDER BY logId desc limit 0,1",
                 new Object[]{index},new BeanPropertyRowMapper<>(AlarmLog.class));

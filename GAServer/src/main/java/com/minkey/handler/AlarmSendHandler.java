@@ -11,6 +11,7 @@ import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.AlarmLog;
 import com.minkey.util.DateUtil;
 import com.minkey.util.SendMailText;
+import com.minkey.util.SendSMS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -37,6 +38,9 @@ public class AlarmSendHandler {
 
     @Autowired
     SendMailText sendMailText;
+
+    @Autowired
+    SendSMS sendSMS;
 
     @Autowired
     DeviceCache deviceCache;
@@ -96,14 +100,50 @@ public class AlarmSendHandler {
                 jianGeFenzhong = 0;
             }
 
+
+            long index = 0;
+            Map<String, Object> configIndex = configHandler.query(ConfigEnum.EmailIndex.getConfigKey());
+            if(!CollectionUtils.isEmpty(configIndex)){
+                index = Long.valueOf(configIndex.get("sendIndex").toString());
+            }
+
+            List<AlarmLog> alarmLogs = alarmLogHandler.query4send(index);
+            if(CollectionUtils.isEmpty(alarmLogs)){
+                return;
+            }
+
+            //取出来
+            AlarmLog alarmLog = alarmLogs.get(0);
+
+            //更新下标
+            configIndex.put("sendIndex",alarmLog.getLogId());
+            configHandler.insert(ConfigEnum.EmailIndex.getConfigKey(),configIndex.toString());
+
+
+            String alarmObjectName = alarmLog.getBid()+"";
+            switch (alarmLog.getbType()){
+                case 1 :
+                    alarmObjectName= deviceCache.getLink8Id(alarmLog.getBid()).getLinkName();
+                case 2 :
+                    alarmObjectName = taskHandler.query(alarmLog.getBid()).getTaskName();
+                case 3 :
+                    alarmObjectName = deviceCache.getDevice(alarmLog.getBid()).getDeviceName();
+            }
+
+
             if (alarmConfigData.getJSONObject("emailConfig") != null) {
-                sendEmail(alarmConfigData.getJSONObject("emailConfig"));
+                sendEmail(alarmObjectName,alarmConfigData.getJSONObject("emailConfig"),alarmLog);
+            }
+
+            if (alarmConfigData.getJSONObject("smsConfig") != null) {
+                sendSMS(alarmObjectName,alarmConfigData.getJSONObject("smsConfig"),alarmLog);
             }
         }catch (Exception e){
             log.error("调度发送报警异常:"+e.getMessage());
         }
-
     }
+
+
 
     private boolean isAlarmTime(JSONObject baseConfig ){
         String timeStart = baseConfig.getString("timeStart");
@@ -122,32 +162,12 @@ public class AlarmSendHandler {
     @Autowired
     TaskHandler taskHandler;
 
-    private void sendEmail(JSONObject emailConfig){
-        long index = 0;
-        Map<String, Object> configIndex = configHandler.query(ConfigEnum.EmailIndex.getConfigKey());
-        if(!CollectionUtils.isEmpty(configIndex)){
-            index = Long.valueOf(configIndex.get("sendIndex").toString());
-        }
-
-        List<AlarmLog> alarmLogs = alarmLogHandler.query4email(index);
-        if(CollectionUtils.isEmpty(alarmLogs)){
+    private void sendEmail(String alarmObjectName ,JSONObject emailConfig,AlarmLog alarmLog){
+        if(!emailConfig.getBooleanValue("isOpen")){
             return;
         }
 
-        //取出来
-        AlarmLog alarmLog = alarmLogs.get(0);
-
         StringBuffer sb = new StringBuffer();
-        String alarmObjectName = alarmLog.getBid()+"";
-        switch (alarmLog.getbType()){
-            case 1 :
-                alarmObjectName= deviceCache.getLink8Id(alarmLog.getBid()).getLinkName();
-            case 2 :
-                alarmObjectName = taskHandler.query(alarmLog.getBid()).getTaskName();
-            case 3 :
-                alarmObjectName = deviceCache.getDevice(alarmLog.getBid()).getDeviceName();
-        }
-
 
         sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append("\r\n");
         sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType())).append("\r\n");
@@ -157,5 +177,23 @@ public class AlarmSendHandler {
         sb.append("告警时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all)).append("\r\n");
 
         sendMailText.send(emailConfig,sb.toString());
+    }
+
+    private void sendSMS(String alarmObjectName ,JSONObject smsConfig,AlarmLog alarmLog) {
+        if(!smsConfig.getBooleanValue("isOpen")){
+            return;
+        }
+
+        StringBuffer sb = new StringBuffer();
+
+        sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc());
+        sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType()));
+        sb.append("告警级别:").append(MyLevel.getString8level(alarmLog.getLevel()));
+        sb.append("告警对象:").append(alarmObjectName);
+        sb.append("告警内容:").append(alarmLog.getMsg());
+        sb.append("告警时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
+
+
+        sendSMS.send(smsConfig,sb.toString());
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class TaskHandler {
 
 
     public int queryCount() {
-        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+"  t,t_link tl where t.linkId=tl.linkId",Integer.class);
+        Integer count = jdbcTemplate.queryForObject("select count(*) from "+tableName+"  t,t_link tl where t.linkId=tl.linkId AND  t.status > 0",Integer.class);
         return count;
     }
 
@@ -122,5 +123,26 @@ public class TaskHandler {
         page.setTotal(total);
 
         return page;
+    }
+
+    public boolean isExist(long linkId, String targetTaskId) {
+        List<Task> taskList= jdbcTemplate.query("select * from "+tableName+" where linkId=? AND targetTaskId=?",
+                new Object[]{linkId,targetTaskId}, new BeanPropertyRowMapper<>(Task.class));
+        if(CollectionUtils.isEmpty(taskList)){
+            return false;
+        }
+        return true;
+    }
+
+    public void insert(Task task) {
+        List<Task> tasks = new ArrayList<>(1);
+        tasks.add(task);
+        insertAll(tasks);
+    }
+
+
+    public void update(Task task) {
+        int num = jdbcTemplate.update("update "+tableName+" set taskName=?,status=?,taskType=? WHERE targetTaskId=? AND linkId=?"
+                ,new Object[]{task.getTaskName(),task.getStatus(),task.getTaskType(),task.getTargetTaskId(),task.getLinkId()});
     }
 }

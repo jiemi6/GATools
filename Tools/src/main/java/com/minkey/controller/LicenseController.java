@@ -39,8 +39,8 @@ public class LicenseController {
             licenseData = "参数错误".getBytes();
         }else{
             JSONObject jo = new JSONObject();
-            jo.put(DATA_DEADLINE, "2020-01-01");
-            jo.put(DATA_PUBLISHER, "XXXX有限公司");
+            jo.put(DATA_DEADLINE, "2022-01-01");
+            jo.put(DATA_PUBLISHER, "江门市公安局");
             if(!StringUtils.isEmpty(licenseKey)){
                 licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
             }

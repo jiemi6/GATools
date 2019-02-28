@@ -43,7 +43,7 @@ public class InitSystem {
         deviceCache.init();
 
         //初始化syslog接受服务器
-        sysLogUtil.startServer(SysLogUtil.SYSLOG_PORT);
+        sysLogUtil.startAcceptServer(SysLogUtil.SYSLOG_PORT);
 
         licenseController.init();
     }

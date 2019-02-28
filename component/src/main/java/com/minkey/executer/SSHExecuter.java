@@ -48,7 +48,7 @@ public class SSHExecuter {
 
             return true;
         } catch (Exception e) {
-            log.error("Test SSH "+e.getMessage());
+            log.error("测试 "+e.getMessage());
             return false;
         }finally {
             if(sshExecuter != null){
@@ -83,7 +83,7 @@ public class SSHExecuter {
             session.isConnected();
         } catch (JSchException e) {
             //Connection refused 网络不通
-            throw new SystemException(String.format("SSH 异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
+            throw new SystemException(String.format("SSH连接异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
         }
         return session;
     }

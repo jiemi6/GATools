@@ -6,6 +6,7 @@ import com.minkey.contants.AlarmEnum;
 import com.minkey.dto.FTPConfigData;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
@@ -133,8 +134,12 @@ public class FTPUtil {
                 String allAuth = checkAuth(ftpClient);
                 resultObject.put("allAuth",allAuth);
 
-                int totalFileNum = countFileNum(ftpClient,rootPath,0);
-                resultObject.put("totalFileNum",totalFileNum);
+                if(StringUtils.isEmpty(rootPath)){
+                    resultObject.put("totalFileNum",0);
+                }else{
+                    int totalFileNum = countFileNum(ftpClient,rootPath,0);
+                    resultObject.put("totalFileNum",totalFileNum);
+                }
                 resultObject.put("topDirNum",topDirNum);
                 resultObject.put("floorNum",maxFloorNum);
             }

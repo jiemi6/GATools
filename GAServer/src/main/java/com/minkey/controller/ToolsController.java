@@ -49,14 +49,14 @@ public class ToolsController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping(Integer netArea,String ip,Long detectorId) {
-        log.debug("start: 执行ping ip={},netArea={},detectorId={}",ip,netArea,detectorId);
+    public String ping(Integer netArea,String ip,Long deviceId) {
+        log.debug("start: 执行ping ip={},netArea={},deviceId={}",ip,netArea,deviceId);
 
         if(netArea == null){
             netArea = CommonContants.NETAREA_IN;
         }
 
-        if(netArea == CommonContants.NETAREA_OUT && detectorId == null){
+        if(netArea == CommonContants.NETAREA_OUT && deviceId == null){
             return JSONMessage.createFalied("请选择一个探针").toString();
         }
 
@@ -80,15 +80,15 @@ public class ToolsController {
                 //内网 直接执行
                 resultInfo = LocalExecuter.exec(cmd);
             }else{
-                if (detectorId == null){
+                if (deviceId == null){
                     return JSONMessage.createFalied("请选择一个在线的探针").toString();
                 }
                 //探针不在线，无法执行命令
-                if(!deviceConnectCache.isOk(detectorId)){
+                if(!deviceConnectCache.isOk(deviceId)){
                     return JSONMessage.createFalied("探针不在线，无法执行命令").toString();
                 }
                 //获取该探针服务
-                DeviceService detectorService = deviceServiceHandler.query8Device(detectorId,DeviceService.SERVICETYPE_DETECTOR);
+                DeviceService detectorService = deviceServiceHandler.query8Device(deviceId,DeviceService.SERVICETYPE_DETECTOR);
 
                 if(detectorService == null){
                     return JSONMessage.createFalied("该探针设备没有探针配置服务，无法执行命令").toString();

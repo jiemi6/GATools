@@ -66,7 +66,7 @@ public class AlarmDayLogAnalysisTask {
             List<Long> allDeviceIds = alarmLogHandler.queryAllBid8btype(AlarmLog.BTYPE_DEVICE, startDate,endDate);
             int alarmDeviceNum = CollectionUtils.isEmpty(allDeviceIds) ? 0 : allDeviceIds.size();
 
-            int totalTaskNum =0;
+            int totalTaskNum =taskHandler.queryCount();
             int alarmTaskNum = 0;
             //获取所有任务
             List<Task> tasks = taskHandler.queryAll();
@@ -83,9 +83,15 @@ public class AlarmDayLogAnalysisTask {
                     alarmTaskNum = allTaskIds.size();
                 }
             }
-            //Minkey 解决报警数有可能大于总数的bug
-            if(alarmTaskNum > totalDeviceNum){
+            //解决报警数有可能大于总数的bug
+            if(alarmDeviceNum > totalDeviceNum){
                 alarmDeviceNum = totalDeviceNum;
+                log.warn("设备报警数为:%s,总的设备数为:%s",alarmDeviceNum,totalDeviceNum);
+            }
+
+            if(alarmTaskNum > totalTaskNum){
+                alarmTaskNum = totalTaskNum;
+                log.warn("任务报警数为:%s,总的任务数为:%s",alarmTaskNum,totalTaskNum);
             }
 
 

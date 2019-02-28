@@ -64,6 +64,7 @@ public class TaskController {
      * 废弃
      * @return
      */
+    @Deprecated
     @RequestMapping("/queryCount")
     public String queryCount() {
         log.debug("start: 执行count所有任务 ");

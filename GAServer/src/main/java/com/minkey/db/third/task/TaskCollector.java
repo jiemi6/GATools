@@ -85,13 +85,12 @@ public class TaskCollector {
             if (link.getLinkType() == LinkType.shujujiaohuan) {
                 shujujiaohuan(link,jdbcTemplate);
             }
-
         }
 
         log.warn("抓取其他链路数据库信息结束...");
     }
 
-    private void shujujiaohuan(Link link, JdbcTemplate jdbcTemplate) {
+    public void shujujiaohuan(Link link, JdbcTemplate jdbcTemplate) {
         try {
             //获取task
             collectorTask(jdbcTemplate, link);
@@ -129,9 +128,6 @@ public class TaskCollector {
         }
         List<Task> taskTriggerList = new ArrayList<>(mapList.size());
 
-
-
-
     }
 
 
@@ -144,12 +140,12 @@ public class TaskCollector {
         //查询所有task
         List<Map<String, Object>>  mapList= jdbcTemplate.queryForList("select taskid,name,tbtasktypeid,status from tbtask ");
 
+        //先删除,软删除
+        taskHandler.del8LinkId(link.getLinkId());
+
         if(CollectionUtils.isEmpty(mapList)){
-            taskHandler.del8LinkId(link.getLinkId());
             return;
         }
-
-        List<Task> tasks = new ArrayList<>(mapList.size());
 
         mapList.forEach(stringObjectMap -> {
             Task task = new Task();
@@ -166,15 +162,15 @@ public class TaskCollector {
             }
             task.setLinkId(link.getLinkId());
             task.setStatus(Integer.valueOf((String)stringObjectMap.get("status")));
-            tasks.add(task);
+
+            //如果存在,则update
+            if(taskHandler.isExist(link.getLinkId(),task.getTargetTaskId())){
+                taskHandler.update(task);
+            }else{
+                //不存在则新增
+                taskHandler.insert(task);
+            }
         });
-
-
-        taskHandler.del8LinkId(link.getLinkId());
-        if(!CollectionUtils.isEmpty(tasks)){
-            //把链路存到数据库中。
-            taskHandler.insertAll(tasks);
-        }
 
     }
 

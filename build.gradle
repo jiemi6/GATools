@@ -2,7 +2,7 @@ group 'com.minkey'
 
 
 subprojects {
-	version '1.0'
+	version '1.2'
 
 	apply plugin: 'java'
 	apply plugin: 'maven'
@@ -34,10 +34,14 @@ subprojects {
 		into "conf"
 	}
 
+	applicationDistribution.from("build/resources/main/static") {
+		into "resources/static"
+	}
+
 	jar{
 		exclude("application.properties")
 		exclude("logback.xml")
-//		exclude("static")
+		exclude("static")
 		exclude("templates")
     }
 

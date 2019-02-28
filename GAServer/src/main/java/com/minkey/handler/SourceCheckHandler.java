@@ -206,9 +206,6 @@ public class SourceCheckHandler {
             alarmLogs.add(alarmLog);
         }
 
-
-
-
         if(source.getDatabaseDriver() == DatabaseDriver.MYSQL){
             alarmLog = judgeMysqlAuth(jsonResult.getJSONArray("authSet"),task.getTaskId());
             if(alarmLog != null){
@@ -220,9 +217,6 @@ public class SourceCheckHandler {
                 alarmLogs.add(alarmLog);
             }
         }
-
-
-
 
         return alarmLogs;
 

@@ -2,6 +2,7 @@ package com.minkey.handler;
 
 import com.minkey.cache.CheckStepCache;
 import com.minkey.cache.DeviceCache;
+import com.minkey.contants.DeviceType;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckItemHandler;
 import com.minkey.db.SourceHandler;
@@ -9,6 +10,7 @@ import com.minkey.db.TaskHandler;
 import com.minkey.db.TaskSourceHandler;
 import com.minkey.db.dao.*;
 import com.minkey.dto.FTPConfigData;
+import com.minkey.dto.SnmpConfigData;
 import com.minkey.exception.SystemException;
 import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
@@ -18,6 +20,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 任务另起一个类
@@ -89,11 +95,72 @@ public class TaskExamineHandler {
         checkItem = testSource(checkId, task, toSource,detectorService);
         checkItemHandler.insert(checkItem);
 
-        //Minkey 检查任务进程是否存在
-        checkItem = checkStepCache.createNextItem(checkId);
-        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg("任务进程正常运行");
+
+        Link link = deviceCache.getLink8Id(task.getLinkId());
+        Map<Long, Device> deviceMap= deviceCache.getDevice8Ids(link.getDeviceIds());
+        Device tas = null;
+        Device uas = null;
+        for(Device device: deviceMap.values()){
+            //找到TAS
+            if(device.getDeviceType() == DeviceType.xinrenduanshujujiaohuanxitong){
+                tas = device;
+            }else if(device.getDeviceType() == DeviceType.feixinrenduanshujujiaohuanxitong){
+                uas = device;
+            }
+        }
+
+        //检查任务进程是否存在
+        checkItem = checkTaskProcess(checkId,task,tas,null,"TAS");
+        checkItemHandler.insert(checkItem);
+        checkItem = checkTaskProcess(checkId,task,uas,detectorService,"UAS");
         checkItemHandler.insert(checkItem);
     }
+
+
+    @Autowired
+    SnmpExploreHandler snmpExploreHandler;
+
+    private CheckItem checkTaskProcess(long checkId,Task task,Device tasDevice,DeviceService detectorService,String deviceType){
+        AlarmLog alarmLog = null;
+        DeviceService snmpDeviceService = null;
+
+        CheckItem checkItem = checkStepCache.createNextItem(checkId); ;
+        //如果设备不存在
+        if(tasDevice == null){
+            //不检查进程，链路会报警
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg("没有找到"+deviceType+"设备");
+            return checkItem;
+        }else {
+            Set<DeviceService> deviceServiceSet = deviceCache.getDeviceService8DeviceId(tasDevice.getDeviceId());
+            if (!CollectionUtils.isEmpty(deviceServiceSet)) {
+                for (DeviceService deviceService : deviceServiceSet) {
+                    //找snmp服务
+                    if (deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP) {
+                        snmpDeviceService = deviceService;
+                        break;
+                    }
+                }
+            }
+
+            //没有配置snmp服务
+            if (snmpDeviceService == null) {
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(deviceType+"设备没有配置SNMP服务！");
+                return checkItem;
+            }
+            SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
+
+            boolean isProcessExist = snmpExploreHandler.checkProcess(task.getTargetTaskId(), snmpConfigData, detectorService);
+
+            if (isProcessExist) {
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(deviceType+"设备正常运行该任务进程！");
+            }else{
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(deviceType+"设备不存在该任务进程！");
+            }
+            return checkItem;
+
+        }
+    }
+
 
     private CheckItem testSource(long checkId, Task task, Source source, DeviceService detectorService){
         //如果是外网而且没有探针

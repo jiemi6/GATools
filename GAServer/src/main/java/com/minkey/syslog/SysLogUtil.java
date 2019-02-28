@@ -1,5 +1,6 @@
 package com.minkey.syslog;
 
+import com.minkey.db.SyslogHandler;
 import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.productivity.java.syslog4j.Syslog;
@@ -9,6 +10,7 @@ import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
 import org.productivity.java.syslog4j.server.impl.event.printstream.PrintStreamSyslogServerEventHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URLDecoder;
@@ -22,6 +24,9 @@ public class SysLogUtil {
     public static final int SYSLOG_PORT = 514;
 
     private SyslogServerIF serverIF;
+
+    @Autowired
+    SyslogHandler syslogHandler;
 
     /**
      * 发送syslog
@@ -63,11 +68,11 @@ public class SysLogUtil {
 
 
     /**
-     * 启动syslog服务
+     * 启动syslog接收服务
      * @param port
      * @throws SystemException
      */
-    public void startServer(int port) throws SystemException{
+    public void startAcceptServer(int port) throws SystemException{
         try{
             new Thread(new Runnable() {
                 @Override

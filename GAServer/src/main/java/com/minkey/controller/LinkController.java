@@ -1,16 +1,21 @@
 package com.minkey.controller;
 
 import com.minkey.cache.DeviceCache;
+import com.minkey.contants.LinkType;
 import com.minkey.contants.Modules;
 import com.minkey.db.*;
 import com.minkey.db.dao.AlarmLog;
 import com.minkey.db.dao.Link;
 import com.minkey.db.dao.User;
+import com.minkey.db.third.task.TaskCollector;
+import com.minkey.dto.DBConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.util.DynamicDB;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -72,6 +77,8 @@ public class LinkController {
             //刷新缓存
             deviceCache.refresh();
 
+            getDataFromThird(link);
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -114,6 +121,8 @@ public class LinkController {
             //刷新缓存
             deviceCache.refresh();
 
+            getDataFromThird(link);
+
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
@@ -124,6 +133,30 @@ public class LinkController {
     }
 
 
+    @Autowired
+    TaskCollector taskCollector;
+
+    /**
+     * 从第三方数据库抓取链路相关的数据, 主要是任务
+     * @param link
+     */
+    @Async
+    public void getDataFromThird(Link link){
+        JdbcTemplate jdbcTemplate;
+            try {
+                if (link.getLinkType() == LinkType.shujujiaohuan) {
+                    //从链路中获取数据交换系统的数据库配置
+                    DBConfigData dbConfig = link.getDbConfigData();
+                    //先从缓存中获取
+                    jdbcTemplate = dynamicDB.get8dbConfig(dbConfig);
+
+                    taskCollector.shujujiaohuan(link,jdbcTemplate);
+                }
+            } catch (Exception e) {
+                log.error("从交换系统抓起任务列表异常", e);
+            }
+
+    }
 
 
 

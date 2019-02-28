@@ -129,7 +129,7 @@ public class SystemController {
         log.debug("start: 执行shutDown");
 
         if(isDebug){
-            return JSONMessage.createSuccess("暂时不真正执行，真的会关机的").toString();
+            return JSONMessage.createSuccess("debug模式不执行真正的关机命令!").toString();
         }
         try{
             User sessionUser = (User) session.getAttribute("user");
@@ -138,13 +138,13 @@ public class SystemController {
 
             if(reboot != null && reboot){
                 //重启
-                //Minkey 关机命令暂时使用假的
-                LocalExecuter.exec("shutdown -k now");
-//                LocalExecuter.exec("shutdown -r now");
+                //关机命令暂时使用假的
+//                LocalExecuter.exec("shutdown -k now");
+                LocalExecuter.exec("shutdown -r now");
             }else{
                 //关机
-                LocalExecuter.exec("shutdown -k now");
-//                LocalExecuter.exec("shutdown -h now");
+//                LocalExecuter.exec("shutdown -k now");
+                LocalExecuter.exec("shutdown -h now");
             }
 
             return JSONMessage.createSuccess().toString();
