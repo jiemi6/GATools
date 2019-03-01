@@ -377,8 +377,12 @@ public class AlarmHandler {
             taskAlarm.addAll(alarmLogSet);
 
             //检查任务进程是否存在
-            checkTaskProcess(task,detectorService);
+            alarmLogSet = checkTaskProcess(task,detectorService);
+            taskAlarm.addAll(alarmLogSet);
         }
+
+
+        alarmLogHandler.insertAll(taskAlarm);
 
         int level = MyLevel.LEVEL_NORMAL;
         for (AlarmLog alarmLogTemp : taskAlarm) {
@@ -395,7 +399,7 @@ public class AlarmHandler {
     /**
      * 检查UAS 和 TAS上任务进程是否都存在
      */
-    private void checkTaskProcess(Task task,DeviceService detectorService){
+    private Set<AlarmLog> checkTaskProcess(Task task, DeviceService detectorService){
         Link link = deviceCache.getLink8Id(task.getLinkId());
         Map<Long, Device> deviceMap= deviceCache.getDevice8Ids(link.getDeviceIds());
         Device tas = null;
@@ -409,57 +413,78 @@ public class AlarmHandler {
             }
         }
 
-        //tas在内网
-        checkTaskProcess(task,tas,null,"TAS");
-        //检查uas，uas在外网
-        checkTaskProcess(task,uas,detectorService,"UAS");
+        Set<AlarmLog> alarmLogs = new HashSet<>();
+        AlarmLog alarmLog = null;
+        //如果设备不存在
+        if(tas == null){
+            alarmLog = new AlarmLog();
+            alarmLog.setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.no_TAS)
+                    .setMsg(String.format("%s所在链路没有没有配置[%s]！",task.getTaskName(),"TAS"));
+        }else{
+            //tas在内网
+            alarmLog = checkTaskProcess(task,tas,null,"TAS");
+        }
+        alarmLogs.add(alarmLog);
 
+        //如果设备不存在
+        if(uas == null){
+            alarmLog = new AlarmLog();
+            alarmLog.setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.no_UAS)
+                    .setMsg(String.format("%s所在链路没有没有配置[%s]！",task.getTaskName(),"UAS"));
+        }else{
+            //检查uas，uas在外网
+            alarmLog = checkTaskProcess(task,uas,detectorService,"UAS");
+        }
+        alarmLogs.add(alarmLog);
+
+        return alarmLogs;
     }
 
-    private void checkTaskProcess(Task task,Device device,DeviceService detectorService,String deviceType){
+    private AlarmLog checkTaskProcess(Task task, Device device, DeviceService detectorService, String deviceType){
         AlarmLog alarmLog = null;
         DeviceService snmpDeviceService = null;
 
-        //如果设备不存在
-        if(device == null){
-            //不检查进程，链路会报警
-            return;
-        }else {
-            Set<DeviceService> deviceServiceSet = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
-            if(!CollectionUtils.isEmpty(deviceServiceSet)){
-                for (DeviceService deviceService : deviceServiceSet) {
-                    //找snmp服务
-                    if(deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP){
-                        snmpDeviceService = deviceService;
-                        break;
-                    }
+        Set<DeviceService> deviceServiceSet = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
+        if(!CollectionUtils.isEmpty(deviceServiceSet)){
+            for (DeviceService deviceService : deviceServiceSet) {
+                //找snmp服务
+                if(deviceService.getServiceType() == DeviceService.SERVICETYPE_SNMP){
+                    snmpDeviceService = deviceService;
+                    break;
                 }
             }
+        }
 
-            //没有配置snmp服务
-            if(snmpDeviceService == null){
+        //没有配置snmp服务
+        if(snmpDeviceService == null){
+            alarmLog = new AlarmLog();
+            alarmLog.setBid(task.getTaskId())
+                    .setbType(AlarmLog.BTYPE_TASK)
+                    .setLevel(MyLevel.LEVEL_ERROR)
+                    .setType(AlarmEnum.no_snmpservice)
+                    .setMsg(String.format("%s设备[%s]没有配置SNMP服务！",deviceType,device.getDeviceName()));
+        }else{
+            SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
+
+            boolean isProcessExist = snmpExploreHandler.checkProcess(task.getTargetTaskId(),snmpConfigData,detectorService);
+
+            if(!isProcessExist){
                 alarmLog = new AlarmLog();
                 alarmLog.setBid(task.getTaskId())
                         .setbType(AlarmLog.BTYPE_TASK)
                         .setLevel(MyLevel.LEVEL_ERROR)
-                        .setType(AlarmEnum.no_snmpservice)
-                        .setMsg(String.format("%s设备[%s]没有配置SNMP服务！",deviceType,device.getDeviceName()));
-            }else{
-                SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
-
-                boolean isProcessExist = snmpExploreHandler.checkProcess(task.getTargetTaskId(),snmpConfigData,detectorService);
-
-                if(!isProcessExist){
-                    alarmLog = new AlarmLog();
-                    alarmLog.setBid(task.getTaskId())
-                            .setbType(AlarmLog.BTYPE_TASK)
-                            .setLevel(MyLevel.LEVEL_ERROR)
-                            .setType(AlarmEnum.no_taskProcess)
-                            .setMsg(String.format("%s设备[%s]上任务进程[%s]不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
-                }
+                        .setType(AlarmEnum.no_taskProcess)
+                        .setMsg(String.format("%s设备[%s]上任务进程[%s]不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
             }
         }
-        alarmLogHandler.insert(alarmLog);
+
+        return alarmLog;
     }
 
 }

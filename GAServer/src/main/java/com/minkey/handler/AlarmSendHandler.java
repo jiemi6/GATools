@@ -186,11 +186,11 @@ public class AlarmSendHandler {
 
         StringBuffer sb = new StringBuffer();
 
-        sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc());
-        sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType()));
-        sb.append("告警级别:").append(MyLevel.getString8level(alarmLog.getLevel()));
-        sb.append("告警对象:").append(alarmObjectName);
-        sb.append("告警内容:").append(alarmLog.getMsg());
+        sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(".");
+        sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType())).append(".");
+        sb.append("告警级别:").append(MyLevel.getString8level(alarmLog.getLevel())).append(".");
+        sb.append("告警对象:").append(alarmObjectName).append(".");
+        sb.append("告警内容:").append(alarmLog.getMsg()).append(".");
         sb.append("告警时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
 
 
