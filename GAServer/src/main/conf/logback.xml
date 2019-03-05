@@ -35,6 +35,7 @@
     <logger name="com.mchange" level="info"/>
     <logger name="io.netty" level="info"/>
     <logger name="org.apache.commons.beanutils" level="info" />
+    <logger name="org.apache.http" level="info" />
     <logger name="org.dna.moquette.messaging.subscriptions" level="info" />
 
     <!--指定最基础的日志输出级别-->
