@@ -18,7 +18,7 @@ public enum  ConfigEnum {
 
     LicenseData("LicenseData","证书相关数据"),
 
-    EmailIndex("EmailIndex","邮箱发送的下标记录"),
+    AlarmSendIndex("AlarmSendIndex","报警发送的下标记录"),
 
 
 
