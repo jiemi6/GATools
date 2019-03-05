@@ -368,7 +368,6 @@ public class AlarmHandler {
             //检查数据来源方
             Source fromSource = sourceHandler.query(task.getLinkId(), fromSourceId);
             Set<AlarmLog> alarmLogSet = sourceCheckHandler.testSource(task, fromSource, detectorService);
-
             taskAlarm.addAll(alarmLogSet);
 
             //检查数据出口方

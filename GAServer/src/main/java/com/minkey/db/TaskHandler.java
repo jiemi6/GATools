@@ -39,7 +39,7 @@ public class TaskHandler {
     }
 
     public List<Task> queryAll() {
-        return jdbcTemplate.query("select * from "+tableName +" t,t_link tl where t.linkId=tl.linkId ", new BeanPropertyRowMapper<>(Task.class));
+        return jdbcTemplate.query("select * from "+tableName +" t,t_link tl where t.linkId=tl.linkId AND t.status > 0", new BeanPropertyRowMapper<>(Task.class));
     }
 
     public void insertAll(List<Task> tasks) {
@@ -114,12 +114,12 @@ public class TaskHandler {
     }
 
     public Page<Task> query8LinkId(Long linkId, Page<Task> page) {
-        List<Task> tasks = jdbcTemplate.query("select * from "+tableName + " where linkId=? ORDER BY level desc limit ?,?",
+        List<Task> tasks = jdbcTemplate.query("select * from "+tableName + " where linkId=? AND status >0 ORDER BY level desc limit ?,?",
                 new Object[]{linkId,page.startNum(),page.getPageSize()},new BeanPropertyRowMapper<>(Task.class));
 
         page.setData(tasks);
 
-        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName + " where linkId=?",new Object[]{linkId},Integer.class);
+        Integer total = jdbcTemplate.queryForObject("select count(*) from "+tableName + " where linkId=? AND status >0 ",new Object[]{linkId},Integer.class);
         page.setTotal(total);
 
         return page;

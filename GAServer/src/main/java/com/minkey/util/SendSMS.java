@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -99,6 +100,9 @@ public class SendSMS {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             // 创建post方式请求对象
             HttpPost httpPost = new HttpPost("http://10.45.0.84/JmGajSmsWS/JmGajSmsWS.asmx");
+            //设置请求和传输超时时间
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(500).setConnectTimeout(500).build();
+            httpPost.setConfig(requestConfig);
 
             // 设置参数到请求对象中
             StringEntity stringEntity = new StringEntity(requestStr, ContentType.create("text/xml","utf-8"));
@@ -117,8 +121,8 @@ public class SendSMS {
                 log.warn("发送短信接口返回错误:"+response.getStatusLine().getStatusCode());
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.error("发送短信异常"+e.getMessage());
         }finally {
             // 释放链接
             try {

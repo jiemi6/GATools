@@ -232,7 +232,7 @@ public class AlarmLogHandler {
      */
     public List<AlarmLog> query4send(long index) {
 
-        List<AlarmLog> alarmLogs = jdbcTemplate.query("select * from "+tableName + "where logId > ? ORDER BY logId desc limit 0,1",
+        List<AlarmLog> alarmLogs = jdbcTemplate.query("select * from "+tableName +" where logId > ? ORDER BY logId desc limit 0,1",
                 new Object[]{index},new BeanPropertyRowMapper<>(AlarmLog.class));
 
         return alarmLogs;

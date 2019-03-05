@@ -10,6 +10,7 @@ import com.minkey.db.dao.User;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.executer.LocalExecuter;
+import com.minkey.handler.AlarmSendHandler;
 import com.minkey.syslog.SysLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
@@ -214,6 +215,9 @@ public class ConfigController {
         }
     }
 
+
+    @Autowired
+    AlarmSendHandler alarmSendHandler;
     /**
      * 报警配置
      * @return
@@ -232,6 +236,9 @@ public class ConfigController {
 
             User user = (User) httpSession.getAttribute("user");
             userLogHandler.log(user, Modules.config, String.format("%s设置报警信息",user.getuName()));
+
+            //更新配置到缓存中
+            alarmSendHandler.updateConfig(configData);
 
             return JSONMessage.createSuccess().toString();
         }catch (JSONException e){

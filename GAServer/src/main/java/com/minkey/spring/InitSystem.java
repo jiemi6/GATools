@@ -2,6 +2,7 @@ package com.minkey.spring;
 
 import com.minkey.cache.DeviceCache;
 import com.minkey.controller.LicenseController;
+import com.minkey.handler.AlarmSendHandler;
 import com.minkey.syslog.SysLogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class InitSystem {
     LicenseController licenseController;
 
     @Autowired
+    AlarmSendHandler alarmSendHandler;
 
     @Value("${system.debug:false}")
     private boolean isDebug;
@@ -46,6 +48,8 @@ public class InitSystem {
         sysLogUtil.startAcceptServer(SysLogUtil.SYSLOG_PORT);
 
         licenseController.init();
+
+        alarmSendHandler.initConfig();
     }
 
 

@@ -9,7 +9,6 @@ import org.productivity.java.syslog4j.impl.net.udp.UDPNetSyslogConfig;
 import org.productivity.java.syslog4j.server.SyslogServer;
 import org.productivity.java.syslog4j.server.SyslogServerConfigIF;
 import org.productivity.java.syslog4j.server.SyslogServerIF;
-import org.productivity.java.syslog4j.server.impl.event.printstream.PrintStreamSyslogServerEventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -82,7 +81,8 @@ public class SysLogUtil {
                     //        config.setHost("192.168.1.114");
                     config.setPort(port);
 
-                    config.addEventHandler(new PrintStreamSyslogServerEventHandler(System.out));
+                    //不打印到控制台
+//                    config.addEventHandler(new PrintStreamSyslogServerEventHandler(System.out));
                     config.addEventHandler(new DBSyslogServerEventHandler());
 
                     serverIF.initialize("udp",config);
