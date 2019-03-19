@@ -49,7 +49,7 @@ public class LicenseController {
     final String DATA_DEADLINE = "deadline";
     final String DATA_PUBLISHER = "publisher";
 
-    final String configKey = ConfigEnum.LicenseData.getConfigKey();
+    final String licenseConfigKey = ConfigEnum.LicenseData.getConfigKey();
 
     /**
      * 导入证书,证书是根据注册码生成的,反向验证
@@ -73,7 +73,7 @@ public class LicenseController {
 
             log.info("license : {}" ,str);
 
-            Map<String, Object> dbData = configHandler.query(configKey);
+            Map<String, Object> dbData = configHandler.query(licenseConfigKey);
 
             if(MapUtils.isEmpty(dbData)){
                 return JSONMessage.createFalied("请先生成licenseKey").toString();
@@ -84,24 +84,33 @@ public class LicenseController {
             String licenseKey = configData.getString(LICENSEKEY);
 
             //校验证书与key的关系，用key解密
-            byte[] licenseData = SymmetricEncoder.AESDncode(licenseKey.getBytes(), file.getBytes());
+            byte[] licenseByteData = SymmetricEncoder.AESDncode(licenseKey.getBytes(), file.getBytes());
 
-            if(licenseData == null){
+            if(licenseByteData == null){
                 //解密失败，返回错误
                 return JSONMessage.createFalied("无效证书文件").toString();
             }
 
-            JSONObject licenseDataJson = (JSONObject) JSONObject.parse(new String(licenseData,"utf-8"));
+            String licenseStr = new String(licenseByteData,"utf-8");
+            JSONObject licenseDataJson = (JSONObject) JSONObject.parse(licenseStr);
+            if (licenseDataJson == null || licenseDataJson.size() <= 0 ) {
+                return JSONMessage.createFalied("无效证书文件").toString();
+            }
+
+            Date dataDeadline = licenseDataJson.getJSONObject("licenseData").getDate(DATA_DEADLINE);
+            if (System.currentTimeMillis() > dataDeadline.getTime()) {
+                return JSONMessage.createFalied("证书文件已经过期").toString();
+            }else{
+                this.licenseOK = true;
+            }
+
             //记录到数据库中
             configData.put("licenseData",licenseDataJson);
-            configHandler.insert(configKey, JSONObject.toJSONString(configData));
-
-            //赋值给缓存
-            this.licenseData = licenseDataJson;
+            configHandler.insert(licenseConfigKey, JSONObject.toJSONString(configData));
 
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
-            userLogHandler.log(sessionUser, Modules.license,String.format("%s 导入新证书，licenseData=%s ",sessionUser.getuName(),licenseData));
+            userLogHandler.log(sessionUser, Modules.license,String.format("%s 导入新证书，licenseData=%s ",sessionUser.getuName(),licenseStr));
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -126,7 +135,7 @@ public class LicenseController {
 
     private String getKey(){
         String licenseKey = null;
-        Map<String, Object> dbData = configHandler.query(configKey);
+        Map<String, Object> dbData = configHandler.query(licenseConfigKey);
         JSONObject configData;
         if(MapUtils.isEmpty(dbData)){
             configData = new JSONObject();
@@ -142,9 +151,8 @@ public class LicenseController {
             //生成一个key
             licenseKey = StringUtil.md5(Math.random()+"");
             configData.put(LICENSEKEY,licenseKey);
-            configHandler.insert(configKey, configData.toJSONString());
+            configHandler.insert(licenseConfigKey, configData.toJSONString());
         }
-
         return licenseKey;
     }
 
@@ -168,7 +176,6 @@ public class LicenseController {
             return null;
         }
     }
-
 
     /**
      * 获取license
@@ -205,7 +212,6 @@ public class LicenseController {
 //        }
     }
 
-
     /**
      * 获取licesen数据信息
      * @return
@@ -213,7 +219,7 @@ public class LicenseController {
     @RequestMapping("/check")
     public String check() {
 
-        Map<String, Object> dbData = configHandler.query(configKey);
+        Map<String, Object> dbData = configHandler.query(licenseConfigKey);
 
         if(MapUtils.isEmpty(dbData)){
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
@@ -226,12 +232,6 @@ public class LicenseController {
 
         return JSONMessage.createSuccess().addData(configData).toString();
     }
-
-
-    /**
-     * 本地缓存的lincense
-     */
-    private JSONObject licenseData;
 
     /**
      * 证书是否有效
@@ -246,7 +246,6 @@ public class LicenseController {
         return licenseOK;
     }
 
-
     /**
      * 初始化证书到缓存中
      * 每天凌晨更新一次
@@ -256,9 +255,9 @@ public class LicenseController {
         String licenseKey = getKey();
 
         log.warn("系统证书key："+licenseKey);
-
+        JSONObject licenseData;
         try {
-            Map<String, Object> dbData = configHandler.query(configKey);
+            Map<String, Object> dbData = configHandler.query(licenseConfigKey);
 
             if (MapUtils.isEmpty(dbData)) {
                 log.warn("数据库中证书为空!");
@@ -267,7 +266,18 @@ public class LicenseController {
             }
 
             try {
-                this.licenseData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
+                //得到的是未解密的证书数据
+                String unData = (String) dbData.get(ConfigHandler.CONFIGDATAKEY);
+
+                //校验证书与key的关系，用key解密
+                byte[] licenseByteData = SymmetricEncoder.AESDncode(licenseKey.getBytes(), unData.getBytes("UTF-8"));
+
+                if(licenseByteData == null){
+                    //解密失败，返回错误
+                    licenseOK = false;
+                    return;
+                }
+                licenseData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
             } catch (Exception e) {
                 log.error("证书配置异常," + e.getMessage());
                 licenseOK = false;

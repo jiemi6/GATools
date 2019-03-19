@@ -57,7 +57,7 @@ public class DynamicDB {
         JdbcTemplate jdbcTemplate ;
         String jdbcUrl ;
         if(databaseDriver == DatabaseDriver.MYSQL){
-            jdbcUrl = "jdbc:mysql://"+ip+":"+port+"/"+dbName+"?useUnicode=true&characterEncoding=utf-8&autoReconnect=true";
+            jdbcUrl = "jdbc:mysql://"+ip+":"+port+"/"+dbName+"?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false";
         }else if(databaseDriver == DatabaseDriver.ORACLE){
             jdbcUrl = "jdbc:oracle:thin:@//"+ip+":"+port+"/"+dbName;
 //        }else if(databaseDriver == DatabaseDriver.SQLSERVER){

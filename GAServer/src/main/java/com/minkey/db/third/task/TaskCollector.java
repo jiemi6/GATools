@@ -51,9 +51,10 @@ public class TaskCollector {
     private boolean isDebug;
 
     /**
-     * 每天凌晨 1：30执行
+     * 每6个小时执行一次
+     * 获取资源表时间为每天凌晨0点执行获取，更改为现在每隔6小时执行获取一次边界平台数据交换系统资源（即0点、6点、12点、18点)
      */
-    @Scheduled(cron="0 30 1 * * ?")
+    @Scheduled(cron="0 0 0/6 * * ? ")
     public void getTaskFromOtherDB(){
         log.warn("开始抓取其他链路数据库信息...");
 

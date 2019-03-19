@@ -32,8 +32,23 @@ public class DetectorUtil {
         return jsonMessage.isSuccess();
     }
 
-    public static boolean ping(String detectorIp,int detectorPort,String ip){
-        String url = String.format("http://%s:%s/ping",detectorIp,detectorPort);
+    public static JSONObject ping(String detectorIp, int detectorPort, String ip) throws SystemException{
+        String url = String.format("http://%s:%s/pingConnect",detectorIp,detectorPort);
+        Integer pingTimes = 4;
+        Double intervalTime = 0.2;
+        Integer timeout = 2;
+        Map<String,String> param = new HashMap<>(1);
+        param.put("ip",ip);
+        param.put("pingTimes",pingTimes.toString());
+        param.put("intervalTime",intervalTime.toString());
+        param.put("timeout",timeout.toString());
+        String returnStr = HttpClient.postRequest(url,param);
+
+        return getReturnJson(returnStr);
+    }
+
+    public static boolean pingConnect(String detectorIp, int detectorPort, String ip){
+        String url = String.format("http://%s:%s/pingConnect",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(1);
         param.put("ip",ip);
         String returnStr = HttpClient.postRequest(url,param);
@@ -47,7 +62,7 @@ public class DetectorUtil {
     }
 
 
-    public static ResultInfo executeSh(String detectorIp,int detectorPort, String cmdStr){
+    public static ResultInfo executeSh(String detectorIp,int detectorPort, String cmdStr) throws SystemException{
         String url = String.format("http://%s:%s/executeSh",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(1);
         param.put("cmdStr",cmdStr);
@@ -72,7 +87,7 @@ public class DetectorUtil {
 
     }
 
-    public static JSONObject snmpGet(String detectorIp,int detectorPort,SnmpConfigData snmpConfigData,String oid){
+    public static JSONObject snmpGet(String detectorIp,int detectorPort,SnmpConfigData snmpConfigData,String oid) throws SystemException{
          String ip = snmpConfigData.getIp();
          Integer port = snmpConfigData.getPort();
          Integer version = snmpConfigData.getVersion();
@@ -94,7 +109,7 @@ public class DetectorUtil {
 
     public static JSONObject snmpWalk(String detectorIp,int detectorPort,
                                       String ip,
-                                      String oid) {
+                                      String oid) throws SystemException{
         return snmpWalk(detectorIp,detectorPort,ip,SnmpUtil.DEFAULT_PORT, SnmpUtil.DEFAULT_VERSION,SnmpUtil.DEFAULT_COMMUNITY,SnmpUtil.DEFAULT_RETRY,SnmpUtil.DEFAULT_TIMEOUT,oid);
     }
 
@@ -105,7 +120,7 @@ public class DetectorUtil {
                                          String community,
                                          Integer retry,
                                          Long timeout,
-                                         String oid) {
+                                         String oid) throws SystemException{
         String url = String.format("http://%s:%s/snmp/walk",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",ip);
@@ -174,7 +189,7 @@ public class DetectorUtil {
         }
     }
 
-    public static JSONObject testDBSource(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
+    public static JSONObject testDBSource(String detectorIp, int detectorPort, DBConfigData dbConfigData) throws SystemException{
         String url = String.format("http://%s:%s/test/testDBSource",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",dbConfigData.getIp());
@@ -189,7 +204,7 @@ public class DetectorUtil {
     }
 
 
-    public static JSONObject testFTPSource(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
+    public static JSONObject testFTPSource(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) throws SystemException{
         String url = String.format("http://%s:%s/test/testFTPSource",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",ftpConfigData.getIp());

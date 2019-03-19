@@ -223,7 +223,7 @@ public class SystemController {
             JSONObject tempObj ;
             for (int i = 0; i < jsonArray.size(); i++) {
                 tempObj = jsonArray.getJSONObject(i);
-                configHandler.insert(tempObj.getString("configKey"),tempObj.getString("configData"));
+                configHandler.insert(tempObj.getString("licenseConfigKey"),tempObj.getString("configData"));
             }
 
             User sessionUser = (User) session.getAttribute("user");
@@ -237,8 +237,6 @@ public class SystemController {
             log.debug("end: 导入配置文件");
         }
     }
-
-
 
     /**
      * 重置系统，恢复出厂设置
@@ -255,9 +253,6 @@ public class SystemController {
 
         return JSONMessage.createSuccess("重置成功").toString();
     }
-
-
-
 
     /**
      * get网卡信息，ip，网关，子掩码等

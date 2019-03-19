@@ -70,9 +70,9 @@ public class ToolsController {
 
         try{
 
-            String cmd = "ping "+ip+ " -c 4";
+            String cmd = "pingConnect "+ip+ " -c 4";
 //            if(OSUtil.isWindowsOS()){
-//                cmd = "ping "+ip;
+//                cmd = "pingConnect "+ip;
 //            }
 
             ResultInfo resultInfo = null;

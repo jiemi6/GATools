@@ -73,9 +73,9 @@ public class AlarmSendHandler {
 
 
     /**
-     * 每天凌晨 0：01重置设置
+     * 每天凌晨 00：00:01重置设置
      */
-    @Scheduled(cron="0 1 0 * * ?")
+    @Scheduled(cron="1 0 0 * * ?")
     public void reset(){
         //重置发送次数
         totalSendTimes = 0;
@@ -98,12 +98,12 @@ public class AlarmSendHandler {
             JSONObject baseConfig = alarmConfigData.getJSONObject("baseConfig");
 
             if(!isAlarmTime(baseConfig)){
-                log.error("非发送时间段");
+                log.error("非告警发送时间段");
                 return;
             }
 
             if (baseConfig.getIntValue("maxnum") < totalSendTimes) {
-                log.error("发送次数超限");
+                log.error("告警发送次数超限,已经发送次数:"+totalSendTimes);
                 return;
             } else {
                 totalSendTimes++;
@@ -115,7 +115,7 @@ public class AlarmSendHandler {
             }
 
             if (baseConfig.getIntValue("alarmtime") > jianGeFenzhong) {
-                log.error("间隔时间没有达到 ");
+                log.error("间隔时间没有达到,暂不发送.");
                 jianGeFenzhong++;
                 return;
             } else {
@@ -217,12 +217,11 @@ public class AlarmSendHandler {
 
         StringBuffer sb = new StringBuffer();
 
-        sb.append("告警代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(".");
-        sb.append("告警类型:").append(AlarmLog.getString8BType(alarmLog.getbType())).append(".");
-        sb.append("告警级别:").append(MyLevel.getString8level(alarmLog.getLevel())).append(".");
-        sb.append("告警对象:").append(alarmObjectName).append(".");
-        sb.append("告警内容:").append(alarmLog.getMsg()).append(".");
-        sb.append("告警时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
+        sb.append(AlarmLog.getString8BType(alarmLog.getbType())).append("["+alarmObjectName+"]").append("告警.");
+        sb.append("级别:").append(MyLevel.getString8level(alarmLog.getLevel())).append(".");
+        sb.append("代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(".");
+        sb.append("内容:").append(alarmLog.getMsg()).append(".");
+        sb.append("时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
 
 
         sendSMS.send(smsConfig,sb.toString());

@@ -49,8 +49,8 @@ public class TaskDayLogCollector {
     public void getTaskLogFromOtherDB(){
         if(isDebug){
             log.error("debug，测试抓取任务执行日志daylog调度.");
-//            return;
         }
+
         List<Link> linkList = null;
         try {
             //查询所有链路

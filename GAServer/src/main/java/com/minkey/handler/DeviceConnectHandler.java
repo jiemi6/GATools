@@ -11,6 +11,7 @@ import com.minkey.exception.SystemException;
 import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -32,11 +33,18 @@ public class DeviceConnectHandler {
     @Autowired
     DeviceConnectCache deviceConnectCache;
 
+    @Value("${system.debug:false}")
+    private boolean isDebug;
+
     /**
-     * 每5秒刷新连接情况
+     * 每10秒刷新连接情况
      */
-    @Scheduled(cron = "0/5 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     public void reflashConnect() {
+        if(isDebug){
+            return ;
+        }
+
         Map<Long, Device> allDevices = deviceCache.allDevice();
 
         for (Device device:allDevices.values()){
@@ -97,7 +105,7 @@ public class DeviceConnectHandler {
         //如果是内网，
         if(device.getNetArea() == CommonContants.NETAREA_IN ){
             //直接访问
-            isConnect = Ping.javaPing(device.getIp());
+            isConnect = Ping.pingConnect(device.getIp());
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
@@ -112,7 +120,7 @@ public class DeviceConnectHandler {
                 return false;
             }
             //发送探针请求
-            return DetectorUtil.ping(detectorService.getIp(),detectorService.getConfigData().getPort(),device.getIp());
+            return DetectorUtil.pingConnect(detectorService.getIp(),detectorService.getConfigData().getPort(),device.getIp());
 
         }
         return isConnect;

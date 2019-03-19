@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Scope("prototype")
 public class BaseController {
+
     @RequestMapping("/check")
     public String check() {
         return JSONMessage.createSuccess().toString();
@@ -30,7 +31,7 @@ public class BaseController {
      * @return
      */
     @RequestMapping("/ping")
-    public String ping(String ip) {
+    public String ping(String ip,int pingTimes,double intervalTime,int timeout) {
         log.debug("exec ping [{}] start! " , ip);
         if(StringUtils.isEmpty(ip)){
             log.error("ip 参数为空！");
@@ -39,8 +40,9 @@ public class BaseController {
 
         try{
             JSONObject data = new JSONObject();
-            boolean isConnect = Ping.javaPing(ip);
-            data.put("isConnect",isConnect);
+            int connectedCount = Ping.pingLinux(ip,pingTimes,intervalTime,timeout);
+            data.put("isConnect",connectedCount > 0);
+            data.put("connectedCount",connectedCount);
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (SystemException e){
             return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
@@ -49,6 +51,29 @@ public class BaseController {
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
             log.debug("exec ping [{}] end! " , ip);
+        }
+    }
+
+    @RequestMapping("/pingConnect")
+    public String pingConnect(String ip) {
+        log.debug("exec pingConnect [{}] start! " , ip);
+        if(StringUtils.isEmpty(ip)){
+            log.error("ip 参数为空！");
+            return JSONMessage.createFalied("ip 参数为空！").toString();
+        }
+
+        try{
+            JSONObject data = new JSONObject();
+            boolean isConnected  = Ping.pingConnect(ip);
+            data.put("isConnect",isConnected);
+            return JSONMessage.createSuccess().addData(data).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            log.debug("exec pingConnect [{}] end! " , ip);
         }
     }
 

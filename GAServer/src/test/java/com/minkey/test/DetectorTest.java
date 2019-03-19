@@ -13,8 +13,8 @@ public class DetectorTest {
     @Test
     public void test() {
 //        log.info(""+DetectorUtil.check("127.0.0.1",1234));
-//        log.info(""+DetectorUtil.ping("127.0.0.1",1234,"127.0.0.1"));
-//        log.info(""+DetectorUtil.executeSh("127.0.0.1",1234,"ping 127.0.0.1"));
+//        log.info(""+DetectorUtil.pingConnect("127.0.0.1",1234,"127.0.0.1"));
+//        log.info(""+DetectorUtil.executeSh("127.0.0.1",1234,"pingConnect 127.0.0.1"));
         boolean b = Pattern.compile(".*(\\.css| \\.json | \\.png|\\.gif|\\.js|\\.eot|\\.svg|\\.ttf|\\.woff|\\.mp4)").matcher("/sshd/get").matches();
        log.error(b+"");
 

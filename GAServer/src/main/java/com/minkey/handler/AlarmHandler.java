@@ -17,6 +17,7 @@ import com.minkey.exception.SystemException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -59,12 +60,18 @@ public class AlarmHandler {
     SnmpExploreHandler snmpExploreHandler;
 
 
+    @Value("${system.debug:false}")
+    private boolean isDebug;
+
     /**
      * 扫描所有设备状态
      */
     @Scheduled(cron = "0 */1 * * * ?")
-//    @Scheduled(cron = "0/30 * * * * ?")
     public void deviceStatus() {
+        if(isDebug){
+            return ;
+        }
+
         //获取所有设备
         Map<Long, Device> allDevice = deviceCache.allDevice();
 

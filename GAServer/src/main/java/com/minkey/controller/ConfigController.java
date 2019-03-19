@@ -41,7 +41,7 @@ public class ConfigController {
 
     @RequestMapping("/insert")
     public String insert(String configKey,String configData) {
-        log.debug("start: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+        log.debug("start: 执行insert配置 licenseConfigKey={} ,configData={}",configKey,configData);
         if(StringUtils.isEmpty(configKey)){
             log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
@@ -57,13 +57,13 @@ public class ConfigController {
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.debug("end: 执行insert配置 configKey={} ,configData={}",configKey,configData);
+            log.debug("end: 执行insert配置 licenseConfigKey={} ,configData={}",configKey,configData);
         }
     }
 
     @RequestMapping("/query")
     public String query(String configKey) {
-        log.debug("start: 执行query配置 configKey={} ",configKey);
+        log.debug("start: 执行query配置 licenseConfigKey={} ",configKey);
         if(StringUtils.isEmpty(configKey)){
             log.info("configKey不能为空");
             return JSONMessage.createFalied("configKey不能为空").toString();
@@ -73,14 +73,14 @@ public class ConfigController {
 
             if(MapUtils.isNotEmpty(data)){
                 //去掉key，不返回
-                data.remove("configKey");
+                data.remove("licenseConfigKey");
             }
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (Exception e){
             log.error(e.getMessage(),e);
             return JSONMessage.createFalied(e.getMessage()).toString();
         }finally {
-            log.debug("end: 执行query配置 configKey={} ",configKey);
+            log.debug("end: 执行query配置 licenseConfigKey={} ",configKey);
         }
     }
 
