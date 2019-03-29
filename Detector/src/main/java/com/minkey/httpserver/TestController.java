@@ -143,8 +143,8 @@ public class TestController {
         }
 
         try{
-            boolean isConnect =  SSHExecuter.testConnect(baseConfigData);
-            return JSONMessage.createSuccess().addData("isConnect",isConnect).toString();
+            JSONObject result =  SSHExecuter.testSSH(baseConfigData);
+            return JSONMessage.createSuccess().addData(result).toString();
         }catch (SystemException e){
             return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
         }catch (Exception e){

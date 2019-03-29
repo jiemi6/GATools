@@ -1,5 +1,6 @@
 package com.minkey.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceConnectCache;
 import com.minkey.cache.DeviceExplorerCache;
@@ -194,7 +195,8 @@ public class AlarmHandler {
             return explorerLogs;
         } else {
             for (DeviceService deviceService : deviceServiceList) {
-                boolean isOk = deviceServiceCheckManager.checkDeviceService(device, deviceService, detectorService);
+                JSONObject jsonObject = deviceServiceCheckManager.checkDeviceService(device,deviceService,detectorService);
+                boolean isOk = jsonObject.getBooleanValue("isOk");
                 if (!isOk) {
                     alarmLog = new AlarmLog();
                     alarmLog.setBid(deviceId);

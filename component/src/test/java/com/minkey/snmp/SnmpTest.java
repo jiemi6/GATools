@@ -10,7 +10,7 @@ import org.junit.Test;
 public class SnmpTest {
         String ip = "127.0.0.1";
 //        String ip = "topwalkhndq.tpddns.cn";
-        String community = "public";
+        String community = "publ5ic";
 
 
     public void testWalk() {
@@ -37,9 +37,13 @@ public class SnmpTest {
     }
 
 
+    @Test
     public void testGetList() {
 //        SnmpUtil snmpUtil = new SnmpUtil("119.130.206.18");
-        SnmpUtil snmpUtil = new SnmpUtil("127.0.0.1");
+//        SnmpUtil snmpUtil = new SnmpUtil("127.0.0.1");
+        SnmpUtil snmpUtil = new SnmpUtil("127.0.0.1",181,
+                SnmpUtil.DEFAULT_COMMUNITY,SnmpUtil.DEFAULT_VERSION,SnmpUtil.DEFAULT_RETRY,SnmpUtil.DEFAULT_TIMEOUT);
+
 //        JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.16");
         JSONObject jo = snmpUtil.snmpWalk("1.3.6.1.2.1.2.2.1.10");
 

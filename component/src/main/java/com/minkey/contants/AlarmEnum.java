@@ -11,6 +11,11 @@ public enum AlarmEnum {
     //性能类
     shebeixingneng(2000,"设备性能报警"),
 
+    //ssh
+    ssh_unkonw(3000,"SSH未知异常"),
+    ssh_port_notConnect(3001,"SSH端口不通"),
+    ssh_wrongPwd(3002,"SSH账号密码错误"),
+
 
     //设备服务类
     shebeifuwu(3000,"设备服务报警"),
@@ -32,6 +37,7 @@ public enum AlarmEnum {
     db_notAllAuth(8004, "DB权限不足"),
     db_oracle_noAuth_V(8005, "无权访问v$系统视图"),
     db_has_bigColumn(8006, "数据库表包含大字段"),
+    db_connect_70(8007, "数据库连接数大于70%"),
 
 
     //ftp相关

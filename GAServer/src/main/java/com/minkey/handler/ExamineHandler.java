@@ -1,8 +1,10 @@
 package com.minkey.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.CheckStepCache;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceExplorerCache;
+import com.minkey.contants.DeviceType;
 import com.minkey.contants.MyLevel;
 import com.minkey.db.CheckItemHandler;
 import com.minkey.db.DeviceHandler;
@@ -110,6 +112,10 @@ public class ExamineHandler {
      * @param device
      */
     public void doDevice(long checkId, Device device) {
+        if (device.getDeviceType() == DeviceType.floder) {
+            //设备如果是文件夹，不做处理
+            return;
+        }
         CheckItem checkItem;
 
         //该设备所有的服务
@@ -117,9 +123,16 @@ public class ExamineHandler {
         //默认就只有一步 就是检查连接
         int totalStep = 1;
         // 检查网络联通性
-        boolean isConnect = deviceConnectHandler.pingTest(device);
+//        boolean isConnect = deviceConnectHandler.pingConnectTest(device);
 
-        if(isConnect){
+        String connectStr = deviceConnectHandler.ping(device);
+        int connect = Integer.parseInt(connectStr.split("/")[0]);
+        int total = Integer.parseInt(connectStr.split("/")[1]);
+        //丢包率
+        int loseRadio = Math.round(((total - connect) *100 ) / total);
+
+        //相等,则显示正常
+        if(connect == total){
             deviceServiceList = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
             //网络联通性 + 硬件情况 + 所有服务个数(没有也加一个)
             totalStep = 1 + 1 + (CollectionUtils.isEmpty(deviceServiceList) ? 1 : deviceServiceList.size());
@@ -127,14 +140,26 @@ public class ExamineHandler {
             checkStepCache.create(checkId,totalStep);
             checkItem = checkStepCache.createNextItem(checkId);
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
-            checkItem.setResultMsg(String.format("设备[%s]网络状态正常",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>网络连接状态正常,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%",
+                    device.getDeviceName(),total,total-connect,loseRadio));
 
             checkItemHandler.insert(checkItem);
+        }else if(connect == 0){
+            //不通就只有一步
+            checkItem = new CheckItem(checkId,1);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
+            checkItem.setResultMsg(String.format("<%s设备>网络无法连接,请检查网络连通性,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%",
+                    device.getDeviceName(),total,total-connect,loseRadio));
+
+            checkItemHandler.insert(checkItem);
+            return;
         }else{
             //不通就只有一步
             checkItem = new CheckItem(checkId,1);
             checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-            checkItem.setResultMsg(String.format("设备[%s]无法联通，请检查网络状态",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>网络连接状态不稳定,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%,请检查网络稳定性",
+                    device.getDeviceName(),total,total-connect,loseRadio));
+
             checkItemHandler.insert(checkItem);
             return;
         }
@@ -144,11 +169,12 @@ public class ExamineHandler {
         checkItem = checkStepCache.createNextItem(checkId);
         if(deviceExplorer == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("设备[%s]无法获取硬件资源信息",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>无法获取硬件资源信息",device.getDeviceName()));
         }else{
             checkItem.setCheckId(checkId);
             checkItem.setResultLevel(deviceExplorer.judgeLevel());
-            checkItem.setResultMsg(String.format("设备[%s]硬件资源 %s",device.getDeviceName(),deviceExplorer.showString()));
+            checkItem.setResultMsg(String.format("<%s设备>硬件资源%s<%s>",
+                    device.getDeviceName(),checkItem.getResultLevel() == MyLevel.LEVEL_NORMAL?"正常":"异常",deviceExplorer.showString()));
         }
         checkItemHandler.insert(checkItem);
 
@@ -158,7 +184,7 @@ public class ExamineHandler {
         //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
         if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("设备[%s]属于外网设备，并且没有配置可用的探针服务，无法探测该设备。",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>属于外网设备，且链路没有配置可用的探针服务，无法探测该设备。",device.getDeviceName()));
             checkItemHandler.insert(checkItem);
             return;
         }
@@ -167,17 +193,19 @@ public class ExamineHandler {
         if(CollectionUtils.isEmpty(deviceServiceList)){
             checkItem = checkStepCache.createNextItem(checkId);
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("设备[%s]没有配置服务!",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>没有配置服务!",device.getDeviceName()));
             checkItemHandler.insert(checkItem);
         }else{
             for(DeviceService deviceService :deviceServiceList){
-                boolean isOk = deviceServiceCheckManager.checkDeviceService(device,deviceService,detectorService);
-                int level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
-                String msg = String.format("设备[%s]%s服务%s",device.getDeviceName(),deviceService.typeNameStr(),isOk ? "正常" : "异常");
-                checkItem = checkStepCache.createNextItem(checkId);
+                JSONObject jsonObject = deviceServiceCheckManager.checkDeviceService(device,deviceService,detectorService);
+                boolean isOk = jsonObject.getBooleanValue("isOk");
+                String msg = jsonObject.getString("msg");
 
+                int level = isOk ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
+                checkItem = checkStepCache.createNextItem(checkId);
                 checkItem.setResultLevel(level);
-                checkItem.setResultMsg(msg);
+                checkItem.setResultMsg(String.format("<%s设备><%s服务>%s<br/>%s",
+                        device.getDeviceName(), device.getDeviceName(),isOk ?"正常":"异常",deviceService.typeNameStr(),msg));
                 checkItemHandler.insert(checkItem);
             }
         }
@@ -215,17 +243,17 @@ public class ExamineHandler {
         for(Long deviceId : deviceMap.keySet()){
             Device device = deviceMap.get(deviceId);
 
-            boolean isConnect = deviceConnectHandler.pingTest(device);
+            boolean isConnect = deviceConnectHandler.pingConnectTest(device);
 
             if(isConnect){
                 //创建检查步数 缓存
                 checkItem = checkStepCache.createNextItem(checkId);
-                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("设备[%s]网络状态正常",device.getDeviceName()));
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s设备>网络状态正常",device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
             }else{
                 //不通就只有一步
                 checkItem = checkStepCache.createNextItem(checkId);
-                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]中设备[%s]无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]中<%s设备>无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
                 allisConnect = false;
                 notConnectNum++;

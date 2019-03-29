@@ -182,7 +182,10 @@ public class DynamicDB {
             int connectNum = connectNum(jdbcTemplate, dbConfigData);
             resultJson.put("maxConnectNum",maxConnectNum);
             resultJson.put("connectNum",connectNum);
-
+            int connectRadio = Math.round(connectNum * 100 /maxConnectNum);
+            if(connectRadio > 70){
+                resultJson.put("alarmType",AlarmEnum.db_connect_70.getAlarmType());
+            }
             //获取所有表名
             Set<String> allTableName = getAllTableNames(jdbcTemplate, dbConfigData);
             //包含所有含有blob字段的表

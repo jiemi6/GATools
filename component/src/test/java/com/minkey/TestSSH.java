@@ -1,9 +1,9 @@
 package com.minkey;
 
 
-import com.jcraft.jsch.JSchException;
 import com.minkey.contants.CommonContants;
 import com.minkey.entity.ResultInfo;
+import com.minkey.exception.SystemException;
 import com.minkey.executer.LocalExecuter;
 import com.minkey.executer.SSHExecuter;
 import org.junit.Test;
@@ -22,8 +22,9 @@ public class TestSSH {
 
     @Test
     public void testSSH2() {
-        String host = "192.168.101.162";
-        int port = 22;
+//        String host = "192.168.101.162";
+        String host = "119.130.207.239";
+        int port = 233;
         String user = "root";
         String password = "sinosun";
         //        String command = "top -bcn 1 ";
@@ -41,7 +42,7 @@ public class TestSSH {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } catch (JSchException e) {
+        } catch (SystemException e) {
             e.printStackTrace();
         }
     }

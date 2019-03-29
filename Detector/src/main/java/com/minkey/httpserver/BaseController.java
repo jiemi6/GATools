@@ -40,9 +40,9 @@ public class BaseController {
 
         try{
             JSONObject data = new JSONObject();
-            int connectedCount = Ping.pingLinux(ip,pingTimes,intervalTime,timeout);
-            data.put("isConnect",connectedCount > 0);
-            data.put("connectedCount",connectedCount);
+            int successNum = Ping.ping(ip,pingTimes,intervalTime,timeout);
+            data.put("isConnect",successNum > 0);
+            data.put("successNum",successNum);
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (SystemException e){
             return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();

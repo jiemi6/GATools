@@ -32,16 +32,14 @@ public class DetectorUtil {
         return jsonMessage.isSuccess();
     }
 
-    public static JSONObject ping(String detectorIp, int detectorPort, String ip) throws SystemException{
+    public static JSONObject ping(String detectorIp, int detectorPort, String ip,
+                                  int pingTimes,double intervalTime,int timeout) throws SystemException{
         String url = String.format("http://%s:%s/pingConnect",detectorIp,detectorPort);
-        Integer pingTimes = 4;
-        Double intervalTime = 0.2;
-        Integer timeout = 2;
         Map<String,String> param = new HashMap<>(1);
         param.put("ip",ip);
-        param.put("pingTimes",pingTimes.toString());
-        param.put("intervalTime",intervalTime.toString());
-        param.put("timeout",timeout.toString());
+        param.put("pingTimes",new Integer(pingTimes).toString());
+        param.put("intervalTime",new Double(intervalTime).toString());
+        param.put("timeout",new Integer(timeout).toString());
         String returnStr = HttpClient.postRequest(url,param);
 
         return getReturnJson(returnStr);
@@ -218,7 +216,7 @@ public class DetectorUtil {
     }
 
 
-    public static boolean testSSH(String detectorIp, int detectorPort, BaseConfigData baseConfigData) {
+    public static JSONObject testSSH(String detectorIp, int detectorPort, BaseConfigData baseConfigData) {
         String url = String.format("http://%s:%s/test/testSSH",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(10);
         param.put("ip",baseConfigData.getIp());
@@ -226,12 +224,8 @@ public class DetectorUtil {
         param.put("name",baseConfigData.getName());
         param.put("pwd",baseConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.debug("探针执行testSSH报错,"+e.getMessage());
-            return false;
-        }
+
+        return getReturnJson(returnStr);
     }
 
     private static JSONObject getReturnJson(String returnStr) throws SystemException{

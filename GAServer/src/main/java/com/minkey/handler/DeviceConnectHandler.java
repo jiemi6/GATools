@@ -1,5 +1,6 @@
 package com.minkey.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.minkey.cache.DeviceCache;
 import com.minkey.cache.DeviceConnectCache;
 import com.minkey.command.Ping;
@@ -70,7 +71,7 @@ public class DeviceConnectHandler {
 
         boolean isConnect = false;
         try {
-            isConnect = pingTest(device);
+            isConnect = pingConnectTest(device);
         } catch (SystemException e) {
             log.error("ping设备异常",e);
         }
@@ -78,7 +79,7 @@ public class DeviceConnectHandler {
         deviceConnectCache.putConnect(deviceId,isConnect);
     }
 
-    public boolean pingTest(Device device) {
+    public boolean pingConnectTest(Device device) {
         if (device.getDeviceType() == DeviceType.floder) {
             //设备如果是文件夹，默认就是联通的
             return true;
@@ -127,6 +128,55 @@ public class DeviceConnectHandler {
     }
 
 
+    public String ping(Device device) {
+        //如果自己是探针 和 内网设备
+        if(device.getDeviceType() == DeviceType.detector || device.getNetArea() == CommonContants.NETAREA_IN ){
+            //需求要求先ping4次
+            int successNum = Ping.ping(device.getIp(),Ping.defalut_pingTimes,Ping.defalut_intervalTime,Ping.defalut_timeout);
+            //如果是0,丢全部包,直接返回
+            if(successNum <= 0){
+                return "0/4";
+            }else if(successNum >= 4){
+                //不丢包,正常
+                return "4/4";
+            }else {
+                //如果是1,2,3个包,再ping50个包
+                successNum = Ping.ping(device.getIp(),50,Ping.defalut_intervalTime,Ping.defalut_timeout);
+                return successNum + "/50";
+            }
+        }else{
+            //如果是外网，需要通过探针访问,获取探针信息
+            DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
+            //
+            if(detectorService == null){
+                throw new SystemException("没有配置探针,无法检查外网设备");
+            }
+            //判断探针是否联通
+            boolean connect = deviceConnectCache.isOk(detectorService.getDeviceId());
+            //如果探针连接失败，则无法测试，直接返回false；
+            if (!connect){
+                throw new SystemException("无法连接探针,无法检查外网设备");
+            }
 
+            //需求要求先ping4次
+            JSONObject returnObj = DetectorUtil.ping(detectorService.getIp(),detectorService.getConfigData().getPort(),device.getIp()
+                                                    ,Ping.defalut_pingTimes,Ping.defalut_intervalTime,Ping.defalut_timeout);
 
+            int successNum = returnObj.getIntValue("successNum");
+            //如果是0,丢全部包,直接返回
+            if(successNum <= 0){
+                return "0/4";
+            }else if(successNum >= 4){
+                //不丢包,正常
+                return "4/4";
+            }else {
+                //如果是1,2,3个包,再ping50个包
+                returnObj = DetectorUtil.ping(detectorService.getIp(),detectorService.getConfigData().getPort(),device.getIp()
+                        ,Ping.defalut_pingTimes,Ping.defalut_intervalTime,Ping.defalut_timeout);
+
+                successNum = returnObj.getIntValue("successNum");
+                return successNum + "/50";
+            }
+        }
+    }
 }

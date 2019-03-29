@@ -18,13 +18,15 @@ public class Ping {
     public final static int defalut_timeout=1;
 
     /**
-     * ping命令默认超时时间
+     *
+     * @param ipAddress
+     * @param timeout 单位秒
+     * @return
+     * @throws SystemException
      */
-    public static final int DEFALUT_TIMEOUT = 1000;
-
     public static boolean javaPing(String ipAddress,int timeout) throws SystemException{
         if(timeout <= 0){
-            timeout = DEFALUT_TIMEOUT;
+            timeout = defalut_timeout * 1000;
         }
         // 当返回值是true时，说明host是可用的，false则不可。
         boolean status;
@@ -43,8 +45,21 @@ public class Ping {
      * @return
      */
     public static boolean pingConnect(String ipAddress) {
-        int connectedCount = pingLinux(ipAddress,defalut_pingTimes,defalut_intervalTime,defalut_timeout);
+        int connectedCount = ping(ipAddress,defalut_pingTimes,defalut_intervalTime,defalut_timeout);
         return connectedCount > 0;
+    }
+
+    /**
+     * 对外暴露的总接口
+     * @param ipAddress
+     * @param pingTimes
+     * @param intervalTime
+     * @param timeout
+     * @return
+     */
+    public static int ping(String ipAddress, int pingTimes, double intervalTime,int timeout) {
+        //可判断操作系统
+        return pingLinux(ipAddress,pingTimes,intervalTime,timeout);
     }
 
     /**
@@ -55,33 +70,32 @@ public class Ping {
      * @param timeout 超时时间 单位秒
      * @return
      */
-    public static int pingLinux(String ipAddress, int pingTimes, double intervalTime,int timeout) {
+    private static int pingLinux(String ipAddress, int pingTimes, double intervalTime,int timeout) {
         BufferedReader in = null;
         // 将要执行的ping命令,此命令是linux格式的命令
         Runtime r = Runtime.getRuntime();
         String pingCommand = "ping " + ipAddress + " -c " + pingTimes + " -i " + intervalTime + " -W "+timeout;
         try {
             // 执行命令并获取输出
-            log.debug("执行ping命令:"+pingCommand);
+            log.debug("linux下执行ping命令:"+pingCommand);
             Process p = r.exec(pingCommand);
             if (p == null) {
                 return 0;
             }
             // 逐行检查输出,计算类似出现=23ms TTL=62字样的次数
             in = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            int connectedCount = 0;
+            int successNum = 0;
             String line = null;
             while ((line = in.readLine()) != null) {
                 log.debug("ping line :"+line);
                 // 如果出现类似=23ms TTL=62这样的字样,
-                connectedCount += getCheckResult4Linux(line);
+                successNum += getCheckResult4Linux(line);
             }
-            log.debug("connectedCount="+connectedCount +"|pingTimes="+ pingTimes);
+            log.debug("successNum ="+successNum +"/pingTimes="+ pingTimes);
             // 出现的次数=测试次数则返回真
-            return connectedCount;
+            return successNum;
         } catch (Exception e) {
             throw new SystemException(e.getMessage(),e);
-            // 出现异常则返回假
         } finally {
             try {
                 in.close();
@@ -112,7 +126,7 @@ public class Ping {
      * @param timeOut
      * @return
      */
-    public static boolean pingWindow(String ipAddress, int pingTimes, int timeOut) {
+    private static boolean pingWindow(String ipAddress, int pingTimes, int timeOut) {
         BufferedReader in = null;
         // 将要执行的ping命令,此命令是windows格式的命令
         Runtime r = Runtime.getRuntime();

@@ -1,7 +1,9 @@
 package com.minkey.executer;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.jcraft.jsch.*;
+import com.minkey.contants.AlarmEnum;
 import com.minkey.contants.CommonContants;
 import com.minkey.dto.BaseConfigData;
 import com.minkey.entity.ResultInfo;
@@ -24,15 +26,15 @@ public class SSHExecuter {
 
     private Session session;
 
-    public SSHExecuter(String host, Integer port, String user, String password,int timeout) throws JSchException {
+    public SSHExecuter(String host, Integer port, String user, String password,int timeout) throws SystemException {
         connect(host, port, user, password,timeout);
     }
 
-    public SSHExecuter(BaseConfigData baseConfigData) throws JSchException {
+    public SSHExecuter(BaseConfigData baseConfigData) throws SystemException {
         this(baseConfigData, CommonContants.DEFAULT_TIMEOUT);
     }
 
-    public SSHExecuter(BaseConfigData baseConfigData,int timeout) throws JSchException {
+    public SSHExecuter(BaseConfigData baseConfigData,int timeout) throws SystemException {
         this(baseConfigData.getIp(),baseConfigData.getPort(), baseConfigData.getName(), baseConfigData.getPwd(), timeout);
     }
 
@@ -41,19 +43,21 @@ public class SSHExecuter {
      * @param baseConfigData
      * @return
      */
-    public static boolean testConnect(BaseConfigData baseConfigData){
+    public static JSONObject testSSH(BaseConfigData baseConfigData){
+        JSONObject jsonObject= new JSONObject();
         SSHExecuter sshExecuter = null;
         try {
             sshExecuter = new SSHExecuter(baseConfigData);
 
-            return true;
-        } catch (Exception e) {
-            log.error("测试 "+e.getMessage());
-            return false;
+            jsonObject.put("isConnect", true);
+        }catch (SystemException e){
+            jsonObject.put("alarmType",e.getErrorCode());
+            jsonObject.put("isConnect", false);
         }finally {
             if(sshExecuter != null){
                 sshExecuter.close();
             }
+            return jsonObject;
         }
     }
 
@@ -82,10 +86,21 @@ public class SSHExecuter {
             session.connect(timeout);
             session.isConnected();
         } catch (JSchException e) {
-            //Connection refused 网络不通
-            throw new SystemException(String.format("SSH连接异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
+            log.error(String.format("SSH连接异常，ip=%s,port=%s,user=%s,pwd=%s,msg=%s",ip,port,user,pwd,e.getMessage()));
+            AlarmEnum code = getErrorCode(e.getMessage());
+            throw new SystemException(code);
         }
         return session;
+    }
+
+    private AlarmEnum getErrorCode(String message) {
+        if(message.contains("socket is not established")){
+            return AlarmEnum.ssh_port_notConnect;
+        }else if(message.contains("Auth fail")){
+            return AlarmEnum.ssh_wrongPwd;
+        }else{
+            return AlarmEnum.ssh_unkonw;
+        }
     }
 
     public ResultInfo sendCmd(String command) throws SystemException {
