@@ -60,10 +60,39 @@ public class DetectorUtil {
     }
 
 
+    /**
+     * 在探针上执行sh命令
+     * @param detectorIp
+     * @param detectorPort
+     * @param cmdStr
+     * @return
+     * @throws SystemException
+     */
     public static ResultInfo executeSh(String detectorIp,int detectorPort, String cmdStr) throws SystemException{
         String url = String.format("http://%s:%s/executeSh",detectorIp,detectorPort);
         Map<String,String> param = new HashMap<>(1);
         param.put("cmdStr",cmdStr);
+        String returnStr = HttpClient.postRequest(url,param);
+
+        return JSONObject.toJavaObject(getReturnJson(returnStr),ResultInfo.class);
+    }
+
+    /**
+     * 执行远程sh命令,在目标机器上执行
+     * @param detectorIp
+     * @param detectorPort
+     * @param cmdStr
+     * @return
+     * @throws SystemException
+     */
+    public static ResultInfo executeRemoteSh(String detectorIp,int detectorPort, BaseConfigData baseConfigData,String cmdStr) throws SystemException{
+        String url = String.format("http://%s:%s/executeRemoteSh",detectorIp,detectorPort);
+        Map<String,String> param = new HashMap<>(1);
+        param.put("cmdStr",cmdStr);
+        param.put("ip",baseConfigData.getIp());
+        param.put("port",""+baseConfigData.getPort());
+        param.put("name",baseConfigData.getName());
+        param.put("pwd",baseConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
 
         return JSONObject.toJavaObject(getReturnJson(returnStr),ResultInfo.class);

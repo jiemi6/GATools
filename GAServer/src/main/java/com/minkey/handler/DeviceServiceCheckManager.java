@@ -81,7 +81,6 @@ public class DeviceServiceCheckManager {
                         break;
                     }
 
-
                     if(testResult.getIntValue("alarmType") == AlarmEnum.db_wrongpwd.getAlarmType()){
                         sb.append("<br/>用户名密码错误,用户名:"+dbConfigData.getName()+",密码:"+dbConfigData.getPwd());
                         msg = sb.toString();
@@ -95,7 +94,6 @@ public class DeviceServiceCheckManager {
                     }else{
                         sb.append( String.format("<br/>连接数小于70%,最大连接数:%s,当前连接数:%s",dbConfigData.getPort(),maxConnectNum,connectNum));
                     }
-
 
                     msg = sb.toString();
                 }

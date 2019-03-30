@@ -12,9 +12,13 @@ import com.minkey.db.LinkHandler;
 import com.minkey.db.TaskHandler;
 import com.minkey.db.dao.*;
 import com.minkey.dto.DeviceExplorer;
+import com.minkey.entity.ResultInfo;
+import com.minkey.executer.SSHExecuter;
+import com.minkey.util.DetectorUtil;
 import com.minkey.util.DynamicDB;
 import com.minkey.util.FTPUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -209,8 +213,88 @@ public class ExamineHandler {
                 checkItemHandler.insert(checkItem);
             }
         }
+
+        //如果是uas或者是tas
+        if(device.getDeviceType() == DeviceType.xinrenduanshujujiaohuanxitong || device.getDeviceType() == DeviceType.feixinrenduanshujujiaohuanxitong){
+            //得到ssh服务
+            DeviceService sshDeviceService = null ;
+            //获取节点数
+            for(DeviceService deviceService :deviceServiceList){
+                if(detectorService.getServiceType() == DeviceService.SERVICETYPE_SSH){
+                    sshDeviceService = deviceService;
+                    break;
+                }
+            }
+
+            //如果没有ssh,
+            if(sshDeviceService == null){
+                checkItem = checkStepCache.createNextItem(checkId);
+                checkItem.setResultLevel(MyLevel.LEVEL_WARN);
+                checkItem.setResultMsg(String.format("<%s设备>没有配置SSH服务,无法检测节点数!",device.getDeviceName()));
+                checkItemHandler.insert(checkItem);
+            }else{
+                String cmdStr = "df -i ";
+                ResultInfo resultInfo;
+                if(device.isNetAreaIn()){
+                    SSHExecuter sshExecuter = new SSHExecuter(sshDeviceService.getConfigData());
+                    resultInfo = sshExecuter.sendCmd(cmdStr);
+                }else{
+                    resultInfo = DetectorUtil.executeRemoteSh(detectorService.getIp(),detectorService.getConfigData().getPort(),sshDeviceService.getConfigData(),cmdStr);
+                }
+
+                if(resultInfo.isExitStutsOK()){
+                    String msg = resultInfo.getOutRes();
+                    String[] lines = msg.split("\n");
+                    boolean isSmall = false;
+                    String outMsg = "";
+                    for (String line : lines) {
+                        String[] oneline = line.split(" ");
+                        String nodeValue =null;
+                        String nodeName = oneline[oneline.length - 1];
+                        if(StringUtils.equals("/",nodeName) || StringUtils.equals("/topdata",nodeName)){
+                            nodeValue = oneline[oneline.length - 2];
+                            outMsg = msg + (nodeName+"分区:"+nodeValue)+" ";
+                            if(isSmall70(nodeValue)){
+                                isSmall = true;
+                            }
+                        }
+                    }
+
+                    int level = isSmall ? MyLevel.LEVEL_NORMAL : MyLevel.LEVEL_ERROR;
+                    checkItem = checkStepCache.createNextItem(checkId);
+                    checkItem.setResultLevel(level);
+                    checkItem.setResultMsg(String.format("<%s设备>节点数%s<br/>%s",
+                            device.getDeviceName(), device.getDeviceName(),isSmall ?"正常":"异常",outMsg));
+                    checkItemHandler.insert(checkItem);
+
+                }else{
+                    checkItem = checkStepCache.createNextItem(checkId);
+                    checkItem.setResultLevel(MyLevel.LEVEL_WARN);
+                    checkItem.setResultMsg(String.format("<%s设备>执行SSH命令错误: %s",device.getDeviceName(),resultInfo.getErrRes()));
+                    checkItemHandler.insert(checkItem);
+                }
+            }
+        }
     }
 
+
+    /**
+     * 专门用于判断df -i 命令是否大于70%
+     * @param nodeValue
+     * @return
+     */
+    private boolean isSmall70(String nodeValue){
+        try {
+            Integer value = Integer.valueOf(nodeValue.split("%")[0]);
+            if(value >= 70){
+                return true;
+            }else{
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     /**
      * 异步执行

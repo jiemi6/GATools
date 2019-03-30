@@ -39,7 +39,7 @@
     <logger name="org.dna.moquette.messaging.subscriptions" level="info" />
 
     <!--指定最基础的日志输出级别-->
-    <root level="warn">
+    <root level="info">
         <!--appender将会添加到这个loger-->
         <appender-ref ref="consoleLog"/>
         <appender-ref ref="consoleFileLog"/>

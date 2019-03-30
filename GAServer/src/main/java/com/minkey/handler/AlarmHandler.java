@@ -198,12 +198,14 @@ public class AlarmHandler {
                 JSONObject jsonObject = deviceServiceCheckManager.checkDeviceService(device,deviceService,detectorService);
                 boolean isOk = jsonObject.getBooleanValue("isOk");
                 if (!isOk) {
+                    String msg = jsonObject.getString("msg");
                     alarmLog = new AlarmLog();
                     alarmLog.setBid(deviceId);
                     alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                     alarmLog.setLevel(MyLevel.LEVEL_ERROR);
                     alarmLog.setType(AlarmEnum.shebeifuwu);
-                    alarmLog.setMsg(String.format("%s[%s]%s服务异常", device.getDeviceName(),device.getIp(), deviceService.typeNameStr()));
+                    alarmLog.setMsg( String.format("<%s设备><%s服务>%s<br/>%s",
+                            device.getDeviceName(), device.getDeviceName(),isOk ?"正常":"异常",deviceService.typeNameStr(),msg));
                     explorerLogs.add(alarmLog);
                 }
             }

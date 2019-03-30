@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.minkey.command.Ping;
 import com.minkey.command.SnmpUtil;
 import com.minkey.command.Telnet;
+import com.minkey.dto.BaseConfigData;
 import com.minkey.dto.JSONMessage;
 import com.minkey.entity.ResultInfo;
 import com.minkey.exception.SystemException;
 import com.minkey.executer.LocalExecuter;
+import com.minkey.executer.SSHExecuter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,6 +103,34 @@ public class BaseController {
             return JSONMessage.createFalied(e.toString()).toString();
         }finally {
             log.debug("exec executeSh [{}] end! " , cmdStr);
+        }
+    }
+
+
+    /**
+     * 远程执行sh命令代理
+     * @param cmdStr
+     * @return
+     */
+    @RequestMapping("/executeRemoteSh")
+    public String executeRemoteSh(BaseConfigData baseConfigData , String cmdStr) {
+        log.debug("exec executeRemoteSh [{}] start! " , cmdStr);
+        if(StringUtils.isEmpty(cmdStr)){
+            log.error("cmdStr 参数为空！");
+            return JSONMessage.createFalied("cmdStr 参数为空！").toString();
+        }
+
+        try{
+            SSHExecuter sshExecuter = new SSHExecuter(baseConfigData);
+            ResultInfo resultInfo = sshExecuter.sendCmd(cmdStr);
+            return JSONMessage.createSuccess().addData(resultInfo).toString();
+        }catch (SystemException e){
+            return JSONMessage.createFalied(e.getErrorCode(),e.getMessage()).toString();
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+            return JSONMessage.createFalied(e.toString()).toString();
+        }finally {
+            log.debug("exec executeRemoteSh [{}] end! " , cmdStr);
         }
     }
 
