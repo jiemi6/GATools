@@ -3,6 +3,7 @@ package com.minkey.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.minkey.util.SymmetricEncoder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.net.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,17 +34,22 @@ public class LicenseController {
     @RequestMapping("/licenseExport")
     public String licenseExport(String licenseKey,HttpServletResponse response) {
         log.debug("start: 根据key= {} 获取licenseData ",licenseKey);
-        byte[] licenseData = null;
+        byte[] licenseData;
         if(StringUtils.isEmpty(licenseKey)){
             //返回错误
             licenseData = "参数错误".getBytes();
         }else{
             JSONObject jo = new JSONObject();
-            jo.put(DATA_DEADLINE, "2022-01-01");
+            jo.put(DATA_DEADLINE, "2019-06-01");
             jo.put(DATA_PUBLISHER, "江门市公安局");
             if(!StringUtils.isEmpty(licenseKey)){
+                //加密
                 licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
+            }else{
+                licenseData = "数据加密错误!".getBytes();
             }
+
+            licenseData = Base64.encodeBase64(licenseData);
 
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");

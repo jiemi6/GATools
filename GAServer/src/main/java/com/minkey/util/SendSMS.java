@@ -124,10 +124,11 @@ public class SendSMS {
         } catch (Exception e) {
             log.error("发送短信异常"+e.getMessage());
         }finally {
-            // 释放链接
-            try {
-                response.close();
-            } catch (IOException e) {
+            if(response != null) {
+                // 释放链接
+                try {
+                    response.close();
+                } catch (IOException e) {}
             }
         }
     }

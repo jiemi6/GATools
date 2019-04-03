@@ -129,9 +129,9 @@ public class ExamineHandler {
         // 检查网络联通性
 //        boolean isConnect = deviceConnectHandler.pingConnectTest(device);
 
-        String connectStr = deviceConnectHandler.ping(device);
-        int connect = Integer.parseInt(connectStr.split("/")[0]);
-        int total = Integer.parseInt(connectStr.split("/")[1]);
+        JSONObject connectStr = deviceConnectHandler.ping(device);
+        int connect = connectStr.getIntValue("successNum");
+        int total = connectStr.getIntValue("total");
         //丢包率
         int loseRadio = Math.round(((total - connect) *100 ) / total);
 

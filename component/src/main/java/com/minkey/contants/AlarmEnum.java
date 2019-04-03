@@ -51,7 +51,8 @@ public enum AlarmEnum {
     ftp_floorNum_tooBig(9007,"FTP根目录下子目录层级太多"),
 
     //探针类,
-    no_detector(5000,"没有配置探针");
+    no_detector(5000,"没有配置探针"),
+    no_detector_connect(5001,"探针无法连接");
 
 
     private int alarmType;

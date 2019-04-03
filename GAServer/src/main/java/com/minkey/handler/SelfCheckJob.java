@@ -61,7 +61,7 @@ public class SelfCheckJob {
                 jdbcTemplate.execute(DatabaseDriver.MYSQL.getValidationQuery());
                 checkItem = new CheckItem(checkId,totalStep);
                 checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
-                checkItem.setResultMsg("连接本地数据库成功");
+                checkItem.setResultMsg(String.format("连接本地数据库成功."));
                 checkItemHandler.insert(checkItem);
             } catch (Exception e) {
                 checkItem = new CheckItem(checkId,totalStep);

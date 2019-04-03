@@ -67,7 +67,7 @@ public class AlarmHandler {
     /**
      * 扫描所有设备状态
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
     public void deviceStatus() {
         if(isDebug){
             return ;
@@ -101,9 +101,9 @@ public class AlarmHandler {
                 alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                 alarmLog.setLevel(MyLevel.LEVEL_ERROR);
                 alarmLog.setType(AlarmEnum.ip_notConnect);
-                alarmLog.setMsg(String.format("%s[%s]网络无法连接!", device.getDeviceName(), device.getIp()));
+                alarmLog.setMsg(String.format("Ping <%s设备> <%s> 网络无法连接!", device.getDeviceName(), device.getIp()));
 
-                //网络不同，更新设备级别为错误
+                //网络不通，更新设备级别为错误
                 deviceCache.updateDeviceLevel(deviceId, MyLevel.LEVEL_ERROR);
 
                 notOKLogs.add(alarmLog);
@@ -148,7 +148,7 @@ public class AlarmHandler {
             alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
             alarmLog.setLevel(MyLevel.LEVEL_WARN);
             alarmLog.setType(AlarmEnum.no_snmpservice);
-            alarmLog.setMsg(String.format("%s[%s]硬件性能指标无法获取，请检查snmp设置!", device.getDeviceName(), device.getIp()));
+            alarmLog.setMsg(String.format("<%s设备>硬件性能指标无法获取，请检查snmp设置!", device.getDeviceName()));
 
             //没有性能指标，更新设备级别为正常
             deviceCache.updateDeviceLevel(deviceId, MyLevel.LEVEL_NORMAL);
@@ -161,7 +161,7 @@ public class AlarmHandler {
                 alarmLog.setbType(AlarmLog.BTYPE_DEVICE);
                 alarmLog.setLevel(MyLevel.LEVEL_WARN);
                 alarmLog.setType(AlarmEnum.shebeixingneng);
-                alarmLog.setMsg(String.format("%s[%s]硬件性能指标告警! %s", device.getDeviceName(), device.getIp(), deviceExplorer.showString()));
+                alarmLog.setMsg(String.format("<%s设备>硬件性能指标告警! %s", device.getDeviceName(), deviceExplorer.showString()));
 
                 //更新设备级别为警告
                 deviceCache.updateDeviceLevel(deviceId, MyLevel.LEVEL_WARN);
@@ -217,7 +217,7 @@ public class AlarmHandler {
     /**
      * 链路告警扫描，只扫描链路设备的连通性
      */
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
     public void link() {
         //获取所有链路
         Map<Long, Link> allLink = deviceCache.getAllLinkMap();
@@ -264,7 +264,7 @@ public class AlarmHandler {
                 }
                 allDeviceName.add(device.getDeviceName());
             }
-            alarmLog.setMsg(String.format("[%s]中有%s个设备掉线，分别为%s", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
+            alarmLog.setMsg(String.format("<%s链路>中有%s个设备掉线，分别为<%s>", link.getLinkName(), notOkDeviceIds.size(), StringUtils.join(allDeviceName), ","));
             linkLogs.add(alarmLog);
 
             Set<Device>  allDetector = deviceCache.getDetector8linkId(link.getLinkId());
@@ -275,7 +275,7 @@ public class AlarmHandler {
                 alarmLog.setbType(AlarmLog.BTYPE_LINK);
                 alarmLog.setLevel(MyLevel.LEVEL_WARN);
                 alarmLog.setType(AlarmEnum.no_detector);
-                alarmLog.setMsg(String.format("[%s]没有配置探针，无法探测外网设备!", link.getLinkName()));
+                alarmLog.setMsg(String.format("<%s链路>没有配置探针，无法探测外网设备!", link.getLinkName()));
                 linkLogs.add(alarmLog);
             }
 
@@ -298,7 +298,7 @@ public class AlarmHandler {
                         .setbType(AlarmLog.BTYPE_LINK)
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.no_TAS)
-                        .setMsg(String.format("链路[%s]没有配置TAS设备！", link.getLinkName()));
+                        .setMsg(String.format("<%s链路>没有配置TAS设备！", link.getLinkName()));
                 linkLogs.add(alarmLog);
             }
             //没有tas设备
@@ -308,7 +308,7 @@ public class AlarmHandler {
                         .setbType(AlarmLog.BTYPE_LINK)
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.no_UAS)
-                        .setMsg(String.format("链路[%s]没有配置UAS设备！", link.getLinkName()));
+                        .setMsg(String.format("<%s链路>没有配置UAS设备！", link.getLinkName()));
                 linkLogs.add(alarmLog);
             }
             alarmLogHandler.insertAll(linkLogs);
@@ -319,7 +319,7 @@ public class AlarmHandler {
      * 任务告警扫描
      * 扫描任务是否存活
      */
-    @Scheduled(cron = "0 */5 * * * ?")
+    @Scheduled(cron = "0 */30 * * * ?")
     public void task() {
 
         //获取所有任务
@@ -368,7 +368,7 @@ public class AlarmHandler {
             alarmLog.setbType(AlarmLog.BTYPE_TASK);
             alarmLog.setLevel(MyLevel.LEVEL_ERROR);
             alarmLog.setType(AlarmEnum.no_source);
-            alarmLog.setMsg(String.format("%s没有配置数据源",task.getTaskName()));
+            alarmLog.setMsg(String.format("<%s任务>没有配置数据源",task.getTaskName()));
             taskAlarm.add(alarmLog);
         } else {
             DeviceService detectorService = deviceCache.getDetectorService8linkId(task.getLinkId());
@@ -432,7 +432,7 @@ public class AlarmHandler {
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_TAS)
-                    .setMsg(String.format("%s所在链路没有没有配置[%s]！",task.getTaskName(),"TAS"));
+                    .setMsg(String.format("<%s>所在链路没有没有配置%s！",task.getTaskName(),"TAS"));
         }else{
             //tas在内网
             alarmLog = checkTaskProcess(task,tas,null,"TAS");
@@ -446,7 +446,7 @@ public class AlarmHandler {
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_UAS)
-                    .setMsg(String.format("%s所在链路没有没有配置[%s]！",task.getTaskName(),"UAS"));
+                    .setMsg(String.format("<%s>所在链路没有没有配置%s！",task.getTaskName(),"UAS"));
         }else{
             //检查uas，uas在外网
             alarmLog = checkTaskProcess(task,uas,detectorService,"UAS");
@@ -478,7 +478,7 @@ public class AlarmHandler {
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_snmpservice)
-                    .setMsg(String.format("%s设备[%s]没有配置SNMP服务！",deviceType,device.getDeviceName()));
+                    .setMsg(String.format("%s设备<%s>没有配置SNMP服务！",deviceType,device.getDeviceName()));
         }else{
             SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
 
@@ -490,7 +490,7 @@ public class AlarmHandler {
                         .setbType(AlarmLog.BTYPE_TASK)
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.no_taskProcess)
-                        .setMsg(String.format("%s设备[%s]上任务进程[%s]不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
+                        .setMsg(String.format("%s设备<%s>上任务进程<%s>不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
             }
         }
 

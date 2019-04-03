@@ -88,7 +88,7 @@ public class AlarmSendHandler {
      */
     @Scheduled(cron = "0 */1 * * * ?")
     public void sendAlarm(){
-        log.error("开始报警发送");
+        log.info("开始报警发送");
         try {
             if (alarmConfigData == null) {
                 log.error("alarmConfigData == null");
@@ -170,7 +170,7 @@ public class AlarmSendHandler {
                 sendSMS(alarmObjectName,alarmConfigData.getJSONObject("smsConfig"),alarmLog);
             }
         }catch (Exception e){
-            log.error("调度发送报警异常:"+e.getMessage());
+            log.error("调度发送报警异常:",e);
         }
     }
 
@@ -217,11 +217,11 @@ public class AlarmSendHandler {
 
         StringBuffer sb = new StringBuffer();
 
-        sb.append(AlarmLog.getString8BType(alarmLog.getbType())).append("["+alarmObjectName+"]").append("告警.");
-        sb.append("级别:").append(MyLevel.getString8level(alarmLog.getLevel())).append(".");
-        sb.append("代码:").append(alarmLog.getType()).append("说明:").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(".");
-        sb.append("内容:").append(alarmLog.getMsg()).append(".");
-        sb.append("时间:").append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
+        sb.append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
+        sb.append("<").append(alarmObjectName).append(":").append(AlarmLog.getString8BType(alarmLog.getbType())).append(">");
+        sb.append("<").append(MyLevel.getString8level(alarmLog.getLevel())).append(">");
+        sb.append("<").append(alarmLog.getType()).append(":").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(">");
+        sb.append(":").append(alarmLog.getMsg()).append(".");
 
 
         sendSMS.send(smsConfig,sb.toString());

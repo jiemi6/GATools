@@ -41,7 +41,7 @@ public class SourceCheckHandler {
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_detector)
-                    .setMsg(String.format("没有部署探针，无法探测外网资源%s",source.getSname()));
+                    .setMsg(String.format("没有部署探针，无法探测外网资源<%s>",source.getSname()));
             alarmLogs.add(alarmLog);
             return alarmLogs;
         }
@@ -54,7 +54,7 @@ public class SourceCheckHandler {
             return testSource_video(task,source,detectorService);
         }else{
             //未知数据格式
-            String logstr = String.format("未知数据源类型[%]",source.getSourceType());
+            String logstr = String.format("未知数据源类型<%>",source.getSourceType());
             log.error(logstr);
             return null;
         }
@@ -81,7 +81,8 @@ public class SourceCheckHandler {
         Integer alarmType = jsonResult.getInteger("alarmType");
         //如果不为空,证明报错,没有正常连上
         if(alarmType != null) {
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(alarmType)
@@ -92,7 +93,8 @@ public class SourceCheckHandler {
 
         boolean isRootLock = jsonResult.getBooleanValue("isRootLock");
         if(!isRootLock){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_WARN)
                     .setType(AlarmEnum.ftp_rootUnLock)
@@ -102,7 +104,8 @@ public class SourceCheckHandler {
 
         boolean isPassive = jsonResult.getBooleanValue("isPassive");
         if(!isPassive){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_WARN)
                     .setType(AlarmEnum.ftp_notPassive)
@@ -112,7 +115,8 @@ public class SourceCheckHandler {
 
         String allAuth = jsonResult.getString("allAuth");
         if(!allAuth.contains("ADD") || !allAuth.contains("DEL") || !allAuth.contains("READ")){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.ftp_notAllAuth)
@@ -122,7 +126,8 @@ public class SourceCheckHandler {
 
         int totalFileNum = jsonResult.getIntValue("totalFileNum");
         if(totalFileNum > 100000){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_WARN)
                     .setType(AlarmEnum.ftp_fileNum_tooBig)
@@ -132,7 +137,8 @@ public class SourceCheckHandler {
 
         int topDirNum = jsonResult.getIntValue("topDirNum");
         if(topDirNum > 30 ){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_WARN)
                     .setType(AlarmEnum.ftp_topDirNum_tooBig)
@@ -142,7 +148,8 @@ public class SourceCheckHandler {
 
         int floorNum = jsonResult.getIntValue("floorNum");
         if(floorNum > 5){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_WARN)
                     .setType(AlarmEnum.ftp_floorNum_tooBig)
@@ -166,7 +173,8 @@ public class SourceCheckHandler {
         Integer alarmType = jsonResult.getInteger("alarmType");
         //如果不为空,证明报错,没有正常连上
         if(alarmType != null){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(alarmType)
@@ -178,7 +186,8 @@ public class SourceCheckHandler {
         int maxConnectNum = jsonResult.getIntValue("maxConnectNum");
         int connectNum = jsonResult.getIntValue("connectNum");
         if(connectNum >= maxConnectNum-1){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.db_maxConnectNum)
@@ -188,7 +197,8 @@ public class SourceCheckHandler {
 
         JSONArray hasBlobTableNames = jsonResult.getJSONArray("hasBlobTableNames");
         if(hasBlobTableNames != null && hasBlobTableNames.size() > 0){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.db_has_bigColumn)
@@ -198,7 +208,8 @@ public class SourceCheckHandler {
 
         JSONArray tableCountMax1W = jsonResult.getJSONArray("tableCountMax1W");
         if(hasBlobTableNames != null && hasBlobTableNames.size() > 0){
-            alarmLog = new AlarmLog().setBid(task.getTaskId())
+            alarmLog = new AlarmLog()
+                    .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.db_has_bigColumn)
@@ -235,7 +246,8 @@ public class SourceCheckHandler {
         }
 
         if(noAuthSet.size()>0){
-            alarmLog = new AlarmLog().setBid(taskId)
+            alarmLog = new AlarmLog()
+                    .setBid(taskId)
                     .setbType(AlarmLog.BTYPE_TASK)
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.db_notAllAuth)
@@ -274,7 +286,8 @@ public class SourceCheckHandler {
                 noAuthSet.add("TRIGGER");
             }
             if(noAuthSet.size()>0){
-                alarmLog = new AlarmLog().setBid(taskId)
+                alarmLog = new AlarmLog()
+                        .setBid(taskId)
                         .setbType(AlarmLog.BTYPE_TASK)
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.db_notAllAuth)
