@@ -20,18 +20,14 @@ public class Ping {
     /**
      *
      * @param ipAddress
-     * @param timeout 单位秒
      * @return
      * @throws SystemException
      */
-    public static boolean javaPing(String ipAddress,int timeout) throws SystemException{
-        if(timeout <= 0){
-            timeout = defalut_timeout * 1000;
-        }
+    public static boolean javaPing(String ipAddress) throws SystemException{
         // 当返回值是true时，说明host是可用的，false则不可。
         boolean status;
         try {
-            status = InetAddress.getByName(ipAddress).isReachable(timeout);
+            status = InetAddress.getByName(ipAddress).isReachable(1000);
         } catch (Exception e) {
             log.debug("Java isReachable "+ipAddress +" Exception,"+e.getMessage());
             return false;

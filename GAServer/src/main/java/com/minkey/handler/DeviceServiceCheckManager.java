@@ -34,6 +34,25 @@ public class DeviceServiceCheckManager {
     @Autowired
     FTPUtil ftpUtil;
 
+    /**
+     * 检查设备服务,处理异常
+     * @param device 入参不能为空,
+     * @param deviceService 入参不能为空,
+     * @param detectorService  当为外网的时候,入参不能为空,
+     * @return json
+     */
+    public JSONObject checkDeviceService(Device device, DeviceService deviceService, DeviceService detectorService) {
+        try {
+            return realCheckDeviceService(device,deviceService,detectorService);
+        } catch (SystemException e) {
+            log.error(String.format("检查设备<%>服务<%s>异常",device.getDeviceName(),detectorService.getServiceName()),e);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("isOk", false);
+            jsonObject.put("msg",e.getMessage());
+            return jsonObject;
+        }
+
+    }
 
     /**
      * 检查设备服务
@@ -42,7 +61,7 @@ public class DeviceServiceCheckManager {
      * @param detectorService  当为外网的时候,入参不能为空,
      * @return json
      */
-   public JSONObject checkDeviceService(Device device, DeviceService deviceService, DeviceService detectorService) throws SystemException {
+   public JSONObject realCheckDeviceService(Device device, DeviceService deviceService, DeviceService detectorService) throws SystemException {
        BaseConfigData baseConfigData;
        JSONObject returnJsonObject = new JSONObject();
        JSONObject testResult;
@@ -101,10 +120,15 @@ public class DeviceServiceCheckManager {
                 break;
             case DeviceService.SERVICETYPE_SNMP:
                 SnmpConfigData snmpConfigData = (SnmpConfigData) deviceService.getConfigData();
-                boolean isConnect ;
+                boolean isConnect  ;
                 //先检查网络
                 if(device.isNetAreaIn()){
-                    isConnect = Telnet.doTelnet(snmpConfigData.getIp(),snmpConfigData.getPort());
+                    try {
+                        isConnect = Telnet.doTelnet(snmpConfigData.getIp(),snmpConfigData.getPort());
+                    } catch (SystemException e) {
+                        log.error(e.getMessage());
+                        isConnect = false;
+                    }
                 }else{
                     isConnect = DetectorUtil.telnetCmd(detectorService.getIp(),detectorService.getConfigData().getPort(),
                             snmpConfigData.getIp(),snmpConfigData.getPort());

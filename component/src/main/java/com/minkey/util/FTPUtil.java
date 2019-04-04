@@ -80,7 +80,7 @@ public class FTPUtil {
      * @return
      * @throws SystemException
      */
-    public JSONObject testFTPSource(FTPConfigData ftpConfigData, int timeout) throws SystemException{
+    public JSONObject testFTPSource(FTPConfigData ftpConfigData, int timeout) {
         return testFTPSource(ftpConfigData.getIp(),ftpConfigData.getPort(),
                 ftpConfigData.getName(),ftpConfigData.getPwd(),ftpConfigData.getRootPath(),timeout);
     }
@@ -96,7 +96,7 @@ public class FTPUtil {
      * @return
      * @throws SystemException
      */
-    private JSONObject testFTPSource(String ip, int port, String user, String pwd, String rootPath, int timeout) throws SystemException{
+    private JSONObject testFTPSource(String ip, int port, String user, String pwd, String rootPath, int timeout){
         FTPClient ftpClient = new FTPClient();
         JSONObject resultObject = new JSONObject();
         maxFloorNum = 0;

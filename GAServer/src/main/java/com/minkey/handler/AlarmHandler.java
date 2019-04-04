@@ -68,11 +68,19 @@ public class AlarmHandler {
      * 扫描所有设备状态
      */
     @Scheduled(cron = "0 */30 * * * ?")
-    public void deviceStatus() {
+    public void scanDeviceStatus() {
         if(isDebug){
             return ;
         }
 
+        try {
+            deviceStatus();
+        } catch (Exception e) {
+            log.error("扫描设备状态异常",e);
+        }
+    }
+
+    public void deviceStatus() {
         //获取所有设备
         Map<Long, Device> allDevice = deviceCache.allDevice();
 

@@ -12,6 +12,7 @@ import com.minkey.db.dao.DeviceService;
 import com.minkey.exception.SystemException;
 import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -48,6 +49,10 @@ public class DeviceConnectHandler {
         }
 
         Map<Long, Device> allDevices = deviceCache.allDevice();
+
+        if(MapUtils.isEmpty(allDevices)){
+            return ;
+        }
 
         for (Device device:allDevices.values()){
             try {
@@ -101,13 +106,13 @@ public class DeviceConnectHandler {
                 log.error(String.format("探针<%s>没有配置探针服务，无法探测自己和外网服务器",device.getDeviceName()));
                 return false;
             }
-            //如果是探针自己，发送探针check
+            //如果是探针自己，发送探针check,使用设备的ip配置,
             return DetectorUtil.check(detectorService.getIp(), detectorService.getConfigData().getPort());
         }
         //如果是内网，
         if(device.getNetArea() == CommonContants.NETAREA_IN ){
             //直接访问
-            isConnect = Ping.pingConnect(device.getIp());
+            isConnect = Ping.javaPing(device.getIp());
         }else{
             //如果是外网，需要通过探针访问,获取探针信息
             DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());

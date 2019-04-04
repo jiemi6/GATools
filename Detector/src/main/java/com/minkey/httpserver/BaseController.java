@@ -66,7 +66,7 @@ public class BaseController {
 
         try{
             JSONObject data = new JSONObject();
-            boolean isConnected  = Ping.pingConnect(ip);
+            boolean isConnected  = Ping.javaPing(ip);
             data.put("isConnect",isConnected);
             return JSONMessage.createSuccess().addData(data).toString();
         }catch (SystemException e){

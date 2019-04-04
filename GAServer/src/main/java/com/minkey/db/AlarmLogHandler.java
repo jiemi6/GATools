@@ -93,14 +93,15 @@ public class AlarmLogHandler {
                         if(argument == null){
                             //这里有为空的情况,不知道原因,可能是多线程的问题导致
                             log.warn("--------Set中AlarmLog对象为空");
-                            return;
+
+                        }else{
+                            ps.setLong(1,argument.getBid());
+                            ps.setInt(2,argument.getbType());
+                            ps.setInt(3, argument.getType());
+                            ps.setInt(4,argument.getLevel());
+                            ps.setString(5,argument.getMsg());
                         }
 
-                        ps.setLong(1,argument.getBid());
-                        ps.setInt(2,argument.getbType());
-                        ps.setInt(3, argument.getType());
-                        ps.setInt(4,argument.getLevel());
-                        ps.setString(5,argument.getMsg());
                     }
                 });
     }

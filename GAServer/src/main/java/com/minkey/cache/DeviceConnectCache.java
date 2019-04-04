@@ -85,10 +85,6 @@ public class DeviceConnectCache {
         return okSet.contains(deviceId);
     }
 
-    public void cleanAll() {
-        okSet = new HashSet<>();
-        checkSet = new HashSet<>();
-        disabledSet = new HashSet<>();
-    }
+
 
 }
