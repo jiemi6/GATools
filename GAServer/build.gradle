@@ -13,6 +13,10 @@ sourceSets {
     }
 }
 
+	applicationDistribution.from("E:\\ga\\static") {
+		into "resources/static"
+	}
+
 
 dependencies {
     compile project(':component')

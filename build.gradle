@@ -34,9 +34,6 @@ subprojects {
 		into "conf"
 	}
 
-//	applicationDistribution.from("build/resources/main/static") {
-//		into "resources/static"
-//	}
 
 	jar{
 		exclude("application.properties")
