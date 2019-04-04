@@ -4,6 +4,7 @@ import com.minkey.db.dao.AlarmLog;
 import com.minkey.dto.Page;
 import com.minkey.dto.SeachParam;
 import com.minkey.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@Slf4j
 @Component
 public class AlarmLogHandler {
     private final String tableName = "t_alarmLog";
@@ -88,6 +90,12 @@ public class AlarmLogHandler {
                 alarmLogs,alarmLogs.size(), new ParameterizedPreparedStatementSetter<AlarmLog>() {
                     @Override
                     public void setValues(PreparedStatement ps, AlarmLog argument) throws SQLException {
+                        if(argument == null){
+                            //这里有为空的情况,不知道原因,可能是多线程的问题导致
+                            log.warn("--------Set中AlarmLog对象为空");
+                            return;
+                        }
+
                         ps.setLong(1,argument.getBid());
                         ps.setInt(2,argument.getbType());
                         ps.setInt(3, argument.getType());

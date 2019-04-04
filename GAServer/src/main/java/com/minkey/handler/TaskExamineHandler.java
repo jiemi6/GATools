@@ -182,10 +182,10 @@ public class TaskExamineHandler {
             return testSource_video(checkId,task,source,detectorService);
         }else{
             //未知数据格式
-            String logstr = String.format("<%s任务><%s>未知数据源类型<%>",task.getTaskName(), source.getSname(),source.getSourceType());
-            log.error(logstr);
+            String msg = String.format("<%s任务><%s>未知数据源类型<%>",task.getTaskName(), source.getSname(),source.getSourceType());
+            log.error(msg);
             CheckItem checkItem = checkStepCache.createNextItem(checkId);
-            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(logstr);
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(msg);
             return checkItem;
         }
     }
@@ -271,18 +271,19 @@ public class TaskExamineHandler {
 
         if(isConnect){
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL)
-                    .setResultMsg(String.format("探测任务[%s]%sDB数据源[%s]连接正常",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+                    .setResultMsg(String.format("探测<%s 任务>%sDB数据源[%s]连接正常",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
         }else {
             checkItem.setResultLevel(MyLevel.LEVEL_ERROR)
-                    .setResultMsg(String.format("探测任务[%s]%sDB数据源[%s]连接失败",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
+                    .setResultMsg(String.format("探测<%s 任务>%sDB数据源[%s]连接失败",task.getTaskName(),source.isNetAreaIn()?"内网":"外网",source.getSname()));
         }
         return checkItem;
     }
 
     private CheckItem testSource_video(long checkId, Task task, Source source, DeviceService detectorService) {
-        log.error("暂时不支持video数据源探测");
+        String msg = String.format("<%s任务><%s>暂时不支持video数据源探测",task.getTaskName(), source.getSname(),source.getSourceType());
+        log.error(msg);
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
-        checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg("暂时不支持video数据源探测");
+        checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(msg);
         return checkItem;
     }
 

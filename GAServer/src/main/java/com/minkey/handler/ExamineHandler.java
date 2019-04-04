@@ -319,7 +319,7 @@ public class ExamineHandler {
         int totalStep = deviceMap.size()+1+1;
         checkStepCache.create(checkId,totalStep);
         CheckItem checkItem = checkStepCache.createNextItem(checkId);
-        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("开始检查链路[%s]中所有设备连通情况，该设备个数：%s",link.getLinkName(),deviceMap.size()));
+        checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("开始检查<%s链路>中所有设备连通情况，总数：%s",link.getLinkName(),deviceMap.size()));
         checkItemHandler.insert(checkItem);
 
         int notConnectNum = 0;
@@ -332,12 +332,12 @@ public class ExamineHandler {
             if(isConnect){
                 //创建检查步数 缓存
                 checkItem = checkStepCache.createNextItem(checkId);
-                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s设备>网络状态正常",device.getDeviceName()));
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s链路>中<%s设备>网络状态正常",device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
             }else{
                 //不通就只有一步
                 checkItem = checkStepCache.createNextItem(checkId);
-                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]中<%s设备>无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
+                checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("<%s链路>中<%s设备>无法联通，请检查网络状态",link.getLinkName(),device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
                 allisConnect = false;
                 notConnectNum++;
@@ -347,11 +347,11 @@ public class ExamineHandler {
 
         if(allisConnect){
             checkItem = checkStepCache.createNextItem(checkId);
-            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("链路[%s]所有设备网络状态正常",link.getLinkName()));
+            checkItem.setResultLevel(MyLevel.LEVEL_ERROR).setResultMsg(String.format("<%s链路>所有设备网络状态正常",link.getLinkName()));
             checkItemHandler.insert(checkItem);
         }else{
             checkItem = checkStepCache.createNextItem(checkId);
-            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("链路[%s]中有[%s]台设备无法连接！",link.getLinkName(),notConnectNum));
+            checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s链路>中有[%s]台设备无法连接！",link.getLinkName(),notConnectNum));
             checkItemHandler.insert(checkItem);
         }
     }

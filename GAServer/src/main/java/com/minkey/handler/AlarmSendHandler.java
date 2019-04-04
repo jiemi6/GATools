@@ -88,7 +88,7 @@ public class AlarmSendHandler {
      */
     @Scheduled(cron = "0 */1 * * * ?")
     public void sendAlarm(){
-        log.info("开始报警发送");
+        log.info("开始执行报警发送任务");
         try {
             if (alarmConfigData == null) {
                 log.error("alarmConfigData == null");
@@ -103,7 +103,7 @@ public class AlarmSendHandler {
             }
 
             if (baseConfig.getIntValue("maxnum") < totalSendTimes) {
-                log.error("告警发送次数超限,已经发送次数:"+totalSendTimes);
+                log.error(String.format("告警发送次数超限,已经发送次数:%s,设置最大次数:%s",totalSendTimes,baseConfig.getIntValue("maxnum")));
                 return;
             } else {
                 totalSendTimes++;
@@ -115,7 +115,6 @@ public class AlarmSendHandler {
             }
 
             if (baseConfig.getIntValue("alarmtime") > jianGeFenzhong) {
-                log.error("间隔时间没有达到,暂不发送.");
                 jianGeFenzhong++;
                 return;
             } else {

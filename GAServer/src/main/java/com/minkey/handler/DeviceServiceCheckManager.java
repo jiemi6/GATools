@@ -138,10 +138,10 @@ public class DeviceServiceCheckManager {
 
                 if(testResult.get("alarmType") == null){
                     isOk = true;
-                    msg = String.format("FTP链接正常,端口:%s,用户名密码正确",ftpConfigData.getPort());
+                    msg = String.format("FTP连接正常,端口:%s,用户名密码正确",ftpConfigData.getPort());
                 }else{
                     isOk =false;
-                    msg = String.format("FTP链接连接失败,端口:%s",ftpConfigData.getPort());
+                    msg = String.format("FTP连接失败,端口:%s",ftpConfigData.getPort());
                 }
                 break;
             case DeviceService.SERVICETYPE_SSH:
