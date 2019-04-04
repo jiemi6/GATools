@@ -81,7 +81,7 @@ public class AlarmLogHandler {
     }
 
 
-    public void insertAll(Set<AlarmLog> alarmLogs) {
+    public void insertAll(final Set<AlarmLog> alarmLogs) {
         if(CollectionUtils.isEmpty(alarmLogs)){
             return;
         }
@@ -90,18 +90,11 @@ public class AlarmLogHandler {
                 alarmLogs,alarmLogs.size(), new ParameterizedPreparedStatementSetter<AlarmLog>() {
                     @Override
                     public void setValues(PreparedStatement ps, AlarmLog argument) throws SQLException {
-                        if(argument == null){
-                            //这里有为空的情况,不知道原因,可能是多线程的问题导致
-                            log.warn("--------Set中AlarmLog对象为空");
-
-                        }else{
                             ps.setLong(1,argument.getBid());
                             ps.setInt(2,argument.getbType());
                             ps.setInt(3, argument.getType());
                             ps.setInt(4,argument.getLevel());
                             ps.setString(5,argument.getMsg());
-                        }
-
                     }
                 });
     }

@@ -185,10 +185,10 @@ public class ExamineHandler {
 
         //找到探针服务
         DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
-        //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
-        if(!device.isDetector() && !device.isNetAreaIn() && detectorService == null){
+        //如果设备是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
+        if(!device.isNetAreaIn() && detectorService == null){
             checkItem.setResultLevel(MyLevel.LEVEL_WARN);
-            checkItem.setResultMsg(String.format("<%s设备>属于外网设备，且链路没有配置可用的探针服务，无法探测该设备。",device.getDeviceName()));
+            checkItem.setResultMsg(String.format("<%s设备>属于外网设备，且所在链路没有配置可用的探针，无法探测该设备上的服务。",device.getDeviceName()));
             checkItemHandler.insert(checkItem);
             return;
         }

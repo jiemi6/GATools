@@ -190,8 +190,8 @@ public class AlarmHandler {
         long deviceId = device.getDeviceId();
         //找到探针服务
         DeviceService detectorService = deviceCache.getOneDetectorServer8DeviceId(device.getDeviceId());
-        //如果设备不是探针，而且是外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
-        if (!device.isDetector() && !device.isNetAreaIn() && detectorService == null) {
+        //如果设备外网机器，而且得到没有一个探针，则不用检查了，直接认为探测不到。
+        if (!device.isNetAreaIn() && detectorService == null) {
             //属于外网设备，并且没有配置可用的探针服务，无法探测该设备。
             return explorerLogs;
         }
@@ -432,7 +432,7 @@ public class AlarmHandler {
         }
 
         Set<AlarmLog> alarmLogs = new HashSet<>();
-        AlarmLog alarmLog = null;
+        AlarmLog alarmLog;
         //如果设备不存在
         if(tas == null){
             alarmLog = new AlarmLog();
@@ -445,7 +445,10 @@ public class AlarmHandler {
             //tas在内网
             alarmLog = checkTaskProcess(task,tas,null,"TAS");
         }
-        alarmLogs.add(alarmLog);
+
+        if(alarmLog != null){
+            alarmLogs.add(alarmLog);
+        }
 
         //如果设备不存在
         if(uas == null){
@@ -459,13 +462,16 @@ public class AlarmHandler {
             //检查uas，uas在外网
             alarmLog = checkTaskProcess(task,uas,detectorService,"UAS");
         }
-        alarmLogs.add(alarmLog);
+
+        if(alarmLog != null){
+            alarmLogs.add(alarmLog);
+        }
 
         return alarmLogs;
     }
 
     private AlarmLog checkTaskProcess(Task task, Device device, DeviceService detectorService, String deviceType){
-        AlarmLog alarmLog = null;
+        AlarmLog alarmLog;
         DeviceService snmpDeviceService = null;
 
         Set<DeviceService> deviceServiceSet = deviceCache.getDeviceService8DeviceId(device.getDeviceId());
@@ -487,6 +493,7 @@ public class AlarmHandler {
                     .setLevel(MyLevel.LEVEL_ERROR)
                     .setType(AlarmEnum.no_snmpservice)
                     .setMsg(String.format("%s设备<%s>没有配置SNMP服务！",deviceType,device.getDeviceName()));
+            return alarmLog;
         }else{
             SnmpConfigData snmpConfigData = (SnmpConfigData) snmpDeviceService.getConfigData();
 
@@ -499,10 +506,12 @@ public class AlarmHandler {
                         .setLevel(MyLevel.LEVEL_ERROR)
                         .setType(AlarmEnum.no_taskProcess)
                         .setMsg(String.format("%s设备<%s>上任务进程<%s>不存在！",deviceType,device.getDeviceName(),task.getTaskName()));
+                return alarmLog;
+            }else{
+                return null;
             }
         }
 
-        return alarmLog;
     }
 
 }

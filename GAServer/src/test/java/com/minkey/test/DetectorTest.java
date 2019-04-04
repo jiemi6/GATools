@@ -5,6 +5,10 @@ import com.minkey.util.DetectorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -19,6 +23,27 @@ public class DetectorTest {
        log.error(b+"");
 
     }
+
+
+    @Test
+    public void testMap(){
+        Map map = new HashMap<>(3);
+        log.error("size: "+map.size());
+
+    }
+
+
+    @Test
+    public void testSet(){
+        Set set = new HashSet<>(3);
+        log.error("size: "+set.size());
+        set.add(null);
+        log.error("size: "+set.size());
+        set.addAll(new HashSet<>());
+        log.error("size: "+set.size());
+
+    }
+
 
     @Test
     public void snmpWalk(){
