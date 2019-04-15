@@ -332,7 +332,7 @@ public class ExamineHandler {
             if(isConnect){
                 //创建检查步数 缓存
                 checkItem = checkStepCache.createNextItem(checkId);
-                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s链路>中<%s设备>网络状态正常",device.getDeviceName()));
+                checkItem.setResultLevel(MyLevel.LEVEL_NORMAL).setResultMsg(String.format("<%s链路>中<%s设备>网络状态正常",link.getLinkName(),device.getDeviceName()));
                 checkItemHandler.insert(checkItem);
             }else{
                 //不通就只有一步

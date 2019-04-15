@@ -118,7 +118,7 @@ public class SendSMS {
                 String result = EntityUtils.toString(response.getEntity(), "utf-8");
                 log.debug("发送短信返回报文:"+result);
             }else{
-                log.warn("发送短信接口返回错误:"+response.getStatusLine().getStatusCode());
+                log.warn("发送短信接口返回错误,错误码:"+response.getStatusLine().getStatusCode());
             }
 
         } catch (Exception e) {

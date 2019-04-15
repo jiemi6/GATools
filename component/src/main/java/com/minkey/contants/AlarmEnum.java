@@ -18,8 +18,12 @@ public enum AlarmEnum {
 
 
     //设备服务类
-    shebeifuwu(3000,"设备服务报警"),
-    no_snmpservice(3001,"没有配置SNMP服务" ),
+    shebeifuwu(4000,"设备服务报警"),
+    no_snmpservice(4001,"没有配置SNMP服务" ),
+
+    //探针类,
+    no_detector(5000,"没有配置探针"),
+    no_detector_connect(5001,"探针无法连接"),
 
     //链路类
     no_TAS(6001, "链路没有配置TAS"),
@@ -48,12 +52,7 @@ public enum AlarmEnum {
     ftp_notAllAuth(9004,"FTP没有读写删全部权限"),
     ftp_fileNum_tooBig(9005,"FTP根目录下文件数量太大"),
     ftp_topDirNum_tooBig(9006,"FTP根目录下文件夹太多"),
-    ftp_floorNum_tooBig(9007,"FTP根目录下子目录层级太多"),
-
-    //探针类,
-    no_detector(5000,"没有配置探针"),
-    no_detector_connect(5001,"探针无法连接");
-
+    ftp_floorNum_tooBig(9007,"FTP根目录下子目录层级太多");
 
     private int alarmType;
     private String desc;

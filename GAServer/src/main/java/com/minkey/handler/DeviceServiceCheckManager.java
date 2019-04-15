@@ -45,7 +45,7 @@ public class DeviceServiceCheckManager {
         try {
             return realCheckDeviceService(device,deviceService,detectorService);
         } catch (SystemException e) {
-            log.error(String.format("检查设备<%>服务<%s>异常",device.getDeviceName(),detectorService.getServiceName()),e);
+            log.error(String.format("检查设备<%s>服务<%s>异常",device.getDeviceName(),detectorService.getServiceName()),e);
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("isOk", false);
             jsonObject.put("msg",e.getMessage());
@@ -88,8 +88,8 @@ public class DeviceServiceCheckManager {
                         isOk = true;
                         msg = String.format("数据库链接正常,端口:%s" +
                                 "<br/>用户名密码正确" +
-                                "<br/>连接数小于70%,最大连接数:%s,当前连接数:%s" +
-                                "<br/>无表死锁",dbConfigData.getPort(),maxConnectNum,connectNum);
+                                "<br/>连接数小于%s,最大连接数:%s,当前连接数:%s" +
+                                "<br/>无表死锁",dbConfigData.getPort(),"70%",maxConnectNum,connectNum);
                 }else{
                     isOk =false;
                     StringBuffer sb = new StringBuffer("数据库资源异常,端口:"+dbConfigData.getPort());
@@ -109,9 +109,9 @@ public class DeviceServiceCheckManager {
                     sb.append("<br/>用户名密码正确");
 
                     if(testResult.getIntValue("alarmType") == AlarmEnum.db_connect_70.getAlarmType()){
-                        sb.append( String.format("<br/>连接数大于70%,最大连接数:%s,当前连接数:%s",dbConfigData.getPort(),maxConnectNum,connectNum));
+                        sb.append( String.format("<br/>连接数大于%s,最大连接数:%s,当前连接数:%s","70%",maxConnectNum,connectNum));
                     }else{
-                        sb.append( String.format("<br/>连接数小于70%,最大连接数:%s,当前连接数:%s",dbConfigData.getPort(),maxConnectNum,connectNum));
+                        sb.append( String.format("<br/>连接数小于%s,最大连接数:%s,当前连接数:%s","70%",maxConnectNum,connectNum));
                     }
 
                     msg = sb.toString();

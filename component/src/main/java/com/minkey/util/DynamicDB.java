@@ -145,7 +145,7 @@ public class DynamicDB {
         }catch (SystemException  e){
             throw e;
         }catch (Exception e){
-            throw new SystemException(AlarmEnum.port_notConnect,String.format("测试数据库%s失败,msg=:",dbConfigData.toString(),e.getMessage()));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("测试数据库%s是否联通异常,msg=%s",dbConfigData.toString(),e.getMessage()));
         }
     }
 
@@ -226,7 +226,7 @@ public class DynamicDB {
         }catch (SystemException  e){
             resultJson.put("alarmType",e.getErrorCode());
         }catch (Exception e){
-            log.debug(String.format("测试数据库%s失败,msg=%s",dbConfigData.toString(),e.getMessage()));
+            log.error(String.format("测试数据库%s资源异常,msg=%s",dbConfigData.toString(),e.getMessage()));
             resultJson.put("alarmType",AlarmEnum.port_notConnect.getAlarmType());
         }
 

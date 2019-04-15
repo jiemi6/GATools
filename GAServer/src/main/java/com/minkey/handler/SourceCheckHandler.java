@@ -57,7 +57,7 @@ public class SourceCheckHandler {
             return testSource_video(task,source,detectorService,link);
         }else{
             //未知数据格式
-            String logstr = String.format("<%s链路>存在未知数据源类型<%>",link.getLinkName(),source.getSourceType());
+            String logstr = String.format("<%s链路>存在未知数据源类型<%s>",link.getLinkName(),source.getSourceType());
             log.error(logstr);
             return null;
         }
@@ -84,7 +84,7 @@ public class SourceCheckHandler {
         Integer alarmType = jsonResult.getInteger("alarmType");
         //如果不为空,证明报错,没有正常连上
         if(alarmType != null) {
-            String msg = String.format("<%s链路>FTP资源<%s>连接失败:<%>",link.getLinkName(),task.getTaskName(),AlarmEnum.find8Type(alarmType).getDesc());
+            String msg = String.format("<%s链路>FTP资源<%s>连接失败:<%s>",link.getLinkName(),task.getTaskName(),AlarmEnum.find8Type(alarmType).getDesc());
             alarmLog = new AlarmLog()
                     .setBid(task.getTaskId())
                     .setbType(AlarmLog.BTYPE_TASK)

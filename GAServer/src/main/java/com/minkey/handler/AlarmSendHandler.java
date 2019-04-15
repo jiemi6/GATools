@@ -88,7 +88,7 @@ public class AlarmSendHandler {
      */
     @Scheduled(cron = "0 */1 * * * ?")
     public void sendAlarm(){
-        log.info("开始执行报警发送任务");
+
         try {
             if (alarmConfigData == null) {
                 log.error("alarmConfigData == null");
@@ -122,7 +122,7 @@ public class AlarmSendHandler {
                 jianGeFenzhong = 1;
             }
 
-
+            log.debug("开始执行报警发送任务");
             long index = 0;
             Map<String, Object> configIndex = configHandler.query(ConfigEnum.AlarmSendIndex.getConfigKey());
             JSONObject jsonConfig ;
@@ -216,11 +216,14 @@ public class AlarmSendHandler {
 
         StringBuffer sb = new StringBuffer();
 
+
+        //&lt;   <
+        //&gt;   >
         sb.append(DateUtil.dateFormatStr(alarmLog.getCreateTime(),DateUtil.format_all));
-        sb.append("<").append(alarmObjectName).append(":").append(AlarmLog.getString8BType(alarmLog.getbType())).append(">");
-        sb.append("<").append(MyLevel.getString8level(alarmLog.getLevel())).append(">");
-        sb.append("<").append(alarmLog.getType()).append(":").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append(">");
-        sb.append(":").append(alarmLog.getMsg()).append(".");
+        sb.append("[").append(alarmObjectName).append(":").append(AlarmLog.getString8BType(alarmLog.getbType())).append("]");
+        sb.append("[").append(MyLevel.getString8level(alarmLog.getLevel())).append("]");
+        sb.append("[").append(alarmLog.getType()).append(":").append(AlarmEnum.find8Type(alarmLog.getType()).getDesc()).append("]");
+        sb.append(":").append(alarmLog.getMsg().replaceAll("<","[").replaceAll(">","]")).append(".");
 
 
         sendSMS.send(smsConfig,sb.toString());
