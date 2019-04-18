@@ -77,7 +77,7 @@ public class HttpClient {
 
 			return buffer.toString();
 		} catch (Exception e) {
-			log.debug(String.format("HTTPClient请求异常,url=%s,",url),e);
+			log.warn(String.format("HTTPClient请求异常,url=%s,",url),e);
 			return null;
 		}finally{
 			IOUtils.close(reader);

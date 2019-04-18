@@ -27,6 +27,7 @@ public class DetectorUtil {
         }
         JSONMessage jsonMessage = JSONMessage.string2Obj(returnStr);
         if(jsonMessage == null){
+            log.warn(String.format("check探针%s:%s返回json为空",detectorIp,detectorPort));
             return false;
         }
         return jsonMessage.isSuccess();
@@ -54,7 +55,7 @@ public class DetectorUtil {
         try {
             return getReturnJson(returnStr).getBoolean("isConnect");
         } catch (SystemException e) {
-            log.debug("探针执行ping报错,"+e.getMessage());
+            log.warn("探针执行ping报错,"+e.getMessage());
             return false;
         }
     }
@@ -108,7 +109,7 @@ public class DetectorUtil {
         try {
             return getReturnJson(returnStr).getBoolean("isConnect");
         } catch (SystemException e) {
-            log.debug("探针执行telnetCmd报错,"+e.getMessage());
+            log.warn("探针执行telnetCmd报错,"+e.getMessage());
             return false;
         }
 
@@ -174,7 +175,7 @@ public class DetectorUtil {
         try {
             return getReturnJson(returnStr).getBoolean("isConnect");
         } catch (SystemException e) {
-            log.debug("探针执行testSNMP报错,"+e.getMessage());
+            log.warn("探针执行testSNMP报错,"+e.getMessage());
             return false;
         }
     }
@@ -193,7 +194,7 @@ public class DetectorUtil {
         try {
             return getReturnJson(returnStr).getBoolean("isConnect");
         } catch (SystemException e) {
-            log.debug("探针执行testDBConnect报错,"+e.getMessage());
+            log.warn("探针执行testDBConnect报错,"+e.getMessage());
             return false;
         }
     }
@@ -211,7 +212,7 @@ public class DetectorUtil {
         try {
             return getReturnJson(returnStr).getBoolean("isConnect");
         } catch (SystemException e) {
-            log.debug("探针执行testFTPConnect报错,"+e.getMessage());
+            log.warn("探针执行testFTPConnect报错,"+e.getMessage());
             return false;
         }
     }
