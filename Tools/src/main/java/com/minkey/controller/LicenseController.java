@@ -32,16 +32,16 @@ public class LicenseController {
      * @return
      */
     @RequestMapping("/licenseExport")
-    public String licenseExport(String licenseKey,HttpServletResponse response) {
+    public String licenseExport(String licenseKey,String publishName,String publishDateLine,HttpServletResponse response) {
         log.debug("start: 根据key= {} 获取licenseData ",licenseKey);
         byte[] licenseData;
-        if(StringUtils.isEmpty(licenseKey)){
+        if(StringUtils.isEmpty(licenseKey) || StringUtils.isEmpty(publishName) ||StringUtils.isEmpty(publishDateLine)){
             //返回错误
             licenseData = "参数错误".getBytes();
         }else{
             JSONObject jo = new JSONObject();
-            jo.put(DATA_DEADLINE, "2019-06-01");
-            jo.put(DATA_PUBLISHER, "江门市公安局");
+            jo.put(DATA_DEADLINE, publishDateLine);
+            jo.put(DATA_PUBLISHER, publishName);
             if(!StringUtils.isEmpty(licenseKey)){
                 //加密
                 licenseData = SymmetricEncoder.AESEncode(licenseKey.getBytes(),jo.toJSONString().getBytes());
