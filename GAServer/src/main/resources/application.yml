@@ -12,6 +12,7 @@ server:
   max-http-header-size: 8192
   tomcat:
     uri-encoding: UTF-8
+    basedir: tmp
 
 logging:
   level:
