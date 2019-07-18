@@ -308,13 +308,18 @@ public class TaskExamineHandler {
     }
 
     public boolean testSourceConnect_db(Source source, DeviceService detectorService)throws SystemException {
-        boolean isConnect;
-        if(source.isNetAreaIn()){
-            isConnect = dynamicDB.testDBConnect(source);
-        }else{
-            isConnect = DetectorUtil.testDBConnect(detectorService.getIp(),detectorService.getConfigData().getPort(),source);
+        try {
+            boolean isConnect;
+            if (source.isNetAreaIn()) {
+                isConnect = dynamicDB.testDBConnect(source);
+            } else {
+                isConnect = DetectorUtil.testDBConnect(detectorService.getIp(), detectorService.getConfigData().getPort(), source);
+            }
+            return isConnect;
+        }catch(SystemException e){
+            log.error("testDBConnect exception ",e);
+            return false;
         }
-        return isConnect;
 
     }
 }

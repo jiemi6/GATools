@@ -27,7 +27,7 @@ public class TestController {
     @Autowired
     FTPUtil ftpUtil;
 
-    @RequestMapping("/testDB")
+    @RequestMapping("/testDBConnect")
     public String testDBConnect(DBConfigData dbConfigData){
         log.debug("start: 执行测试数据库是否能连通 dbConfigData={}",dbConfigData);
 

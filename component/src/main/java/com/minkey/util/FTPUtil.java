@@ -51,23 +51,26 @@ public class FTPUtil {
             ftpClient.connect(ip, port);
             boolean isConnect =  ftpClient.isConnected();
 
-            //再登陆
-            boolean login = ftpClient.login(user, pwd);
-
             // 检测连接是否成功
             int reply = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
-                throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp连接失败%s:%s/%s:%s",ip,port,user,pwd));
+                throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp网络连接失败%s:%s/%s:%s",ip,port,user,pwd));
+            }
+            //再登陆
+            boolean login = ftpClient.login(user, pwd);
+
+            if (!login) {
+                throw new SystemException(AlarmEnum.ftp_wrongpwd,String.format("ftp连接账号密码错误%s:%s/%s:%s",ip,port,user,pwd));
             }
 
             return isConnect;
         } catch (SocketTimeoutException e) {
-            throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp连接超时%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp网络连接超时%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         } catch (SocketException e) {
             //Connection refused 网络不通
-            throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp连接异常%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
+            throw new SystemException(AlarmEnum.port_notConnect,String.format("ftp网络连接错误%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         } catch (IOException e) {
-            throw new SystemException(AlarmEnum.ftp_io_error,String.format("ftp-IO异常%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
+            throw new SystemException(AlarmEnum.ftp_io_error,String.format("ftp网络IO异常%s:%s/%s:%s,msg=%s",ip,port,user,pwd,e));
         }finally {
             close(ftpClient);
         }

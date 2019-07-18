@@ -70,9 +70,9 @@ public class ToolsController {
 
         try{
 
-            String cmd = "pingConnect "+ip+ " -c 4";
+            String cmd = "ping "+ip+ " -c 4";
 //            if(OSUtil.isWindowsOS()){
-//                cmd = "pingConnect "+ip;
+//                cmd = "ping "+ip;
 //            }
 
             ResultInfo resultInfo = null;
@@ -107,7 +107,7 @@ public class ToolsController {
             if(resultInfo.isExitStutsOK()){
                 return JSONMessage.createSuccess().addData("msg",resultInfo.getOutRes()).toString();
             }else{
-                return JSONMessage.createSuccess().addData("msg",resultInfo.getErrRes()).toString();
+                return JSONMessage.createSuccess().addData("msg",resultInfo.getOutRes()).toString();
             }
         }catch (Exception e){
             log.error(e.getMessage(),e);

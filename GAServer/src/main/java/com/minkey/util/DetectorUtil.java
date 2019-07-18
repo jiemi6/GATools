@@ -52,12 +52,7 @@ public class DetectorUtil {
         param.put("ip",ip);
         String returnStr = HttpClient.postRequest(url,param);
 
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.warn("探针执行ping报错,"+e.getMessage());
-            return false;
-        }
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
 
@@ -106,12 +101,7 @@ public class DetectorUtil {
         param.put("port",""+port);
         String returnStr = HttpClient.postRequest(url,param);
 
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.warn("探针执行telnetCmd报错,"+e.getMessage());
-            return false;
-        }
+        return getReturnJson(returnStr).getBoolean("isConnect");
 
     }
 
@@ -172,12 +162,8 @@ public class DetectorUtil {
         param.put("version",String.valueOf(snmpConfigData.getVersion()));
         String returnStr = HttpClient.postRequest(url,param);
 
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.warn("探针执行testSNMP报错,"+e.getMessage());
-            return false;
-        }
+        return getReturnJson(returnStr).getBoolean("isConnect");
+
     }
 
     public static boolean testDBConnect(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
@@ -191,12 +177,8 @@ public class DetectorUtil {
         param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
         String returnStr = HttpClient.postRequest(url,param);
 
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.warn("探针执行testDBConnect报错,"+e.getMessage());
-            return false;
-        }
+        //如果没有连上, 则会抛出异常
+        return getReturnJson(returnStr).getBoolean("isConnect");
     }
 
     public static boolean testFTPConnect(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
@@ -209,12 +191,9 @@ public class DetectorUtil {
         param.put("pwd",ftpConfigData.getPwd());
         String returnStr = HttpClient.postRequest(url,param);
 
-        try {
-            return getReturnJson(returnStr).getBoolean("isConnect");
-        } catch (SystemException e) {
-            log.warn("探针执行testFTPConnect报错,"+e.getMessage());
-            return false;
-        }
+        //如果没有连上, 则会抛出异常
+        return getReturnJson(returnStr).getBoolean("isConnect");
+
     }
 
     public static JSONObject testDBSource(String detectorIp, int detectorPort, DBConfigData dbConfigData) throws SystemException{

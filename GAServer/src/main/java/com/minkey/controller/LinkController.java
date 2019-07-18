@@ -235,28 +235,21 @@ public class LinkController {
         }
         try{
 
-            //删除链路下的所有任务报警
-            alarmLogHandler.deleteTask8LinkId(linkId);
-            //删除任务每日统计
-            taskDayLogHandler.delete8LinkId(linkId);
-            //删除链路报警日志
-            alarmLogHandler.delete8Id(AlarmLog.BTYPE_LINK,linkId);
-
-            //删除链路的任务
-            taskHandler.del8LinkId(linkId);
-            //删除链路与数据源的对应关系
-            taskSourceHandler.del8LinkId(linkId);
-            //删除链路对应的数据源
-            sourceHandler.del8LinkId(linkId);
-            //真正删除链路
-            linkHandler.del(linkId);
-
             User sessionUser = (User) session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser, Modules.link,String.format("%s 删除链路，链路id=%s ",sessionUser.getuName(),linkId));
 
-            //刷新缓存
-            deviceCache.refresh();
+            deleteAysn(linkId);
+
+            try {
+                //等待5秒
+                Thread.sleep(5000l);
+            }catch (Exception e){}
+
+            //删除链路的任务
+            taskHandler.del8LinkId(linkId);
+            //真正删除链路
+            linkHandler.del(linkId);
 
             return JSONMessage.createSuccess().toString();
         }catch (Exception e){
@@ -265,6 +258,52 @@ public class LinkController {
         }finally {
             log.debug("end: 执行删除link ");
         }
+    }
+
+    /**
+     * 删除耗时太长了,改成异步的
+     * @param linkId
+     */
+    @Async
+    public void deleteAysn(Long linkId){
+        try {
+            //删除链路下的所有任务报警
+            alarmLogHandler.deleteTask8LinkId(linkId);
+        }catch (Exception e){
+            log.error(String.format("删除链路下的所有任务报警异常,链路id=%s",linkId),e);
+        }
+
+        try{
+            //删除任务每日统计
+            taskDayLogHandler.delete8LinkId(linkId);
+        }catch (Exception e){
+            log.error(String.format("删除任务每日统计异常,链路id=%s",linkId),e);
+        }
+
+        try{
+            //删除链路报警日志
+            alarmLogHandler.delete8Id(AlarmLog.BTYPE_LINK,linkId);
+        }catch (Exception e){
+            log.error(String.format("删除链路报警日志异常,链路id=%s",linkId),e);
+        }
+
+        try{
+            //删除链路与数据源的对应关系
+            taskSourceHandler.del8LinkId(linkId);
+        }catch (Exception e){
+            log.error(String.format("删除链路与数据源的对应关系异常,链路id=%s",linkId),e);
+        }
+
+        try{
+            //删除链路对应的数据源
+            sourceHandler.del8LinkId(linkId);
+        }catch (Exception e){
+            log.error(String.format("删除链路对应的数据源异常,链路id=%s",linkId),e);
+        }
+
+
+        //刷新缓存
+        deviceCache.refresh();
     }
 
 }
