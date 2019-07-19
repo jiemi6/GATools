@@ -48,10 +48,10 @@ public class SelfCheckJob {
     public void startCheck(long checkId){
         CheckItem checkItem;
 
-        //Minkey pingConnect 网关
+        //Minkey ping 网关
         checkItem = new CheckItem(checkId,totalStep);
         checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
-        checkItem.setResultMsg("pingConnect 网关成功");
+        checkItem.setResultMsg("ping 网关成功");
         checkItemHandler.insert(checkItem);
 
 
