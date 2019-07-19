@@ -53,8 +53,8 @@ public class CleanLogHandler {
             Calendar date = Calendar.getInstance();
             date.setTime(new Date());
 
-            int today = date.get(Calendar.DATE);
-            date.set(Calendar.DAY_OF_YEAR, today - LogOverDay);
+            //往前倒推保留天数
+            date.add(Calendar.DAY_OF_YEAR, 0 - LogOverDay);
             String deleteDayStr = DateUtil.dateFormatStr(date.getTime(),DateUtil.format_day);
 
             //删除日期小于这天的log
@@ -63,7 +63,7 @@ public class CleanLogHandler {
             syslogHandler.clean(deleteDayStr);
 
         }catch (Exception e){
-            log.error("定时清理log异常"+e.getMessage());
+            log.error("定时清理log异常",e);
         }
     }
 }
