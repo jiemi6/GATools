@@ -50,4 +50,10 @@ public class BaseException extends RuntimeException{
 		return errorCode;
 	}
 
+
+	public String toLogString() {
+		return "BaseException{" +
+				"errorCode=" + errorCode +
+				"} " + super.getMessage();
+	}
 }
