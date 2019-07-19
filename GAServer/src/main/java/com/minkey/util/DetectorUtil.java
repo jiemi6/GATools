@@ -52,7 +52,12 @@ public class DetectorUtil {
         param.put("ip",ip);
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.warn("探针执行ping报错," + e.toString());
+            return false;
+        }
     }
 
 
@@ -101,7 +106,12 @@ public class DetectorUtil {
         param.put("port",""+port);
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.warn("探针执行telnetCmd报错,"+e.toString());
+            return false;
+        }
 
     }
 
@@ -162,8 +172,12 @@ public class DetectorUtil {
         param.put("version",String.valueOf(snmpConfigData.getVersion()));
         String returnStr = HttpClient.postRequest(url,param);
 
-        return getReturnJson(returnStr).getBoolean("isConnect");
-
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.warn("探针执行testSNMP报错,"+e.toString());
+            return false;
+        }
     }
 
     public static boolean testDBConnect(String detectorIp, int detectorPort, DBConfigData dbConfigData) {
@@ -177,8 +191,12 @@ public class DetectorUtil {
         param.put("databaseDriverId",dbConfigData.getDatabaseDriver().getId());
         String returnStr = HttpClient.postRequest(url,param);
 
-        //如果没有连上, 则会抛出异常
-        return getReturnJson(returnStr).getBoolean("isConnect");
+        try {
+            return getReturnJson(returnStr).getBoolean("isConnect");
+        } catch (SystemException e) {
+            log.warn("探针执行testDBConnect报错,"+e.toString());
+            return false;
+        }
     }
 
     public static boolean testFTPConnect(String detectorIp, int detectorPort, FTPConfigData ftpConfigData) {
