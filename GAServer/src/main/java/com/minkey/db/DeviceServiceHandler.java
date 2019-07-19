@@ -28,14 +28,20 @@ public class DeviceServiceHandler {
         return count;
     }
 
-    public void insertAll(Device device,List<DeviceService> deviceService) {
+    public void insertAll(Device device,List<DeviceService> deviceServiceList) {
+        deviceServiceList.forEach(deviceService -> {
+            if(StringUtils.isEmpty(deviceService.getIp())){
+                //设备ip赋值给设备服务
+                deviceService.setIp(device.getIp());
+            }
+        });
         int[][] num = jdbcTemplate.batchUpdate("insert into "+tableName+" (deviceId,serviceName,ip,serviceType,configData) VALUES (?,?,?,?,?)",
-                deviceService,deviceService.size(), new ParameterizedPreparedStatementSetter<DeviceService>() {
+                deviceServiceList,deviceServiceList.size(), new ParameterizedPreparedStatementSetter<DeviceService>() {
                     @Override
                     public void setValues(PreparedStatement ps, DeviceService argument) throws SQLException {
                         ps.setLong(1,device.getDeviceId());
                         ps.setString(2,argument.getServiceName());
-                        ps.setString(3, StringUtils.isEmpty(argument.getIp()) ? device.getIp() :argument.getIp());
+                        ps.setString(3, argument.getIp());
                         ps.setInt(4,argument.getServiceType());
                         ps.setString(5,argument.configDataStr());
                     }

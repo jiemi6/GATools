@@ -112,16 +112,11 @@ public class DeviceController {
         }
 
         try{
-            List<DeviceService> paramList = device.getDeviceServiceList();
             long deviceId = deviceHandler.insert(device);
             device.setDeviceId(deviceId);
 
+            List<DeviceService> paramList = device.getDeviceServiceList();
             if(!CollectionUtils.isEmpty(paramList)){
-                paramList.forEach(deviceService -> {
-                    if(StringUtils.isEmpty(deviceService.getIp())){
-                        deviceService.setIp(device.getIp());
-                    }
-                });
                 deviceServiceHandler.insertAll(device,paramList);
             }
 
@@ -154,7 +149,6 @@ public class DeviceController {
             return jsonMessage.toString();
         }
 
-
         try{
             deviceHandler.replace(device);
             //先删除
@@ -169,7 +163,6 @@ public class DeviceController {
             User sessionUser = (User)session.getAttribute("user");
             //记录用户日志
             userLogHandler.log(sessionUser,Modules.device,String.format("[%s]修改设备信息，设备名称[%s]。",sessionUser.getuName(),device.getDeviceName()));
-
             //刷新缓存
             deviceCache.refresh();
 
