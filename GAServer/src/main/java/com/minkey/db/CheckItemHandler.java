@@ -38,7 +38,7 @@ public class CheckItemHandler {
     }
 
     public List<CheckItem> getLast10() {
-        return jdbcTemplate.query("select * from "+tableName+" ORDER BY createTime limit 0,10",new BeanPropertyRowMapper<>(CheckItem.class));
+        return jdbcTemplate.query("select * from "+tableName+" ORDER BY createTime desc limit 0,20",new BeanPropertyRowMapper<>(CheckItem.class));
     }
 
     public void clean(String deleteDayStr) {
