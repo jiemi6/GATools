@@ -213,19 +213,27 @@ public class LicenseController {
      */
     @RequestMapping("/check")
     public String check() {
+        Map<String, Object> dbDataMap = configHandler.query(licenseConfigKey);
 
-        Map<String, Object> dbData = configHandler.query(licenseConfigKey);
-
-        if(MapUtils.isEmpty(dbData)){
+        if(MapUtils.isEmpty(dbDataMap)){
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
 
-        JSONObject configData = JSONObject.parseObject((String) dbData.get(ConfigHandler.CONFIGDATAKEY));
-        if(configData == null){
+        JSONObject dbData = JSONObject.parseObject((String) dbDataMap.get(ConfigHandler.CONFIGDATAKEY));
+        if(dbData == null){
             return JSONMessage.createFalied(ErrorCodeEnum.No_license).toString();
         }
+        //得到的是未解密的证书数据
+        String licenseValue = dbData.getString(LICENSE_DATA_KEY);
+        String key = dbData.getString(LICENSE_KEY);
 
-        return JSONMessage.createSuccess().addData(configData).toString();
+        //解密data,得到明文
+        String licenseDataStr = getLicenseDataStr(key, licenseValue.getBytes());
+
+        //覆盖数据库取出来的加密data
+        dbData.put(LICENSE_DATA_KEY,licenseDataStr);
+
+        return JSONMessage.createSuccess().addData(dbData).toString();
     }
 
     /**
