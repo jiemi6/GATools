@@ -1,0 +1,10 @@
+{
+  "echarts.js": "echarts.js?v=99c93638ab",
+  "global.js": "global.js?v=83e03aad4b",
+  "global.min.js": "global.min.js?v=9b1436812d",
+  "jquery-3.3.1.js": "jquery-3.3.1.js?v=6a07da9fae",
+  "jquery-3.3.1.min.js": "jquery-3.3.1.min.js?v=a09e13ee94",
+  "plupload.full.min.js": "plupload.full.min.js?v=851bcb8c0e",
+  "qiniu.js": "qiniu.js?v=3c39650049",
+  "vue.js": "vue.js?v=a43164fe16"
+}

@@ -1,0 +1,138 @@
+<!-- 日志模块 用户日志 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="#/equiplog" class="usercen ex_act">
+            <img class="logimg hui" src="../images/sbrz.png" alt="">
+            <img class="logimg bai" src="../images/sbrz_act.png" alt="">
+            <span>设备日志</span>
+          </a></li>
+        <!-- 	<li><a href="#/businesslog" class="userpro ex_act">
+		    		    <img class="logimg hui" src="../images/logimg.png" alt="">
+             <img class="logimg bai" src="../images/logimg_act.png" alt="">
+               <span>任务日志</span>
+		    		</a></li> -->
+        <li tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+            <img class="logimg" src="../images/yhrz_act.png" alt=""><span>用户日志</span>
+          </a></li>
+        <li tapshow='0'><a href="#/explog" class="userpro ex_act">
+            <img class="logimg hui" src="../images/tjrz.png" alt="">
+            <img class="logimg bai" src="../images/tjrz_act.png" alt="">
+            <span>体检日志</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox">
+
+
+        <form class="layui-form">
+          <div class="upshuru">
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">用&nbsp;&nbsp;户：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="zt">
+                <select lay-filter="YS_plista.params.uid" ysselect="YS_plista.params.uid">
+                  <option value="" selected="">请选择用户</option>
+                  <option ng-repeat="(k, v) in YS_listb.data.users" value="{{v.uid}}" ng-bind="v.uName"></option>
+                </select>
+              </div>
+            </div>
+
+                        <div class="layui-form-item shitem shitem2">
+              <label class="layui-form-label shtitle2">关 键 字：</label>
+              <div class="layui-input-block yhblock">
+                <input id="key" type="text" placeholder="请输入" class="layui-input bjinput elinput" ng-model="YS_plista.params.keyword">
+              </div>
+            </div>
+
+            <div class="layui-form-item riqi mr_10">
+              <div class="layui-inline">
+                <label class="layui-form-label shtitle2">起止时间：</label>
+                <div class="layui-input-inline">
+                  <input id="date" type="text" class="layui-input bjinput eldate" ystwodate="YS_plista.params.startDate"
+                    to="YS_plista.params.endDate" style="background-position-x:14.8vw">
+                </div>
+              </div>
+            </div>
+
+
+
+            <div class="dpf scf_btn">
+              <div class="search cp" searchinter="YS_plista"><span>搜索</span></div>
+              <div class="rest cp" rest><span>重置</span></div>
+            </div>
+          </div>
+          <div class="dpn sls_btn">
+            <div class="search cp" searchinter="YS_plista"><span>搜索</span></div>
+            <div class="rest cp" rest><span>重置</span></div>
+          </div>
+        </form>
+
+
+
+
+
+
+
+
+        <!--  <div class="alarm">
+    	<div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+    </div> -->
+        <div class="table">
+          <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+            <col style="width: 5%" />
+            <col style="width: 15%" />
+            <col style="width: 15%" />
+            <col style="width: 15%" />
+            <col style="width: 35%" />
+            <col style="width: 15%" />
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>用户名称</th>
+                <th>用户IP</th>
+                <th>用户类型</th>
+                <th>描述</th>
+                <th>操作时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                <td ng-bind="key+1">1</td>
+                <td ng-bind="value.name" class="normal_n">张晓明</td>
+                <td ng-bind="value.loginIp">2018/08/27 08:23</td>
+                <td ng-bind="value.moduleName">一级体验</td>
+                <td ng-bind="value.msg">链路不通链路不通链路不通链路不通链路不通链路不通链路不通</td>
+                <td ng-bind="value.createTime">下载日志</td>
+              </tr>
+              <tr ng-if="!YS_plista.data.list.length">
+                <td colspan="6">
+                  <div class="allnmsg">
+                    <div class="nmsg_pic">
+                      <img src="/images/nonemsg.png" alt="">
+                    </div>
+                    <div>
+                      <span>暂无数据…</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+   

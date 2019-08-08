@@ -1,0 +1,168 @@
+<!-- 统计报表  任务执行统计 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="#/tasksta" class="usercen ex_act">
+            <img class="logimg hui" src="../images/rwzxtj.png" alt="">
+            <img class="logimg bai" src="../images/rwzxtj_act.png" alt="">
+            <span>任务执行统计</span>
+          </a></li>
+        <li tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+            <img class="logimg" src="../images/sbyxtj_act.png" alt=""><span>设备运行统计</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox">
+        <div class="tapbtn">
+          <!-- <div class="inlineb cp tkbtnl {{tapshow==0?'tkbtn_act':''}}" tapshow="0"><span>数据交换</span></div>
+          <div class="inlineb cp tkbtnr {{tapshow==1?'tkbtn_act':''}}" tapshow="1"><span>单向导入</span></div> -->
+
+          <div class="tapbtn">
+            <div class="layui-form">
+              <div class="layui-form-item shitem">
+                <label class="layui-form-label shtitle">链接名称：</label>
+                <div class="layui-input-block bji-blcok three_inf" id="lbj">
+                  <select name="city" lay-filter="YS_plista.params.linkId" ysselect="YS_plista.params.linkId" run="YS_plista">
+                    <option value="" selected="">请选择链路</option>
+                    <option ng-repeat="(k, v) in YS_lista.data.list" ng-selected="v.linkId==YS_plista.params.linkId"
+                      value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="upshuru">
+            <div class="choosetime" id="fw">
+              <input id="now" type="radio" name="time" value="0" ysradio="YS_plista.params.fw"><label todate="t" for="now"><span>今日</span></label>
+              <input id="weak" type="radio" name="time" value="1" ysradio="YS_plista.params.fw"><label todate="w" for="weak"><span>当前周</span></label>
+              <input id="month" type="radio" name="time" value="2" ysradio="YS_plista.params.fw"><label todate="m" for="month"><span>当前月</span></label>
+            </div>
+            <form class="layui-form">
+              <div class="layui-form-item riqi">
+                <div class="layui-inline">
+                  <label class="layui-form-label shtitle2" style="margin-top:4px">起止时间：</label>
+                  <div class="layui-input-inline">
+                    <input id="date" type="text" class="layui-input bjinput eldate" readonly="true" ystwodate="YS_plista.params.startDate"
+                      to="YS_plista.params.endDate" ng-model="todates" style="background-position-x:14.5vw">
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div class=" dpf ml_30">
+              <div class="search cp" searchinter="YS_plista"><span>搜索</span></div>
+              <div class="rest cp" rest><span>重置</span></div>
+            </div>
+          </div>
+
+          <div class="statotal dpf" style="flex-wrap: wrap;">
+            <div class="t-item1 dpf">
+              <div class="t-img2"><img style="height:38px;margin-top:25px" src="../images/equip_all.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>设备总数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.deviceNum"></span></div>
+              </div>
+            </div>
+            <div class="t-item6 dpf">
+              <div class="t-img2"><img style="height:38px;margin-top:25px" src="../images/eqalarm.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>设备报警数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.alarmDeviceNum"></span></div>
+              </div>
+            </div>
+            <div class="t-item7 dpf">
+              <div class="t-img2"><img style="height:38px;margin-top:25px" src="../images/eqalarmall.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>设备报警总次数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.alarmNum"></span></div>
+              </div>
+            </div>
+            <div class="t-item2 dpf">
+              <div class="t-img2"><img style="width:42px;margin-top:20px;height:47px" src="../images/linkcheck.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>连通检测报警数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.alarmNum_connect"></span></div>
+              </div>
+            </div>
+            <div class="t-item3 dpf">
+              <div class="t-img2"><img style="width:49px;height:47px;margin-top:20px" src="../images/ser_check.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>服务监测报警数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.alarmNum_service"></span></div>
+              </div>
+            </div>
+            <div class="t-item4 dpf">
+              <div class="t-img2"><img style="width:51px;height:36px;margin-top:25px" src="../images/xncheck.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>性能监测报警数</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.alarmNum_explore"></span></div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="alarm">
+    	<div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+    </div> -->
+          <div class="table">
+            <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+<!--               <col style="width: 20%" />
+              <col style="width: 10%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" /> -->
+      
+              <thead>
+                <tr>
+                 <th width="60">序号</th>
+                  <th>设备名称</th>
+                 <!--  <th>设备IP</th> -->
+                  <th width="200">总计</th>
+<!--                   <th>连通监测报警数</th>
+                  <th>服务监测报警数</th>
+                  <th>性能监测报警数</th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                <td ng-bind="key+1"></td>
+                  <td ng-bind="value.name" class="normal_n" align="left">移动手机报警定位平台系统</td>
+                 <!--  <td ng-bind="value.ip">100M</td> -->
+                  <td ng-bind="value.countNum"></td>
+<!--                   <td ng-bind="value.type">12533</td>
+                  <td ng-bind="value.createTime">847</td>
+                  <td ng-bind="value.level">0</td> -->
+                </tr>
+
+                <tr ng-if="!YS_plista.data.list.length">
+                  <td colspan="6">
+                    <div class="allnmsg">
+                      <div class="nmsg_pic">
+                        <img src="/images/nonemsg.png" alt="">
+                      </div>
+                      <div>
+                        <span>暂无数据…</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+            </table>
+          </div>
+          <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+   

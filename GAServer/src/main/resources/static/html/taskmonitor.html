@@ -1,0 +1,86 @@
+<!-- 任务监控 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="#/experience" class="userpro ex_act" tapshow="0">
+            <img class="menuimg hui" src="../images/yjtj.png" style="height:20px;" alt="">
+            <img class="menuimg bai" src="../images/yjtj_act.png" style="height:20px;" alt="">
+            <span>一键体检</span>
+          </a></li>
+        <li tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+            <img class="menuimg" src="../images/rwjk_act.png" alt="">
+            <span>任务监控</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox">
+        <div class="tapbtn">
+          <div class="layui-form">
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">链路名称：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="lbj">
+                <select name="city" lay-filter="YS_plista.params.linkId" ysselect="YS_plista.params.linkId" run="YS_plista">
+                  <option value="" selected="">请选择链路</option>
+                  <option ng-repeat="(k, v) in YS_lista.data.list" ng-selected="{{v.linkId==YS_plista.params.linkId}}" value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div ng-show="tapshow==0">
+          <div class="table">
+            <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+              <col style="width: 10%" />
+              <col style="width: 60%" />
+              <col style="width: 30%" />
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>任务名称</th>
+                  <th>任务状态</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list" alarmnav key="{{value.level==2||value.level==3?'true':'false'}}">
+                  <td ng-bind="key+1"></td>
+                  <td ng-bind="value.taskName" class="normal_n"></td>
+                  <td ng-if="value.level==1">正常</td>
+                  <td ng-if="value.level==2" class="org">警告</td>
+                  <td ng-if="value.level==3" class="red">错误</td>
+                  <td ng-if="value.level==-1"  class="org" >未知</td>
+
+                </tr>
+                <tr ng-if="!YS_plista.data.list.length">
+                  <td colspan="3">
+                    <div class="allnmsg">
+                      <div class="nmsg_pic">
+                        <img src="/images/nonemsg.png" alt="">
+                      </div>
+                      <div>
+                        <span>暂无数据…</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <div class="jia_nextpage fenye" id="YS_plista"></div>
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+</div>

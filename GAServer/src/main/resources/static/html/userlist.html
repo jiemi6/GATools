@@ -1,0 +1,160 @@
+<!-- 配置管理 设备管理 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li><a href="javascript:;" class="usercen act ex_act">
+            <img class="logimg" src="../images/ulistlog.png" alt=""><span>用户列表</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <!--       <div class="breadnav">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+      </div> -->
+      <div class="tmbox res-leftbox">
+        <div class="nonemsg" ng-if="YS_plista.data.users==undefined || YS_plista.data.users==0">
+          <div class="allnmsg">
+            <div class="nmsg_pic">
+              <img src="/images/nonemsg.png" alt="">
+            </div>
+            <div>
+              <span>暂无数据…</span>
+            </div>
+          </div>
+        </div>
+        <div class="eptitle"><span>用户列表</span></div>
+        <div>
+          <a href="#/userinfo">
+            <div class="addep cp">+添加</div>
+          </a>
+        </div>
+
+        <div class="table">
+          <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+            <col style="width: 5%" />
+            <col style="width: 20%" />
+            <col style="width: 15%" />
+            <col style="width: 15%" />
+            <col style="width: 15%" />
+            <col style="width: 14%" />
+            <col style="width: 16%" />
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>姓名</th>
+                <th>用户名</th>
+                <th>联系方式</th>
+                <th>创建时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.users">
+                <td ng-bind="key+1"></td>
+                <td ng-bind="value.name" class="normal_n">张晓明</td>
+                <td ng-bind="value.uName">admin</td>
+                <td ng-bind="value.phone">13524557220</td>
+                <td ng-bind="value.createTime">2017/08/25 23:00</td>
+                <td >
+                <span ng-if="value.status==1" class="normal_n">正常</span>
+                <span class="{{value.status=='2'?'org':''}}" ng-if="value.status==2">锁定</span>
+
+                </td>
+
+                <td class="ptr">
+                  <a href="#/edituser">
+                    <span class="blu cp" edituser>查看/编辑</span>
+                  </a>
+                  <span class="rep blu cp smore" showmore>更多</span>
+
+                  <div class="more dpn">
+                    <div ng-if="value.status==2" class="moret mt_10 mb_20 cp" userjs><span>解锁</span></div>
+                    <div class="moret mt_20 mb_20 cp" repwd><span>重置</span></div>
+                    <div class="moret mt_20 mb_10 cp" ulistdel><span>删除</span></div>
+                  </div>
+
+                </td>
+              </tr>
+
+
+            </tbody>
+          </table>
+        </div>
+
+
+      </div>
+    </div>
+
+
+    <!-- 确认删除 -->
+    <div id="userremove" class="com_tc dpn">
+      <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+      </div>
+      <div class="topline"><div class="cline"></div></div>
+      <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除该用户吗？</span></div>
+
+      </div>
+      <div class="tc_foot">
+        <div class="confirm" ysfetch="YS_objc"  showload="1000">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+      </div>
+    </div>
+
+    <!-- 修改密码 -->
+    <div id="repwd" class="com_tc dpn">
+      <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+      </div>
+      <div class="topline"><div class="cline"></div></div>
+      <div class="tc_cont3">
+        <div class="edi-desmove-right too-dis-flex too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">旧密码：</label>
+          <div class="">
+            <input type="text" placeholder="请输入旧密码" class="pwdinput">
+          </div>
+        </div>
+        <div class="edi-desmove-right too-dis-flex too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">新密码：</label>
+          <div class="">
+            <input type="text" placeholder="请输入新密码" class="pwdinput">
+          </div>
+        </div>
+        <div class="edi-desmove-right too-dis-flex too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">确认密码：</label>
+          <div class="">
+            <input type="text" placeholder="请确认新密码" class="pwdinput">
+          </div>
+        </div>
+      </div>
+      <div class="tc_foot">
+        <div class="confirm" ysfetch="YS_objb">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+      </div>
+    </div>
+
+    <!-- 密码重置成功 -->
+    <div id="pwdresucc" class="com_tc dpn">
+      <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+      </div>
+      <div class="topline"><div class="cline"></div></div>
+      <div class="tc_cont2">
+        <div class="zt_img"><img src="../images/success.png" alt=""></div>
+        <div class="ask"><span>密码重置为：123456!</span></div>
+        <div class="warnt2"><span>请妥善保管您的账户信息</span></div>
+        <div class="confirm3" onclick="window.location.href='/login.html'">重新登录</div>
+      </div>
+
+    </div>

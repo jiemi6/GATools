@@ -1,0 +1,95 @@
+<!-- 网络配置 -->
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow=0><a href="#/equipadmin" class="usercen l_btn ex_act">
+                        <img class="logimg hui" src="../images/sbgl.png" alt="">
+                        <img class="logimg bai" src="../images/sbgl_act.png" alt="">
+                        <span>设备管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/linkadmin" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/llgl.png" alt="">
+                        <img class="logimg bai" src="../images/llgl_act.png" alt="">
+                        <span>链路管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/register" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/ptzc.png" alt="">
+                        <img class="logimg bai" src="../images/ptzc_act.png" alt="">
+                        <span>平台注册</span>
+                    </a></li>
+                <li tapshow='0'><a href="javascript:;" class="userpro act l_btn ex_act">
+                        <img class="logimg" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/physicalconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/tjpz.png" alt="">
+                        <img class="logimg bai" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+                    </a></li>
+<!--                 <li tapshow='0'><a href="#/logconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/rzpz.png" alt="">
+                        <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+                    </a></li> -->
+                <li tapshow="0"><a href="#/alarmconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/alarmconf.png" alt="">
+                        <img class="logimg bai" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+                    </a></li>
+                                           <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+                        <img class="logimg hui" src="../images/gjx.png" alt="">
+           <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>网络配置</span></div>
+                </div>
+                <div class="res-body">
+                    <div class="lic-position">
+                        <div>
+                            <div class="pla-dec lic-dec">
+                                <div class="pla_decspeace-mtop m_t30">
+                                    <label>IP地址*：</label>
+                                    <input type="text" id="plaip" placeholder="请输入IP地址" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params.localIp" checkip="YS_obja.params.localIp">
+                                </div>
+                                <div class="pla_decspeace-mtop m_t30">
+                                    <label>子网掩码*：</label>
+                                    <input type="text" id="playm" placeholder="请输入子网掩码" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params.subnetMask" checkip="YS_obja.params.subnetMask">
+                                </div>
+                                <div class="pla_decspeace-mtop m_t30">
+                                    <label>网关*：</label>
+                                    <input type="text" id="plawg" placeholder="请输入网关" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params.gateway" checkip="YS_obja.params.gateway">
+                                </div>
+                                <div class="pla_decspeace-mtop m_t30">
+                                    <label>首选DNS服务器地址*：</label>
+                                    <input type="text" id="plasxdns" placeholder="请输入首选DNS服务器地址" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params.dns" checkip="YS_obja.params.dns">
+                                </div>
+                                <div class="pla_decspeace-mtop m_t30">
+                                    <label>备用DNS服务器地址*：</label>
+                                    <input type="text" id="plabydns" placeholder="请输入备用DNS服务器地址" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params.dnsBak" checkip="YS_obja.params.dnsBak">
+                                </div>
+                                <div class="pla_decspeace-mtop mt_0">
+                                    <button class="net-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act m_t45"
+                                        ysfetch="YS_obja">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

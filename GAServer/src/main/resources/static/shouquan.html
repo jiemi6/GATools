@@ -1,0 +1,341 @@
+<!doctype html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>公安监控系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="icon" type="image/png" href="/images/galogo.png">
+
+  <script src="/YSplugin/YS.js"></script>
+  <script src="/js/global.js?v=5ffefb5764"></script>
+
+</head>
+<style type="text/css" media="screen">
+  body {
+    font-family: "MicroSoft YaHei";
+    font: 14px Helvetica Neue, Helvetica, PingFang SC, \5FAE\8F6F\96C5\9ED1, Tahoma, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .def {
+    display: flex;
+  }
+
+  .shouquan {
+    background: url('images/mp_bg.png');
+    background-size: 100% 100%;
+    min-width: 1200px;
+  }
+
+  .sqbox {
+
+    width: 784px;
+    height: 568px;
+    border-radius: 2px;
+    background: #fff;
+    box-shadow: -1px 5px 30px #222;
+    background: #14455a;
+    margin: 200px auto;
+
+
+  }
+
+  .topline {
+    width: 100%;
+    height: 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .cline {
+    width: 98%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, .2);
+
+  }
+
+  .sqtitle {
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    height: 115px;
+    line-height: 172px;
+
+
+  }
+
+  .daochu {
+    color: #fff;
+    font-size: 16px;
+    padding: 15px 128px;
+  }
+
+  .dctitle {
+    color: #03d6fc;
+    font-size: 16px;
+    margin: 10px 0 19px;
+  }
+
+  .daochu input {
+    width: 406px;
+    height: 40px;
+    outline: none;
+    border: 1px solid #10394b;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #113c4f;
+    line-height: 40px;
+    padding: 0 10px;
+  }
+
+  .daochu input::-webkit-input-placeholder {}
+
+  .dcbtn {
+    width: 105px;
+    height: 40px;
+    background: #03d6fc;
+    color: #fff;
+    font-size: 18px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 3px;
+    margin: 20px 80px;
+    cursor: pointer;
+  }
+
+  .zc {
+    width: 80px;
+    line-height: 40px;
+  }
+
+  .close {
+    position: absolute;
+    margin-left: -30px;
+    margin-top: 15px;
+  }
+
+  .layui-upload-file {
+    display: none;
+  }
+
+  a,
+  a:hover {
+    text-decoration: none;
+  }
+
+  .dcss {
+    display: inline-block;
+    width: 100%;
+    color: #fff;
+  }
+
+  .close {
+    cursor: pointer;
+    transition: all 1s ease 0s;
+
+  }
+
+  .close:hover {
+    transform: rotate(180deg);
+    /*旋转180度*/
+  }
+
+  .com_tc {
+    width: 785px;
+    height: 445px;
+    /*width:40.8vw;*/
+    /* height:23vw;*/
+    background: rgb(6, 57, 76);
+    border-radius: 5px;
+    border: 1px solid rgba(0, 234, 255, 0.35);
+  }
+
+  .dpn {
+    display: none;
+  }
+
+  .tc_top {
+    width: 100%;
+    height: 70px;
+    border-radius: 3px 3px 0 0;
+    background: rgb(6, 57, 76);
+    line-height: 70px;
+    display: flex;
+
+  }
+
+  .tc_title {
+    flex: 1;
+    font-size: 28px;
+    color: #fff;
+
+
+  }
+
+  .tc_title span,
+  .tc_close img {
+    margin: 0 30px;
+  }
+
+  .tc_close img {
+    width: 19px;
+    height: 19px;
+    cursor: pointer;
+  }
+
+  .tc_close {
+    flex: 1;
+    text-align: right;
+  }
+
+  .tc_cont {
+    text-align: center;
+    padding: 80px 60px;
+  }
+
+
+  .zt_img img {
+    width: 100px;
+    height: 100px;
+  }
+
+  .ask {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 20px 0 0;
+    color: #fff;
+  }
+
+  .warnt {
+    font-size: 12px;
+    margin: 5px 0;
+
+  }
+
+  .warnt2 {
+    font-size: 14px;
+    margin: 5px 0;
+
+  }
+
+  .tc_foot {
+    width: 100%;
+    height: 70px;
+    /*border-top: 1px solid rgba(7,171,184,0.75);*/
+    /*	bottom: 0;
+	position: absolute;*/
+  }
+
+  .confirm {
+    width: 105px;
+    height: 45px;
+    border-radius: 5px;
+    background: #03d6fc;
+    margin: 12px 54px 12px 10px;
+    color: #fff;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    float: right;
+    cursor: pointer;
+  }
+
+  .quxiao {
+    width: 105px;
+    height: 45px;
+    border-radius: 5px;
+    background: #a8c1ca;
+    margin: 12px 10px 12px 10px;
+    color: #fff;
+    line-height: 45px;
+    text-align: center;
+    font-size: 18px;
+    float: right;
+    cursor: pointer;
+  }
+</style>
+
+<body class="shouquan" ng-controller="shouquan">
+  <div class="sqbox">
+    <div>
+      <div class="sqtitle"><span>平台硬件未检测到合法的license授权请重新进行授权</span></div>
+      <div class="daochu">
+        <div class="dctitle"><span>导出License文件</span></div>
+        <div class="def">
+          <div class="zc"><span>注 册 码：</span></div>
+          <div><input type="text" name="" value="" ng-model="licenseKey" placeholder=""><img delinput="licenseKey"
+              class="close" src="images/close.png" alt=""></div>
+        </div>
+
+        <div class="dcbtn">
+          <a class="dcss" href="./license/keyExport?licenseKey={{licenseKey}}">导出</a></div>
+      </div>
+      <div class="daochu">
+        <div class="dctitle"><span>导入License文件</span></div>
+        <div class="def">
+          <div class="zc"> <span>授权文件：</span></div>
+          <div><input type="text" name="" value="" ng-model="filename" placeholder=""><img delinput="filename" class="close"
+              src="images/close.png" alt=""></div>
+        </div>
+
+        <div class="dcbtn" licensesupload2>导入</div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- 授权成功 -->
+  <div id="sqsucc" class="com_tc dpn">
+    <div class="tc_top">
+      <div class="tc_title"><span>提示</span></div>
+      <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline">
+      <div class="cline"></div>
+    </div>
+
+    <div class="tc_cont">
+      <div class="zt_img"><img src="../images/success.png" alt=""></div>
+      <div class="ask"><span>License授权成功</span></div>
+      <div class="warnt2"><span>许可证有效期至：{{YS_objb.data.licenseData.deadline}}</span></div>
+    </div>
+    <div class="tc_foot">
+      <div class="confirm" comclose>确认</div>
+      <!-- <div class="quxiao" comclose>取消</div> -->
+
+    </div>
+  </div>
+
+  <!-- 授权失败 -->
+  <div id="sqfail" class="com_tc dpn">
+    <div class="tc_top">
+      <div class="tc_title"><span>提示</span></div>
+      <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline">
+      <div class="cline"></div>
+    </div>
+
+    <div class="tc_cont">
+      <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+      <div class="ask"><span>License文件无效，无法授权</span></div>
+
+    </div>
+    <div class="tc_foot">
+      <div class="confirm" comclose>确认</div>
+      <!-- <div class="quxiao" comclose>取消</div> -->
+
+    </div>
+  </div>
+</body>
+
+</html>

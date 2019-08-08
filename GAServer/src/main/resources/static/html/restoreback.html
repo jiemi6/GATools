@@ -1,0 +1,146 @@
+<!-- ----------恢复备份------------ -->
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li  tapshow='0'><a href="#/sysexam" class="usercen ex_act">
+                        <img class="logimg hui" src="../images/xtzj.png" alt="">
+                        <img class="logimg bai" src="../images/xtzj_act.png" alt="">
+                        <span>系统自检</span>
+                    </a></li>
+                <li  tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/hfbf_act.png" alt="">
+                        <span>恢复备份</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/power" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/xtgl.png" alt="">
+                        <img class="logimg bai" src="../images/xtgl_act.png" alt="">
+                        <span>系统管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/licenses" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/sqgl.png" alt="">
+                        <img class="logimg bai" src="../images/sqgl_act.png" alt="">
+                        <span>授权管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/tools" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/gjx.png" alt="">
+                        <img class="logimg bai" src="../images/gjx_act.png" alt="">
+                        <span>工具箱</span>
+                    </a></li>
+
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>恢复备份</span></div>
+                </div>
+                <div class="res-body">
+                    <div class="d-flex">
+                        <div class="res-dec-logo dis_flex">
+                            <img src="../images/beifen.png">
+                        </div>
+                        <div class="res-dec">
+                            <span>备份系统</span>
+                            <p>一键备份所有的系统配置和文件</p>
+                        </div>
+                        <button class="res-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" sysbackup> 备份
+                        </button>
+                    </div>
+                    <div class="d-flex-unringt d-flex">
+                        <div class="res-dec-logo dis_flex">
+                            <img src="../images/xitonghuifu.png">
+                        </div>
+                        <div class="res-dec">
+                            <span>恢复系统</span>
+                            <p>一键恢复所有的系统配置和文件</p>
+                        </div>
+                        <button class="res-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" bfload="YS_objb.params.imgurl" run="YS_objb">查看恢复</button>
+                    </div>
+                    <div class="d-flex-unringt d-flex">
+                        <div class="res-dec-logo dis_flex">
+                            <img src="../images/huifuchuchang.png">
+                        </div>
+                        <div class="res-dec">
+                            <span>恢复出厂设置</span>
+                            <p>此操作会删除当前所有设置</p>
+                        </div>
+                        <button class="res-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" chuchang>恢复出厂</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 系统备份位置询问 -->
+        <div id="sysbackup" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>系统备份</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="../images/warn.png" alt=""></div>
+                <div class="ask"><span>确定进行系统备份？</span></div>
+            </div>
+            <div class="tc_foot">
+                <a href="./system/bakupConfig">
+                    <div class="confirm l_btn ex_act" comclose>备份</div>
+                </a>
+                <div class="quxiao ex_act hs_btn" comclose>取消</div>
+            </div>
+        </div>
+        <!-- 系统恢复成功 ------------------------------>
+        <div id="sysrecoed" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont2" style="padding: 100px 60px;">
+                <div class="zt_img"><img src="../images/success.png" alt=""></div>
+                <div class="ask"><span>恭喜您，恢复成功！</span></div>
+            </div>
+        </div>
+
+        <!-- 恢复出厂设置询问 -->
+        <div id="reask" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="../images/warn.png" alt=""></div>
+                <div class="ask"><span>确定恢复出厂设置？</span></div>
+                <div class="warnt"><span class="red">此操作会删除当前所有设置，您还要继续吗？</span></div>
+            </div>
+            <div class="tc_foot">
+                <div ysfetch="YS_obja" class="confirm l_btn ex_act" hfcg>确认</div>
+                <div class="quxiao ex_act hs_btn" comclose>取消</div>
+
+            </div>
+        </div>
+
+        <!-- 恢复出厂设置成功 -->
+        <div id="resucc" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont2" style="padding: 100px 60px;">
+                <div class="zt_img"><img src="../images/success.png" alt=""></div>
+                <div class="ask"><span>已成功恢复出厂设置!</span></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

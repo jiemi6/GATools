@@ -1,0 +1,248 @@
+
+  <style>
+  .layui-form-select dl{
+    top: 44px;
+    height:200px;
+  }
+.layui-select-disabled .layui-disabled {
+    border-color: #0b4c63 !important;
+}
+  </style>
+
+
+<div class="log-body pd_30 mt_0">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li><a href="javascript:;" class="userpro act ex_act" tapshow="0">
+            <img class="menuimg" src="../images/yjtj_act.png" alt="" style="height:20px"><span>一键体检</span>
+          </a></li>
+        <li tapshow='0'><a href="#/taskmonitor" class="userpro ex_act">
+            <img class="menuimg hui" src="../images/rwjk.png" alt="">
+            <img class="menuimg bai" src="../images/rwjk_act.png" alt="">
+            <span>任务监控</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox" ng-show="tapshow==1">
+        <div class="tapbtn">
+          <div class="restore-tit">
+            <span>一键体检</span>
+            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+              onclick="window.location.reload()">返回</button>
+          </div>
+        </div>
+        <div class="res-body dis_flex">
+          <div class="bf-box">
+            <div class="dis_flex cp mt_0 yjtj-btn ptr kstj" yjjc ysfetch="YS_obja">
+              <!-- <img class="bfimg" src="../images/100.png" alt=""> -->
+              <!--  <div class="pow_contant pow-btn1"> -->
+              <img class="bfimg bfimg2" src="{{nowimg}}" alt="">
+              <img class="bf-qian" src="../images/qian0.png" alt="">
+              <div class="baifen baifen2"><span>{{nowbaifen}}%</span></div>
+              <!-- <p class="exp_test">一键体检</p> -->
+              <!--  </div> -->
+
+            </div>
+            <div class="jcts lb dpf" ng-if="zzjc==1"><span>正在进行体检</span>
+              <div class="loading">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+            <div class="jcts lb" ng-if="zzjc==0"><span>检测完成</span></div>
+          </div>
+
+          <div class="jcbtn-box">
+            <div class="tijian btndx">
+              <span ng-if="zzjc==1" yjjc data-cancle="1">取消</span>
+              <span ng-if="zzjc==0" tijian reset="1">重新检测</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dfjc">
+          <div style="width:950px">
+                    <span class="exp_buletit" ng-show="isyj==0">单项体检</span>
+          <span class="exp_buletit" ng-show="isyj==1">一键体检</span>
+          </div>
+        </div>
+        <div class="dfjc">
+          <img class="spline" src="../images/spline1.png" alt=""></div>
+        <!-- <div class="res-body dis_flex">
+          <div>
+            <div class="pow-btn dis_flex cp mt_0">
+             
+              <div class="pow_contant pow-btn1">
+                <div class="baifen"><span>{{nowbaifen}}</span></div>
+                <p ng-if="zzjc==1" yjjc>取消</p>
+                <p ng-if="zzjc==0" yjjc>重新检测</p>
+              </div>
+            </div>
+          </div>
+        </div> -->
+        <!--  <div class="jcts lb" ng-if="zzjc==1"><span>正在检测链路...</span></div>
+        <div class="jcts lb" ng-if="zzjc==0"><span>检测完成</span></div> -->
+
+
+
+        <!-- <div class="tb_title lb t_c"><span>链路1</span></div> -->
+        <div class="timeline">
+          <div class="tlbox tldx">
+            <ul class="layui-timeline">
+              <li ng-repeat="(key, value) in templist"  class="{{templist.length==1?'fuckline':'tl_item1'}} layui-timeline-item tl_item tl_itemhsl " >
+
+                <img ng-if="zzjc==1" class="xpimg xping" src="../images/xp1.png" alt="">
+                <img ng-if="zzjc==0" class="bl_img" src="../images/xp0.png" alt="">
+
+             <!--    <div class="zjline {{key==0?'dpn':''}} "></div> -->
+          <!--     <img ng-if="zzjc==0" class="xpimg xping" src="../images/xp1.png" alt=""> -->
+                <div class="layui-timeline-content layui-text">
+                  <div class="layui-timeline-title tl_title lb {{value.errorType>0?'red':''}}">{{value.resultMsg}}</div>
+                </div>
+
+              </li>
+
+            </ul>
+          </div>
+        </div>
+
+
+      </div>
+
+
+
+      <div class="tmbox" ng-show="tapshow==0">
+        <div class="tapbtn">
+          <div class="restore-tit"><span>一键体检</span></div>
+        </div>
+        <div class="res-body dis_flex">
+          <div class="bf-box">
+            <div class="dis_flex cp mt_0 yjtj-btn ptr">
+              <!-- <img class="bfimg" src="../images/100.png" alt=""> -->
+              <!--  <div class="pow_contant pow-btn1"> -->
+              <img class="bf-qian" src="../images/qian0.png" alt="">
+              <img style="z-index:9" src="../images/c-logo.png" alt="">
+              <!-- <p class="exp_test">一键体检</p> -->
+              <!--  </div> -->
+
+            </div>
+          </div>
+          <div class="jcbtn-box">
+            <div class="tijian" tijian="YS_obja"><span>一键体检</span></div>
+          </div>
+        </div>
+        <div class="dfjc">
+          <div style="width:950px">
+          <span class="exp_buletit" ng-show="isyj==0">单项体检</span>
+          <span class="exp_buletit" ng-show="isyj==1">一键体检</span>
+
+          </div>
+        </div>
+        <div class="dfjc"><img class="spline" src="../images/spline1.png" alt=""></div>
+        <div class="lic-position exp_minh p_t26">
+          <div class="layui-form">
+            <div class="exp_dec">
+              <!--               <span class="exp_buletit">单项体检</span> -->
+
+
+
+              <div class="layui-form-item shitem m_b30 dpf">
+                <label class="layui-form-label shtitle">链路：</label>
+                <div class="layui-input-block exp-blcok dpf">
+                  <!--  ng-if="timestamp>0" -->
+                  <select llselect="YS_objd.params.linkId" lay-filter="YS_objd.params.linkId">
+                    <option value="" selected="">请选择检测的链路</option>
+                    <option ng-repeat="(k, v) in YS_lista.data.list" value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                  </select>
+                </div>
+                <!--ng-bind="linkCheck?'重新检测':'检测'" -->
+                <button class="edi-btn-test layui-btn layui-btn-lg layui-btn-normal h_btn_j" 
+                  tijian="YS_objd">检测</button>
+              </div>
+
+              <div class="layui-form-item shitem m_b30 dpf">
+                <label class="layui-form-label shtitle">设备：</label>
+                <div class="layui-input-block exp-blcok dpf">
+                  <select name="city" lay-filter="YS_objc.params.deviceId" ysselect="YS_objc.params.deviceId">
+                    <option value="" selected="">请选择检测的设备</option>
+                    <option ng-repeat="(k, v) in YS_listb.data.list" value="{{v.deviceId}}" ng-bind="v.deviceName"></option>
+                  </select>
+                </div>
+                <!-- ng-bind="deviceCheck?'重新检测':'检测'" -->
+                <button class="edi-btn-test layui-btn layui-btn-lg layui-btn-normal h_btn_j" 
+                  tijian="YS_objc">检测</button>
+              </div>
+
+              <div class="layui-form-item shitem m_b30 dpf">
+                <label class="layui-form-label shtitle">任务：</label>
+
+                <div class="layui-input-block exp-blcok dpf">
+                  <select toselecttask="YS_objf.params.linkId" lay-filter="YS_objf.params.linkId">
+                    <option value="" selected="">先选择链路，再选择任务</option>
+                    <option ng-repeat="(k, v) in YS_lista.data.list" value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                  </select>
+                </div>
+
+         </div>
+              <div class="layui-form-item shitem m_b30 dpf">
+                <label class="layui-form-label shtitle"></label>
+                <div class="layui-input-block exp-blcok dpf">
+                  <select name="city" id="xlu" disabled="" lay-filter="YS_obje.params.taskId" ysselect="YS_obje.params.taskId">
+                    <option value="" selected="">先选择链路，再选择任务</option>
+                    <option ng-repeat="(k, v) in taskarr" ng-selected="YS_obje.params.taskId==v.taskId"  :id2="{{YS_obje.params.taskId}}"  :id="{{v.linkId}}" value="{{v.taskId}}" ng-bind="v.taskName"></option>
+                  </select>
+                </div>
+                <!-- ng-bind="taskCheck?'重新检测':'检测'" -->
+                <button class="edi-btn-test layui-btn layui-btn-lg layui-btn-normal h_btn_j" 
+                  tijian="YS_obje">检测</button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+<!-- 知识库 -->
+<div id="zsk" class="com_tc dpn">
+  <div class="tc_top">
+    <div class="tc_title"><span>知识库</span></div>
+    <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+  </div>
+  <div class="topline"><div class="cline"></div></div>
+  <div class="zskcont">
+    <div class="zskr">
+      <input id="zk1" type="radio" name="time" value=""><label for="zk1"></label>
+      <span>内置对各种异常的说明以及对原因的文字分析</span>
+    </div>
+    <div class="zskr">
+      <input id="zk2" type="radio" name="time" value=""><label for="zk2"></label>
+      <span>内置对各种异常的说明以及对原因的文字分析</span>
+    </div>
+    <div class="yuany">
+      <div class="yytitle"><span>原因描述：</span></div>
+      <div><textarea name="" class="yycont" placeholder="请输入至少五个字符"></textarea></div>
+    </div>
+  </div>
+  <div class="tc_foot">
+    <div class="confirm">确认</div>
+    <div class="quxiao" comclose>取消</div>
+
+  </div>
+</div>

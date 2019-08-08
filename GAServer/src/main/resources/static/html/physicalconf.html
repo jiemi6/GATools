@@ -1,0 +1,97 @@
+<!-- 体检配置 -->
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow="0"><a href="#/equipadmin" class="usercen l_btn ex_act">
+                        <img class="logimg hui" src="../images/sbgl.png" alt="">
+                        <img class="logimg bai" src="../images/sbgl_act.png" alt="">
+                        <span>设备管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/linkadmin" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/llgl.png" alt="">
+                        <img class="logimg bai" src="../images/llgl_act.png" alt="">
+                        <span>链路管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/register" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/ptzc.png" alt="">
+                        <img class="logimg bai" src="../images/ptzc_act.png" alt="">
+                        <span>平台注册</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/networkconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/wlpz.png" alt="">
+                        <img class="logimg bai" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+                    </a></li>
+                <li tapshow='0'><a href="javascript:;" class="userpro act l_btn ex_act">
+                        <img class="logimg" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+                    </a></li>
+<!--                 <li tapshow='0'><a href="#/logconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/rzpz.png" alt="">
+                        <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+                    </a></li> -->
+                <li tapshow="0"><a href="#/alarmconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/alarmconf.png" alt="">
+                        <img class="logimg bai" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+                    </a></li>
+                                                   <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+                     <img class="logimg hui" src="../images/gjx.png" alt="">
+           <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>体检配置</span></div>
+                </div>
+                <div class="res-body">
+                    <div class="lic-position lic-secdechigth">
+                        <div>
+                            <div class="pla-dec lic-dec">
+                                <div class="layui-form">
+                                    <div class="layui-form-item m_b20 m_t40">
+                                        <label>体检类型：</label>
+                                        <div class="layui-input-block equ-right-del" id="platjlx">
+                                            <p class="tjtype" style="color: #759CAA;">一键体检</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pla_time_contant">
+                                    <label>每天体检时间：</label>
+                                    <div class="pla_tjtime layui-form cp">
+                                        <input type="text" readonly="readonly" id="platjsj" class="pla-time layui-input cp"
+                                            placeholder="请选择" yslaytime="temptime">
+                                        <img src="../images/choose_time.png" alt="">
+                                    </div>
+                                    <button class="phy-btn layui-btn layui-btn-lg layui-btn-normal ml_20 hw_btn ex_act"
+                                        addnewtime>添加</button>
+                                </div>
+                                <div class="pla_time_contant m_t30" ng-repeat="(key, value) in timearr">
+                                    <label></label>
+                                    <div class="pla_tjtime layui-form cp">
+                                        <input type="text" readonly="readonly" class="pla-time layui-input cp"
+                                            placeholder="12:10:00" yslaytimeone="checkTimes" key="{{key}}" value="{{value}}"><!-- YS_objb.params.checkTimes -->
+                                        <img src="../images/choose_time.png">
+                                    </div>
+                                    <img src="../images/pla-delete.png" class="cp pla_delete_left" alt="" delnewtime="{{key}}">
+                                </div>
+                                <div class="pla_time_contant">
+                                    <button class="phy-btn-bott layui-btn layui-btn-lg layui-btn-normal l_btn ex_act m_t45"
+                                        ysfetch="YS_objb">保存</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

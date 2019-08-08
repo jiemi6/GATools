@@ -1,0 +1,141 @@
+
+
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow='0'><a href="javascript:;" class="usercen act ex_act">
+                        <img class="logimg" src="../images/xtzj_act.png" alt="">
+                        <span>系统自检</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/restoreback" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/hfbf.png" alt="">
+                        <img class="logimg bai" src="../images/hfbf_act.png" alt="">
+                        <span>恢复备份</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/power" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/xtgl.png" alt="">
+                        <img class="logimg bai" src="../images/xtgl_act.png" alt="">
+                        <span>系统管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/licenses" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/sqgl.png" alt="">
+                        <img class="logimg bai" src="../images/sqgl_act.png" alt="">
+                        <span>授权管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/tools" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/gjx.png" alt="">
+                        <img class="logimg bai" src="../images/gjx_act.png" alt="">
+                        <span>工具箱</span>
+                    </a></li>
+
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit">
+                        <span>系统自检</span>
+                        <button ng-if="zzjc==0" class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+                            onclick="window.location.reload()">返回</button>
+                    </div>
+                </div>
+                <!-- <div class="res-body dis_flex">
+                            <div class="ptr">
+                                <div class="pow-btn dis_flex cp mt_0 {{zzjc==1||zzjc==0?'moveleft':''}}" sysjc ysfetch="YS_obja">
+                                <img class="bfimg" src="../images/p0.png" alt="">
+                                    <div class="pow_contant pow-btn1">
+                                        <div class="baifen" ><span>检测</span></div>
+                                    </div>
+                                </div>  
+                        <div class="jcts lb" ng-if="zzjc==1"><span>系统正在检测...</span></div>
+                        <div class="jcts lb" ng-if="zzjc==0"><span>检测完成</span></div>
+                                <div class="cutbtn" ng-if="zzjc==1||zzjc==0">
+                                <span ng-if="zzjc==1" sysjc>取消</span>
+                                <span ng-if="zzjc==0" sysjc>重新检测</span>
+                                </div>   
+                            </div>
+                        </div> -->
+
+                <div class="res-body dis_flex">
+                    <div class="bf-box">
+                        <div class="dis_flex cp mt_0 yjtj-btn ptr {{zzjc==1||zzjc==0?'kstj':''}}">
+                            <!-- <img class="bfimg" src="../images/100.png" alt=""> -->
+                            <!--  <div class="pow_contant pow-btn1"> -->
+                            <img ng-if="zzjc==1||zzjc==0" class="bfimg bfimg2" src="{{nowimg}}" alt="" ng-show="tapshow==1">
+                            <div class="baifen baifen2" ng-show="tapshow==1"><span>{{nowbaifen}}%</span></div>
+                            <img class="bf-qian" src="../images/qian0.png" alt="">
+                            <img ng-if="zzjc==-1" style="z-index:9" src="../images/c-logo.png" alt="" ng-show="tapshow==0">
+                            <!-- <p class="exp_test">一键体检</p> -->
+                            <!--  </div> -->
+
+                        </div>
+                        <div class="jcts lb dpf" ng-if="zzjc==1"><span>正在进行体检</span>
+                            <div class="loading">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="jcts lb" ng-if="zzjc==0"><span>检测完成</span></div>
+                    </div>
+                    <div class="jcbtn-box ">
+                        <div class="tijian {{zzjc==1||zzjc==0?'btndx':''}}">
+                            <span ng-if="zzjc==-1" xitongzijian="YS_obja" >一键体检</span>
+                            <span ng-if="zzjc==1" xitongzijian cancle="1"  onclick="window.location.reload()">取消</span>
+                            <span ng-if="zzjc==0" xitongzijian="YS_obja" >重新检测</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dfjc">
+                    <div style="width:950px"><span class="exp_buletit">系统自检</span></div>
+                </div>
+                <div class="dfjc"><img class="spline" src="../images/spline1.png" alt=""></div>
+
+
+
+
+                <!--  <div class="tb_title lb t_c {{zzjc==1?'tldx':''}}"><span>系统</span></div> -->
+                <div class="timeline">
+
+                    <div id="exambox" class="tlbox {{zzjc==1||zzjc==0?'tldx':''}}">
+                        <ul class="layui-timeline">
+                            <li class="layui-timeline-item tl_item tl_itemhsl" ng-repeat="(key, value) in templist">
+                                <!-- <i class="layui-icon layui-anim layui-anim-rotate layui-anim-loop layui-timeline-axis"></i> -->
+                                <img ng-if="zzjc==1" class="xpimg xping xping{{key}} " src="../images/xp1.png" alt="">
+                                <img ng-if="zzjc==0" class="bl_img" src="../images/xp0.png" alt="">
+                                <div class="layui-timeline-content layui-text">
+                                    <div class="layui-timeline-title tl_title lb {{value.errorType>0?'red':''}}" ng-bind="value.resultMsg"></div>
+
+                                </div>
+                            </li>
+
+                            <!-- 					  <li class="layui-timeline-item tl_item">
+					    <img class="bl_img" src="../images/copy_db.png" alt="">
+					    <div class="layui-timeline-content layui-text">
+					      <div class="layui-timeline-title tl_title">访问边界系统数据库</div>
+					    
+					    </div>
+					  </li>
+					  <li class="layui-timeline-item tl_item">
+					     <img  class="bl_img" src="../images/copy_db.png" alt="">
+					    <div class="layui-timeline-content layui-text">
+					      <div class="layui-timeline-title tl_title">访问边界系统数据库</div>
+					    </div>
+					  </li> -->
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

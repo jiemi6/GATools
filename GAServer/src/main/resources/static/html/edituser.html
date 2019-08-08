@@ -1,0 +1,194 @@
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li><a href="javascript:;" class="usercen act ex_act">
+                        <img class="menuimg" src="../images/edituser-left.png" alt=""><span>编辑用户</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+
+            <div class="tmbox res-leftbox">
+
+                <div class="tapbtn">
+                    <div class="restore-tit">
+                        <span>编辑用户</span>
+                        <a href="#/userlist">
+                            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder">返回</button>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="res-body too-dis-flex">
+                    <div>
+                        <div class="edi_first_top">
+                            <label class="edi-form-label layui-form-label">用户名：</label>
+                            <div class="edi-input layui-input-inline">
+                                <span class="edi-userwhite" style="letter-spacing:1px">{{YS_obja.params.uName}}({{YS_obja.params.status==2?"锁定":"正常"}})</span>
+                                <button ng-show="YS_obja.params.status==2" class="edi-btn-lock layui-btn layui-btn-lg layui-btn-normal h_btn_h ex_act"
+                                    ysfetch="YS_objc">解锁</button>
+                                <button ng-show="YS_obja.params.status==1" class="edi-btn-lock layui-btn layui-btn-lg layui-btn-normal ex_act" style="color:#fff"
+                                >正常</button>
+                            </div>
+                        </div>
+                        <div class="too_secend_top dpf m_t30">
+                            <label class="edi-form-label layui-form-label">密码：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="password" placeholder="请输入密码" autocomplete="off" class="layui-input w_414">
+                            </div>
+                            <button class="edi-btn-white layui-btn layui-btn-lg layui-btn-normal ml_20 h_btn ex_act spwborder"
+                                repwd2>重置</button>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">姓名：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" placeholder="请输入用姓名" autocomplete="off" class="layui-input w_414" ng-model="YS_obja.params.name">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">电话号码：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" placeholder="请输入电话号码" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_obja.params.phone">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">电子邮箱：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" placeholder="请输入电子邮箱" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_obja.params.email">
+                            </div>
+                        </div>
+
+                        <div class="layui-form">
+                            <div class="layui-form-item m_b30 m_t30 dpf">
+                                <label class="edi-form-label layui-form-label">权限：</label>
+                                <div class="layui-input-block edi-blcok">
+                                    <select lay-filter="YS_obja.params.auth" ysselect="YS_obja.params.auth" id="auth">
+                                        <option value="">请选择权限</option>
+                                        <option ng-selected="YS_obja.params.auth==1" value="1" >只读</option>
+                                        <option ng-selected="YS_obja.params.auth==2" value="2"  >读写</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">用户登录IP段：</label>
+                            <div class="edi_chooseip edi-input layui-input-inline">
+                                <input type="text" placeholder="请输入开始IP" autocomplete="off" class="layui-input fl"
+                                    ng-model="YS_obja.params.loginIpStart" ><span class="zhi fl">至</span>
+                                <input type="text" placeholder="请输入结束IP" autocomplete="off" class="layui-input fl"
+                                    ng-model="YS_obja.params.loginIpEnd" >
+                            </div>
+                            <div class="buxian">
+                                <input id="bx1" type="checkbox" name="" value=""><label class="ml_20" for="bx1" bxip><span
+                                        class="buxian-dec">不限</span></label>
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">登录时段：</label>
+                            <div class="edi_chooseip edi-input layui-input-inline">
+                                <input type="text" placeholder="开始时间" autocomplete="off" class="layui-input fl"
+                                    ng-model="YS_obja.params.loginTimeStart" yslaytime="YS_obja.params.loginTimeStart" ><span class="zhi fl" >至</span>
+                                <input type="text" placeholder="结束时间" autocomplete="off" class="layui-input fl"
+                                    ng-model="YS_obja.params.loginTimeEnd" yslaytime="YS_obja.params.loginTimeEnd" 
+                                    >
+                            </div>
+                            <div class="buxian">
+                                <input id="bx2" type="checkbox" name="" value=""><label class="ml_20" for="bx2" bxtime><span
+                                        class="buxian-dec">不限</span></label>
+                            </div>
+                        </div>
+
+                        <div class="too_third_top edi-threebtn m_t45">
+                            <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act"
+                                ysfetch="YS_obja"  >保存</button>
+                            <button class="edi-btn2 edi-btn-white layui-btn layui-btn-lg layui-btn-normal b_btn_h ex_act"
+                                ulistdel showload="1000">删除</button>
+                            <a href="#/userlist">
+                                <button class="edi-btn3 edi-btn-white layui-btn layui-btn-lg layui-btn-normal h_btn ex_act">取消</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- 确认删除 -->
+<div id="userremove" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除这行内容吗？</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" ysfetch="YS_obje">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>
+
+
+<!-- 修改密码 -->
+<div id="repwd" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img closenull src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont3">
+        <div class="too_secend_top tcinput">
+            <label class="edi-form-label layui-form-label">旧密码：</label>
+            <div class="">
+                <input type="text" placeholder="请输入旧密码" class="pwdinput rewords" ng-model="sco.YS_objd.params.oldpaw">
+            </div>
+        </div>
+        <div class="too_secend_top tcinput">
+            <label class="edi-form-label layui-form-label">新密码：</label>
+            <div class="">
+                <input type="text" placeholder="请输入新密码" class="pwdinput rewords" ng-model="sco.YS_objd.params.reoldpaw">
+            </div>
+        </div>
+        <div class="too_secend_top tcinput">
+            <label class="edi-form-label layui-form-label">确认密码：</label>
+            <div class="">
+                <input type="text" placeholder="请确认新密码" class="pwdinput rewords" ng-model="sco.YS_objd.params.newpaw">
+            </div>
+        </div>
+    </div>
+    <div class="tc_foot">
+        <div class="confirm cp" ysfetch="YS_objd">确认</div>
+        <div class="quxiao cp" closenull>取消</div>
+
+    </div>
+</div>
+
+<!-- 密码重置成功 -->
+<div id="pwdresucc" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont2">
+        <div class="zt_img"><img src="../images/success.png" alt=""></div>
+        <div class="ask"><span>密码重置成功!</span></div>
+        <div class="warnt2"><span>请妥善保管您的账户信息</span></div>
+        <div class="confirm3" comclose>重新登录</div>
+    </div>
+
+</div>

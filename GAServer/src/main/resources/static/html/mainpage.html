@@ -1,0 +1,688 @@
+<style type="text/css" media="screen">
+  .myline_one{
+height: 64%;
+ position: absolute;
+ width: 10px;
+ padding:42px;
+top:-41px;
+  }
+</style>
+
+<div class="log-body pd_30 mt_0" colseinfo>
+  <div class="mp_box">
+    <div class="earthbg">
+      <video loop autoplay muted="muted" name="media" style="width:100%;">
+        <source src="/images/video117.mp4" type="video/mp4"></video>
+    </div>
+    <div class="mp_leftbox" style="width:100%;">
+      <!-- 链路总览 -->
+      <div class="alllink angle mp_br dpf">
+        <table class="" style="width:100%;position: absolute;top: -26px" border="0">
+          <tr>
+            <td style="width: 109px;"></td>
+            <td>
+              <div class="btopline"></div>
+            </td>
+            <td style="width:32%;"></td>
+          </tr>
+
+        </table>
+        <!-- <span class="a_lt"></span>
+        <span class="a_rt"></span>
+        <span class="a_rd"></span>
+        <span class="a_ld"></span> -->
+
+        <!--   <div class="mp_title linktitle"> -->
+        <!--  <div style="width:50%">
+            <span>链路总览</span>
+          </div> -->
+        <div class="tjtitle"><img src="../images/lltitle.png" alt="">
+          <span class="tt">链路总览</span>
+        </div>
+        <div class="lltitle"><img style="width:100%;height: 100%;" src="../images/lltitle2.png" alt="">
+        </div>
+        <div class="nameswitch">
+          <label for="kname" class="iSwitch">
+            <input id="kname" type="checkbox" checked yscheck>
+            <i class="cp"></i>
+          </label>
+        </div>
+        <div class="hidden_nav cp {{navup?'':'dpn'}}">
+          <img class="sarrdown" src="/images/sarrdown.png" alt="" indexnav>
+        </div>
+        <!-- </div> -->
+
+        <div id="linkall" class="linkall dpf mai_left">
+          <div id="leftlink" class="leftlink">
+            <div class="llitem dpf ptr" ng-repeat="(key, value) in YS_lista.data.list">
+            <img class="guangdian guangdian{{key}}{{suiji}} gdzc"  src="../images/guangdian.png" alt="" ng-show="value.lastErrorIndex==-1">
+              <div class="mp_midline">
+                <div class="mpparent">
+              
+                </div>
+                  <div class="mpparent2" style="width:{{value.topologyNodes.length - (value.lastErrorIndex+1)==1?100:(dtwidth/(value.topologyNodes.length-1))*(value.topologyNodes.length - (value.lastErrorIndex+1.9))}}px" ng-show="value.lastErrorIndex!=-1&&value.topologyNodes.length - (value.lastErrorIndex + 1)!=0">
+                  <div style="position: relative;width:100%;height:100%">
+                    <img class="guangdian guangdian{{key}}{{suiji}}"  src="../images/guangdian.png" alt="">
+                  </div>
+                </div>
+                <div class="mpparent3" style="width:{{value.topologyNodes.length - (value.lastErrorIndex+1)==1?dtwidth - 100:dtwidth - (dtwidth/(value.topologyNodes.length-1))*(value.topologyNodes.length - (value.lastErrorIndex+1.9))}}px" ng-show="value.lastErrorIndex!=-1&&value.topologyNodes.length - (value.lastErrorIndex + 1)!=0">
+                </div>
+                 <div class="mpparent3" style="width:{{dtwidth}}px" ng-show="value.topologyNodes.length - (value.lastErrorIndex + 1)==0">
+                </div>
+              </div>
+              <div class="epitem ptr" id="{{key}}{{k}}" ng-repeat="(k, val) in value.topologyNodes" style="z-index:{{val.show>0?10:9 - key}}">
+                <div class="linkpoint" id="{{key}}s{{val.toDeviceId}}"  lx="1"></div>
+           <img ng-show="val.deviceInfo.icon!=60" class="{{val.bottomType==0?'ssb':''}} {{val.bottomType==1?'iesb':''}}{{val.deviceInfo.icon==''?'dpn':''}}"
+                  ng-src="../images/c{{val.deviceInfo.icon}}{{val.deviceStatus==1||val.deviceStatus==3?1:0}}.png" alt=""
+                  showinfo="{{val.toDeviceId}}" status="{{val.deviceStatus}}" listkey="{{key}}" file="{{val.deviceInfo.icon==60?'true':'false'}}">
+          <img  ng-show="val.deviceInfo.icon==60" class="{{val.bottomType==0?'ssb':''}} {{val.bottomType==1?'iesb':''}}{{val.deviceInfo.icon==''?'dpn':''}}"
+                  ng-src="../images/c{{val.deviceInfo.icon}}{{val.deviceStatus==1||val.deviceStatus==3?1:0}}.png" alt=""
+                  showinfo2="{{val.toDeviceId}}" status="{{val.deviceStatus}}" listkey="{{key}}" file="{{val.deviceInfo.icon==60?'true':'false'}}">
+
+                <img ng-show="val.deviceInfo.icon!=60" class="dz {{val.deviceInfo.icon==''?'dpn':''}} 
+              {{val.bottomType==0&&val.deviceStatus==0?'dz00':''}}
+              {{val.bottomType==0&&val.deviceStatus==1?'dz01':''}}
+              {{val.bottomType==0&&val.deviceStatus==2?'dz00':''}}
+              {{val.bottomType==1&&val.deviceStatus==0?'dz10':''}}
+              {{val.bottomType==1&&val.deviceStatus==1?'dz11':''}}
+              {{val.bottomType==1&&val.deviceStatus==2?'dz10':''}}"
+                  ng-src="../images/dz{{val.bottomType}}{{val.deviceStatus}}1.png" showinfo="{{val.toDeviceId}}"  status="{{val.deviceStatus}}"
+                  listkey="{{key}}" file="{{val.deviceInfo.icon==60?'true':'false'}}">
+
+                <img  ng-show="val.deviceInfo.icon==60" class="dz {{val.deviceInfo.icon==''?'dpn':''}} 
+              {{val.bottomType==0&&val.deviceStatus==0?'dz00':''}}
+              {{val.bottomType==0&&val.deviceStatus==1?'dz01':''}}
+              {{val.bottomType==0&&val.deviceStatus==2?'dz00':''}}
+              {{val.bottomType==1&&val.deviceStatus==0?'dz10':''}}
+              {{val.bottomType==1&&val.deviceStatus==1?'dz11':''}}
+              {{val.bottomType==1&&val.deviceStatus==2?'dz10':''}}"
+                  ng-src="../images/dz{{val.bottomType}}{{val.deviceStatus}}1.png" showinfo2="{{val.toDeviceId}}"  status="{{val.deviceStatus}}"
+                  listkey="{{key}}" file="{{val.deviceInfo.icon==60?'true':'false'}}">
+
+
+                <!-- <div class="dznew" style="width: 104px;height: 84px;display: inline-block;"></div> -->
+                <img ng-if="val.deviceStatus==1&&k==value.lastErrorIndex" class="redx" devicewrong key="true" src="../images/redx.png" alt="" style="right:-{{value.topologyNodes.length - (value.lastErrorIndex + 1)!=0?((dtwidth/(value.topologyNodes.length-1))-100)/2.2:25;}}px">
+                <div ng-if="val.alarm==1" class="tan" devicealarm alt=""></div>
+                <div class="sbinfo" ng-show="val.show>0">
+                  <div class="process progress">
+                    <div id="ecpu{{key}}{{val.toDeviceId}}"></div>
+                    <div class="prtext"><span>cpu</span></div>
+                  </div>
+                  <div class="process progress">
+                    <div id="enc{{key}}{{val.toDeviceId}}"></div>
+                    <div class="prtext"><span>内存</span></div>
+                  </div>
+                  <div class="process progress">
+                    <div id="eyp{{key}}{{val.toDeviceId}}"></div>
+                    <div class="prtext"><span>硬盘</span></div>
+                  </div>
+                 <!--  <div class="process">
+                    <div id="ewl{{key}}{{val.deviceInfo.icon}}"></div>
+                    <div class="prtext"><span>网络</span></div>
+                  </div> -->
+                </div>
+                <!-- <img class="tan" src="../images/tan.png" alt=""> -->
+
+            <div class="epitem epitem-chl ptr" id="{{key}}{{k}}0"   lx="2" ng-show="val.child.length>0"  listkey="{{key}}" status="{{val.child[0].deviceStatus}}" childkey="0" ischild="1" file="{{val.child[0].deviceInfo.icon==60?'true':'false'}}" style="z-index:{{val.child[0].show>0?10:9}}">
+           <div class="linkpoint lp0" id="{{key}}s{{val.child[0].toDeviceId}}"></div> 
+             <img class="c-gd {{val.child[0].deviceStatus==1?'dpn':''}}" src="../images/guangdian.png" alt="">
+              <div ng-show="val.deviceInfo.icon!=''" class="stline {{val.child[0].deviceStatus==1?'gline':''}}"></div>
+              <div ng-show="val.deviceInfo.icon==''" class="tline"></div>
+              <div>
+              <!-- val.deviceStatus==1||val.deviceStatus==3?1:0 -->
+              <img  ng-show="val.deviceInfo.icon!=60" showinfo="{{val.child[0].toDeviceId}}" listkey="{{key}}" status="{{val.child[0].deviceStatus}}" childkey="0" ischild="1" file="{{val.child[0].deviceInfo.icon==60?'true':'false'}}"  class="{{val.bottomType==0?'ssb':''}} {{val.child[0].bottomType==1?'iesb':''}}" ng-src="../images/c{{val.child[0].deviceInfo.icon}}{{val.child[0].deviceStatus==1||val.child[0].deviceStatus==3?1:0}}.png" alt="" >
+
+             <img  ng-show="val.deviceInfo.icon==60" showinfo2="{{val.child[0].toDeviceId}}" listkey="{{key}}" status="{{val.child[0].deviceStatus}}" childkey="0" ischild="1" file="{{val.child[0].deviceInfo.icon==60?'true':'false'}}"  class="{{val.bottomType==0?'ssb':''}} {{val.child[0].bottomType==1?'iesb':''}}" ng-src="../images/c{{val.child[0].deviceInfo.icon}}{{val.child[0].deviceStatus==1||val.child[0].deviceStatus==3?1:0}}.png" alt="" >
+
+              <img class="dz 
+              {{val.child[0].bottomType==0&&val.child[0].deviceStatus==0?'dz00':''}}
+              {{val.child[0].bottomType==0&&val.child[0].deviceStatus==1?'dz01':''}}
+              {{val.child[0].bottomType==0&&val.child[0].deviceStatus==2?'dz00':''}}
+              {{val.child[0].bottomType==1&&val.child[0].deviceStatus==0?'dz10':''}}
+              {{val.child[0].bottomType==1&&val.child[0].deviceStatus==1?'dz11':''}}
+              {{val.child[0].bottomType==1&&val.child[0].deviceStatus==2?'dz10':''}}
+               "
+                      ng-src="../images/dz{{val.child[0].bottomType}}{{val.child[0].deviceStatus}}1.png">
+                    <!-- <div class="dznew" style="width: 104px;height: 84px;display: inline-block;"></div> -->
+                    <img ng-if="val.child[0].deviceStatus==1&&isredx==0" class="redx" devicewrong key="true" src="../images/redx.png" alt="">
+                    <div ng-if="val.child[0].alarm==1" class="tan tan-c" devicealarm alt=""></div>
+                    <div class="sbinfo-c" ng-show="val.child[0].show>0">
+                      <!-- dpb -->
+                      <div class="process progress-c">
+                        <div id="ecpu{{key}}{{k2}}{{val.child[0].toDeviceId}}"></div>
+                        <div class="prtext"><span>cpu</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="enc{{key}}{{k2}}{{val.child[0].toDeviceId}}"></div>
+                        <div class="prtext"><span>内存</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="eyp{{key}}{{k2}}{{val.child[0].toDeviceId}}"></div>
+                        <div class="prtext"><span>硬盘</span></div>
+                      </div>
+                     <!--  <div class="process">
+                        <div id="ewl{{key}}{{val.child[0].deviceInfo.icon}}"></div>
+                        <div class="prtext"><span>网络</span></div>
+                      </div> -->
+                    </div>
+                  </div>
+
+
+                  <div ng-if="ischk" class="iname" title="{{val.child[0].deviceInfo['deviceName']}}" >
+                    <div ng-bind="val.child[0].deviceInfo['deviceName']"></div>
+                    <div ng-bind="val.child[0].deviceInfo['ip']"></div>
+                  </div>
+                </div>
+<!-- 如果不是文件夹 -->
+              <div class="epitem epitem-chs ptr" id="{{key}}{{k}}{{k2}}"  lx="3" ng-show="v.deviceInfo.icon!=60&&val.child.length>1&&k2>0" ng-repeat="(k2, v) in val.child" showinfo="{{v.toDeviceId}}" status="{{v.deviceStatus}}" title="{{val.child[0].deviceInfo}}" listkey="{{key}}" childkey="{{k2}}" ischild="1" file="{{v.deviceInfo.icon==60?'true':'false'}}" style="left:{{k2*100+50}}px">
+
+              <div class="linkpoint " id="{{key}}s{{v.toDeviceId}}"></div>
+             <img class="cs-gd {{v.deviceStatus==1?'dpn':''}}" src="../images/guangdian.png" alt="" >
+              <div ng-show="val.deviceInfo.icon!=''" class="shline {{v.deviceStatus==1?'gline':''}}" ></div>
+             <!--  <div ng-show="val.deviceInfo.icon==''" class="tline"></div>
+{{val.child[0].deviceStatus==1||val.child[0].deviceStatus==3?1:0}}
+             -->
+              <div>
+              <img class="{{val.bottomType==0?'ssb':''}} {{v.bottomType==1?'iesb':''}}"
+               ng-src="../images/c{{v.deviceInfo.icon}}{{v.deviceStatus==1||v.deviceStatus==3?1:0}}.png" alt="" >
+              <img class="dz 
+              {{v.bottomType==0&&v.deviceStatus==0?'dz00':''}}
+              {{v.bottomType==0&&v.deviceStatus==1?'dz01':''}}
+              {{v.bottomType==0&&v.deviceStatus==2?'dz00':''}}
+              {{v.bottomType==1&&v.deviceStatus==0?'dz10':''}}
+              {{v.bottomType==1&&v.deviceStatus==1?'dz11':''}}
+              {{v.bottomType==1&&v.deviceStatus==2?'dz10':''}}
+               "
+                      ng-src="../images/dz{{v.bottomType}}{{v.deviceStatus}}1.png" id="s{{key}}{{k}}{{k2}}">
+                    <!-- <div class="dznew" style="width: 104px;height: 84px;display: inline-block;"></div> -->
+                    <img ng-if="v.deviceStatus==1" class="redx" devicewrong key="true" src="../images/redx.png" alt="">
+                    <div ng-if="v.alarm==1" class="tan tan-c" devicealarm alt=""></div>
+                    <div class="sbinfo-c" ng-show="v.show>0">
+                      <!-- dpb -->
+                      <div class="process progress-c">
+                        <div id="ecpu{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>cpu</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="enc{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>内存</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="eyp{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>硬盘</span></div>
+                      </div>
+                     <!--  <div class="process">
+                        <div id="ewl{{key}}{{v.deviceInfo.icon}}"></div>
+                        <div class="prtext"><span>网络</span></div>
+                      </div> -->
+                    </div>
+                  </div>
+
+
+                  <div ng-if="ischk" class="iname iname_c" title="{{v.deviceInfo['deviceName']}}" ng-bind="v.deviceInfo['deviceName']"></div>
+                </div>
+
+<!-- 如果是文件夹 -->
+              <div class="epitem epitem-chs ptr" id="{{key}}{{k}}{{k2}}"  lx="3" ng-show="v.deviceInfo.icon==60&&val.child.length>1&&k2>0" ng-repeat="(k2, v) in val.child" showinfo2="{{v.toDeviceId}}" status="{{v.deviceStatus}}" title="{{val.child[0].deviceInfo}}" listkey="{{key}}" childkey="{{k2}}" ischild="1" file="{{v.deviceInfo.icon==60?'true':'false'}}" style="left:{{k2*100+50}}px">
+
+              <div class="linkpoint " id="{{key}}s{{v.toDeviceId}}"></div>
+             <img class="cs-gd {{v.deviceStatus==1?'dpn':''}}" src="../images/guangdian.png" alt="" >
+              <div ng-show="val.deviceInfo.icon!=''" class="shline {{v.deviceStatus==1?'gline':''}}" ></div>
+             <!--  <div ng-show="val.deviceInfo.icon==''" class="tline"></div> -->
+              <div>
+              <img class="{{val.bottomType==0?'ssb':''}} {{v.bottomType==1?'iesb':''}}"
+               ng-src="../images/c{{v.deviceInfo.icon}}{{v.deviceStatus==1||v.deviceStatus==3?1:0}}.png" alt="" >
+              <img class="dz 
+              {{v.bottomType==0&&v.deviceStatus==0?'dz00':''}}
+              {{v.bottomType==0&&v.deviceStatus==1?'dz01':''}}
+              {{v.bottomType==0&&v.deviceStatus==2?'dz00':''}}
+              {{v.bottomType==1&&v.deviceStatus==0?'dz10':''}}
+              {{v.bottomType==1&&v.deviceStatus==1?'dz11':''}}
+              {{v.bottomType==1&&v.deviceStatus==2?'dz10':''}}
+               "
+                      ng-src="../images/dz{{v.bottomType}}{{v.deviceStatus}}1.png" id="s{{key}}{{k}}{{k2}}">
+                    <img ng-if="v.deviceStatus==1" class="redx" devicewrong key="true" src="../images/redx.png" alt="">
+                    <div ng-if="v.alarm==1" class="tan tan-c" devicealarm alt=""></div>
+                    <div class="sbinfo-c" ng-show="v.show>0">
+                      <!-- dpb -->
+                      <div class="process progress-c">
+                        <div id="ecpu{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>cpu</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="enc{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>内存</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="eyp{{key}}{{k2}}{{v.toDeviceId}}"></div>
+                        <div class="prtext"><span>硬盘</span></div>
+                      </div>
+
+                    </div>
+                  </div>
+
+
+                  <div ng-if="ischk" class="iname iname_c" title="{{v.deviceInfo['deviceName']}}" ng-bind="v.deviceInfo['deviceName']"></div>
+                </div>
+
+<!-- 如果是文件夹 -->
+                <div ng-if="ischk" class="iname" title="{{val.deviceInfo['deviceName']}}" >
+                  <div ng-bind="val.deviceInfo['deviceName']"></div>
+                  <div ng-bind="val.deviceInfo['ip']"></div>
+
+
+                </div>
+
+              </div>
+              
+              <!--   <img ng-if={{key==2}} class="guangdian2" src="../images/guangdian.png" alt="">
+              <img ng-if={{key==3}} class="guangdian3" src="../images/guangdian.png" alt="">
+              <img ng-if={{key==4}} class="guangdian4" src="../images/guangdian.png" alt="">
+              <img ng-if={{key==5}} class="guangdian5" src="../images/guangdian.png" alt=""> -->
+              <!--  <div class="epitem">
+              <img src="../images/tz.png" alt="">
+              <img  class="dz" src="../images/dz.png" >
+
+              </div>
+              <div class="epitem">
+              <img src="../images/sb2.png" alt="">
+              <img class="dz" src="../images/dz.png"  >
+
+              </div>
+              <div class="epitem">
+               <img src="../images/sb0.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+              </div> -->
+
+              <!--    <div class="epitem ptr">
+              <img src="../images/sbjg.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+
+              <div class="epitem epitem-chl">
+              <div class="stline"></div>
+              <img src="../images/sbjg.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+              </div>
+
+              </div> -->
+              <!--   <div class="epitem ptr">
+              <img src="../images/sb0.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+              </div>
+              <div class="epitem">
+              <img src="../images/sbjg.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+              </div>
+              <div class="epitem ptr">
+              <img src="../images/sb0.png" alt="">
+              <img class="dz" src="../images/dz.png" > 
+              </div> -->
+
+
+
+
+
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- <div class="llitem dpf ptr"  >
+               
+              <div class="epitem ptr"><img src="../images/shebao.png" alt="">
+  <div class="iname" ng-if="ischk"><span>外部介入单位 192.168.0.0</span></div>
+              </div>
+              <div class="epitem ptr"><img src="../images/shqsy.png" alt=""><img class="redx" src="../images/redx.png" alt=""></div>
+              <div class="epitem ptr">
+              <img src="../images/shebao.png" alt="">
+              <div class="sbinfo dpb" style="display: none">
+               <div class="process"><div id="cpup"></div><div class="prtext"><span>cpu</span></div></div> 
+               <div class="process"><div id="ypp"></div><div class="prtext"><span>内存</span></div></div> 
+               <div class="process"><div id="ncp"></div><div class="prtext"><span>硬盘</span></div></div> 
+               <div class="process"><div id="wlp"></div><div class="prtext"><span>网络</span></div></div> 
+              </div>
+              </div>
+              <div class="epitem ptr"><img src="../images/fwq.png" alt="">
+              </div>
+              <div class="epitem"><img src="../images/nwadmin.png" alt=""></div>
+              <div class="epitem ptr"><img src="../images/hg.png" alt="">
+
+              </div>
+              <div class="vbline"></div>
+            </div>
+ -->
+
+
+
+
+
+            <!-- 右边的模块，用定位固定，这样可以做到跟左边的div高度一致； -->
+            <div class="rightlinkx">
+              <div class="myline  {{YS_lista.data.list.length==1?'myline_one':''}} ">
+                <img class="vt-gd" src="../images/guangdian.png" alt="">
+                <img class="vb-gd" src="../images/guangdian.png" alt="">
+                <!-- 四五条 -->
+                <img class="vt-gd1" src="../images/guangdian.png" alt="" ng-show="YS_lista.data.list.length>3">
+                <img class="vb-gd1" src="../images/guangdian.png" alt="" ng-show="YS_lista.data.list.length>3">
+                <!-- 六七条 -->
+                <img class="vt-gd2" src="../images/guangdian.png" alt="" ng-show="YS_lista.data.list.length>5">
+                <img class="vb-gd2" src="../images/guangdian.png" alt="" ng-show="YS_lista.data.list.length>5">
+
+                <table class="" style="height:100%" border="0">
+                  <tr style="height:106px">
+                    <td></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="vline"></div>
+                    </td>
+                  </tr>
+                  <tr style="height:134px">
+                  <!-- 44px -->
+                    <td></td>
+                  </tr>
+                </table>
+              </div>
+
+              <div style="display: flex;" class="ptr">
+              <div class="lline"></div>
+                <div class="ptzc">
+                  <div class="ptzctext"><span>平台运行中...</span></div>
+                  <div id="scrolltext" class="scrolltext" style="height:{{loglength*20 - 5}}px">
+                    <ul>
+                      <li class="logli lt" title="{{value}}" ng-repeat="(key, value) in YS_objf.data.rollLog">{{value}}</li>
+                      <li class="logli lt" title="{{value}}" ng-repeat="(key, value) in YS_objf.data.rollLog">{{value}}</li>
+                      <li class="logli lt" title="{{value}}" ng-repeat="(key, value) in YS_objf.data.rollLog">{{value}}</li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="epitem ptr">
+                  <img class="fake" src="../images/sb0.png" alt="">
+                  <img class="ldz dz00" src="../images/dz001.png">
+                </div>
+                <div class="sepitem ptr">
+                  <div class="sline"></div>
+                </div>
+                <div class="epitem bitem ptr">
+                  <img class="fakeall" src="../images/plat.png" alt="">
+                  <img class="pdz" style="width: 180px;" src="../images/pdz.png" alt="">
+
+                  <!-- <div class="ibname" ng-if="ischk"><span>运维监控平台 192.168.0.0</span></div> -->
+                </div>
+
+              </div>
+            </div>
+            <!-- 右边的模块，用定位固定，这样可以做到跟左边的div高度一致； -->
+          </div>
+        </div>
+
+        <!-- 两个角报警box -->
+        <div class="mai_right">
+          <div class="alarmup dpf">
+            <div class="shouqi2 cp {{syxmenu1?'':'dpn'}}" symenus1><img src="../images/yljt.png" alt=""></div>
+            <div class="allalarm angle ptr">
+              <span class="a_rt"></span>
+              <span class="a_ld"></span>
+              <img class="zlbg" src="../images/zlbg.png" alt="">
+              <div class="shouqi cp" symenus1><img src="../images/zljt.png" alt=""></div>
+              <!--  <div class="leftla"></div> -->
+              <div class="mp_title ptr">
+                <div class="l_t"><span>报警总览</span></div>
+                <div class="r_t f_16 too-dis-flex" id="layui-form" style="position: absolute;right: 0;top: 20px;">
+                  <input type="text" readonly="true" class="mp_date cp" value="2018-08-8" ng-model="YS_objb.params.selectDate" yslaydate="YS_objb.params.selectDate"
+                    run="YS_objb">
+                  <!-- <span >2018-08-08</span><img class="downarr" src="../images/downarr.png" alt=""> -->
+                </div>
+              </div>
+              <div class="gaugebox dpf">
+                <div class="gaugeitem">
+                  <div style="" class="ptr">
+                    <!--  <div class="bfb"><span>{{link}}%</span></div> -->
+                    <div class="kdbg"></div>
+                   <!--  <img class="kdbg" src="../images/bjxz1.png" alt=""> -->
+                    <div class="gauge">
+                      <div id="foo1" style=""><span class="bjt"></span></div>
+                    </div>
+                    <div class="gtext dpf">
+                      <div class="glt lb"><span>链路</span></div>
+                      <div class="grt lb"><span>报警</span></div>
+                    </div>
+                    <div class="gnum dpf">
+                      <div class="gln maib_sword"><span ng-bind="YS_objb.data.totalLinkNum">5</span></div>
+                      <div class="grn maij_sword"><span ng-bind="YS_objb.data.alarmLinkNum">1</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="gaugeitem">
+                  <div style="" class="ptr">
+                    <!--    <div class="bfb"><span>{{device}}%</span></div> -->
+                   <!--  <img class="kdbg" src="../images/bjxz1.png" alt=""> -->
+                   <div class="kdbg"></div>
+                    <div class="gauge">
+                      <div id="foo2" style=""><span class="bjt"></span></div>
+                    </div>
+                    <div class="gtext dpf">
+                      <div class="glt lb"><span>设备</span></div>
+                      <div class="grt lb"><span>报警</span></div>
+                    </div>
+                    <div class="gnum dpf">
+                      <div class="gln maib_sword"><span ng-bind="YS_objb.data.totalDeviceNum">51</span></div>
+                      <div class="grn maij_sword"><span ng-bind="YS_objb.data.alarmDeviceNum">25</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="gaugeitem">
+                  <div style="" class="ptr">
+                    <!--   <div class="bfb"><span>{{task}}%</span></div> -->
+                    <!-- <img class="kdbg" src="../images/bjxz1.png" alt=""> -->
+                    <div class="kdbg"></div>
+                    <div class="gauge">
+                      <div id="foo3" style=""><span class="bjt"></span></div>
+                    </div>
+                    <div class="gtext dpf">
+                      <div class="glt lb"><span>任务</span></div>
+                      <div class="grt lb"><span>报警</span></div>
+                    </div>
+                    <div class="gnum dpf">
+                      <div class="gln maib_sword"><span ng-bind="YS_objb.data.totalTaskNum">345</span></div>
+                      <div class="grn maij_sword"><span ng-bind="YS_objb.data.alarmTaskNum">34</span></div>
+                    </div>
+                  </div>
+                </div>
+                <!--  -->
+              </div>
+            </div>
+          </div>
+
+          <div class="alarmdown dpf">
+            <div class="shouqi3 cp {{syxmenu2?'':'dpn'}}" symenus2><img src="../images/yljt.png" alt=""></div>
+            <div class="alarmph angle ptr">
+              <span class="a_rt"></span>
+              <span class="a_ld"></span>
+              <img class="zlbg" src="../images/phbg.png" alt="">
+              <div class="shouqi cp" symenus2><img src="../images/zljt.png" alt=""></div>
+
+              <div class="mp_title" style="margin: 10px 0 30px 0;">
+                <div class="lb_t"><span style="margin-left:20px">报警排行榜(周)</span></div>
+                <!-- <div class="dpf"> -->
+                <div style="justify-content:flex-end;display:flex;position:absolute;right: 5px;top:22px;z-index:9">
+                  <div class="mpts_l f_16 min_arlmp5"><span class="{{YS_objc.params.type==1?'mpts_on':''}}" fetrinking="1">链路</span></div>
+                  <div class="mpts_e f_16 min_arlmp5"><span class="{{YS_objc.params.type==3?'mpts_on':''}}" fetrinking="3">设备</span></div>
+                  <div class="mpts_t f_16 min_arlmp5"><span class="{{YS_objc.params.type==2?'mpts_on':''}}" fetrinking="2">任务</span></div>
+                </div>
+                <!-- </div> -->
+              </div>
+
+
+
+
+              <div id="zchart" class="zchart" ng-show="tapshow==0">
+                <div class="nodatass" style="" ng-show="nodatas==1">
+                    <div class="nodatassimg" style="">
+                      <img src="../images/nodatass.png" alt="">
+                    </div>
+                    <div class="nodatassfz" style="">
+                      运行完美
+                    </div>
+                </div>
+              </div>
+              <!--     <div id="zchart" class="zchart"  ng-show="tapshow==1"></div>
+        <div id="zchart" class="zchart"  ng-show="tapshow==2"></div> -->
+
+              <!--         <div class='gauge'><canvas id="foo4" style=""></canvas></div> -->
+
+
+            </div>
+          </div>
+        </div>
+
+
+
+      </div>
+      <!-- 链路总览完 -->
+
+      <!-- 报警数据统计 -->
+
+    </div>
+    <!--     <div class="alarmsta angle mp_br">
+        <span class="a_lt"></span>
+        <span class="a_rt"></span>
+        <span class="a_rd"></span>
+        <span class="a_ld"></span>
+
+        <div class="mp_title">
+            <div class="l_t"><span >报警数统计</span></div>
+        </div>
+        
+        <div class="charts" id="lchart">
+
+          
+        </div>
+
+      </div> -->
+
+
+
+
+    <!--    <div class="qunee" style="margin-bottom:100px;">
+       <div id="myqunee" style="width:100%;height:800px;border:1px solid #ddd;background:#ddd"></div>
+     </div> -->
+    <!-- 报警数据统计完 -->
+    <div class="mp_rightbox dpf ">
+
+
+      <div class="alarmsta angle mp_br mr_30">
+
+        <div class="tjtitle"><img src="../images/tjtitle.png" alt="">
+          <span class="tt">报警数统计</span>
+        </div>
+        <!--   <div class="mp_title">
+          <div class="l_t"><span>报警数统计</span></div>
+        </div> -->
+        <div style="height:100%;width:100%" id="lchart"></div>
+        <!--  <div class="charts" >
+
+
+        </div>
+ -->
+      </div>
+      <!-- 报警总览 -->
+
+      <!-- 报警总览完 -->
+
+      <!-- 报警周排行 -->
+
+      <!-- 报警周排行完 -->
+
+      <!-- 后台数据统计 -->
+      <div class="datasta angle mp_br">
+        <div class="tjtitle"><img src="../images/sjtitle.png" alt="">
+          <span class="tt">数据统计(月)</span>
+        </div>
+        <!--  <div class="mp_title">
+          <div class="l_t"><span>后台数据统计（月）</span></div>
+        </div>
+ -->
+        <div class="dpf mp_sta">
+          <div class="stabox">
+            <div class="staimg">
+            <div class="wjimg"></div>
+            </div>
+            <div class="staf_t"><span class="lb f_16">文件/个</span></div>
+            <div class="staf_n"><span ng-bind="YS_obje.data.totalFile">10000</span></div>
+          </div>
+          <div class="stabox">
+          <div class="staimg">
+            <div class="sjimg"></div>
+            </div>
+            <div class="stad_t"><span class="lb f_16">数据/条</span></div>
+            <div class="stad_n"><span ng-bind="YS_obje.data.totalData">34234</span></div>
+          </div>
+          <div class="stabox">
+          <div class="staimg">
+            <div class="llimg"></div>
+            </div>
+            <div class="stal_t"><span class="lb f_16">流量/GB</span></div>
+            <div class="stal_n"><span ng-bind="YS_obje.data.totalFlow"></span></div>
+          </div>
+        </div>
+      </div>
+      <!-- 后台数据统计完 -->
+      <!-- </div>-->
+    </div>
+  </div>
+</div>
+
+
+
+<div id="filebox" class="com_tc dpn" cfinfo>
+  <div class="tc_top">
+    <div class="tc_title"><span>文件夹</span></div>
+    <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+  </div>
+  <div class="topline"><div class="cline"></div></div>
+  <div class="dpf xgmaintc" style="padding: 0 124px 95px 124px;">
+    <div class="fileitem ps_r" ng-repeat="value in filenamelist">
+
+      <img ng-src="../images/c{{value.icon}}{{value.status}}.png" alt="" showfinfo="{{value.deviceId}}"listkey="{{value.listkey}}" status="{{value.status}}">
+      <div ng-if="ischk" class="iname_file"  val="{{value}}">
+        <div ng-bind="filenamelist[$index].name"  title="{{value.name}}"></div>
+        <div ng-bind="filenamelist[$index].ip" title="{{filenamelist[$index].ip}}"></div>
+
+      </div>
+
+         <div id=finfo{{value.listkey}}{{value.deviceId}} class="sbinfo-c" ng-show="showf==value.deviceId">
+                      <!-- dpb -->
+                      <div class="process progress-c">
+                        <div id="ecpu{{value.listkey}}{{value.deviceId}}"></div>
+                        <div class="prtext"><span>cpu</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="enc{{value.listkey}}{{value.deviceId}}"></div>
+                        <div class="prtext"><span>内存</span></div>
+                      </div>
+                      <div class="process progress-c">
+                        <div id="eyp{{value.listkey}}{{value.deviceId}}"></div>
+                        <div class="prtext"><span>硬盘</span></div>
+                      </div>
+                     <!--  <div class="process">
+                        <div id="ewl{{key}}{{v.deviceInfo.icon}}"></div>
+                        <div class="prtext"><span>网络</span></div>
+                      </div> -->
+                    </div>
+ 
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,117 @@
+<!-- ----------系统管理------------ -->
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow='0'><a href="#/sysexam" class="usercen ex_act">
+                        <img class="logimg hui" src="../images/xtzj.png" alt="">
+                        <img class="logimg bai" src="../images/xtzj_act.png" alt="">
+                        <span>系统自检</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/restoreback" class="userpro ex_actex_act">
+                        <img class="logimg hui" src="../images/hfbf.png" alt="">
+                        <img class="logimg bai" src="../images/hfbf_act.png" alt="">
+                        <span>恢复备份</span>
+                    </a></li>
+                <li tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/xtgl_act.png" alt="">
+                        <span>系统管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/licenses" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/sqgl.png" alt="">
+                        <img class="logimg bai" src="../images/sqgl_act.png" alt="">
+                        <span>授权管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/tools" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/gjx.png" alt="">
+                        <img class="logimg bai" src="../images/gjx_act.png" alt="">
+                        <span>工具箱</span>
+                    </a></li>
+
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>系统管理</span></div>
+                </div>
+                <div class="res-body dis_flex">
+                    <div>
+                        <span class="bule_mtit">电源管理</span>
+                        <div class="powbtn_true">
+                            <div class="pow-btn dis_flex cp ex_act" cfclose>
+                                <div class="pow_contant pow-btn1">
+                                    <img class="light" src="../images/chongqi.png" alt="">
+                                    <p class="light">重启</p>
+                                </div>
+                            </div>
+                            <div class="pow-btn dis_flex cp ex_act" cfrestar>
+                                <div class="pow_contant pow-btn2">
+                                    <img class="light" src="../images/guanji.png" alt="">
+                                    <p class="light">关机</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="too-swich">
+                    <div style="width:926px">
+                        <span class="bule_mtit" style="padding-left:22px;">SSHD</span>
+                        <div class="powbtn_true" style="margin-top:40px;">
+                            <label class="too-label layui-form-label" style="font-size: 16px;color: #759CAA; width: auto;">sshd服务：</label>
+                            <div class="testswitch">
+                                <input class="testswitch-checkbox" id="onoffswitch" type="checkbox" ng-checked="YS_objd.params.open"
+                                    ysfetch="YS_objd" ng-model="YS_objd.params.open">
+                                <label class="testswitch-label" for="onoffswitch">
+                                    <span class="testswitch-inner" data-on="开" data-off="关"></span>
+                                    <span class="testswitch-switch"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- 确认关机弹窗 -->
+        <div id="powertc" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="../images/warn.png" alt=""></div>
+                <div class="ask"><span>确定重启系统硬件设备？</span></div>
+            </div>
+            <div class="tc_foot">
+                <div ysfetch="YS_obja" class="confirm" comclose>确认</div>
+                <div class="quxiao" comclose>取消</div>
+            </div>
+        </div>
+
+        <div id="powerrestar" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline"><div class="cline"></div></div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="../images/warn.png" alt=""></div>
+                <div class="ask"><span>确定关闭系统硬件设备？</span></div>
+            </div>
+            <div class="tc_foot">
+                <div ysfetch="YS_objb" class="confirm" comclose>确认</div>
+                <div class="quxiao" comclose>取消</div>
+            </div>
+        </div>
+    </div>
+</div>

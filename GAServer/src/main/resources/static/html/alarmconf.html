@@ -1,0 +1,242 @@
+<!-- 报警配置 -->
+<style type="text/css" media="screen">
+    .edi-form-label {
+    width: 145px;
+}
+</style>
+
+
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow=0><a href="#/equipadmin" class="usercen l_btn ex_act">
+                        <img class="logimg hui" src="../images/sbgl.png" alt="">
+                        <img class="logimg bai" src="../images/sbgl_act.png" alt="">
+                        <span>设备管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/linkadmin" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/llgl.png" alt="">
+                        <img class="logimg bai" src="../images/llgl_act.png" alt="">
+                        <span>链路管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/register" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/ptzc.png" alt="">
+                        <img class="logimg bai" src="../images/ptzc_act.png" alt="">
+                        <span>平台注册</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/networkconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/wlpz.png" alt="">
+                        <img class="logimg bai" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/physicalconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/tjpz.png" alt="">
+                        <img class="logimg bai" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+                    </a></li>
+<!--                 <li tapshow='0'><a href="#/logconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/rzpz.png" alt="">
+                        <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+                    </a></li> -->
+                <li tapshow='0'><a href="javascript:;" class="userpro l_btn act ex_act">
+                        <img class="logimg" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+                    </a></li>
+                                           <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+                      <img class="logimg hui" src="../images/gjx.png" alt="">
+           <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+ 
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>报警配置</span></div>
+                </div>
+                <div class="res-body too-dis-flex">
+                    <div>
+                        <div class="dpf edi_first_top">
+                            <label class="edi-form-label layui-form-label">报警间隔*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="alarmtime" name="alarmtime" placeholder="请输入报警间隔时间" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.baseConfig.alarmtime">
+                            </div>
+                            <p class="alcodec">分钟</p>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">报警最大条数*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="maxnum" name="maxnum" placeholder="请输入报警最大条数" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.baseConfig.maxnum">
+                            </div>
+                            <p class="alcodec">条</p>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">报警时段*：</label>
+                            <div class="uinf_tinput edi-input layui-input-inline dpf">
+                                <div class="uinf_time">
+                                    <input type="text" id="timeStart" name="timeStart" placeholder="开始时间" autocomplete="off"
+                                        class="layui-input fl cp" yslaytime="YS_obja.params.baseConfig.timeStart" ng-model="YS_obja.params.baseConfig.timeStart">
+                                    <img class="cp" src="../images/choose_time.png" alt="">
+                                </div>
+                                <span class="zhi fl">至</span>
+                                <div class="uinf_time">
+                                    <input type="text" id="timeEnd" name="timeEnd" placeholder="结束时间" autocomplete="off"
+                                        class="layui-input fl cp" yslaytime="YS_obja.params.baseConfig.timeEnd" ng-model="YS_obja.params.baseConfig.timeEnd">
+                                    <img class="cp" src="../images/choose_time.png" alt="">
+                                </div>
+
+                            </div>
+                        </div>
+ 
+                        <div class="dpf too_secend_top  m_t30" >
+                            <label class="edi-form-label layui-form-label">短信接收报警：</label>
+
+                            <div class="dpf">
+                                <div class=" line_h28 dpf">
+                                
+                                    <div class="testswitchsp1">
+               <input ng-if="dxbj==1" class="testswitchsp1-checkbox" id="dxswitch1" type="checkbox" checked dxbj>
+               <input ng-if="dxbj==0" class="testswitchsp1-checkbox" id="dxswitch1" type="checkbox" dxbj>
+                                        <label class="testswitchsp1-label" for="dxswitch1">
+                                            <span class="testswitchsp1-inner" data-on="" data-off=""></span>
+                                            <span class="testswitchsp1-switch"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+
+
+     
+                            </div>
+
+                        </div>
+
+
+                        <div class="dpf too_secend_top " style="margin-top: 20px">
+                            <label class="edi-form-label layui-form-label">服务中心号码*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="fwzxhm" name="fwzxhm" placeholder="请输入服务中心号码" autocomplete="on" class="layui-input w_414" ng-model="YS_obja.params.smsConfig.fwzxhm" ng-show="dxbj==1">
+                                <input type="text" placeholder="请输入服务中心号码" disabled autocomplete="on" class="layui-input w_414 bukey" ng-show="dxbj==0" ng-model="YS_obja.params.smsConfig.fwzxhm">
+                            </div>
+                        </div>
+
+
+                        <div class="dpf too_secend_top mt_30" >
+                            <label class="edi-form-label layui-form-label">接收手机号码*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="fstel" name="fstel" placeholder="请输入接收手机号码" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.smsConfig.fstel" ng-show="dxbj==1" chkbjphone="YS_obja" data-id="fstel">
+                                <input type="text" name="fstel" disabled placeholder="请输入接收手机号码" autocomplete="off"
+                                    class="layui-input w_414 bukey" ng-show="dxbj==0" ng-model="YS_obja.params.smsConfig.fstel">
+
+                            </div>
+                        </div>
+
+
+
+                        <div class="dpf too_secend_top  m_t30" >
+                            <label class="edi-form-label layui-form-label">邮件接收报警：</label>
+
+                            <div class="dpf">
+                                <div class=" line_h28 dpf">
+                                  
+                                    <div class="testswitchsp1">
+                                        <input ng-if="yjbj==1" class="testswitchsp1-checkbox" id="dxswitch2" type="checkbox" checked yjbj>
+                                        <input ng-if="yjbj==0" class="testswitchsp1-checkbox" id="dxswitch2" type="checkbox" yjbj>
+                                        <label class="testswitchsp1-label" for="dxswitch2">
+                                            <span class="testswitchsp1-inner" data-on="" data-off=""></span>
+                                            <span class="testswitchsp1-switch"></span>
+                                        </label>
+                                    </div>
+
+                                </div>
+
+
+     
+                            </div>
+
+                        </div>
+
+
+                        <div class="dpf too_secend_top "  style="margin-top: 20px">
+                            <label class="edi-form-label layui-form-label">邮件服务器地址*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="fwmaildz"  name="fwmaildz" placeholder="请输入邮件服务器地址" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.emailConfig.fwmaildz" ng-show="yjbj==1">
+
+                                <input type="text" id="fwmaildz2" disabled name="fwmaildz2" placeholder="请输入邮件服务器地址" autocomplete="off" class="layui-input w_414 bukey" ng-show="yjbj==0" ng-model="YS_obja.params.emailConfig.fwmaildz">
+
+                            </div>
+                        </div>
+
+                        
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">端口*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="ports"  name="ports" placeholder="请输入端口" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.emailConfig.ports" ng-show="yjbj==1">
+
+                                <input type="text" id="ports2" disabled name="ports2" placeholder="请输入端口" autocomplete="off"
+                                    class="layui-input w_414 bukey" ng-show="yjbj==0" ng-model="YS_obja.params.emailConfig.ports">
+
+                            </div>
+                        </div>
+
+                        <div class="dpf too_secend_top m_t30" >
+                            <label class="edi-form-label layui-form-label">邮箱地址*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="emailbj"  name="emailbj" placeholder="请输入接收邮箱的邮箱地址" autocomplete="off" class="layui-input w_414" ng-model="YS_obja.params.emailConfig.emailbj" ng-show="yjbj==1" checkacemail="YS_obja" data-id="emailbj">
+
+                                <input type="text" id="emailbj2" disabled name="emailbj2" placeholder="请输入接收邮箱的邮箱地址" autocomplete="off" class="layui-input w_414 bukey" ng-show="yjbj==0" ng-model="YS_obja.params.emailConfig.emailbj">
+
+                            </div>
+                        </div>
+
+
+                        <div class="dpf too_secend_top ">
+                            <label class="edi-form-label layui-form-label">用户名*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="alarmuser"  name="alarmuser" placeholder="请输入用户名" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.emailConfig.alarmuser" ng-show="yjbj==1">
+
+                                <input type="text" id="alarmuser2" disabled name="alarmuser2" placeholder="请输入用户名" autocomplete="off" class="layui-input w_414 bukey" ng-show="yjbj==0" ng-model="YS_obja.params.emailConfig.alarmuser">
+
+                            </div>
+                        </div>
+
+                        <div class="dpf too_secend_top ">
+                            <label class="edi-form-label layui-form-label">密码*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="password" id="alarpwd"  name="alarpwd" placeholder="请输入密码" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.emailConfig.alarpwd" ng-show="yjbj==1">
+
+                                <input type="password" id="alarpwd2" disabled name="alarpwd2" placeholder="请输入密码" autocomplete="off" class="layui-input w_414 bukey" ng-show="yjbj==0"  ng-model="YS_obja.params.emailConfig.alarpwd">
+
+                            </div>
+                        </div>
+
+                        <div class="dpf too_secend_top ">
+                            <label class="edi-form-label layui-form-label">报警标题*：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="bjtitle"  name="bjtitle" placeholder="请输入报警标题" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.emailConfig.bjtitle" ng-show="yjbj==1">
+
+                                <input type="text" id="bjtitle2" disabled name="bjtitle2" placeholder="请输入报警标题" autocomplete="off" class="layui-input w_414 bukey" ng-show="yjbj==0" ng-model="YS_obja.params.emailConfig.bjtitle">
+
+                            </div>
+                        </div>
+
+
+                        <div class="dpf too_third_top inf-threebtn m_t45">
+                            <label class="edi-form-label layui-form-label"></label>
+                            <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act uinf_btn"
+                                ysfetch="YS_obja">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

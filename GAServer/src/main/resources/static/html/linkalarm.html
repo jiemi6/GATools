@@ -1,0 +1,205 @@
+<!-- 报警中心  链接报警 -->
+
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="javascript:;" class="usercen act ex_act">
+            <img class="menuimg" src="../images/llbj_act.png" alt="">
+            <span>链路报警</span>
+          </a></li>
+        <li tapshow='0'><a href="#/equipalarm" class="userpro ex_act">
+            <img class="menuimg hui" src="../images/sbbj.png" alt="">
+            <img class="menuimg bai" src="../images/sbbj_act.png" alt="">
+            <span>设备报警</span>
+          </a></li>
+        <li tapshow='0'><a href="#/taskalarm" class="userpro ex_act">
+            <img class="menuimg hui" src="../images/rwbj.png" alt="">
+            <img class="menuimg bai" src="../images/rwbj_act.png" alt="">
+            <span>任务报警</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+
+      <div class="tmbox res-leftbox">
+
+        <form class="layui-form">
+          <div class="upshuru">
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">链路名称：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="lbj">
+                <select name="city" lay-filter="YS_plista.params.bid" ysselect="YS_plista.params.bid">
+                  <option value="" selected="">请选择链路</option>
+                  <option ng-repeat="(k, v) in YS_lista.data.list" value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">报警类型：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="lbj2">
+                <select name="city" lay-filter="YS_plista.params.type" ysselect="YS_plista.params.type" value="{{YS_plista.params.type}}">
+                  <option value="">选择报警类型</option>
+                  <option ng-repeat="(k, v) in newList" value="{{v.type}}" ng-bind="v.name">{{v.name}}</option>
+                  
+<!--                   <option value="0">系统不可用</option>
+                  <option value="1">必须马上采取行动的事件</option>
+                  <option value="2">关键的事件 </option>
+                  <option value="3">错误事件</option>
+                  <option value="4">警告事件</option>
+                  <option value="5">普通但重要的事件</option>
+                  <option value="6">有用的信息</option>
+                  <option value="7">调试信息</option> -->
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">关 键 字：</label>
+              <div class="layui-input-block bji-blcok">
+                <input id="lkey" type="text" name="title" placeholder="请输入" class="layui-input bjinput" ng-model="YS_plista.params.keyword">
+              </div>
+            </div>
+          </div>
+          <div class="downshuru">
+            <div class="layui-form-item riqi">
+              <div class="layui-inline">
+                <label class="layui-form-label shtitle">起止时间：</label>
+                <div class="layui-input-inline choosedate">
+                  <input id="ldate" type="text" readonly="true" class="layui-input bjinput" ystwodate="YS_plista.params.startDate"
+                    to="YS_plista.params.endDate" placeholder="请选择时间">
+                </div>
+              </div>
+            </div>
+            <div class="sbtn">
+              <div class="search cp j_btn ex_act" searchinter="YS_plista"><span>搜索</span></div>
+              <div class="rest cp b_btn_l ex_act" rest><span>重置</span></div>
+            </div>
+          </div>
+        </form>
+
+        <div class="alarm">
+          <div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+        </div>
+        <div class="table">
+          <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+            <col style="width: 5%" />
+            <col style="width: 20%" />
+            <col style="width: 20%" />
+            <col style="width: 30%" />
+            <col style="width: 10%" />
+            <col style="width: 15%" />
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>链接名称</th>
+                <th>报警类型</th>
+                <th>报警详情</th>
+                <th></th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list" ng-if="YS_plista.data.list.length>0">
+
+                <td ng-bind="key+1">1</td>
+                <td  title="{{value.name}}" class="normal_n">
+                  <div class="eldiv" ng-bind="value.name">
+                    
+                  </div>
+                </td>
+                <td>{{value.typename}}</td>
+                <td class="dfjc">
+                  <div class="equ_decover" style="  min-width:297px;">
+                    {{value.msg}}
+                  </div>
+                  <div class="ptr" ng-show="value.msg.length>20">
+                    <img src="../images/tips.png" class="circle">
+                    <div class="tips dpn"><span ng-bind="value.msg">通常用来显示完整信息，注释信息，辅助提示。</span></div>
+                  </div>
+                </td>
+                <td>
+                  <div class="too-dis-flex">
+                    <div class="deal_idea cp" dealshow data-type="{{value.type}}">处理建议</div>
+                  </div>
+                </td>
+                <td ng-bind="value.createTime">2018/08/27 08:23</td>
+              </tr>
+              <tr ng-if="YS_plista.data.list.length>0">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+
+              <tr ng-if="!YS_plista.data.list.length">
+                <td colspan="6">
+                  <div class="allnmsg">
+                    <div class="nmsg_pic">
+                      <img src="/images/nonemsg.png" alt="">
+                    </div>
+                    <div>
+                      <span>暂无数据…</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+
+
+            </tbody>
+          </table>
+        </div>
+        <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+      </div>
+    </div>
+
+
+
+<div id="dealtip" class="com_tc dpn">
+  <div class="tc_top">
+    <div class="tc_title"><span>处理建议知识库</span></div>
+    <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+  </div>
+  <div class="topline"><div class="cline"></div></div>
+  <div class="zskcont">
+   <div class="jy-title"><span ng-bind="YS_plistb.params.typename"></span></div>
+   <div class="jylist" >
+    <div class="zskr jy-zskr" ng-repeat="(key, value) in jylist" ng-if="YS_plistb.data.list.length!=0">
+    <!--   <input id="zk1" type="radio" name="time" value=""><label for="zk1"></label> -->
+    <div class="zandec" title="{{value.knowledgeDesc}}">
+       <span>{{key+1}}. {{value.knowledgeDesc}}</span>
+    </div>
+      <div class="zannums">
+            <img class="upimg" src="../images/updef.png" alt="" ng-show="haszan!=value.knowledgeId" data-id="{{value.knowledgeId}}" upknow >
+      <img class="upimg" src="../images/upon.png" alt=""  ng-show="haszan==value.knowledgeId">
+      <span>{{value.upNum}}</span>  
+      </div>
+
+    </div>
+    <div class="zskr jy-zskr" ng-if="YS_plistb.data.list.length==0">
+      <span>暂无处理建议，请添加！</span>
+    </div>
+
+    </div>
+
+    <div ng-show="paged" class="jy_page fenye" id="YS_plistb" ng-if="YS_plistb.data.list.length!=0"></div>
+
+
+    <div class="yuany">
+      <div class="yytitle" style="color:#fff;font-weight: 600"><span>添加建议：</span></div>
+      <div>
+      <textarea name="" class="yycont jy-desc" placeholder="请输入处理建议（非必填）" ng-model="YS_obja.params.knowledgeDesc"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="tc_foot" style="position: absolute;bottom:0;right:0;left:0">
+    <div class="confirm" addknow>确认</div>
+    <div class="quxiao" comclose>取消</div>
+
+  </div>
+</div>
+
+   

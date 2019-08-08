@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>公安监控系统</title>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="icon" type="image/png" href="/images/galogo.png">
+</head>
+<style type="text/css">
+    body,
+    ul,
+    .con_sec {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    html,
+    body {
+        height: 100%;
+    }
+
+    html {
+        overflow: auto;
+    }
+
+    body {
+        font-family: "MicroSoft YaHei";
+        font: 14px Helvetica Neue, Helvetica, PingFang SC, \5FAE\8F6F\96C5\9ED1, Tahoma, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background: rgba(4, 17, 35, 1);
+    }
+
+    .logb {
+        max-width: 1920px;
+    }
+
+    .logb video {
+        position: fixed;
+        min-width: 100%;
+        min-height: 100%;
+        z-index: -11;
+        width: auto;
+        height: auto;
+    }
+
+    .c_page {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        max-width: 1920px;
+        min-width: 1200px;
+    }
+
+    .alllog {
+        width: 100%;
+        height: 270px;
+        position: relative;
+        margin-top: 19%;
+    }
+
+    .logtitle {
+        width: 1000px;
+        height: 150px;
+        position: absolute;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: rgb(218, 234, 255);
+        font-size: 48px;
+        letter-spacing: 36px;
+    }
+
+    .titlt_dec {
+        margin-left: 30px;
+        text-shadow: -4px 4px 6px rgba(0, 0, 0, .9)
+    }
+
+    .title_pic {
+        margin-top: 20px;
+    }
+
+    .logcont {
+        width: 1000px;
+        height: 66px;
+        position: absolute;
+        right: 0;
+        top: 150px;
+        display: flex;
+        align-items: center;
+    }
+
+    .log_input {
+        width: 236px;
+        height: 48px;
+        background: rgba(180, 238, 255, .85);
+        margin: 0 15px 0 0;
+        border-radius: 15px;
+        display: flex;
+        box-shadow: -3px 3px 10px rgba(0, 0, 0, .65);
+    }
+
+    .log_input label {
+        color: rgba(30, 99, 116);
+        font-size: 18px;
+        line-height: 47px;
+        width: 72px;
+        text-align: right;
+    }
+
+    .log_input input {
+        border: none;
+        background: rgba(180, 238, 255, 0);
+        border-radius: 15px;
+        outline: none;
+        width: 160px;
+        color: rgba(30, 99, 116, 1);
+        font-size: 18px;
+        line-height: 48px;
+    }
+
+    .yzm {
+        width: 72px;
+        background: rgba(76, 142, 152, 1);
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+    }
+
+    .yzm img {
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
+        width: 100%;
+        height: 51px;
+        cursor: pointer;
+        margin-top: -1px;
+    }
+
+    .yzcode input {
+        width: 92px;
+    }
+
+    .login_btn {
+        width: 140px;
+        height: 48px;
+        border-radius: 15px;
+        color: #ffffff;
+        font-size: 24px;
+        text-align: center;
+        background: rgba(7, 217, 197, .85);
+        line-height: 48px;
+        cursor: pointer;
+        margin-left: 32px;
+        box-shadow: -3px 3px 10px rgba(0, 0, 0, .65);
+    }
+
+    .topline {
+        width: 100%;
+        height: 1px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .cline {
+        width: 98%;
+        height: 1px;
+        background-color: rgba(255, 255, 255, .2);
+
+    }
+
+    .fgpwd {
+        position: absolute;
+        right: 0;
+        top: 230px;
+        width: 100%;
+        color: rgba(89, 163, 172, 1);
+        font-size: 16px;
+        text-align: right;
+        padding: 0 100px;
+    }
+
+    .forgetpwd {
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        padding: 15px;
+        border-radius: 2px;
+        font-size: 14px;
+        position: absolute;
+        top: -14px;
+        display: none;
+        right: 194px;
+    }
+
+    .forgetpwd:before {
+        content: '';
+        width: 0;
+        height: 0;
+        border: 10px solid transparent;
+        /*调整小三角形的大小*/
+        border-left-color: rgba(0, 0, 0, 0.8);
+        /*改变小三角的颜色（最好就是和父级div的背景颜色相同）;bottom是用于调整小三角的方向*/
+        position: absolute;
+        right: 0px;
+        /*调整小三角形的位置*/
+        bottom: 30%;
+        /*调整小三角形的位置*/
+        margin-right: -20px;
+        /*调整小三角形的位置*/
+    }
+
+    .cp {
+        cursor: pointer;
+    }
+
+    .dpn {
+        display: none;
+    }
+
+    .com_tc {
+        width: 785px;
+        height: 445px;
+        /*width:40.8vw;*/
+        /* height:23vw;*/
+        background: rgb(6, 57, 76);
+        border-radius: 5px;
+        border: 1px solid rgba(0, 234, 255, 0.35);
+    }
+
+    .tc_top {
+        width: 100%;
+        height: 70px;
+        border-radius: 3px 3px 0 0;
+        background: rgb(6, 57, 76);
+        line-height: 70px;
+        display: flex;
+
+    }
+
+    .tc_title {
+        flex: 1;
+        font-size: 28px;
+        color: #fff;
+
+
+    }
+
+    .tc_title span,
+    .tc_close img {
+        margin: 0 30px;
+    }
+
+    .tc_close img {
+        width: 19px;
+        height: 19px;
+        cursor: pointer;
+    }
+
+    .tc_close {
+        flex: 1;
+        text-align: right;
+    }
+
+    .tc_cont {
+        text-align: center;
+        padding: 80px 60px;
+    }
+
+    .tc_cont {
+        text-align: center;
+        padding: 80px 60px;
+    }
+
+    .zt_img img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .ask {
+        font-size: 16px;
+        font-weight: 600;
+        margin: 20px 0 0;
+        color: #fff;
+    }
+
+    .warnt {
+        font-size: 12px;
+        margin: 5px 0;
+
+    }
+
+    .warnt2 {
+        font-size: 14px;
+        margin: 5px 0;
+
+    }
+
+    .tc_foot {
+        width: 100%;
+        height: 70px;
+        /*border-top: 1px solid rgba(7,171,184,0.75);*/
+        /*	bottom: 0;
+	position: absolute;*/
+    }
+
+    .confirm {
+        width: 105px;
+        height: 45px;
+        border-radius: 5px;
+        background: #03d6fc;
+        margin: 12px 54px 12px 10px;
+        color: #fff;
+        line-height: 45px;
+        text-align: center;
+        font-size: 18px;
+        float: right;
+        cursor: pointer;
+    }
+
+    .quxiao {
+        width: 105px;
+        height: 45px;
+        border-radius: 5px;
+        background: #a8c1ca;
+        margin: 12px 10px 12px 10px;
+        color: #fff;
+        line-height: 45px;
+        text-align: center;
+        font-size: 18px;
+        float: right;
+        cursor: pointer;
+    }
+
+    .l_btn:hover {
+        background: #3fe1fe;
+        transition: all 0.4s linear;
+    }
+
+    .l_btn:active {
+        background: #00bbdd;
+    }
+
+    .ex_act:hover,
+    .ex_act {
+        transition: all 0.3s linear;
+    }
+
+    .login_btn:hover {
+        background: rgba(5, 187, 172, .85);
+        transition: all 0.2s linear;
+    }
+
+    .login_btn:active {
+        background: rgba(3, 162, 149, .85)
+    }
+
+    .rootpage {
+        display: flex;
+        justify-content: center;
+    }
+
+    .logvide1,
+    .logvide2,
+    .logvide3,
+    .logvide4 {
+        display: none;
+    }
+
+    @media (min-width:1700px) {
+        .logvide1 {
+            display: block;
+        }
+    }
+
+    @media (min-width:1400px) and (max-width:1700px) {
+        .logvide2 {
+            display: block;
+        }
+
+        .logtitle {
+            font-size: 38px;
+            letter-spacing: 28px;
+            width: 800px;
+        }
+
+        .alllog {
+            margin-top: 21%;
+        }
+
+        .logtitle img {
+            width: 50px;
+        }
+
+        .titlt_dec {
+            margin-left: 23px;
+        }
+
+        .log_input {
+            width: 186px;
+            height: 42px;
+            border-radius: 8px;
+        }
+
+        .log_input input {
+            border-radius: 8px;
+            width: 114px;
+            line-height: 42px;
+            font-size: 16px;
+        }
+
+        .log_input label {
+            font-size: 16px;
+            line-height: 42px;
+            width: 64px;
+        }
+
+        .yzm img {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            width: 100%;
+            height: 44px;
+        }
+
+        .yzcode input {
+            width: 56px;
+            font-size: 16px;
+        }
+
+        .login_btn {
+            width: 112px;
+            height: 42px;
+            border-radius: 8px;
+            font-size: 20px;
+            line-height: 42px;
+        }
+
+        .logcont {
+            width: 800px;
+            top: 128px;
+        }
+
+        .fgpwd {
+            padding: 0px 68px;
+            font-size: 15px;
+            top: 206px;
+        }
+
+        .forgetpwd {
+            right: 160px;
+        }
+    }
+
+    @media (min-width:1300px) and (max-width:1399px) {
+        .logvide3 {
+            display: block;
+        }
+
+        .logtitle {
+            font-size: 36px;
+            letter-spacing: 26px;
+            width: 716px;
+        }
+
+        .titlt_dec {
+            margin-left: 23px;
+        }
+
+        .alllog {
+            margin-top: 17%;
+        }
+
+        .logtitle img {
+            width: 46px;
+        }
+
+        .log_input {
+            width: 170px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .log_input label {
+            font-size: 15px;
+            line-height: 36px;
+            width: 54px;
+        }
+
+        .log_input input {
+            border-radius: 8px;
+            width: 114px;
+            line-height: 36px;
+            font-size: 16px;
+        }
+
+        .logcont {
+            width: 716px;
+            top: 128px;
+        }
+
+        .yzm img {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            width: 100%;
+            height: 38px;
+        }
+
+        .yzcode input {
+            width: 48px;
+            font-size: 15px;
+        }
+
+        .login_btn {
+            width: 100px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 18px;
+            line-height: 36px;
+        }
+
+        .fgpwd {
+            padding: 0px 38px;
+            font-size: 15px;
+            top: 206px;
+        }
+
+        .forgetpwd {
+            right: 130px;
+        }
+
+    }
+
+    @media (min-width:0) and (max-width:1299px) {
+        .logvide4 {
+            display: block;
+        }
+
+        .alllog {
+            margin-top: 30%;
+        }
+
+        .titlt_dec {
+            margin-left: 20px;
+        }
+
+        .logtitle {
+            font-size: 36px;
+            letter-spacing: 26px;
+            width: 716px;
+        }
+
+        .logtitle img {
+            width: 46px;
+        }
+
+        .log_input {
+            width: 170px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        .log_input label {
+            font-size: 15px;
+            line-height: 36px;
+            width: 54px;
+        }
+
+        .log_input input {
+            border-radius: 8px;
+            width: 114px;
+            line-height: 36px;
+            font-size: 16px;
+        }
+
+        .logcont {
+            width: 716px;
+            top: 128px;
+        }
+
+        .yzm img {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+            width: 100%;
+            height: 38px;
+        }
+
+        .yzcode input {
+            width: 48px;
+            font-size: 15px;
+        }
+
+        .login_btn {
+            width: 100px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 18px;
+            line-height: 36px;
+        }
+
+        .fgpwd {
+            padding: 0px 38px;
+            font-size: 15px;
+            top: 206px;
+        }
+
+        .forgetpwd {
+            right: 130px;
+        }
+
+
+    }
+</style>
+
+<body>
+    <div class="rootpage">
+        <div class="logb">
+            <video loop autoplay muted="muted" name="media" class="logvide1">
+                <source src="/images/logb.mp4" type="video/mp4"></video>
+            <video loop autoplay muted="muted" name="media" class="logvide2">
+                <source src="/images/logb2.mp4" type="video/mp4"></video>
+            <video loop autoplay muted="muted" name="media" class="logvide3">
+                <source src="/images/logb3.mp4" type="video/mp4"></video>
+            <video loop autoplay muted="muted" name="media" class="logvide4">
+                <source src="/images/logb4.mp4" type="video/mp4"></video>
+
+        </div>
+        <div class="c_page">
+            <div class="alllog">
+                <div class="logtitle">
+                    <div class="title_pic">
+                        <img src="/images/login-logo.png">
+                    </div>
+                    <div class="titlt_dec">
+                        <span>跨域运维监控系统</span>
+                    </div>
+                </div>
+                <div class="logcont">
+                    <div class="log_input uname">
+                        <label for="">用户名:</label>
+                        <input type="text" id="uname">
+                    </div>
+                    <div class="log_input password">
+                        <label for="">密码:</label>
+                        <input type="password" id="paword">
+                    </div>
+                    <div class="log_input yzcode">
+                        <label for="">验证码:</label>
+                        <input type="text" id="yzm">
+                        <div class="yzm">
+                            <img id="yzmpic" src="./user/getVCode" alt="" onclick="this.src='./user/getVCode?'+Date.parse(new Date())" />
+                        </div>
+                    </div>
+                    <div class="login_btn" id="loginin">
+                        登 录
+                    </div>
+                </div>
+                <div class="fgpwd">
+                    <div class="forgetpwd">忘记密码请联系管理员！</div>
+                    <span id="forget" class="cp" onclick="forget()">忘记密码？</span>
+                </div>
+            </div>
+        </div>
+        <div id="pwdwrong" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline">
+                <div class="cline"></div>
+            </div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="/images/fail.png" alt=""></div>
+                <div class="ask"><span>用户名或密码输入错误，请重新输入！</span></div>
+            </div>
+            <div class="tc_foot">
+                <div class="confirm l_btn ex_act" comclose>确认</div>
+            </div>
+        </div>
+
+        <div id="yzmwrong" class="com_tc dpn">
+            <div class="tc_top">
+                <div class="tc_title"><span>提示</span></div>
+                <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+            </div>
+            <div class="topline">
+                <div class="cline"></div>
+            </div>
+            <div class="tc_cont">
+                <div class="zt_img"><img src="/images/fail.png" alt=""></div>
+                <div class="ask"><span>验证码输入错误，请重新输入！</span></div>
+            </div>
+            <div class="tc_foot">
+                <div class="confirm l_btn ex_act" comclose>确认</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="js/global.min.js"></script>
+<script>
+    $(function () {
+
+
+        $.ajax({
+            // 请求发送方式
+            type: 'post',
+            // 验证文件
+            url: './license/check',
+            data: {},
+            // 异步，不写默认为True
+            async: true,
+            //请求成功后的回调
+            success: function (data) {
+
+                //无授权证书
+                if (data.code == "-100") {
+                    layer.msg(data.msg);
+
+                    setTimeout(function () {
+                        window.location.href = '/shouquan.html';
+                    }, 1000)
+                }
+            },
+            error: function () {
+                layer.msg('服务端异常');
+                setTimeout(function () {
+                    window.location.href = '/shouquan.html';
+                }, 1000)
+            }
+        })
+
+
+
+
+        $('#loginin').on('click', function () {
+
+            if ($('#uname').val().trim().length == 0) {
+                layer.msg('请输入用户名');
+/*                layer.open({
+                    type: 1,
+                    title: false, //不显示标题
+                    closeBtn: 0,
+                    shadeClose: true,
+                    shade: 0.5,
+                    area: ['auto', 'auto'], //宽高
+                    content: $('#pwdwrong')
+                });*/
+                $("#yzmpic").attr("src", "./user/getVCode?kk=" + Date.parse(
+                    new Date()));
+                layer.msg(data.msg);
+                return false;
+            }
+            if ($('#paword').val().trim().length == 0) {
+                 layer.msg('请输入密码');
+/*                layer.open({
+                    type: 1,
+                    title: false, //不显示标题
+                    closeBtn: 0,
+                    shadeClose: true,
+                    shade: 0.5,
+                    area: ['auto', 'auto'], //宽高
+                    content: $('#pwdwrong')
+                });*/
+                $("#yzmpic").attr("src", "./user/getVCode?kk=" + Date.parse(
+                    new Date()));
+                layer.msg(data.msg);
+                return false;
+            }
+            if ($('#yzm').val().trim().length == 0) {
+                 layer.msg('请输入验证码');
+   /*             layer.open({
+                    type: 1,
+                    title: false, //不显示标题
+                    closeBtn: 0,
+                    shadeClose: true,
+                    shade: 0.5,
+                    area: ['auto', 'auto'], //宽高
+                    content: $('#yzmwrong')
+                });*/
+                $("#yzmpic").attr("src", "./user/getVCode?kk=" + Date.parse(
+                    new Date()));
+                layer.msg(data.msg);
+                return false;
+            } else {
+                $.ajax({
+                    // 请求发送方式
+                    type: 'post',
+                    // 验证文件
+                    url: './user/login',
+                    // 用户输入的帐号密码
+                    data: {
+                        uName: $("#uname").val().trim(),
+                        pwd: $("#paword").val().trim(),
+                        vcode: $("#yzm").val().trim()
+                    },
+                    // 异步，不写默认为True
+                    async: true,
+                    //请求成功后的回调
+                    success: function (data) {
+
+                        if (data.code == -1) {
+                            layer.msg(data.msg);
+                            $("#yzmpic").attr("src",
+                                "./user/getVCode?kk=" +
+                                Date.parse(new Date()));
+                            return false;
+                        }
+
+                        // localStorage.clear();
+                        // var data = JSON.parse(data);
+                        // console.log(re.code);
+                        if (data.code == 0) {
+                            layer.msg('登录成功');
+                            setCookie("JSESSIONID", data.data.sessionId);
+
+                            debugger;
+                            setTimeout(function () {
+                                window.location.href = '/';
+                            }, 2000)
+
+
+                        }
+                    },
+                    error: function () {
+                        layer.msg('服务端异常');
+                    }
+                })
+                return true;
+            }
+
+
+        })
+
+        $(document).keydown(function (event) {
+            if (event.keyCode == 13) {
+                $('#loginin').triggerHandler('click');
+            }
+        });
+
+
+        $('#yzm').on('change', function () {
+            $.ajax({
+                // 请求发送方式
+                type: 'post',
+                // 验证文件
+                url: './user/checkVCode',
+                // 用户输入的帐号密码
+                data: {
+                    vcode: $("#yzm").val().trim()
+                },
+                // 异步，不写默认为True
+                async: true,
+                //请求成功后的回调
+                success: function (data) {
+
+                    if (data.code == -1) {
+                        // $("#yzmdes").html(data.msg);
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function () {
+                    layer.msg('服务端异常');
+                }
+            })
+        })
+
+
+
+    })
+    // function login() {
+    // };
+
+    function setCookie(name, value) {
+        //写cookies 
+        var d = new Date();
+        d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = name + "=" + value + "; " + expires + ";path=/";
+    }
+
+
+
+    function getCookie(c_name) {
+        if (document.cookie.length > 0) {
+            c_start = document.cookie.indexOf(c_name + "=");
+            if (c_start != -1) {
+                c_start = c_start + c_name.length + 1;
+                c_end = document.cookie.indexOf(";", c_start);
+                if (c_end == -1)
+                    c_end = document.cookie.length;
+                return unescape(document.cookie.substring(c_start, c_end));
+            }
+        }
+        return "";
+    }
+
+
+    function forget() {
+        $('.forgetpwd').fadeIn();
+        setTimeout(function () {
+            $('.forgetpwd').fadeOut()
+        }, 3000);
+    }
+</script>
+
+</html>

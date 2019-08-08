@@ -1,0 +1,166 @@
+<!-- 统计报表  任务执行统计 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="javascript:;" class="usercen act ex_act">
+            <img class="logimg" src="../images/rwzxtj_act.png" alt="">
+            <span>任务执行统计</span>
+          </a></li>
+        <li tapshow='0'><a href="#/equipsta" class="userpro ex_act">
+            <img class="logimg hui" src="../images/sbyxtj.png" alt="">
+            <img class="logimg bai" src="../images/sbyxtj_act.png" alt="">
+            <span>设备运行统计</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox">
+        <div class="tapbtn">
+          <!-- <div class="inlineb cp tkbtnl {{tapshow==0?'tkbtn_act':''}}" tapshow="0"><span>数据交换</span></div>
+          <div class="inlineb cp tkbtnr {{tapshow==1?'tkbtn_act':''}}" tapshow="1"><span>单向导入</span></div> -->
+
+          <div class="tapbtn">
+            <div class="layui-form">
+              <div class="layui-form-item shitem">
+                <label class="layui-form-label shtitle">链接名称：</label>
+                <div class="layui-input-block bji-blcok three_inf" id="lbj">
+                  <select name="city" lay-filter="YS_plista.params.linkId" ysselect="YS_plista.params.linkId" run="YS_plista">
+                    <option value="" selected="">请选择链路</option>
+                    <option ng-repeat="(k, v) in YS_lista.data.list" ng-selected="v.linkId==YS_plista.params.linkId"
+                      value="{{v.linkId}}" ng-bind="v.linkName">{{v.linkName}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="upshuru">
+            <div class="choosetime" id="fw">
+              <input id="now" type="radio" name="time" value="0"><label todate="t" for="now"><span>今日</span></label>
+              <input id="weak" type="radio" name="time" value="1"><label todate="w" for="weak"><span>当前周</span></label>
+              <input id="month" type="radio" name="time" value="2"><label todate="m" for="month"><span>当前月</span></label>
+            </div>
+            <form class="layui-form">
+              <div class="layui-form-item riqi">
+                <div class="layui-inline">
+                  <label class="layui-form-label shtitle2" style="margin-top:4px">起止时间：</label>
+                  <div class="layui-input-inline">
+                    <input id="date" type="text" class="layui-input bjinput eldate" ystwodate="YS_plista.params.startDate"
+                      to="YS_plista.params.endDate" ng-model="todates" style="background-position-x:14.5vw">
+                  </div>
+                </div>
+              </div>
+            </form>
+            <div class=" dpf ml_30">
+              <div class="search cp" searchinter="YS_plista"><span>搜索</span></div>
+              <div class="rest cp" rest><span>重置</span></div>
+            </div>
+          </div>
+
+          <div class="statotal dpf">
+            <div class="t-item1 dpf">
+              <div class="t-img"><img src="../images/task_all.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>任务成功总数</span></div>
+                <div class="t-num"><span>{{YS_objb.data.sum.successNum}}</span></div>
+              </div>
+            </div>
+            <div class="t-item2 dpf">
+              <div class="t-img"><img src="../images/taskfailnum.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>任务失败总数</span></div>
+                <div class="t-num"><span>{{YS_objb.data.sum.errorNum}}</span></div>
+              </div>
+            </div>
+            <div class="t-item3 dpf">
+              <div class="t-img"><img src="../images/liul_all.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>成功流量</span></div>
+                <div class="t-num"><span ng-bind="YS_objb.data.sum.successFlow"></span>
+                <span ng-show="istb==1">T</span>
+                <span ng-show="isgb==1">G</span>
+                <span ng-show="ismb==1">M</span>
+                <span ng-show="isb==1">B</span>
+                
+
+
+                </div>
+              </div>
+            </div>
+            <div class="t-item5 dpf">
+              <div class="t-img"><img src="../images/liulfaillnum.png" alt=""></div>
+              <div class="t-cont">
+                <div class="t-title"><span>失败流量</span></div>
+                <div class="t-num">
+                <span ng-bind="YS_objb.data.sum.errorFlow"></span>
+                <span ng-show="isTb2==1">T</span>
+                <span ng-show="isgb2==1">G</span>
+                <span ng-show="ismb2==1">M</span>
+                <span ng-show="isb2==1">B</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="alarm">
+    	<div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+    </div> -->
+          <div class="table">
+            <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 15%" />
+              <col style="width: 25%" />
+
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>成功流量/B</th>
+                  <th>失败流量/B</th>
+                  <th>成功数据条数</th>
+                  <th>失败数据条数</th>
+                  <th>创建时间</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                  <td ng-bind="key+1" class="normal_n">移动手机报警定位平台系统</td>
+                  <td ng-bind="value.successFlow">100M</td>
+                  <td ng-bind="value.errorFlow">100M</td>
+                  <td ng-bind="value.successNum">12533</td>
+                  <td ng-bind="value.errorNum">847</td>
+                  <td ng-bind="value.createTime">847</td>
+                </tr>
+                <tr ng-if="!YS_plista.data.list.length">
+                  <td colspan="6">
+                    <div class="allnmsg">
+                      <div class="nmsg_pic">
+                        <img src="/images/nonemsg.png" alt="">
+                      </div>
+                      <div>
+                        <span>暂无数据…</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+            </table>
+          </div>
+          <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+   

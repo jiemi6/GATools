@@ -1,0 +1,134 @@
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li><a href="javascript:;" class="usercen act ex_act">
+                        <img class="menuimg" src="../images/yhxxtx_act.png" alt=""><span>用户信息填写</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+
+            <div class="tmbox res-leftbox uinf_font">
+                <div class="tapbtn ps_r">
+                    <div class="restore-tit">
+                        <span>用户信息填写</span>
+                        <a href="#/userlist">
+                            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder">返回</button>
+                        </a>
+                    </div>
+
+                </div>
+                <div class="res-body too-dis-flex">
+                    <div>
+                        <div class="dpf edi_first_top">
+                            <label class="edi-form-label layui-form-label">用户名：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="uName" name="text" placeholder="请输入用户名" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_obja.params.uName">
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">密码：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="password" id="pwd" name="text" placeholder="请输入密码" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.pwd">
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">确认密码：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="password" id="repwd" name="text" placeholder="请再输入密码" autocomplete="off"
+                                    class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">姓名：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="name" name="text" placeholder="请输入用姓名" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_obja.params.name">
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">电话号码：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="phone" name="text" placeholder="请输入电话号码" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.phone">
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">电子邮箱：</label>
+                            <div class="edi-input layui-input-inline">
+                                <input type="text" id="email" name="text" placeholder="请输入电子邮箱" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_obja.params.email">
+                            </div>
+                        </div>
+                        <div class="layui-form">
+                            <div class="layui-form-item m_b30 m_t30 dpf uinf_item">
+                                <label class="layui-form-label edi-form-label">权限：</label>
+                                <div class="layui-input-block equ-right-del" id="auth">
+                                    <select name="city" lay-verify="required" lay-filter="YS_obja.params.auth" ysselect="YS_obja.params.auth">
+                                        <option value="" selected="" class="sph">请选择</option>
+                                        <option value="1">只读</option>
+                                        <option value="2">读写</option> 
+                                    </select>
+                                    <div class="layui-unselect layui-form-select layui-form-selected">
+                                        <div class="layui-select-title selectinp">
+                                            <input type="text" style="width:414px;" placeholder="请选择" value="" readonly=""
+                                                class="layui-input layui-unselect w_414">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">用户登录IP段：</label>
+                            <div class="uinf_tinput edi-input layui-input-inline">
+                                <input type="text" id="loginIpStart" name="text" placeholder="请输入开始IP" autocomplete="off"
+                                    class="layui-input fl" ng-model="YS_obja.params.loginIpStart"><span class="zhi fl">至</span>
+                                <input type="text" id="loginIpEnd" name="text" placeholder="请输入结束IP" autocomplete="off"
+                                    class="layui-input fl" ng-model="YS_obja.params.loginIpEnd">
+                            </div>
+                            <div class="buxian">
+                                <input id="bx1" type="checkbox" name="" value=""><label for="bx1" bxip><span class="buxian-dec">不限</span></label>
+                            </div>
+                        </div>
+
+
+                        <div class="dpf too_secend_top m_t30">
+                            <label class="edi-form-label layui-form-label">登录时段：</label>
+                            <div class="uinf_tinput edi-input layui-input-inline dpf">
+                                <div class="uinf_time">
+                                    <input type="text" id="loginTimeStart" name="text" placeholder="开始时间" autocomplete="off"
+                                        class="layui-input fl cp" yslaytime="YS_obja.params.loginTimeStart"  ng-model="YS_obja.params.loginTimeStart">
+                                    <img class="cp" src="../images/choose_time.png" alt="">
+                                </div>
+                                <span class="zhi fl">至</span>
+                                <div class="uinf_time">
+                                    <input type="text" id="loginTimeEnd" name="text" placeholder="结束时间" autocomplete="off"
+                                        class="layui-input fl cp" yslaytime="YS_obja.params.loginTimeEnd"  ng-model="YS_obja.params.loginTimeEnd">
+                                    <img class="cp" src="../images/choose_time.png" alt="">
+                                </div>
+
+                            </div>
+                            <div class="buxian">
+                                <input id="bx2" type="checkbox" name="" value=""><label for="bx2" bxtime><span class="buxian-dec">不限</span></label>
+                            </div>
+                        </div>
+
+
+    
+
+                        <div class="dpf too_third_top inf-threebtn m_t45">
+                            <label class="edi-form-label layui-form-label"></label>
+                            <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act uinf_btn"
+                                ysfetch="YS_obja">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>

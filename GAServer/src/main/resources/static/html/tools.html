@@ -1,0 +1,299 @@
+<!-- ----------工具箱----------- -->
+<style type="text/css" media="screen">
+.too-dis-flex{
+    padding-left: 28%;
+    justify-content: unset;
+}
+.layui-form-label{
+    width:90px;
+}
+</style>
+
+
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li  tapshow='0'><a href="#/sysexam" class="usercen ex_act">
+                        <img class="logimg hui" src="../images/xtzj.png" alt="">
+                        <img class="logimg bai" src="../images/xtzj_act.png" alt="">
+                        <span>系统自检</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/restoreback" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/hfbf.png" alt="">
+                        <img class="logimg bai" src="../images/hfbf_act.png" alt="">
+                        <span>恢复备份</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/power" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/xtgl.png" alt="">
+                        <img class="logimg bai" src="../images/xtgl_act.png" alt="">
+                        <span>系统管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/licenses" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/sqgl.png" alt="">
+                        <img class="logimg bai" src="../images/sqgl_act.png" alt="">
+                        <span>授权管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/gjx_act.png" alt=""><span>工具箱</span>
+                    </a></li>
+
+
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>工具箱</span></div>
+                </div>
+                <div class="too-tapbtn tapbtn">
+                    <div class="inlineb ex_act cp tkbtnl {{tapshow==0?'tkbtn_act':''}}" tapshow="0" renderselect><span>PING</span></div>
+                    <div class="inlineb ex_act cp too_tkbtn {{tapshow==1?'tkbtn_act':''}}" tapshow="1" renderselect><span>Telnet</span></div>
+                    <div class="inlineb ex_act cp too_tkbtn {{tapshow==2?'tkbtn_act':''}}" tapshow="2" renderselect><span>数据库</span></div>
+                    <div class="inlineb ex_act cp tkbtnr {{tapshow==3?'tkbtn_act':''}}" tapshow="3" renderselect><span>FTP</span></div>
+                </div>
+                <!-- -----PING页面-------开始 -->
+                <div class="res-body too-dis-flex" ng-if="tapshow==0">
+                    <div>
+                        <div class="too_first_top">
+                            <label class="layui-form-label">IP*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" ng-model="YS_obja.params.ip" name="text" placeholder="请输入IP" id="toolip" autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30" id="toolwd">
+                            <label class="layui-form-label" style="line-height:8px;">网段*：</label>
+                            <div class="check too-check-right">
+                                <span tonei="YS_obja"><input type="radio" name="netarea" class="input_check" value="1" id="check1" ng-checked="YS_obja.params.netArea==1" ng-model="YS_obja.params.netArea">
+                                <label for="check1"></label></span>
+                                <span tonei="YS_obja" class="check_dec line_h28"><label for="check1">内网</label></span>
+
+
+                                <span><input type="radio" name="netarea" class="input_check" id="check2" ng-checked="YS_obja.params.netArea==2" ng-model="YS_obja.params.netArea"  value="2" ysfetch="YS_obje"><label for="check2"></label></span><span class="check_dec line_h28"><label for="check2">外网</label></span>
+                            </div>
+                        </div>
+                        <div class="layui-form" ng-show="YS_obja.params.netArea==2">
+                            <div class="layui-form-item m_b30 m_t30" id="tooltz">
+                                <label class="layui-form-label">探针*：</label>
+                                <div class="layui-input-block equ-right-del">
+                                    <select name="city" lay-filter="YS_obja.params.deviceId" ysselect="YS_obja.params.deviceId"> 
+                                        <option value="" selected="" class="sph">请选择</option>
+                                        <option ng-repeat="(k , v) in YS_obje.data.list" value="{{v.deviceId}}" ng-bind="v.deviceName">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="too_third_top dpf m_t45">
+                            <button class="too-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act"  ysfetch="YS_obja">检测</button>
+                        </div>
+                        <div class="too_four_top m_t30">
+                            <div class="layui-input-block">
+                                <div class="too-dec-textarea" readonly="readonly">
+                                    <div ng-repeat="(key, value) in mesagea track by $index">{{value}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- -----PING页面-------结束 -->
+
+                <!-- ----------Telnetyemian--------开始 -->
+                <div class="res-body too-dis-flex" ng-if="tapshow==1">
+                    <div>
+                        <div class="too_first_top" >
+                            <label class="layui-form-label">IP*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" id="telnetip" name="text" placeholder="请输入IP" ng-model="YS_objb.params.ip" autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">端口*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" id="telnetport" placeholder="请输入端口"  ng-model="YS_objb.params.port"  autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30" id="telnetwd">
+                            <label class="layui-form-label" style="line-height:8px;">网段*：</label>
+                            <div class="check too-check-right">
+                                <span tonei="YS_objb" >
+                                <!--  -->
+                                <input type="radio" ng-checked="YS_objb.params.netArea==1" ng-model="YS_objb.params.netArea" value="1"  name="netarea" class="input_check"  id="check3"><label for="check3"></label></span>
+                                <span tonei="YS_objb"  class="check_dec line_h28"><label for="check3">内网</label></span>
+                                <span>
+                                <input type="radio"  ng-checked="YS_objb.params.netArea==2" ng-model="YS_objb.params.netArea" name="netarea" class="input_check" value="2" id="check4"  ysfetch="YS_obje">
+                                <label for="check4"></label></span>
+                                <span class="check_dec line_h28"><label for="check4">外网</label></span>
+                            </div>
+                        </div>
+                        <div class="layui-form" ng-show="YS_objb.params.netArea==2"  id="telnettz">
+                            <div class="layui-form-item m_b30 m_t30">
+                                <label class="layui-form-label">探针*：</label>
+                                <div class="layui-input-block equ-right-del">
+                                    <select name="city" lay-filter="YS_objb.params.deviceId" ysselect="YS_objb.params.deviceId">
+                                        <option value="" selected="" class="sph">请选择</option>
+                                        <option ng-repeat="(k , v) in YS_obje.data.list" value="{{v.deviceId}}" ng-bind="v.deviceName">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="too_third_top m_t45">
+                            <button class="too-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" ysfetch="YS_objb">检测</button>
+                        </div>
+                        <div class="too_four_top m_t30">
+                                <div class="too-dec-textarea" readonly="readonly">
+                                    <div ng-repeat="(key, value) in mesageb  track by $index">{{value}}</div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- ----------Telnetyemian--------结束 -->
+
+                <!-- -----------数据库页面---------开始 -->
+                <div class="res-body p_r6vw too-dis-flex" ng-if="tapshow==2">
+                    <div>
+                        <div class="too_first_top">
+                            <label class="layui-form-label">数据库名*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" placeholder="请输入数据库名" id="sqldkname" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_objc.params.dbName">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">IP*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" placeholder="请输入IP" id="sqlip" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_objc.params.ip">
+                            </div>
+                        </div>
+
+
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">端口*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" placeholder="请输入端口" id="sqlport" autocomplete="off" class="layui-input w_414"
+                                    ng-model="YS_objc.params.port">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">用户名*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" placeholder="请输入用户名" id="sqluname" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_objc.params.name">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">密码*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="password" name="text" placeholder="请输入密码" id="sqlpwd" autocomplete="off"
+                                    class="layui-input w_414" ng-model="YS_objc.params.pwd">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30" id="sqlwd">
+                            <label class="layui-form-label" style="line-height:8px;">网段*：</label>
+                            <div class="check too-check-right">
+                                <span   tonei="YS_objc">
+                                <input  ng-checked="YS_objc.params.netArea==1" ng-model="YS_objc.params.netArea" value="1"   type="radio" name="netarea" class="input_check" id="check5">
+                                <label for="check5"></label></span>
+                                <span tonei="YS_objc"  class="check_dec line_h28"><label for="check5">内网</label></span>
+                                <span><input  ng-checked="YS_objc.params.netArea==2" ng-model="YS_objc.params.netArea" value="2"  type="radio" name="netarea" class="input_check" id="check6"  ysfetch="YS_obje"><label for="check6"></label></span><span
+                                    class="check_dec line_h28"><label for="check6">外网</label></span>
+                            </div>
+                        </div>
+                        <div class="layui-form" id="sqltz" ng-show="YS_objc.params.netArea==2">
+                            <div class="layui-form-item m_b30 m_t30">
+                                <label class="layui-form-label">探针*：</label>
+                                <div class="layui-input-block equ-right-del">
+                                    <select name="city" lay-filter="YS_objc.params.deviceId" ysselect="YS_objc.params.deviceId">
+                                        <option value="" selected="" class="sph">请选择</option>
+                                        <option ng-repeat="(k , v) in YS_obje.data.list" value="{{v.deviceId}}" ng-bind="v.deviceName">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="too_third_top m_t45">
+                            <button class="too-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" ysfetch="YS_objc">检测</button>
+                        </div>
+
+                        <div class="too_four_top m_t30">
+                                <div class="too-dec-textarea" readonly="readonly">
+                                    <div ng-repeat="(key, value) in mesagec track by $index">{{value}}</div>
+                                </div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+
+                <!-- -----------数据库页面---------结束 -->
+
+                <!-- --------------FTP页面------------开始 -->
+                <div class="res-body too-dis-flex" ng-if="tapshow==3">
+                    <div>
+                        <div class="too_first_top">
+                            <label class="layui-form-label">FTP地址*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" id="ftpname" placeholder="请输入FTP地址" ng-model="YS_objd.params.ip"  autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">端口*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" id="ftpport"  ng-model="YS_objd.params.port" placeholder="请输入端口" autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">用户名*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input type="text" name="text" id="ftpuname" ng-model="YS_objd.params.name" placeholder="请输入用户名" autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30">
+                            <label class="layui-form-label">密码*：</label>
+                            <div class="too-input layui-input-inline">
+                                <input  ng-model="YS_objd.params.pwd" id="ftppwd" type="text" name="text" placeholder="请输入密码" autocomplete="off" class="layui-input w_414">
+                            </div>
+                        </div>
+                        <div class="too_secend_top m_t30" id="ftpwd">
+                            <label class="layui-form-label" style="line-height:8px;">网段*：</label>
+                            <div class="check too-check-right">
+                                <span tonei="YS_objd"><input  ng-checked="YS_objd.params.netArea==1" ng-model="YS_objd.params.netArea" value="1"  type="radio" name="netarea" class="input_check" id="check7"><label for="check7"></label></span>
+                                <span tonei="YS_objd" class="check_dec line_h28"><label for="check7">内网</label></span>
+                                <span><input ng-checked="YS_objd.params.netArea==2" ng-model="YS_objd.params.netArea" value="2"  type="radio" name="netarea" class="input_check" id="check8"  ysfetch="YS_obje"><label for="check8"></label></span><span
+                                    class="check_dec line_h28"><label for="check8">外网</label></span>
+                            </div>
+                        </div>
+                        <div class="layui-form"id="ftptz" ng-show="YS_objd.params.netArea==2">
+                            <div class="layui-form-item m_b30 m_t30">
+                                <label class="layui-form-label">探针*：</label>
+                                <div class="layui-input-block equ-right-del">
+                                    <select name="city" lay-filter="YS_objd.params.deviceId" ysselect="YS_objd.params.deviceId">
+                                        <option value="" selected="" class="sph">请选择</option>
+                                        <option ng-repeat="(k , v) in YS_obje.data.list" value="{{v.deviceId}}" ng-bind="v.deviceName">1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="too_third_top m_t45">
+                            <button class="too-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" ysfetch="YS_objd">检测</button>
+                        </div>
+                        <div class="too_four_top m_t30">
+                                <div class="too-dec-textarea" readonly="readonly">
+                                    <div ng-repeat="(key, value) in mesaged track by $index">{{value}}</div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- --------------FTP页面------------结束 -->
+
+            </div>
+        </div>
+
+    </div>
+</div>

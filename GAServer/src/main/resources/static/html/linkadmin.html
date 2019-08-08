@@ -1,0 +1,594 @@
+<!-- 链路管理 -->
+
+	<style>
+.layui-form-select dl{
+	top:44px;
+}
+
+.layui-form-selectup dl{
+	bottom: 44px;
+}
+._jsPlumb_endpoint {
+	width:30px!important;
+	height:30px!important;
+
+
+}
+
+.ep_3s{
+height: 63px;
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+	</style>
+
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow='0'><a href="#/equipadmin" class="usercen ex_act">
+                        <img class="logimg hui" src="../images/sbgl.png" alt="">
+                        <img class="logimg bai" src="../images/sbgl_act.png" alt="">
+                        <span>设备管理</span>
+                    </a></li>
+                <li reload><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/llgl_act.png" alt=""><span>链路管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/register" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/ptzc.png" alt="">
+                        <img class="logimg bai" src="../images/ptzc_act.png" alt="">
+                        <span>平台注册</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/networkconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/wlpz.png" alt="">
+                        <img class="logimg bai" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/physicalconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/tjpz.png" alt="">
+                        <img class="logimg bai" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+                    </a></li>
+<!--                 <li tapshow='0'><a href="#/logconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/rzpz.png" alt="">
+                        <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+                    </a></li> -->
+                <li tapshow="0"><a href="#/alarmconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/alarmconf.png" alt="">
+                        <img class="logimg bai" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+                    </a></li>
+                                                   <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+                         <img class="logimg hui" src="../images/gjx.png" alt="">
+                      <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <!-- ------链路列表页面-----开始 -->
+            <div class="tmbox res-leftbox" ng-show="tapshow==0">
+                <div class="eptitle"><span>链路列表</span></div>
+                <div>
+                    <div class="addep cp b_btn_l ex_act" tapshow="1">+添加</div>
+                </div>
+                <!-- <div class="alarm">
+            <div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+        </div> -->
+                <div class="table">
+                    <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+                        <col style="width: 10%" />
+                        <col style="width: 30%" />
+                        <col style="width: 30%" />
+                        <col style="width: 30%" />
+                        <thead>
+                            <tr>
+                                <th>序号</th>
+                                <th>链路名称</th>
+                                <th>链路类型</th>
+
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                                <td ng-bind="key+1"></td>
+                                <td ng-bind="value.linkName" class="normal_n"></td>
+                                <td>{{value.linkType==1?'数据交换':''}}
+                                    {{value.linkType==2?'单项传入':''}}
+                                    {{value.linkType==3?'授权访问':''}}
+                                    {{value.linkType==4?'视频传入':''}}
+                                </td>
+
+                                <td>
+                                    <span class="blu cp" editlink>查看/编辑</span>
+                                    <span class="rep red cp" linkdel>删除</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="YS_plista.data.list.length>0">
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr ng-if="!YS_plista.data.list.length">
+                                <td colspan="4">
+                                    <div class="allnmsg">
+                                        <div class="nmsg_pic">
+                                            <img src="/images/nonemsg.png" alt="">
+                                        </div>
+                                        <div>
+                                            <span>暂无数据…</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+            </div>
+            <!-- ------链路列表页面-----结束 -->
+
+            <!-- ----------新建填写链路信息---------开始 -->
+            <div class="tmbox res-leftbox" ng-show="tapshow==1">
+                <div class="res-body lic-position">
+                    <div>
+                        <div class="stepbox t_c" style="text-align: left;">
+                            <span class="step step_on cp" tapshow="1">1</span>
+                            <span class="lb cp" tapshow="1">填写链路信息</span>
+                            <div class="midline"></div>
+                            <span class="step">2</span>
+                            <span> 制作链路拓扑图</span>
+                            <span class="midline"></span>
+                            <span class="step">3</span>
+                            <span>完成</span>
+                        </div>
+
+                        <div class="pla-dec lic-dec">
+                            <span>基本信息</span>
+                            <div class="pla_decspeace-mtop m_b30">
+                                <p>链路名称*：</p>
+                                <input type="text" placeholder="请输入链路名称" id="xlinkName" class="lic-input layui-input w_414"
+                                    ng-model="YS_obja.params.linkName">
+                            </div>
+                            <div class="layui-form">
+                                <div class="layui-form-item m_t20 dpf">
+                                    <p>链路类型*：</p>
+                                    <div class="layui-input-block edi-blcok" id="linktype">
+                                        <select lay-filter="YS_obja.params.linkType" ysselect="YS_obja.params.linkType">
+                                            <option value="">请选择链路类型</option>
+                                            <option value="1">数据交换</option>
+                                            <option value="2">单项传入</option>
+                                            <option value="3">授权访问</option>
+                                            <option value="4">视频传入</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="layui-form">
+                                <div class="layui-form-item m_t20 dpf">
+                                    <p>任务区域：</p>
+                                    <div class="layui-input-block edi-blcok">
+                                        <select lay-filter="" ysselect="">
+                                            <option value="">请选择</option>
+                                            <option value="1">路由接入区</option>
+                                            <option value="2">边界保护区</option>
+                                            <option value="3">应用服务器</option>
+                                            <option value="4">安全隔离区</option>
+                                            <option value="5">安全检测与管理区</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="lic-secdechigth">
+                            <div class="pla-dec lic-dec">
+                                <div class="pla_decspeace_add">
+                                    <span>数据库服务</span>
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <p>数据库名*：</p>
+                                    <input type="text" placeholder="请输入数据库名" id="xdbName" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params['dbConfigData.dbName']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop m_t30">
+                                    <p>IP*：</p>
+                                    <input type="text" placeholder="请输入IP" id="xip" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params['dbConfigData.ip']" checkip="YS_obja.params['dbConfigData.ip']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop m_t30">
+                                    <p>端口*：</p>
+                                    <input type="text" placeholder="请输入端口" id="xport" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params['dbConfigData.port']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop m_t30">
+                                    <p>用户名*：</p>
+                                    <input type="text" placeholder="请输入用户名" id="xname" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params['dbConfigData.name']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop m_t30">
+                                    <p>密码*：</p>
+                                    <input type="password" placeholder="请输入密码" id="xpwd" class="lic-input layui-input w_414"
+                                        ng-model="YS_obja.params['dbConfigData.pwd']">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="too_third_top m_t45">
+                            <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-norma l_btn ex_act"
+                                style="margin-left:92px;" linknext>下一步</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ----------新建填写链路信息---------结束 -->
+
+
+            <!-- ----------编辑链路信息----------开始 -->
+            <div class="tmbox res-leftbox" ng-show="tapshow==3">
+                <div class="res-body">
+                    <div class="lic-position">
+                        <div>
+                            <div class="pla-dec lic-dec">
+                                <span>基本信息</span>
+                                <div class="pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">链路名称*：</label>
+                                    <input type="text" placeholder="请输入设备名称" id="blinkName" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params.linkName">
+                                </div>
+                                <div class="layui-form">
+                                    <div class="layui-form-item m_t20 dpf">
+                                        <label class="layui-form-label equ-right">链路类型*：</label>
+                                        <div class="layui-input-block edi-blcok" id="linkType">
+                                            <select lay-filter="YS_objb.params.linkType" ysselect="YS_objb.params.linkType">
+                                                <option value="">请选择链路类型</option>
+                                                <option ng-selected="YS_objb.params.linkType==1" value="1">数据交换</option>
+                                                <option ng-selected="YS_objb.params.linkType==2" value="2">单项传入</option>
+                                                <option ng-selected="YS_objb.params.linkType==3" value="3">授权访问</option>
+                                                <option ng-selected="YS_objb.params.linkType==4" value="4">视频传入</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="layui-form">
+                                    <div class="layui-form-item m_t20 dpf">
+                                        <label class="layui-form-label equ-right">任务区域：</label>
+                                        <div class="layui-input-block edi-blcok">
+                                            <select lay-filter="" ysselect="">
+                                                <option value="">请选择</option>
+                                               <option value="1">路由接入区</option>
+                                            <option value="2">边界保护区</option>
+                                            <option value="3">应用服务器</option>
+                                            <option value="4">安全隔离区</option>
+                                            <option value="5">安全检测与管理区</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lic-position lic-secdechigth">
+                        <div>
+                            <div class="pla-dec lic-dec">
+                                <div class="pla_decspeace_add">
+                                    <span>数据库服务</span>
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">数据库名*：</label>
+                                    <input type="text" placeholder="请输入数据库名" id="bdbName" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params['dbConfigData.dbName']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">IP*：</label>
+                                    <input type="text" placeholder="请输入IP" id="bip" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params['dbConfigData.ip']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">端口*：</label>
+                                    <input type="text" placeholder="请输入端口" id="bport" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params['dbConfigData.port']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">用户名*：</label>
+                                    <input type="text" placeholder="请输入用户名" id="bname" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params['dbConfigData.name']">
+                                </div>
+                                <div class="pla_time_contant pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">密码*：</label>
+                                    <input type="password" placeholder="请输入密码" id="bpwd" class="lic-input layui-input w_414"
+                                        ng-model="YS_objb.params['dbConfigData.pwd']">
+                                </div>
+                            </div>
+                            <div class="pla-dec lic-dec lic-secdechigth">
+                                <div class="pla_decspeace_add">
+                                    <span>链路拓扑图</span>
+                                </div>
+                                <div class="pla_decspeace-mtop">
+                                    <label class="layui-form-label equ-right">链路拓扑图：</label>
+                                    <button class="lin-btn-white layui-btn layui-btn-lg layui-btn-normal h_btn ex_act"
+                                        etuopu>修改</button>
+                                </div>
+                            </div>
+                            <div class="lin_tbmove too_third_top">
+                                <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act"
+                                    ysfetch="YS_objb" >保存</button>
+                                <button class="edi-btn2 edi-btn-white layui-btn layui-btn-lg layui-btn-normal b_btn_h ex_act">删除</button>
+                                <button class="edi-btn3 edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act"
+                                    tapshow="0">取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ----------编辑查看链路信息----------结束 -->
+
+            <!-- ----------制作拓扑图----------开始 -->
+            <div class="tmbox res-leftbox" ng-show="tapshow==2">
+                       <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder" style="right: 41px;" tapshow="1">返回</button>
+                <div class="stepbox t_c">
+                    <span class="step step_on cp" tapshow="1">1</span>
+                    <span class="lb cp" tapshow="1">填写链路信息</span>
+                    <div class="midline"></div>
+                    <span class="step step_on cp" tapshow="2">2</span>
+                    <span class="lb cp" tapshow="2"> 制作链路拓扑图</span>
+                    <span class="midline"></span>
+                    <span class="step">3</span>
+                    <span>完成</span>
+                </div>
+                <div class="dpf">
+                    <div class="tandl ">
+                        <!--                     <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 l_btn ex_act">拖动</button>
+                        <button class="btn-ornge edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 j_btn ex_act">画线</button> -->
+                    </div>
+                    <div class="randb t_r">
+                        <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 ex_act l_btn"
+                            savelink  >保存</button>
+                        <button class="btn-ornge edi-btn-white layui-btn layui-btn-lg layui-btn-normal mr_20 br_3 j_btn ex_act"
+                            clearicon showload="1000">重置</button>
+                    </div>
+                </div>
+
+                <div class="zzbox">
+                    <div class="zhizuo">
+                        <div class="zhanshi ptr">
+                            <div class="i-left" ileft><img src="../images/arrl.png" alt=""></div>
+                            <div class="i-right" iright><img src="../images/arrr.png" alt=""></div>
+
+                            <div id="left">
+                                <div ng-repeat="(key, value) in iconlist" class="item" data-index="{{value.deviceId}}"
+                                    data-icon="{{value.icon}}" data-name="{{value.deviceName}}" style="display: {{value.status==showstatus?'':'none';}}">
+                                    <div ng-if="value.icon==60" class="filebox dpn"></div>
+                                    <div class="minh_pic"><img ng-src="../images/c{{value.icon}}0.png" alt="" style="max-height: 78px;"></div>
+                                  <!--   <div class="draw_word">{{value.deviceName}}<p>{{value.ip}}</p> </div> -->
+                                  <div class="draw_word" style="line-height:unset;">
+                                    <p class="ep_3s" style=""title="{{value.deviceName}}">{{value.deviceName}}</p><p>{{value.ip}}</p>
+                                    </div>
+                                   
+                                </div>
+
+                                <!--    <div class="item ptr" data-index="60">
+                                    <div class="filebox dpn"></div>
+                                    <div class="minh_pic"><img src="../images/c600.png" alt=""></div>
+                                    <div class="draw_word">文件夹
+                                    </div>
+                                </div>
+ -->
+
+                            </div>
+                        </div>
+                        <div id="main" class="ui-droppable">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ----------制作拓扑图----------结束 -->
+
+
+
+
+            <!-- 编辑链路 -->
+            <div class="tmbox res-leftbox" ng-show="tapshow==4">
+            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder" style="right: 41px;" tapshow="3">返回</button>
+                <div class="stepbox t_c">
+                    <span class="step step_on cp" tapshow="3">1</span>
+                    <span class="lb cp" tapshow="3">修改链路信息</span>
+                    <div class="midline"></div>
+                    <span class="step step_on cp" tapshow="4">2</span>
+                    <span class="lb cp" tapshow="4">修改链路拓扑图</span>
+                </div>
+                <div class="dpf">
+                    <div class="tandl ">
+                        <!--                 <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 l_btn ex_act">拖动</button>
+                        <button class="btn-ornge edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 j_btn ex_act">画线</button> -->
+                    </div>
+                    <div class="randb t_r">
+                        <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal br_3 ex_act l_btn"
+                            etoplog>保存</button>
+                        <button class="btn-ornge edi-btn-white layui-btn layui-btn-lg layui-btn-normal mr_20 br_3 j_btn ex_act"
+                            clearicon>重置</button>
+                    </div>
+                </div>
+
+                <div class="zzbox">
+                    <div class="zhizuo" style="overflow-x: auto;
+    overflow-y: hidden;">
+                        <div class="zhanshi ptr">
+                            <div class="i-left" ileft><img src="../images/arrl.png" alt=""></div>
+                            <div class="i-right" iright><img src="../images/arrr.png" alt=""></div>
+
+                            <div id="left_e">
+                                <div ng-repeat="(key, value) in iconlist" class="item" data-index="{{value.deviceId}}"
+                                    data-icon="{{value.icon}}" data-name="{{value.deviceName}}" style="display: {{value.status==showstatus?'':'none';}}">
+                                    <div ng-if="value.icon==60" class="filebox dpn"></div>
+                                    <div class="minh_pic"><img ng-src="../images/c{{value.icon}}0.png" alt="" style="max-height: 78px;"></div>
+                                    <div class="draw_word" style="line-height:unset;">
+                                    <p class="ep_3s" style=""title="{{value.deviceName}}">{{value.deviceName}}</p><p>{{value.ip}}</p>
+                                    </div>
+                                </div>
+                                <!-- 
+                                <div class="item ptr" data-index="60">
+                                    <div class="filebox dpn"></div>
+                                    <div class="minh_pic"><img src="../images/c600.png" alt=""></div>
+                                    <div class="draw_word">文件夹<p>192.168.2.1</p>
+                                    </div>
+                                </div>
+ -->
+
+                            </div>
+                        </div>
+                        <div style="width:100%;/*overflow: auto*/">
+                        <div id="main_e" class="ui-droppable">
+
+                            <div id="eitem{{value.toDeviceId}}" ischild="false" ng-repeat="(key, value) in e_toplist"
+                                class="e_item" data-index="{{value.toDeviceId}}" data-icon="{{value.icon}}">
+                                <div class="filebox dpn ">
+                                    <div class="fileimg ps_r 110" ng-repeat="v2 in filelist"     isabc="{{filelist}}">
+                                    <img ng-src="../images/c{{v2.isfile}}0.png" alt="">
+    <img src="../images/pla-delete.png" scwjs  index="{{v2.lindex}}"  value="{{v2}}" style="width: 15px;position: absolute;top: 0;right: 10px;">
+     <div class="finame" title="{{v2.dname}}"><span>{{v2.dname}}</span></div>
+                                    </div>
+                                </div>
+                                <div class="minh_pic"><img ng-src="../images/c{{value.icon}}0.png" alt=""></div>
+                                <div class="draw_word" data-name="{{v.deviceName}}" ng-if="v.deviceId==value.toDeviceId" ng-repeat="v in iconlist">{{v.deviceName}}<p>{{v.ip}}</p>
+                                </div>
+                                <!--  <div class="draw_word" ng-if="value.toDeviceId==60">文件夹<p>192.168.2.1</p>
+                                </div> -->
+                            </div>
+                            <div id="eitem{{val.toDeviceId}}" ischild="true" ng-repeat="(key, val) in e_ctoplist" class="e_item"
+                                data-index="{{val.toDeviceId}}" data-icon="{{val.icon}}">
+                                <div class="filebox dpn">
+                                    <div class="fileimg ps_r" ng-repeat="v2 in filelist"><img ng-src="../images/c{{v2.isfile}}0.png"
+                                            alt=""></div>
+                        <img src="../images/pla-delete.png" scwjs  index="{{v2.lindex}}"  value="{{v2}}" style="width: 15px;position: absolute;top: 0;right: 10px;">
+  
+                                        <div class="finame" title="{{v2.dname}}"><span>{{v2.dname}}</span></div>
+                                </div>
+                                <div class="minh_pic"><img ng-src="../images/c{{val.icon}}0.png" alt=""></div>
+                                <div class="draw_word" data-name="{{v.deviceName}}" ng-if="v2.deviceId==val.toDeviceId" ng-repeat="v2 in iconlist">{{v2.deviceName}}<p>{{v2.ip}}</p>
+                                </div>
+                                <!--    <div class="draw_word" ng-if="val.toDeviceId==60">文件夹<p>192.168.2.1</p>
+                                </div> -->
+                            </div>
+
+
+                        </div>
+                        <div style="clear: both;">
+                            
+                        </div>
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 编辑链路 -->
+        </div>
+
+    </div>
+
+</div>
+
+<div id="remove" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除这行内容吗？将会删除所有相关的日志和数据，请您谨慎操作！</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" ysfetch="YS_objd"  showload="1000">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>
+
+
+<div id="removext" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除吗？</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" id="scxt"  showload="1000">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>
+
+<div id="removetb" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除吗？</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" id="sctb"  showload="1000">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>
+
+<div id="removetbadd" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>您确定要删除吗？</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" id="sctbadd"  showload="1000">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>
+
+
+
+
+
+<!-- 数据库检测不通 -->
+<div id="sqlfail" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/warn.png" alt=""></div>
+        <div class="ask"><span>数据库服务检测不通！</span></div>
+        <div class="warnt2"><span>请检查信息录入是否正确</span></div>
+    </div>
+    <div class="tc_foot">
+        <div class="confirm">确认</div>
+        <div class="quxiao" comclose>取消</div>
+
+    </div>
+</div>

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>公安监控系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="renderer" content="webkit"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+</head>
+<style type="text/css">
+  body {
+    font-family: "MicroSoft YaHei";
+    font: 14px Helvetica Neue, Helvetica, PingFang SC, \5FAE\8F6F\96C5\9ED1, Tahoma, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .login {
+    background: url('images/mp_bg.png') no-repeat;
+    background-size: cover;
+
+  }
+
+  .loginbox {
+    display: flex;
+    width: 1179px;
+    height: 547px;
+    background: #fff;
+    box-shadow: 0px 15px 30px rgba(0, 0, 0, .4);
+    margin: 200px auto;
+  }
+
+  .lg-left {
+    width: 60%;
+    background: url('images/loginleft.png') no-repeat;
+    background-size: 100%;
+    text-align: center;
+    line-height: 980px;
+  }
+
+  .lg-left span {
+    font-size: 46px;
+    color: #fff;
+  }
+
+  .lg-right {
+    padding: 80px 30px;
+  }
+
+  .lg-title {
+    color: #242424;
+    font-size: 30px;
+  }
+
+  .loginform {
+    margin: 40px 0;
+  }
+
+  .username input {
+    border: none;
+    width: 90%;
+    outline: none;
+    padding: 0 10px;
+    font-size: 18px;
+    color: #7a7a7a;
+
+  }
+
+  .userpwd {
+    margin-top: 40px;
+  }
+
+  .userpwd input {
+    border: none;
+    width: 90%;
+    outline: none;
+    padding: 0 10px;
+    font-size: 18px;
+    color: #7a7a7a;
+
+  }
+
+  .vcode {
+    margin-top: 6px;
+    position: relative;
+    padding-top: 40px;
+  }
+
+  .vcode input {
+    border: none;
+    width: 50%;
+    padding: 0 10px;
+    font-size: 18px;
+    color: #7a7a7a;
+    outline: none;
+  }
+
+  .username input::-webkit-input-placeholder {
+    color: #acacac;
+    font-weight: 500;
+    font-size: 18px;
+
+  }
+
+  .userpwd input::-webkit-input-placeholder {
+    color: #acacac;
+    font-weight: 500;
+    font-size: 18px;
+
+  }
+
+  .vcode input::-webkit-input-placeholder {
+    color: #acacac;
+    font-weight: 500;
+    font-size: 18px;
+
+  }
+
+  .forget {
+    color: #03d6fc;
+    font-size: 16px;
+    display: flex;
+    position: relative;
+  }
+
+  .duan {
+    width: 56%;
+    height: 2px;
+  }
+
+  .loginbtn {
+    cursor: pointer;
+    width: 100%;
+    height: 60px;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 60px;
+    color: #fff;
+    background-color: #03d6fc;
+    margin: 45px 0 20px;
+
+  }
+
+  .l_btn:hover {
+    background: #3fe1fe;
+    transition: all 0.4s linear;
+  }
+
+  .l_btn:active {
+    background: #00bbdd;
+  }
+
+  .vcode img {
+    position: absolute;
+    top: 0;
+  }
+
+  .cp {
+    cursor: pointer;
+  }
+
+  .forgetpwd {
+    background: rgba(0, 0, 0,0.8);
+    color: #fff;
+    padding: 15px;
+    border-radius: 2px;
+    font-size: 14px;
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+  }
+  .com_tc{
+	width:785px;
+	height:445px;
+  background:#fff;
+  border-radius:5px;
+}
+.dpn{ display:none;}
+.tc_top{
+	width:100%;
+	height:70px;
+	border-radius:3px 3px 0 0;
+	background:#047b96;
+	line-height:70px;
+	display:flex;
+
+}
+.tc_title{
+	flex:1;
+    font-size:18px;
+    color:#fff;
+    font-weight:600;
+
+}
+.tc_title span ,.tc_close img{
+	margin:0 30px;
+}
+.tc_close img{
+	width:19px;
+	height:19px;
+	cursor:pointer;
+}
+.tc_close{
+	flex:1;
+	text-align:right;
+}
+.tc_cont{
+	text-align:center;
+	padding:80px 60px ;
+}
+.zt_img img{
+	width:100px;
+	height:100px;
+}
+.ask{
+	font-size:16px;
+	font-weight:600;
+	margin:20px 0 0;
+}
+.tc_foot{
+	width:100%;
+	height:70px;
+	border-top:1px solid #ddd;
+    bottom: 0;
+    position: absolute;
+}
+.confirm{
+	width:105px;
+	height:45px;
+	border-radius:5px;
+	background:#03d6fc;
+	margin:12px 30px 12px 10px;
+	color:#fff;
+	line-height:45px;
+	text-align:center;
+	font-size:18px;
+	float:right;
+	cursor:pointer;
+}
+.l_btn:hover{
+	background: #3fe1fe;
+}
+.l_btn:active{
+	background: #00bbdd;
+}
+.ex_act:hover,
+.ex_act {
+    transition: all 0.3s linear;
+}
+
+</style>
+
+<body class="login">
+  <div class="loginbox">
+    <div class="lg-left"><span>跨域应用运维监管系统</span></div>
+    <div class="lg-right">
+      <div class="lg-title"><span>欢迎登录</span></div>
+
+      <div class="loginform">
+        <div class="username">
+          <input type="text" name="" id="uname" placeholder="请输入用户名" />
+        </div>
+        <img src="images/lg-line.png" alt="">
+        <div class="userpwd">
+          <input type="password" name="" id="paword" placeholder="请输入密码" />
+        </div>
+        <img src="images/lg-line.png" alt="">
+        <div class="vcode">
+          <input type="text" name="" id="yzm" placeholder="请输入右侧验证码" />
+ <img id="yzmpic" src="http://topwalkhndq.tpddns.cn:8888/user/getVCode" alt="" style="width: 155px;
+    height: 74px;cursor: pointer;" onclick="this.src='http://topwalkhndq.tpddns.cn:8888/user/getVCode?'+Date.parse(new Date())" />
+    <div id="yzmdes"></div>
+        </div>
+        <img class="duan" src="images/lg-line.png" alt="">
+        <div class="loginbtn l_btn" id="loginin">登 录</div>
+
+        <div class="forget"><span id="forget" class="cp" onclick="forget()">忘记密码</span>
+        <div class="forgetpwd">忘记密码请联系管理员！</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="pwdwrong" class="com_tc dpn">
+      <div class="tc_top">
+          <div class="tc_title"><span>提示</span></div>
+          <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+      </div>
+      <div class="tc_cont">
+          <div class="zt_img"><img src="/images/fail.png" alt=""></div>
+          <div class="ask"><span>用户名或密码输入错误，请重新输入！</span></div>
+      </div>
+      <div class="tc_foot">
+          <div class="confirm l_btn ex_act" comclose>确认</div>
+      </div>
+  </div>
+
+  <div id="yzmwrong" class="com_tc dpn">
+      <div class="tc_top">
+          <div class="tc_title"><span>提示</span></div>
+          <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+      </div>
+      <div class="tc_cont">
+          <div class="zt_img"><img src="/images/fail.png" alt=""></div>
+          <div class="ask"><span>验证码输入错误，请重新输入！</span></div>
+      </div>
+      <div class="tc_foot">
+          <div class="confirm l_btn ex_act" comclose>确认</div>
+      </div>
+  </div>
+</body>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript" src="js/global.min.js"></script>
+<script>
+  $(function () {
+    $('#loginin').on('click',function(){
+      if ($('#uname').val().trim().length == 0) {
+      layer.open({
+            type: 1,
+            title: false, //不显示标题
+            closeBtn: 0,
+            shadeClose: true,
+            shade: 0.5,
+            area: ['auto', 'auto'], //宽高
+            content: $('#pwdwrong')
+          });
+            $("#yzmpic").attr("src", "http://topwalkhndq.tpddns.cn:8888/user/getVCode?kk=" + Date.parse(new Date()));
+            layer.msg(data.msg);
+      return false;
+    }
+    if ($('#paword').val().trim().length == 0) {
+      layer.open({
+            type: 1,
+            title: false, //不显示标题
+            closeBtn: 0,
+            shadeClose: true,
+            shade: 0.5,
+            area: ['auto', 'auto'], //宽高
+            content: $('#pwdwrong')
+          });
+            $("#yzmpic").attr("src", "http://topwalkhndq.tpddns.cn:8888/user/getVCode?kk=" + Date.parse(new Date()));
+            layer.msg(data.msg);
+      return false;
+    }
+    if ($('#yzm').val().trim().length == 0) {
+      layer.open({
+            type: 1,
+            title: false, //不显示标题
+            closeBtn: 0,
+            shadeClose: true,
+            shade: 0.5,
+            area: ['auto', 'auto'], //宽高
+            content: $('#yzmwrong')
+          });
+            $("#yzmpic").attr("src", "http://topwalkhndq.tpddns.cn:8888/user/getVCode?kk=" + Date.parse(new Date()));
+            layer.msg(data.msg);
+      return false;
+    } else {
+      $.ajax({
+        // 请求发送方式
+        type: 'post',
+        // 验证文件
+        url: 'http://topwalkhndq.tpddns.cn:8888/user/login',
+        // 用户输入的帐号密码
+        data: {
+          uName: $("#uname").val().trim(),
+          pwd: $("#paword").val().trim(),
+          vcode: $("#yzm").val().trim()
+        },
+        // 异步，不写默认为True
+        async: true,
+        //请求成功后的回调
+        success: function (data) {
+            $("#yzmpic").attr("src", "http://topwalkhndq.tpddns.cn:8888/user/getVCode?kk=" + Date.parse(new Date()));
+            layer.msg(data.msg);
+          // localStorage.clear();
+          // var data = JSON.parse(data);
+          // console.log(re.code);
+          if (data.code == 0) {
+            layer.msg('登录成功');
+            setCookie("JSESSIONID",data.data.sessionId);
+            // localStorage.setItem("JSESSIONID",getCookie("JSESSIONID")); 
+            setTimeout(function () {
+              window.location.href = '/';
+            }, 2000)
+
+
+          }
+        },
+        error: function () {
+          layer.msg('服务端异常');
+        }
+      })
+      return true;
+    }
+
+      
+    })
+
+
+
+
+    $('#yzm').on('change',function(){
+      $.ajax({
+        // 请求发送方式
+        type: 'post',
+        // 验证文件
+        url: 'http://topwalkhndq.tpddns.cn:8888/user/checkVCode',
+        // 用户输入的帐号密码
+        data: {
+          vcode: $("#yzm").val().trim()
+        },
+        // 异步，不写默认为True
+        async: true,
+        //请求成功后的回调
+        success: function (data) {
+
+          if (data.code == -1) {
+            // $("#yzmdes").html(data.msg);
+            layer.msg(data.msg);
+          }
+        },
+        error: function () {
+          layer.msg('服务端异常');
+        }
+      })
+    })
+
+
+
+    })
+  // function login() {
+  // };
+
+        function setCookie(name, value) {
+            //写cookies 
+            var d = new Date();
+            d.setTime(d.getTime() + (7 * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + "; " + expires + ";path=/";
+        }
+
+
+
+      function getCookie(c_name) {  
+        if (document.cookie.length>0)  {  
+            c_start=document.cookie.indexOf(c_name + "=");  
+            if (c_start!=-1)  {   
+                c_start=c_start + c_name.length+1 ;  
+                c_end=document.cookie.indexOf(";",c_start);  
+                    if (c_end==-1) 
+                       c_end=document.cookie.length;  
+                       return unescape(document.cookie.substring(c_start,c_end));  
+            }   
+        }  
+        return "";  
+    }
+
+
+  function forget() {
+    $('.forgetpwd').fadeIn();
+    setTimeout(function(){
+      $('.forgetpwd').fadeOut()
+    },3000);
+  }
+</script>
+
+</html>

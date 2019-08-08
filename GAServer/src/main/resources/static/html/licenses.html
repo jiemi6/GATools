@@ -1,0 +1,129 @@
+<!-- -----------license授权---------- -->
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li><a href="#/sysexam" class="usercen ex_act" setzzjc >
+                        <img class="logimg hui" src="../images/xtzj.png" alt="">
+                        <img class="logimg bai" src="../images/xtzj_act.png" alt="">
+                        <span>系统自检</span>
+                    </a></li>
+                <li  tapshow='0' ><a href="#/restoreback" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/hfbf.png" alt="">
+                        <img class="logimg bai" src="../images/hfbf_act.png" alt="">
+                        <span>恢复备份</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/power" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/xtgl.png" alt="">
+                        <img class="logimg bai" src="../images/xtgl_act.png" alt="">
+                        <span>系统管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/sqgl_act.png" alt="">
+                        <span>授权管理</span>
+                    </a></li>
+                <li  tapshow='0'><a href="#/tools" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/gjx.png" alt="">
+                        <img class="logimg bai" src="../images/gjx_act.png" alt="">
+                        <span>工具箱</span>
+                    </a></li>
+
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>授权管理</span></div>
+                </div>
+                <div class="res-body">
+                    <div class="lic-position">
+                        <div>
+                            <div class="lic-dec">
+                                <span>导出license文件</span>
+                                <div class="decspeace-mtop dpf m_t30">
+                                    <label class="lic_contdic">注册码：</label>
+                                    <input type="text" class="lic-input layui-input w_414" ng-model="licenseKey">
+                                </div>
+                                <div class="dpf">
+                                    <a href="./license/keyExport?licenseKey={{licenseKey}}"
+                                        class="t_r">
+                                        <label class="lic_contdic"></label>
+                                        <button class="lic-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act m_t45">导出</button>
+                                    </a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lic-position lic-secdechigth">
+                        <div>
+                            <div class="lic-dec">
+                                <span>导入license文件</span>
+                                <div class="decspeace-mtop dpf m_t30">
+                                    <label class="lic_contdic">授权文件：</label>
+                                    <input type="text" class="lic-input layui-input w_414" ng-model="filename">
+                                </div>
+                                <div class="dpf">
+                                    <label class="lic_contdic"></label>
+                                    <!-- <button class="lic-btn layui-btn layui-btn-lg layui-btn-normal l_btn ex_act ">导入</button> -->
+                                    <button class="sj-out-btn _verticle upload layupload ex_act lic-btn layui-btn layui-btn-lg layui-btn-normal m_t45"
+                                        licensesupload>导入</button>
+                                </div>
+                                <div class="dpf" style="margin-top:60px;">
+                                    <label class="lic_contdic">许可有效期：</label>
+                                    <p style="width:auto;">{{YS_objb.data.licenseData.deadline}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- 授权成功 -->
+<div id="sqsucc" class="com_tc dpn" >
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/success.png" alt=""></div>
+        <div class="ask"><span>License授权成功</span></div>
+        <div class="warnt2" style="color: #fff;"><span>许可证有效期至：{{YS_objb.data.licenseData.deadline}}</span></div>
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" comclose>确认</div>
+        <!-- <div class="quxiao" comclose>取消</div> -->
+
+    </div>
+</div>
+
+<!-- 授权失败 -->
+<div id="sqfail" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+        <div class="ask"><span>License文件无效，无法授权</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" comclose>确认</div>
+        <!-- <div class="quxiao" comclose>取消</div> -->
+
+    </div>
+</div>

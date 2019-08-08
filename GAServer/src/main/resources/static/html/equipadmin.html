@@ -1,0 +1,555 @@
+<!-- 配置管理 设备管理 -->
+<style type="text/css" media="screen">
+  .layui-form-select dl{
+    top:45px;
+    height: 200px;
+  }
+</style>
+
+
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li reload><a href="javascript:;" class="usercen act ex_act">
+            <img class="logimg" src="../images/sbgl_act.png" alt=""><span>设备管理</span>
+          </a></li>
+        <li><a href="#/linkadmin?time={{timestamp}}" class="userpro ex_act">
+            <img class="logimg hui" src="../images/llgl.png" alt="">
+            <img class="logimg bai" src="../images/llgl_act.png" alt="">
+            <span>链路管理</span>
+          </a></li>
+        <li><a href="#/register" class="userpro ex_act">
+            <img class="logimg hui" src="../images/ptzc.png" alt="">
+            <img class="logimg bai" src="../images/ptzc_act.png" alt="">
+            <span>平台注册</span>
+          </a></li>
+        <li><a href="#/networkconf" class="userpro l_btn ex_act">
+            <img class="logimg hui" src="../images/wlpz.png" alt="">
+            <img class="logimg bai" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+          </a></li>
+        <li><a href="#/physicalconf" class="userpro l_btn ex_act">
+            <img class="logimg hui" src="../images/tjpz.png" alt="">
+            <img class="logimg bai" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+          </a></li>
+<!--         <li><a href="#/logconf" class="userpro l_btn ex_act">
+            <img class="logimg hui" src="../images/rzpz.png" alt="">
+            <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+          </a></li> -->
+        <li><a href="#/alarmconf" class="userpro l_btn ex_act">
+            <img class="logimg hui" src="../images/alarmconf.png" alt="">
+            <img class="logimg bai" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+          </a></li>
+                               <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+           <img class="logimg hui" src="../images/gjx.png" alt="">
+           <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+          
+      </ul>
+
+    </div>
+    <div class="rightbox">
+
+      <div class="tmbox res-leftbox" ng-show="tapshow==0">
+        <div class="eptitle"><span>设备列表</span></div>
+        <div>
+          <div class="addep cp" tapshow=2>+添加</div>
+        </div>
+<!-- <div class="alarm">
+    	<div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+    </div> -->
+        <div class="table">
+          <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+            <col style="width: 5%" />
+            <col style="width: 10%" />
+            <col style="width: 20%" />
+            <col style="width: 22%" />
+            <col style="width: 10%" />
+            <col style="width: 15%" />
+            <col style="width: 18%" />
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>设备名称</th>
+                <th>设备类型</th>
+                <th>所属区域</th>
+                <th>设备IP</th>
+                <th>位置</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                <td ng-bind="key+1">1</td>
+                <td>
+                  <span ng-bind="value.deviceName" class="normal_n">监控设备</span>
+                  <div class="ptr dpi">
+                    <img class="smalljd cp" src="../images/smalljd.png" alt="" sbinfo>
+                    <div class="esinfo dpb " style="display: none">
+                      <div class="process">
+                        <div id="ecpu{{value.deviceId}}"></div>
+                        <div class="prtext"><span></span></div>
+                      </div>
+                      <div class="process">
+                        <div id="enc{{value.deviceId}}"></div>
+                        <div class="prtext"><span></span></div>
+                      </div>
+                      <div class="process">
+                        <div id="eyp{{value.deviceId}}"></div>
+                        <div class="prtext"><span></span></div>
+                      </div>
+                      <div class="process">
+                        <div id="ewl"></div>
+                        <div class="prtext"><span></span></div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{devicetype[value.deviceType]}}</td>
+                <td>{{area[value.area]}}</td>
+                <td ng-bind="value.ip">192.168.12</td>
+                <td ng-if="value.netArea==1">内网</td>
+                <td ng-if="value.netArea==2">外网</td>
+                <td>
+                  <span class="blu cp" editep>查看/编辑</span>
+                  <span class="rep red cp" elistdel >删除</span>
+                </td>
+              </tr>
+              <tr ng-if="YS_plista.data.list.length>0">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr ng-if="!YS_plista.data.list.length">
+                <td colspan="7">
+                  <div class="allnmsg">
+                    <div class="nmsg_pic">
+                      <img src="/images/nonemsg.png" alt="">
+                    </div>
+                    <div>
+                      <span>暂无数据…</span>
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+        <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+      </div>
+      <!-- ----------设备编辑---------开始 -->
+      <div class="tmbox res-leftbox" ng-if="tapshow==1">
+        <div class="tapbtn">
+          <div class="restore-tit">
+            <span>设备编辑</span>
+            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+              onclick="window.location.reload() ">返回</button>
+          </div>
+        </div>
+        <div class="res-body">
+          <div class="lic-position lic-dec">
+            <div class="layui-form">
+              <div class="pla-dec">
+                <span>设备信息</span>
+
+                <div class="pla_decspeace-mtop">
+                  <label class="layui-form-label equ-right">设备名称*：</label>
+                  <input id="name" type="text" placeholder="请输入设备名称" class="lic-input layui-input w_414" ng-model="YS_objb.params.deviceName">
+                </div>
+                <div class="layui-form-item m_t30 m_b30">
+                  <label class="layui-form-label equ-right">设备类型*：</label>
+                  <div class="layui-input-block equ-right-del" id="type">
+                    <select lay-filter="YS_objb.params.deviceType" ysselect="YS_objb.params.deviceType">
+                      <option value=""></option>
+                      <option ng-selected="YS_objb.params.deviceType==1" value="1">文件夹</option>
+                      <option ng-selected="YS_objb.params.deviceType==2" value="2">探针</option>
+                      <option ng-selected="YS_objb.params.deviceType==3" value="3">防火墙</option>
+                      <option ng-selected="YS_objb.params.deviceType==4" value="4">可信边界安全网关</option>
+                      <option ng-selected="YS_objb.params.deviceType==5" value="5">入侵检测系统</option>
+                      <option ng-selected="YS_objb.params.deviceType==6" value="6">安全隔离网闸</option>
+                      <option ng-selected="YS_objb.params.deviceType==7" value="7">网络防毒设备</option>
+                      <option ng-selected="YS_objb.params.deviceType==8" value="8">入侵防御系统</option>
+                      <option ng-selected="YS_objb.params.deviceType==9" value="9">集控系统</option>
+                      <option ng-selected="YS_objb.params.deviceType==10" value="10">路由器</option>
+                      <option ng-selected="YS_objb.params.deviceType==11" value="11">交换机</option>
+                      <option ng-selected="YS_objb.params.deviceType==12" value="12">web应用防火墙</option>
+                      <option ng-selected="YS_objb.params.deviceType==13" value="13">安全单向隔离光闸</option>
+                      <option ng-selected="YS_objb.params.deviceType==14" value="14">导入前置机</option>
+                      <option ng-selected="YS_objb.params.deviceType==15" value="15">导入服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==16" value="16">FTP库服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==17" value="17">数据库服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==18" value="18">信任端数据交换系统</option>
+                      <option ng-selected="YS_objb.params.deviceType==19" value="19">非信任端数据交换系统</option>
+                      <option ng-selected="YS_objb.params.deviceType==20" value="20">视频接入认证服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==21" value="21">视频用户认证服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==22" value="22">终端</option>
+                      <option ng-selected="YS_objb.params.deviceType==23" value="23">其他类型服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==24" value="24">视频平台服务器</option>
+                      <option ng-selected="YS_objb.params.deviceType==25" value="25">IP音视频终端</option>
+                      <option ng-selected="YS_objb.params.deviceType==26" value="26">应用服务区</option>
+                      <option ng-selected="YS_objb.params.deviceType==27" value="27">其他终端设备</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-form-item m_b30">
+                  <label class="layui-form-label equ-right">所属区域*：</label>
+                  <div class="layui-input-block equ-right-del" id="area">
+                    <select lay-filter="YS_objb.params.area" ysselect="YS_objb.params.area">
+                      <option value="" selected="" class="sph">请选择</option>
+                      <option value="1" ng-selected="YS_objb.params.area==1">路由接入区</option>
+                      <option value="2" ng-selected="YS_objb.params.area==2">边界保护区</option>
+                      <option value="3" ng-selected="YS_objb.params.area==3">应用服务区</option>
+                      <option value="4" ng-selected="YS_objb.params.area==4">安全隔离区</option>
+                      <option value="5" ng-selected="YS_objb.params.area==5">安全检测与管理区</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-form-item m_b30">
+                  <label class="layui-form-label equ-right">所属网络*：</label>
+                  <div class="layui-input-block equ-right-del" id="net">
+                    <select lay-filter="YS_objb.params.netArea" ysselect="YS_objb.params.netArea">
+                      <option value="" selected="" class="sph">请选择</option>
+                      <option value="1" ng-selected="YS_objb.params.netArea==1">内网</option>
+                      <option value="2" ng-selected="YS_objb.params.netArea==2">外网</option>
+
+                    </select>
+                  </div>
+                </div>
+                <div class="pla_decspeace-mtop mb_30">
+                  <label class="layui-form-label equ-right">IP地址*：</label>
+                  <input id="ip2" type="text" placeholder="请输入IP地址" checkip="YS_objb" class="lic-input layui-input w_414"
+                    ng-model="YS_objb.params.ip">
+                </div>
+                <div class="pla_decspeace-mtop">
+                  <label class="layui-form-label equ-right">选择图标*：</label>
+                  <div id="icon" class="eqad_choosephoto cp" chicon ng-if="!YS_objb.params.icon">
+                    <span class="eqad_addphoto2">+</span><br>
+                    <span class="eqad_addphoto">添加</span>
+                  </div>
+                  <div id="icon" class="eqad_choosephoto2 cp" chicon ng-if="YS_objb.params.icon">
+                    <img src="../images/c{{YS_objb.params.icon}}0.png" alt="">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="lic-position lic-secdechigth">
+            <div class="layui-form">
+              <div class="pla-dec lic-dec">
+                <div class="pla_decspeace_add">
+                  <span>设备服务</span>
+                  <div class="equ_mrightphoto">
+                    <button class="edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+                      addsbs>添加</button>
+                  </div>
+                </div>
+
+
+                <div ng-repeat="(key, value) in deviceServiceList">
+                  <div class="layui-form-item m_t30">
+                    <label class="layui-form-label equ-right">服务类型：</label>
+                    <div class="layui-input-block equ-right-del">
+                      <select lay-filter="value.serviceType{{key}}" dsselect="value.serviceType{{key}}" key="{{key}}" type="edit">
+                        <option value="" class="sph">请选择</option>
+                        <option ng-selected="{{value.serviceType==1}}" value="1">数据库</option>
+                        <option ng-selected="{{value.serviceType==2}}" value="2">ftp</option>
+                        <option ng-selected="{{value.serviceType==3}}" value="3">ssh</option>
+                        <option ng-selected="{{value.serviceType==4}}" value="4">探针</option>
+                        <option ng-selected="{{value.serviceType==5}}" value="5">snmp</option>
+                      </select>
+                      <img src="../images/pla-delete.png" class="cp pla_delete_left" alt="" delsbs="{{key}}">
+                    </div>
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3||value.serviceType==4||value.serviceType==5">
+                    <label class="layui-form-label equ-right">端口*：</label>
+                    <input type="text" placeholder="请输入端口" class="lic-input layui-input w_414" ng-model="value.configData.port">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==4">
+                    <label class="layui-form-label equ-right">探针IP*：</label>
+                    <input type="text" placeholder="请输入端口" class="lic-input layui-input w_414" ng-model="value.ip">
+                  </div>
+
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1">
+                    <label class="layui-form-label equ-right">数据库*：</label>
+                    <input type="text" placeholder="请输入数据库" class="lic-input layui-input w_414" ng-model="value.configData.dbName">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3">
+                    <label class="layui-form-label equ-right">用户名*：</label>
+                    <input type="text" placeholder="请输入用户名" class="lic-input layui-input w_414" ng-model="value.configData.name">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3">
+                    <label class="layui-form-label equ-right">密码*：</label>
+                    <input type="password" placeholder="请输入密码" class="lic-input layui-input w_414" ng-model="value.configData.pwd">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==2">
+                    <label class="layui-form-label equ-right">ftp根路径*：</label>
+                    <input type="text" placeholder="请输入ftp根路径" class="lic-input layui-input w_414" ng-model="value.configData.rootPath">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==5">
+                    <label class="layui-form-label equ-right">团体名*：</label>
+                    <input type="text" placeholder="请输入团体名" class="lic-input layui-input w_414" ng-model="value.configData.community">
+                  </div>
+
+                  <div class="layui-form-item m_t30" ng-if="value.serviceType==5">
+                    <label class="layui-form-label equ-right">版本*：</label>
+                    <div class="layui-input-block equ-right-del">
+                      <select lay-filter="value.configData.version" dsselect="value.configData.version">
+                        <option value="" class="sph">请选择版本</option>
+                        <option ng-selected="{{value.configData.version==0}}" value="0">version1</option>
+                        <option ng-selected="{{value.configData.version==1}}" value="1">version2c</option>
+                        <option ng-selected="{{value.configData.version==3}}" value="3">version3</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="lin_tbmove too_third_top m_t45">
+                  <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" ysfetch="YS_objb" >保存</button>
+                  <button class="edi-btn2 edi-btn-white layui-btn layui-btn-lg layui-btn-normal b_btn_h ex_act"
+                    elistdel="{{YS_objb.params.deviceId}}">删除</button>
+                  <button class="edi-btn3 edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act" tapshow="0">取消</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ----------设备编辑---------结束 -->
+
+
+      <!-- ----------设备添加----------开始 -->
+      <div class="tmbox res-leftbox" ng-if="tapshow==2">
+        <div class="tapbtn">
+          <div class="restore-tit">
+            <span>设备添加</span>
+            <button class="edi-back edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+              tapshow="0">返回</button>
+          </div>
+        </div>
+        <div class="res-body">
+          <div class="lic-position lic-dec">
+            <div class="layui-form">
+              <div class="pla-dec">
+                <span>设备信息</span>
+
+                <div class="pla_decspeace-mtop">
+                  <label class="layui-form-label equ-right">设备名称*：</label>
+                  <input id="name" type="text" placeholder="请输入设备名称" class="lic-input layui-input w_414" ng-model="YS_obja.params.deviceName">
+                </div>
+                <div class="layui-form-item m_t30 m_b30">
+                  <label class="layui-form-label equ-right">设备类型*：</label>
+                  <div class="layui-input-block equ-right-del" id="type">
+                    <select lay-filter="YS_obja.params.deviceType" ysselect="YS_obja.params.deviceType">
+                      <option value=""></option>
+                      <option value="1">文件夹</option>
+                      <option value="2">探针</option>
+                      <option value="3">防火墙</option>
+                      <option value="4">可信边界安全网关</option>
+                      <option value="5">入侵检测系统</option>
+                      <option value="6">安全隔离网闸</option>
+                      <option value="7">网络防毒设备</option>
+                      <option value="8">入侵防御系统</option>
+                      <option value="9">集控系统</option>
+                      <option value="10">路由器</option>
+                      <option value="11">交换机</option>
+                      <option value="12">web应用防火墙</option>
+                      <option value="13">安全单向隔离光闸</option>
+                      <option value="14">导入前置机</option>
+                      <option value="15">导入服务器</option>
+                      <option value="16">FTP库服务器</option>
+                      <option value="17">数据库服务器</option>
+                      <option value="18">信任端数据交换系统</option>
+                      <option value="19">非信任端数据交换系统</option>
+                      <option value="20">视频接入认证服务器</option>
+                      <option value="21">视频用户认证服务器</option>
+                      <option value="22">终端</option>
+                      <option value="23">其他类型服务器</option>
+                      <option value="24">视频平台服务器</option>
+                      <option value="25">IP音视频终端</option>
+                      <option value="26">应用服务区</option>
+                      <option value="27">其他终端设备</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-form-item m_b30">
+                  <label class="layui-form-label equ-right">所属区域*：</label>
+                  <div class="layui-input-block equ-right-del" id="area">
+                    <select lay-filter="YS_obja.params.area" ysselect="YS_obja.params.area">
+                      <option value="" selected="" class="sph">请选择</option>
+                      <option value="1">路由接入区</option>
+                      <option value="2">边界保护区</option>
+                      <option value="3">应用服务区</option>
+                      <option value="4">安全隔离区</option>
+                      <option value="5">安全检测与管理区</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="layui-form-item m_b30">
+                  <label class="layui-form-label equ-right">所属网络*：</label>
+                  <div class="layui-input-block equ-right-del" id="net">
+                    <select lay-filter="YS_obja.params.netArea" ysselect="YS_obja.params.netArea">
+                      <option value="" selected="" class="sph">请选择</option>
+                      <option value="1">内网</option>
+                      <option value="2">外网</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="pla_decspeace-mtop mb_30">
+                  <label class="layui-form-label equ-right">IP地址*：</label>
+                  <input id="ip" type="text" placeholder="请输入IP地址" checkip="YS_obja" class="lic-input layui-input w_414"
+                    ng-model="YS_obja.params.ip">
+                </div>
+                <div class="pla_decspeace-mtop">
+                  <label class="layui-form-label equ-right">选择图标*：</label>
+                  <div id="icon" class="eqad_choosephoto cp" chicon ng-if="!YS_obja.params.icon">
+                    <span class="eqad_addphoto2">+</span><br>
+                    <span class="eqad_addphoto">添加</span>
+                  </div>
+                  <div id="icon" class="eqad_choosephoto2 cp" chicon ng-if="YS_obja.params.icon">
+                    <img src="../images/c{{YS_objb.params.icon}}0.png" alt="">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="lic-position lic-secdechigth">
+            <div class="layui-form">
+              <div class="pla-dec lic-dec">
+                <div class="pla_decspeace_add">
+                  <span>设备服务</span>
+                  <div class="equ_mrightphoto">
+                    <button class="edi-btn-white layui-btn layui-btn-lg layui-btn-normal hw_btn ex_act spwborder"
+                      addsbs>添加</button>
+                  </div>
+                </div>
+
+
+                <div ng-repeat="(key, value) in deviceServiceList">
+                  <div class="layui-form-item m_t30" style="border-bottom: 2px solid rgba(6, 61, 82, 1)">
+                      <label class="layui-form-label equ-right">服务类型{{value.count}}</label>
+                      <div class="layui-input-block equ-right-del" style="width:414px;">
+                          <img src="../images/pla-delete.png" class="cp pla_delete_left" style="height: 32px;margin-top: 6px;margin-left: 414px"
+                          alt="" delsbs="{{key}}">
+                          </div>
+
+                  </div>
+                  <div class="layui-form-item m_t30">
+                    <label class="layui-form-label equ-right">类型*：</label>
+                    <div class="layui-input-block equ-right-del">
+                      <select lay-filter="value.serviceType{{key}}" dsselect="value.serviceType{{key}}"  key="{{key}}" type="add">
+                        <option value="" selected="" class="sph">请选择</option>
+                        <option value="1">数据库</option>
+                        <option value="2">ftp</option>
+                        <option value="3">ssh</option>
+                        <option value="4">探针</option>
+                        <option value="5">snmp</option>
+                      </select>
+                      <!-- <img src="../images/pla-delete.png" class="cp pla_delete_left" style="height: 32px;margin-top: 6px;"
+                        alt="" delsbs="{{key}}"> -->
+                    </div>
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3||value.serviceType==4||value.serviceType==5">
+                    <label class="layui-form-label equ-right">端口*：</label>
+                    <input type="text" placeholder="请输入端口" class="lic-input layui-input w_414" ng-model="value.configData.port">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==4">
+                    <label class="layui-form-label equ-right">探针IP*：</label>
+                    <input type="text" placeholder="请输入端口" class="lic-input layui-input w_414" ng-model="value.ip">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1">
+                    <label class="layui-form-label equ-right">数据库*：</label>
+                    <input type="text" placeholder="请输入数据库" class="lic-input layui-input w_414" ng-model="value.configData.dbName">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3">
+                    <label class="layui-form-label equ-right">用户名*：</label>
+                    <input type="text" placeholder="请输入用户名" class="lic-input layui-input w_414" ng-model="value.configData.name">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==1||value.serviceType==2||value.serviceType==3">
+                    <label class="layui-form-label equ-right">密码*：</label>
+                    <input type="password" placeholder="请输入密码" class="lic-input layui-input w_414" ng-model="value.configData.pwd">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==2">
+                    <label class="layui-form-label equ-right">ftp根路径*：</label>
+                    <input type="text" placeholder="请输入ftp根路径" class="lic-input layui-input w_414" ng-model="value.configData.rootPath">
+                  </div>
+                  <div class="pla_time_contant pla_decspeace-mtop m_t30" ng-if="value.serviceType==5">
+                    <label class="layui-form-label equ-right">团体名*：</label>
+                    <input type="text" placeholder="请输入团体名" class="lic-input layui-input w_414" ng-model="value.configData.community">
+                  </div>
+                  <div class="layui-form-item m_t30" ng-if="value.serviceType==5">
+                    <label class="layui-form-label equ-right">版本*：</label>
+                    <div class="layui-input-block equ-right-del">
+                      <select lay-filter="value.configData.version" dsselect="value.configData.version">
+                        <option value="" class="sph">请选择版本</option>
+                        <option ng-selected="{{value.configData.version==0}}" value="0">version1</option>
+                        <option ng-selected="{{value.configData.version==1}}" value="1">version2c</option>
+                        <option ng-selected="{{value.configData.version==3}}" value="3">version3</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="eqad-desmove-right mb_40 m_t45" style="margin-left: 180px;">
+                  <button class="edi-btn1 edi-btn-white layui-btn layui-btn-lg layui-btn-normal l_btn ex_act" ysfetch="YS_obja">保存</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ----------设备添加----------结束 -->
+  </div>
+
+</div>
+
+
+<div id="remove" class="com_tc dpn">
+  <div class="tc_top">
+    <div class="tc_title"><span>提示</span></div>
+    <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+  </div>
+  <div class="topline"><div class="cline"></div></div>
+  <div class="tc_cont">
+    <div class="zt_img"><img src="../images/fail.png" alt=""></div>
+    <div class="ask"><span>您确定要删除这行内容吗？将会删除所有相关的日志和数据，请您谨慎操作！</span></div>
+
+  </div>
+  <div class="tc_foot">
+    <div class="confirm" ysfetch="YS_objc"  showload="1000">确认</div>
+    <div class="quxiao" comclose>取消</div>
+
+  </div>
+</div>
+
+<div id="chicon" class="com_tc dpn">
+  <div class="tc_top">
+    <div class="tc_title"><span>图标库</span></div>
+    <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+  </div>
+  <div class="topline"><div class="cline"></div></div>
+  <div class="iconlist" id="iconlist">
+
+    <div class="dicon ptr cp" ng-repeat="(key, value) in iconlist">
+      <img class="dimg" src="../images/c{{value.id}}0.png" sicon>
+      <img ng-show="YS_obja.params.icon==value.id||YS_objb.params.icon==value.id" class="sicon" src="../images/select.png">
+      <div class="icname"><span>{{value.name}}</span></div>
+    </div>
+
+
+  </div>
+  <div class="tc_foot">
+    <div class="confirm" comclose>确认</div>
+    <div class="quxiao" comclose>取消</div>
+
+  </div>
+</div>

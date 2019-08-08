@@ -1,0 +1,134 @@
+<!-- 平台注册 -->
+<style type="text/css" media="screen">
+    .reg-dec label{
+        width:195px;
+    }
+</style>
+
+
+<div class="log-body pd_30 mt_0">
+    <div class="mainbox">
+        <div class="leftbox">
+            <ul class="boxmenu">
+                <li tapshow=0><a href="#/equipadmin" class="usercen ex_act">
+                        <img class="logimg hui" src="../images/sbgl.png" alt="">
+                        <img class="logimg bai" src="../images/sbgl_act.png" alt="">
+                        <span>设备管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/linkadmin" class="userpro ex_act">
+                        <img class="logimg hui" src="../images/llgl.png" alt="">
+                        <img class="logimg bai" src="../images/llgl_act.png" alt="">
+                        <span>链路管理</span>
+                    </a></li>
+                <li tapshow='0'><a href="javascript:;" class="userpro act ex_act">
+                        <img class="logimg" src="../images/ptzc_act.png" alt=""><span>平台注册</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/networkconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/wlpz.png" alt="">
+                        <img class="logimg bai" src="../images/wlpz_act.png" alt=""><span>网络配置</span>
+                    </a></li>
+                <li tapshow='0'><a href="#/physicalconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/tjpz.png" alt="">
+                        <img class="logimg bai" src="../images/tjpz_act.png" alt=""><span>体检配置</span>
+                    </a></li>
+<!--                 <li tapshow='0'><a href="#/logconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/rzpz.png" alt="">
+                        <img class="logimg bai" src="../images/rzpz_act.png" alt=""><span>日志配置</span>
+                    </a></li> -->
+                <li tapshow="0"><a href="#/alarmconf" class="userpro l_btn ex_act">
+                        <img class="logimg hui" src="../images/alarmconf.png" alt="">
+                        <img class="logimg bai" src="../images/alarmconf_act.png" alt=""><span>报警配置</span>
+                    </a></li>
+                                               <li  tapshow='0'><a href="#syslog" class="userpro  ex_act">
+                     <img class="logimg hui" src="../images/gjx.png" alt="">
+           <img class="logimg bai" src="../images/gjx_act.png" alt=""><span>日志配置</span>
+                    </a></li>
+            </ul>
+        </div>
+        <div class="rightbox">
+            <div class="breadnav dpn">
+                <span>面包屑 /</span>
+                <span>面包屑 / </span>
+                <span style="color:#fff">面包屑</span>
+                <!-- <button type="button" value="123">123</button> -->
+            </div>
+            <div class="tmbox res-leftbox">
+                <div class="tapbtn">
+                    <div class="restore-tit"><span>平台注册</span></div>
+                </div>
+                <div class="res-body">
+                    <div class="lic-position">
+                        <div>
+                            <div class="reg-dec lic-dec">
+                                <div class="m_t30 ps_r">
+                                    <label>平台名称*：</label>
+                                    <input name="平台名称" id="regpt" type="text" placeholder="请输入平台名称" class="layui-input lic-input w_414"
+                                        ng-model="YS_obja.params.systemName">
+                                </div>
+                                <div class="m_t30">
+                                    <label>负责人姓名*：</label>
+                                    <input name="负责人姓名" id="regxm" type="text" placeholder="请输入负责人姓名" class="layui-input lic-input w_414"
+                                        ng-model="YS_obja.params.managerName">
+                                </div>
+                                <div class="m_t30">
+                                    <label>负责人联系电话*：</label>
+                                    <input name="负责人联系电话" id="regphone" type="text" placeholder="请输入负责人联系电话" class="layui-input lic-input w_414"
+                                        checkphone ng-model="YS_obja.params.managerPhone">
+                                </div>
+                                <div class="dpf">
+                                    <div class="reg_tipl"></div>
+                                    <div class="reg_tipr">
+                                        <span id="check_phone"></span>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <label>负责人公安网邮箱地址*：</label>
+                                    <input name="负责人公安网邮箱地址" id="regemail" type="text" placeholder="请输入负责人公安网邮箱地址"
+                                        class="layui-input lic-input w_414" checkemail ng-model="YS_obja.params.managerEmail">
+                                </div>
+                                <div class="dpf">
+                                    <div class="reg_tipl"></div>
+                                    <div class="reg_tipr">
+                                        <span id="check_email"></span>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <label></label>
+                                  <button ng-show="has==0" type="submit" class="layui-btn layui-btn-lg layui-btn-normal reg-btn m_t15"
+                                    ysfetch="YS_obja">注册</button>
+                                <button ng-show="has==1" type="submit" class="layui-btn layui-btn-lg layui-btn-normal reg-btn m_t15" rezc>重新注册</button>
+                                </div>
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- 注册成功 -->
+<div id="regsucc" class="com_tc dpn">
+    <div class="tc_top">
+        <div class="tc_title"><span>提示</span></div>
+        <div class="tc_close"><img comclose src="../images/bigclose.png" alt=""></div>
+    </div>
+    <div class="topline"><div class="cline"></div></div>
+    <div class="tc_cont">
+        <div class="zt_img"><img src="../images/success.png" alt=""></div>
+        <div class="ask"><span>平台注册成功</span></div>
+
+    </div>
+    <div class="tc_foot">
+        <div class="confirm" comclose>确认</div>
+        <!-- <div class="quxiao" comclose>取消</div> -->
+
+    </div>
+</div>

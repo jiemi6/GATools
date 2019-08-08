@@ -1,0 +1,268 @@
+<!-- 日志管理 设备日志 -->
+<div class="log-body">
+  <div class="mainbox">
+    <div class="leftbox">
+      <ul class="boxmenu">
+        <li tapshow='0'><a href="javascript:;" class="usercen act ex_act">
+            <img class="logimg" src="../images/sbrz_act.png" alt=""><span>设备日志</span>
+          </a></li>
+        <!-- <li><a href="#/businesslog" class="userpro ex_act">
+            <img class="logimg hui" src="../images/logimg.png" alt="">
+            <img class="logimg bai" src="../images/logimg_act.png" alt="">
+            <span>任务日志</span>
+          </a></li> -->
+        <li tapshow='0'><a href="#/userlog" class="userpro ex_act">
+            <img class="logimg hui" src="../images/yhrz.png" alt="">
+            <img class="logimg bai" src="../images/yhrz_act.png" alt="">
+            <span>用户日志</span>
+          </a></li>
+        <li tapshow='0'><a href="#/explog" class="userpro ex_act">
+            <img class="logimg hui" src="../images/tjrz.png" alt="">
+            <img class="logimg bai" src="../images/tjrz_act.png" alt="">
+            <span>体检日志</span>
+          </a></li>
+      </ul>
+    </div>
+    <div class="rightbox">
+      <div class="breadnav dpn">
+        <span>面包屑 /</span>
+        <span>面包屑 / </span>
+        <span style="color:#fff">面包屑</span>
+        <!-- <button type="button" value="123">123</button> -->
+      </div>
+      <div class="tmbox res-leftbox">
+        <form class="layui-form">
+          <div class="upshuru mb_10" style="">
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">设备名称：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="zt">
+                <select lay-filter="YS_plista.params.deviceId" ysselect="YS_plista.params.deviceId">
+                  <option value="" selected="">请选择设备</option>
+                  <option ng-repeat="(k, v) in YS_listb.data.list" ng-selected="v.deviceId==YS_plista.params.deviceId"
+                    value="{{v.deviceId}}" ng-bind="v.deviceName"></option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">级&nbsp;&nbsp;别：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="zt">
+                <select lay-filter="YS_plista.params.level" ysselect="YS_plista.params.level">
+                  <option value=""></option>
+                  <option value="0" ng-selected="YS_plista.params.level!=''&&YS_plista.params.level==0">系统不可用</option>
+                  <option value="1" ng-selected="YS_plista.params.level==1">必须马上采取行动的事件</option>
+                  <option value="2" ng-selected="YS_plista.params.level==2">关键的事件 </option>
+                  <option value="3" ng-selected="YS_plista.params.level==3">错误事件</option>
+                  <option value="4" ng-selected="YS_plista.params.level==4">警告事件</option>
+                  <option value="5" ng-selected="YS_plista.params.level==5">普通但重要的事件</option>
+                  <option value="6" ng-selected="YS_plista.params.level==6">有用的信息</option>
+                  <option value="7" ng-selected="YS_plista.params.level==7">调试信息</option>
+                </select>
+              </div>
+            </div>
+            <div class="layui-form-item shitem" style="display: none;">
+              <label class="layui-form-label shtitle">类&nbsp;&nbsp;型：</label>
+              <div class="layui-input-block bji-blcok three_inf" id="type">
+                <select lay-filter="YS_plista.params.type" ysselect="YS_plista.params.type">
+                  <option value=""></option>
+                  <option value="1"  ng-selected="YS_plista.params.type==1">文件夹</option>
+                  <option value="2"  ng-selected="YS_plista.params.type==2">探针</option>
+                  <option value="3"  ng-selected="YS_plista.params.type==3">防火墙</option>
+                  <option value="4"  ng-selected="YS_plista.params.type==4">可信边界安全网关</option>
+                  <option value="5"  ng-selected="YS_plista.params.type==5">入侵检测系统</option>
+                  <option value="6"  ng-selected="YS_plista.params.type==6">安全隔离网闸</option>
+                  <option value="7"  ng-selected="YS_plista.params.type==7">网络防毒设备</option>
+                  <option value="8"  ng-selected="YS_plista.params.type==8">入侵防御系统</option>
+                  <option value="9"  ng-selected="YS_plista.params.type==9">集控系统</option>
+                  <option value="10"  ng-selected="YS_plista.params.type==10">路由器</option>
+                  <option value="11"  ng-selected="YS_plista.params.type==11">交换机</option>
+                  <option value="12"  ng-selected="YS_plista.params.type==12">web应用防火墙</option>
+                  <option value="13"  ng-selected="YS_plista.params.type==13">安全单向隔离光闸</option>
+                  <option value="14"  ng-selected="YS_plista.params.type==14">导入前置机</option>
+                  <option value="15"  ng-selected="YS_plista.params.type==15">导入服务器</option>
+                  <option value="16"  ng-selected="YS_plista.params.type==16">FTP库服务器</option>
+                  <option value="17"  ng-selected="YS_plista.params.type==17">数据库服务器</option>
+                  <option value="18"  ng-selected="YS_plista.params.type==18">信任端数据交换系统</option>
+                  <option value="19"  ng-selected="YS_plista.params.type==19">非信任端数据交换系统</option>
+                  <option value="20"  ng-selected="YS_plista.params.type==20">视频接入认证服务器</option>
+                  <option value="21"  ng-selected="YS_plista.params.type==21">视频用户认证服务器</option>
+                  <option value="22"  ng-selected="YS_plista.params.type==22">终端</option>
+                  <option value="23"  ng-selected="YS_plista.params.type==23">其他类型服务器</option>
+                  <option value="24"  ng-selected="YS_plista.params.type==24">视频平台服务器</option>
+                  <option value="25"  ng-selected="YS_plista.params.type==25">IP音视频终端</option>
+                  <option value="26"  ng-selected="YS_plista.params.type==26">应用服务器</option>
+                  <option value="27"  ng-selected="YS_plista.params.type==27">其他终端设备</option>
+                </select>
+              </div>
+            </div>
+
+                        <div class="layui-form-item shitem">
+              <label class="layui-form-label shtitle">关 键 字：</label>
+              <div class="layui-input-block bji-blcok">
+                <input id="key" type="text" name="title" placeholder="请输入" class="layui-input bjinput" ng-model="YS_plista.params.keyword">
+              </div>
+            </div>
+
+          </div>
+          <div class="downshuru">
+
+            <div class="layui-form-item riqi epriqi">
+              <div class="layui-inline">
+                <label class="layui-form-label shtitle">起止时间：</label>
+                <div class="layui-input-inline">
+                  <input id="date" type="text" class="layui-input bjinput" ystwodate="YS_plista.params.startDate" to="YS_plista.params.endDate">
+                </div>
+              </div>
+            </div>
+            <div class="sbtn">
+              <div class="search cp" searchinter="YS_plista"><span>搜索</span></div>
+              <div class="rest cp" rest><span>重置</span></div>
+            </div>
+          </div>
+
+        </form>
+        <!-- <div class="alarm">
+    	<div class="baojin"><img class="bjimg" src="../images/baojin.png" alt=""><span>链接报警，请联系厂家处理</span></div>
+    </div> -->
+        <div class="table">
+          <table class="tktable" ellpadding="1" cellspacing="1" border="0">
+            <col style="width: 5%" />
+            <col style="width: 10%" />
+            <col style="width: 15%" />
+            <col style="width: 10%" />
+            <col style="width: 35%" />
+            <col style="width: 15%" />
+            <col style="width: 10%" />
+            <thead>
+              <tr>
+                <th>序号</th>
+                <th>设备名称</th>
+                <th>设备类型</th>
+                <th>设备IP</th>
+                <th>描述</th>
+                <th>时间</th>
+                <th>级别</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="lightform" ng-repeat="(key, value) in YS_plista.data.list">
+                <td ng-bind="key+1"></td>
+                <td class="normal_n">
+                <div class="eldiv" title="{{value.deviceName}}">
+                  {{value.deviceName?value.deviceName:"空"}}
+                </div></td>
+                <td>{{value.deviceType?devicetype[value.deviceType]:"空"}}
+
+                  <div ng-if="value.deviceType==1">文件夹</div>
+
+
+
+                  <div ng-if="value.deviceType==1">文件夹</div>
+
+                  <div ng-if="value.deviceType==2">探针</div>
+
+                  <div ng-if="value.deviceType==3">防火墙</div>
+
+                  <div ng-if="value.deviceType==4">可信边界安全网关</div>
+
+                  <div ng-if="value.deviceType==5">入侵检测系统</div>
+
+                  <div ng-if="value.deviceType==6">安全隔离网闸</div>
+
+                  <div ng-if="value.deviceType==7">网络防毒设备</div>
+
+                  <div ng-if="value.deviceType==8">入侵防御系统</div>
+
+                  <div ng-if="value.deviceType==9">集控系统</div>
+
+                  <div ng-if="value.deviceType==10">路由器</div>
+
+                  <div ng-if="value.deviceType==11">交换机</div>
+
+                  <div ng-if="value.deviceType==12">web应用防火墙</div>
+
+
+                  <div ng-if="value.deviceType==13">安全单向隔离光闸</div>
+
+
+                  <div ng-if="value.deviceType==14">导入前置机</div>
+
+
+                  <div ng-if="value.deviceType==15">导入服务器</div>
+
+
+                  <div ng-if="value.deviceType==16">FTP库服务器</div>
+
+
+                  <div ng-if="value.deviceType==17">数据库服务器</div>
+
+
+                  <div ng-if="value.deviceType==18">信任端数据交换系统</div>
+
+
+                  <div ng-if="value.deviceType==19">非信任端数据交换系统</div>
+
+
+                  <div ng-if="value.deviceType==20">视频接入认证服务器</div>
+
+
+                  <div ng-if="value.deviceType==21">视频用户认证服务器</div>
+
+
+                  <div ng-if="value.deviceType==22">终端</div>
+
+
+                  <div ng-if="value.deviceType==23">其他类型服务器</div>
+
+
+                  <div ng-if="value.deviceType==24">视频平台服务器</div>
+
+
+                  <div ng-if="value.deviceType==25">IP音视频终端</div>
+
+
+                  <div ng-if="value.deviceType==26">应用服务器</div>
+
+
+                  <div ng-if="value.deviceType==27">其他终端设备</div>
+
+
+                </td>
+                <td>{{value.host?value.host:"空"}}</td>
+                <td class="dfjc">
+                  <div class="equ_decover">
+                    {{value.msg}}
+                  </div>
+                  <div class="ptr" ng-if="value.msg.length>30">
+                    <img src="../images/tips.png" class="circle">
+                    <div class="equ_tips dpn"><span ng-bind="value.msg"></span></div>
+                  </div>
+                </td>
+                <td ng-bind="value.createTime"></td>
+                <td ng-if="value.level!=-1">{{alarmlevel[value.level]}}</td>
+                <td ng-if="value.level==-1">未知（-1）</td>
+              </tr>
+              <tr ng-if="!YS_plista.data.list.length">
+                <td colspan="7">
+                  <div class="allnmsg">
+                    <div class="nmsg_pic">
+                      <img src="/images/nonemsg.png" alt="">
+                    </div>
+                    <div>
+                      <span>暂无数据…</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="jia_nextpage fenye" id="YS_plista"></div>
+
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+   

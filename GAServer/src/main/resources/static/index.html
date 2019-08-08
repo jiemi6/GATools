@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="no-js">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+  <title>公安监控系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="icon" type="image/png" href="/images/galogo.png">
+  <link rel="stylesheet" href="/css/global.css?v=26f8d84028?v=9b5a53b100?v=7c5ec0d75f">
+  <script src="/YSplugin/YS.js"></script>
+ 
+
+  <script src="/YSplugin/echarts/3.1.6/echarts2.js"></script>
+  <script src="/YSplugin/gauge/circles.min.js"></script>
+  <script src="/YSplugin/gauge/gauge.min.js"></script>
+  
+  <script src="/YSplugin/progress/radialIndicator.js"></script>
+  <script src="/YSplugin/amcharts/amcharts.js"></script>
+  <script src="/YSplugin/amcharts/serial.js"></script>
+
+ 
+  <script src="/js/global.js?v=b8160a35fd?v=ef4df80b09?v=1d5cbf97f7"></script>
+<script src="/YSplugin/circleprogress/circle-progress.js"></script>
+<script src="/YSplugin/scoll/scroll.js"></script>
+</head>
+
+<body class="layui-layout-body mainbody" ng-controller="ctrl">
+
+
+  <div id="LAY_app">
+    <div class="main-tabbox fixation-nav {{navup?'dpn':''}}">
+      <!-- 头部导航--开始 -->
+      <div class="nav">
+        <div class="nav-left">
+          <ul>
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/taskmonitor" >
+                <div class="{{hrefinfo.path=='experience'||hrefinfo.path=='taskmonitor'?'lightbg':''}} cp hidmenu">
+                  <!-- <img ng-if="hrefinfo.path=='experience'||hrefinfo.path=='taskmonitor'" class="topact" src="../images/topact.png"
+                    alt=""> -->
+                  <img class="me_pic {{hrefinfo.path=='experience'||hrefinfo.path=='taskmonitor'?'dpn':''}}" src="/images/platatt.png"
+                    alt="">
+                  <img class="me_pic {{hrefinfo.path=='experience'||hrefinfo.path=='taskmonitor'?'':'dpn'}}" src="/images/platatt_act.png"
+                    alt="">
+                  <span>平台监控</span>
+                </div>
+              </a>
+
+              <div class="navmenul">
+                <a href="#/experience">
+                  <div class="navmenu_dec navchild_f" >一键体检</div>
+                </a>
+                <a href="#/taskmonitor">
+                  <div class="navmenu_dec navchild_l" >任务监控</div>
+                </a>
+              </div>
+            </li>
+
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/linkalarm" >
+
+                <div class="{{hrefinfo.path=='linkalarm'||hrefinfo.path=='equipalarm'||hrefinfo.path=='taskalarm'?'lightbg':''}} cp hidmenu">
+                  <img class="me_pic {{hrefinfo.path=='linkalarm'||hrefinfo.path=='equipalarm'||hrefinfo.path=='taskalarm'?'dpn':''}}"
+                    src="/images/alarmc.png" alt="">
+                  <img class="me_pic {{hrefinfo.path=='linkalarm'||hrefinfo.path=='equipalarm'||hrefinfo.path=='taskalarm'?'':'dpn'}}"
+                    src="/images/alarmc_act.png" alt="">
+                  <span>报警中心</span>
+                </div>
+              </a>
+
+              <div class="navmenul">
+                <a href="#/linkalarm">
+                  <div class="navmenu_dec navchild_f" >链路报警</div>
+                </a>
+                <a href="#/equipalarm">
+                  <div class="navmenu_dec" >设备报警</div>
+                </a>
+                <a href="#/taskalarm">
+                  <div class="navmenu_dec navchild_l" >任务报警</div>
+                </a>
+              </div>
+            </li>
+
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/tasksta" >
+
+                <div class="{{hrefinfo.path=='tasksta'||hrefinfo.path=='equipsta'?'lightbg':''}} cp hidmenu">
+                  <img class="me_pic {{hrefinfo.path=='tasksta'||hrefinfo.path=='equipsta'?'dpn':''}}" src="/images/allform.png"
+                    alt="">
+                  <img class="me_pic {{hrefinfo.path=='tasksta'||hrefinfo.path=='equipsta'?'':'dpn'}}" src="/images/allform_act.png"
+                    alt="">
+                  <span>统计报表</span>
+                </div>
+              </a>
+              <div class="navmenul">
+                <a href="#/tasksta">
+                  <div class="navmenu_dec navchild_f" >任务执行统计</div>
+                </a>
+                <a href="#/equipsta">
+                  <div class="navmenu_dec navchild_l" >设备运行统计</div>
+                </a>
+              </div>
+
+            </li>
+
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/equiplog" >
+
+                <div class="{{hrefinfo.path=='equiplog'||hrefinfo.path=='userlog'||hrefinfo.path=='explog'?'lightbg':''}} cp hidmenu">
+                  <img class="me_pic {{hrefinfo.path=='equiplog'||hrefinfo.path=='userlog'||hrefinfo.path=='explog'?'dpn':''}}"
+                    src="/images/logad.png" alt="">
+                  <img class="me_pic {{hrefinfo.path=='equiplog'||hrefinfo.path=='userlog'||hrefinfo.path=='explog'?'':'dpn'}}"
+                    src="/images/logad_act.png" alt="">
+                  <span>日志管理</span>
+                </div>
+              </a>
+
+              <div class="navmenul">
+                <a href="#/equiplog">
+                  <div class="navmenu_dec navchild_f" >设备日志</div>
+                </a>
+                <a href="#/userlog">
+                  <div class="navmenu_dec" >用户日志</div>
+                </a>
+                <a href="#/explog">
+                  <div class="navmenu_dec navchild_l" >体检日志</div>
+                </a>
+              </div>
+
+            </li>
+          </ul>
+        </div>
+        <div class="nav-center">
+          <div class="nav-title-d">
+            <a href="/" clearicon >
+              <img src="/images/galogo.png" alt="">
+            </a>
+            <h1>跨域应用运维监管系统</h1>
+          </div>
+          <div class="cen_bg">
+            <div class="ps_r">
+              <span id="DateTime" class="nav_time">
+              <span  id="DateTime1"></span>&nbsp;&nbsp;
+              <span  id="DateTime2"></span>&nbsp;&nbsp;
+              <span  id="DateTime3"></span></span>
+              <img class="cp sarrup" ng-if="hrefinfo.path=='mainpage'||hrefinfo.path==''" src="/images/sarrup.png" alt=""
+                indexnav>
+            </div>
+          </div>
+        </div>
+        <div class="nav-right">
+          <ul>
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/equipadmin" >
+
+                <div class="{{hrefinfo.path=='equipadmin'||hrefinfo.path=='linkadmin'||hrefinfo.path=='register'||hrefinfo.path=='networkconf'||hrefinfo.path=='physicalconf'||hrefinfo.path=='logconf'||hrefinfo.path=='alarmconf'?'lightbg':''}} cp hidmenu">
+                  <img class="me_pic {{hrefinfo.path=='equipadmin'||hrefinfo.path=='linkadmin'||hrefinfo.path=='register'||hrefinfo.path=='networkconf'||hrefinfo.path=='physicalconf'||hrefinfo.path=='logconf'||hrefinfo.path=='alarmconf'?'dpn':''}}"
+                    src="/images/confad.png" alt="">
+                  <img class="me_pic {{hrefinfo.path=='equipadmin'||hrefinfo.path=='linkadmin'||hrefinfo.path=='register'||hrefinfo.path=='networkconf'||hrefinfo.path=='physicalconf'||hrefinfo.path=='logconf'||hrefinfo.path=='alarmconf'?'':'dpn'}}"
+                    src="/images/confad_act.png" alt="">
+                  <span>配置管理</span>
+                </div>
+              </a>
+
+              <div class="navmenur ">
+                <a href="#/equipadmin">
+                  <div class="navmenu_dec navchild_f" >设备管理</div>
+                </a>
+                <a href="#/linkadmin">
+                  <div class="navmenu_dec" lempty>链路管理</div>
+                </a>
+                <a href="#/register">
+                  <div class="navmenu_dec" >平台注册</div>
+                </a>
+                <a href="#/networkconf">
+                  <div class="navmenu_dec" >网络配置</div>
+                </a>
+                <a href="#/physicalconf">
+                  <div class="navmenu_dec" >体检配置</div>
+                </a>
+<!--                 <a href="#/logconf">
+                  <div class="navmenu_dec" >日志配置</div>
+                </a> -->
+                <a href="#/alarmconf">
+                  <div class="navmenu_dec navchild_l" >报警配置</div>
+                </a>
+                   <a href="#/syslog">
+                  <div class="navmenu_dec" >日志配置</div>
+                </a>
+
+              </div>
+            </li>
+
+            <li class="layui-col-md3 layui-col-sm3 layui-col-xs3 ps_r navmenu">
+              <a href="#/sysexam" >
+
+                <div class="{{hrefinfo.path=='sysexam'||hrefinfo.path=='restoreback'||hrefinfo.path=='power'||hrefinfo.path=='licenses'||hrefinfo.path=='tools'?'lightbg':''}} cp hidmenu">
+                  <!-- <img ng-if="hrefinfo.path=='sysexam'||hrefinfo.path=='restoreback'||hrefinfo.path=='power'||hrefinfo.path=='licenses'||hrefinfo.path=='tools'"
+                    class="topact_r" src="../images/topact.png" alt=""> -->
+                  <img class="me_pic {{hrefinfo.path=='sysexam'||hrefinfo.path=='restoreback'||hrefinfo.path=='power'||hrefinfo.path=='licenses'||hrefinfo.path=='tools'?'dpn':''}}"
+                    src="/images/syspro.png" alt="">
+                  <img class="me_pic {{hrefinfo.path=='sysexam'||hrefinfo.path=='restoreback'||hrefinfo.path=='power'||hrefinfo.path=='licenses'||hrefinfo.path=='tools'?'':'dpn'}}"
+                    src="/images/syspro_act.png" alt="">
+                  <span>系统维护</span>
+                </div>
+              </a>
+
+              <div class="navmenur ">
+                <a href="#/sysexam">
+                  <div class="navmenu_dec navchild_f" >系统自检</div>
+                </a>
+                <a href="#/restoreback">
+                  <div class="navmenu_dec" >恢复备份</div>
+                </a>
+                <a href="#/power">
+                  <div class="navmenu_dec" >系统管理</div>
+                </a>
+                <a href="#/licenses">
+                  <div class="navmenu_dec" >授权管理</div>
+                </a>
+                <a href="#/tools">
+                  <div class="navmenu_dec navchild_l" >工具箱</div>
+                </a>
+              </div>
+            </li>
+
+            <li class="layui-col-md6 layui-col-sm6 layui-col-xs6 headpic-d dpf">
+              <div>
+                <img class="head_move" src="images/dux.png" alt="">
+              </div>
+              <div showumenu class="navuname">
+                <div class="showuname cp">
+                  <span>{{com_objd.data.uName}}</span>
+                </div>
+                <div style="margin-left:10px">
+                  <img class="cp" src="images/arrow.png" alt="">
+                </div>
+                <div class="h_umenu dpn">
+                  <div class="cp ps_r navchild_f" fgpwd style="border:none;"><img class="put_logout" src="images/changepwd.png" alt="" >修改密码</div>
+                  <a href="#/userlist">
+                    <div class="cp ps_r"><img class="put_logout" src="images/ulistlog.png" alt="" >用户列表</div>
+                  </a>
+                  <a href="/login.html">
+                    <div class="cp ps_r navchild_l" ysfetch="com_objc"><img class="put_logout" src="images/logout.png"
+                        alt="">退出登录</div>
+                  </a>
+                </div>
+
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <!-- 头部导航--结束 -->
+      <div>
+
+      </div>
+
+
+    </div>
+
+
+
+
+
+
+    <!-- 主体内容 --开始-->
+    <div class="gabody {{navup?'navup':'navdown'}}" id="LAY_app_body" colseumenu>
+      <div class="layadmin-tabsbody-item layui-show" ng-include="hrefinfo.url" onload="ready()" style="">
+      </div>
+    </div>
+    <!-- 主体内容 --结束-->
+    <!-- 修改密码 -->
+    <div id="repwd2" class="com_tc dpn">
+      <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img closenull src="/images/bigclose.png" alt=""></div>
+      </div>
+      <div class="topline"><div class="cline"></div></div>
+      <div class="tc_cont3">
+        <div class="too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">旧密码：</label>
+          <div class="">
+            <input type="text" placeholder="请输入旧密码" class="pwdinput rewords" ng-model="com_objb.params.oldPwd">
+          </div>
+        </div>
+        <div class="too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">新密码：</label>
+          <div class="">
+            <input type="text" placeholder="请输入新密码" class="pwdinput rewords" ng-model="com_objb.params.reoldpaw">
+          </div>
+        </div>
+        <div class="too_secend_top tcinput">
+          <label class="edi-form-label layui-form-label">确认密码：</label>
+          <div class="">
+            <input type="text" placeholder="请确认新密码" class="pwdinput rewords" ng-model="com_objb.params.newPwd">
+          </div>
+        </div>
+      </div>
+      <div class="tc_foot">
+        <div class="confirm cp l_btn ex_act" ysfetch="com_objb">确认</div>
+        <div class="quxiao cp hs_btn ex_act" closenull>取消</div>
+
+      </div>
+    </div>
+
+    <!-- 密码重置成功 -->
+    <div id="pwdresucc" class="com_tc dpn">
+      <div class="tc_top">
+        <div class="tc_title"><span>修改密码</span></div>
+        <div class="tc_close"><img comclose src="/images/bigclose.png" alt=""></div>
+      </div>
+      <div class="topline"><div class="cline"></div></div>
+      <div class="tc_cont2">
+        <div class="zt_img"><img src="/images/success.png" alt=""></div>
+        <div class="ask"><span>密码重置成功!</span></div>
+        <div class="warnt2"><span>请妥善保管您的账户信息</span></div>
+        <div class="confirm3" comclose>重新登录</div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+
+</html>
