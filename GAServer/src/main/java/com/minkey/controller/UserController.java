@@ -372,7 +372,7 @@ public class UserController {
         try{
             User sessionUser = (User)session.getAttribute("user");
 
-            if(StringUtils.equals(sessionUser.getPwd(),StringUtil.md5(oldPwd))){
+            if(!StringUtils.equals(sessionUser.getPwd(),StringUtil.md5(oldPwd))){
                 return JSONMessage.createFalied("原密码错误").toString();
             }
 
