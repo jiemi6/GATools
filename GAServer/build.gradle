@@ -13,9 +13,17 @@ sourceSets {
     }
 }
 
-	applicationDistribution.from("E:\\ga\\static") {
-		into "resources/static"
-	}
+
+jar{
+    exclude("application.properties")
+    exclude("logback.xml")
+    exclude("static")
+    exclude("templates")
+}
+
+applicationDistribution.from("E:\\ga\\static") {
+    into "resources/static"
+}
 
 
 dependencies {

@@ -38,7 +38,6 @@ subprojects {
 	jar{
 		exclude("application.properties")
 		exclude("logback.xml")
-		exclude("static")
 		exclude("templates")
     }
 
