@@ -144,7 +144,7 @@ public class ExamineHandler {
             checkStepCache.create(checkId,totalStep);
             checkItem = checkStepCache.createNextItem(checkId);
             checkItem.setResultLevel(MyLevel.LEVEL_NORMAL);
-            checkItem.setResultMsg(String.format("<%s设备>网络连接状态正常,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%",
+            checkItem.setResultMsg(String.format("<%s设备>网络连接状态正常,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%%",
                     device.getDeviceName(),total,total-connect,loseRadio));
 
             checkItemHandler.insert(checkItem);
@@ -152,7 +152,7 @@ public class ExamineHandler {
             //不通就只有一步
             checkItem = new CheckItem(checkId,1);
             checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-            checkItem.setResultMsg(String.format("<%s设备>网络无法连接,请检查网络连通性,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%",
+            checkItem.setResultMsg(String.format("<%s设备>网络无法连接,请检查网络连通性,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%%",
                     device.getDeviceName(),total,total-connect,loseRadio));
 
             checkItemHandler.insert(checkItem);
@@ -161,7 +161,7 @@ public class ExamineHandler {
             //不通就只有一步
             checkItem = new CheckItem(checkId,1);
             checkItem.setResultLevel(MyLevel.LEVEL_ERROR);
-            checkItem.setResultMsg(String.format("<%s设备>网络连接状态不稳定,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%,请检查网络稳定性",
+            checkItem.setResultMsg(String.format("<%s设备>网络连接状态不稳定,<br/>网络ping包%s个，%s个包丢失，丢包率为%s%%,请检查网络稳定性",
                     device.getDeviceName(),total,total-connect,loseRadio));
 
             checkItemHandler.insert(checkItem);
